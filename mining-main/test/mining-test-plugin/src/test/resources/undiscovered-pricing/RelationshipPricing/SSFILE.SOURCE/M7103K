@@ -1,0 +1,46 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . M7103K                                            *
+*   Description  . . RP Rate Table (Key Panel)                         *
+*   Product  . . . . Relationship Pricing - MICM Form 7103             *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24, 80), ORIENT=(1, 1)
+EASEL ON
+ 7103K     ________             RP Rate Table                  ____  __________
+
+
+ Enter the following key parameters:
+
+   Function . . . . . . _                    B (Browse)
+                                             C (Copy)
+                                             D (Delete)
+                                             M (Maintenance)
+                                             N (New)
+                                             Space (Inquiry only)
+   ____________________ ______
+
+   ____________________ __________
+
+
+
+
+
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M, KEY
+FIELD=CURDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=FUNC,     PIC='X(01)', ATTR=(INPUT,OPTIONAL), HELP=HXXX031M
+FIELD=M03005SN, PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HM03005S, CASE=M
+FIELD=M03005S,  PIC='X(06)', ATTR=(INPUT,OPTIONAL), HELP=HM03005S
+FIELD=M03006SN, PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HXXX026M, CASE=M
+FIELD=M03006S,  PIC='X(10)', ATTR=(INPUT,OPTIONAL), HELP=HXXX026M
+FIELD=MSGLINE,PIC='X(78)',ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

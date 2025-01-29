@@ -1,0 +1,12 @@
+//EVPACDUN JOB (A,D,2AIC00,R),'CIS LTTR',                                       
+//   MSGCLASS=W,NOTIFY=D026076,                                                 
+//   USER=ZIIGCIS                                                               
+//*+JBS BIND DPDDBA6.ONLINE                                                     
+//*AUTOBEEP PAGE=PMCIS                                                          
+//JCLDSN JCLLIB ORDER=(AD87CM.LBP.IIFS.PROC.JES.JCLLIB,                         
+//         AD87CM.LBP.CTSP.PROC.JES.JCLLIB)                                     
+//EVPACDUN   EXEC EVPACDUN,CYCLE=D&:CURDCYC,SMF=AD2AIC.,                        
+//    DATE1=&:M1WS2,                                       WEEKDAY#1    I=SCHD  
+//    DATE1=&:CURDY4.-&:CURDMM.-&:CURDDD,                  WEEKDAY#1    D=SCHD  
+//    DATE2=&:CURDY4.-&:CURDMM.-&:CURDDD                                        
+//                                                                              

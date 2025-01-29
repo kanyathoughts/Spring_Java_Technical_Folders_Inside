@@ -1,0 +1,1 @@
+CREATE INDEX Module_sourceAttachmentLink_idx IF NOT EXISTS ON Module (sourceAttachmentLink) NOTUNIQUE;

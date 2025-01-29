@@ -1,0 +1,149 @@
+000010******************************************************************00001000
+000020* RPSRPTS  REPORT RECORD                                         *00002000
+000030******************************************************************00003000
+000040*01  RPRPTS-RECORD.                                               00004000
+000050*----------------------------------------------------------------*00005000
+000060     03  RPRPTS-INST             PIC S9(03)      COMP-3.          00006000
+000070     03  RPRPTS-MODEL            PIC X(10).                       00007000
+000080     03  RPRPTS-BRANCH           PIC S9(05)      COMP-3.          00008000
+000090     03  RPRPTS-TYPE             PIC S9(03)      COMP-3.          00009000
+000100     03  RPRPTS-ACCOUNT          PIC X(18).                       00010000
+000110     03  RPRPTS-PRODCODE         PIC X(06).                       00011000
+000120     03  RPRPTS-APPL             PIC X(02).                       00012000
+000130     03  RPRPTS-OFFICER          PIC X(09).                       00013000
+000140     03  RPRPTS-NAME             PIC X(40).                       00014000
+000150     03  RPRPTS-RPTNBR           PIC S9(04)      COMP.            00015000
+000160     03  RPRPTS-SPEC             PIC X(01).                       00016000
+000170     03  RPRPTS-RPTCTL           PIC X(05).                       00017000
+000180     03  RPRPTS-ALPHAFIELD.                                       00018000
+000190         05  FILLER              PIC X(03).                       00019000
+000200         05  RPRPTS-NBRFIELD     PIC S9(18)      COMP-3.          00020000
+000210     03  RPRPTS-SRTNUMBER        PIC S9(11)      COMP-3.          00021000
+000220                                                                  00022000
+000230     03  RPRPTS-DATA             PIC X(232).                      00023000
+000240     03  RPRPTS-REPORT050                                         00024000
+000250                         REDEFINES RPRPTS-DATA.                   00025000
+000260         05  RPRPTS-050SECINST   PIC 9(04).                       00026000
+000270         05  RPRPTS-050SECPRODCD PIC X(06).                       00027000
+000280         05  RPRPTS-050SECBRANCH PIC X(05).                       00028000
+000290         05  RPRPTS-050SECTYPE   PIC X(03).                       00029000
+000300         05  RPRPTS-050SECACCT   PIC X(18).                       00030000
+000310         05  RPRPTS-050OPENDATE  PIC S9(09)      COMP-3.          00031000
+000320         05  RPRPTS-050ENROLLATTEMPTS                             00032000
+000330                                 PIC 9(02).                       00033000
+000340         05  RPRPTS-050CRWOLDNXTDT                                00034000
+000350                                 PIC S9(09)      COMP-3.          00035000
+000360         05  RPRPTS-050CRWNEWNXTDT                                00036000
+000370                                 PIC S9(09)      COMP-3.          00037000
+000380         05  RPRPTS-050ERRORMSG  PIC X(35).                       00038000
+000390         05  RPRPTS-050ERRORNBR  PIC S9(03)      COMP-3.          00039000
+000400         05  FILLER              PIC X(142).                      00040000
+000410     03  RPRPTS-REPORT051                                         00041000
+000420                         REDEFINES RPRPTS-DATA.                   00042000
+000430         05  RPRPTS-051HOLDINST  PIC 9(04).                       00043000
+000440         05  RPRPTS-051HOLDPRODCODE                               00044000
+000450                                 PIC X(06).                       00045000
+000460         05  RPRPTS-051HOLDACCOUNT                                00046000
+000470                                 PIC X(18).                       00047000
+000480         05  RPRPTS-051RECTYPE   PIC X(01).                       00048000
+000490         05  RPRPTS-051HOLDBRANCH                                 00049000
+000500                                 PIC S9(05)      COMP-3.          00050000
+000510         05  RPRPTS-051HOLDTYPE  PIC S9(03)      COMP-3.          00051000
+000520         05  RPRPTS-051SCOPT     PIC X(01).                       00052000
+000530         05  RPRPTS-051RTOPT     PIC X(01).                       00053000
+000540         05  RPRPTS-051BALTYPE   PIC X(03).                       00054000
+000550         05  RPRPTS-051ACCTBAL   PIC S9(09)V99   COMP-3.          00055000
+000560                                                                  00056000
+000570         05  RPRPTS-051REQDBAL   PIC S9(09)V99   COMP-3.          00057000
+000580         05  RPRPTS-051ERRORMSG  PIC X(35).                       00058000
+000590         05  RPRPTS-051ERRORNBR  PIC S9(03)      COMP-3.          00059000
+000600         05  RPRPTS-051NUMOFREL                                   00060000
+000610                                 PIC S9(05)      COMP-3.          00061000
+000620         05  RPRPTS-051NUMOFRELNOTQUAL                            00062000
+000630                                 PIC S9(05)      COMP-3.          00063000
+000640         05  RPRPTS-051NUMOFACTIVE                                00064000
+000650                                 PIC S9(05)      COMP-3.          00065000
+000660         05  RPRPTS-051NUMOFINACTIVE                              00066000
+000670                                 PIC S9(05)      COMP-3.          00067000
+000680         05  RPRPTS-051NUMOFEXPIRED                               00068000
+000690                                 PIC S9(05)      COMP-3.          00069000
+000700         05  RPRPTS-051NUMOFEXPTODAY                              00070000
+000710                                 PIC S9(05)      COMP-3.          00071000
+000720         05  RPRPTS-051NUMOFRELDEL                                00072000
+000730                                 PIC S9(05)      COMP-3.          00073000
+000740         05  RPRPTS-051NUMOFACCTDEL                               00074000
+000750                                 PIC S9(05)      COMP-3.          00075000
+000760         05  RPRPTS-051NUMOFFAILED                                00076000
+000770                                 PIC S9(13)      COMP-3.          00077000
+000780         05  RPRPTS-051NUMOFSUCCESS                               00078000
+000790                                 PIC S9(13)      COMP-3.          00079000
+000800         05  FILLER              PIC X(106).                      00080000
+000810     03  RPRPTS-REPORT052                                         00081000
+000820                         REDEFINES RPRPTS-DATA.                   00082000
+000830         05  RPRPTS-052SCOPTION  PIC X(01).                       00083000
+000840         05  RPRPTS-052SCQUAL    PIC X(01).                       00084000
+000850         05  RPRPTS-052SCMODEL   PIC X(10).                       00085000
+000860         05  RPRPTS-052SCAMT     PIC S9(03)V99   COMP-3.          00086000
+000870         05  RPRPTS-052SCPCT     PIC SV9(05)     COMP-3.          00087000
+000880         05  RPRPTS-052RTOPTION  PIC X(01).                       00088000
+000890         05  RPRPTS-052RTQUAL    PIC X(01).                       00089000
+000900         05  RPRPTS-052RATEMODEL PIC X(10).                       00090000
+000910         05  RPRPTS-052RTPCT     PIC SV9(05)     COMP-3.          00091000
+000920         05  RPRPTS-052RTPROCOPT PIC X(01).                       00092000
+000930         05  RPRPTS-052RATETYPE  PIC X(01).                       00093000
+000940         05  RPRPTS-052RATEOPTION                                 00094000
+000950                                 PIC X(01).                       00095000
+000960         05  RPRPTS-052NUMOFDUPREC PIC S9(05)    COMP-3.          00096000
+000970         05  RPRPTS-052SPLITRATETABLE                             00097000
+000980                                 PIC X(150).                      00098000
+000990         05  FILLER              PIC X(43).                       00099000
+001000     03  RPRPTS-REPORT053                                         00100000
+001010                         REDEFINES RPRPTS-DATA.                   00101000
+001020         05  RPRPTS-053SCOPTION  PIC X(01).                       00102000
+001030         05  RPRPTS-053RTOPTION  PIC X(01).                       00103000
+001040         05  RPRPTS-053PRIMINST  PIC 9(04).                       00104000
+001050         05  RPRPTS-053PRIMPRCD  PIC X(06).                       00105000
+001060         05  RPRPTS-053PRIMACCT  PIC X(18).                       00106000
+001070         05  FILLER              PIC X(202).                      00107000
+001080     03  RPRPTS-REPORT054                                         00108000
+001090                         REDEFINES RPRPTS-DATA.                   00109000
+001100         05  RPRPTS-054PRIMINST  PIC 9(04).                       00110000
+001110         05  RPRPTS-054PRIMPRODCODE                               00111000
+001120                                 PIC X(06).                       00112000
+001130         05  RPRPTS-054PRIMACCOUNT                                00113000
+001140                                 PIC X(18).                       00114000
+001150         05  RPRPTS-054DISCAMT-OVRD-FLAG                          00115000
+001160                                 PIC X(01).                       00116000
+001170         05  RPRPTS-054DISCPCT-OVRD-FLAG                          00117000
+001180                                 PIC X(01).                       00118000
+001190         05  RPRPTS-054RATEPCT-OVRD-FLAG                          00119000
+001200                                 PIC X(01).                       00120000
+001210         05  RPRPTS-054DISCAMT-OVRD                               00121000
+001220                                 PIC S9(09)V99   COMP-3.          00122000
+001230         05  RPRPTS-054DISCPCT-OVRD                               00123000
+001240                                 PIC SV9(05)     COMP-3.          00124000
+001250         05  RPRPTS-054RATEPCT-OVRD                               00125000
+P0042                                  PIC SV9(09)     COMP-3.          00126000
+001270         05  RPRPTS-054RATETYPE  PIC X(01).                       00127000
+001280         05  RPRPTS-054RATEOPTION                                 00128000
+001290                                 PIC X(01).                       00129000
+001300         05  RPRPTS-054SPLITRATETABLE                             00130000
+001310                                 PIC X(150).                      00131000
+P0193          05  FILLER              PIC X(35).                       00132000
+001330     03  RPRPTS-REPORT055                                         00133000
+001340                         REDEFINES RPRPTS-DATA.                   00134000
+001350         05  RPRPTS-055EXPIRED-MODEL                              00135000
+001360                                 PIC X(10).                       00136000
+001370         05  RPRPTS-055FAIL      PIC X(01).                       00137000
+001380         05  FILLER              PIC X(221).                      00138000
+001390     03  RPRPTS-REPORT056                                         00139000
+001400                         REDEFINES RPRPTS-DATA.                   00140000
+001410         05  RPRPTS-056SECINST   PIC 9(04).                       00141000
+001420         05  RPRPTS-056SECPRODCD PIC X(06).                       00142000
+001430         05  RPRPTS-056SECBRANCH PIC X(05).                       00143000
+001440         05  RPRPTS-056SECTYPE   PIC X(03).                       00144000
+001450         05  RPRPTS-056SECACCT   PIC X(18).                       00145000
+001460         05  RPRPTS-056ERRORMSG  PIC X(35).                       00146000
+001470         05  RPRPTS-056ERRORNBR  PIC S9(03)      COMP-3.          00147000
+P0147          05  RPRPTS-056EXPIRED   PIC X(01).                       00148000
+P0147          05  FILLER              PIC X(158).                      00148990

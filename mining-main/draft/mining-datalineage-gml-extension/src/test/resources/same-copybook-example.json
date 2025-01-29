@@ -1,0 +1,234 @@
+{
+  "object": {
+    "className": "innowake.mining.shared.model.datalineage.graph.DataFlowGraph",
+    "nodes": [
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-136",
+        "name": "WS-ONE",
+        "location": {
+          "offset": 136,
+          "length": 16
+        },
+        "incomings": [],
+        "outgoings": [
+          "module-2011-statement-530"
+        ],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 136,
+            "length": 16
+          }
+        }
+      },
+      {
+        "type": "STATEMENT",
+        "id": "module-2011-statement-530",
+        "name": "Move",
+        "location": {
+          "offset": 530,
+          "length": 33
+        },
+        "incomings": [
+          "module-2011-field-136"
+        ],
+        "outgoings": [
+          "module-2011-field-265",
+          "module-2011-field-190"
+        ],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 362,
+            "length": 33
+          }
+        }
+      },
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-265",
+        "name": "GROUP-ONE.WS-FIELD",
+        "location": {
+          "offset": 265,
+          "length": 18
+        },
+        "incomings": [
+          "module-2011-statement-530"
+        ],
+        "outgoings": [],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2003,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 11,
+            "length": 18
+          }
+        },
+        "errors": [
+          {
+            "severity": "ERROR",
+            "text": "While creating DataFlowNode: A different kind of DataFlowNode already exists at this location.  REQUESTED: name=WS-FIELD type=FIELD offset: 265 moduleId: 2011 EXISTING: name=GROUP-ONE.WS-FIELD type=FIELD offset: 265 length: 18 moduleId: 2011"
+          }
+        ]
+      },
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-190",
+        "name": "GROUP-ONE",
+        "location": {
+          "offset": 190,
+          "length": 13
+        },
+        "incomings": [
+          "module-2011-statement-530"
+        ],
+        "outgoings": [],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 190,
+            "length": 13
+          }
+        }
+      },
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-162",
+        "name": "WS-TWO",
+        "location": {
+          "offset": 162,
+          "length": 16
+        },
+        "incomings": [],
+        "outgoings": [
+          "module-2011-statement-576"
+        ],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 162,
+            "length": 16
+          }
+        }
+      },
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-324",
+        "name": "GROUP-TWO",
+        "location": {
+          "offset": 324,
+          "length": 13
+        },
+        "incomings": [
+          "module-2011-statement-576"
+        ],
+        "outgoings": [],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 240,
+            "length": 13
+          }
+        }
+      },
+      {
+        "type": "STATEMENT",
+        "id": "module-2011-statement-576",
+        "name": "Move",
+        "location": {
+          "offset": 576,
+          "length": 33
+        },
+        "incomings": [
+          "module-2011-field-162"
+        ],
+        "outgoings": [
+          "module-2011-field-324",
+          "module-2011-field-399"
+        ],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2011,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 408,
+            "length": 33
+          }
+        }
+      },
+      {
+        "type": "FIELD",
+        "id": "module-2011-field-399",
+        "name": "GROUP-TWO.WS-FIELD",
+        "location": {
+          "offset": 399,
+          "length": 18
+        },
+        "incomings": [
+          "module-2011-statement-576"
+        ],
+        "outgoings": [],
+        "parentModule": "module-2011",
+        "children": [],
+        "sourceLocation": {
+          "moduleId": 2003,
+          "moduleName": "SAMECOPY",
+          "moduleLocation": {
+            "offset": 11,
+            "length": 18
+          }
+        },
+        "errors": [
+          {
+            "severity": "ERROR",
+            "text": "While creating DataFlowNode: A different kind of DataFlowNode already exists at this location.  REQUESTED: name=WS-FIELD type=FIELD offset: 399 moduleId: 2011 EXISTING: name=GROUP-TWO.WS-FIELD type=FIELD offset: 399 length: 18 moduleId: 2011"
+          }
+        ]
+      },
+      {
+        "type": "MODULE",
+        "id": "module-2011",
+        "moduleId": 2011,
+        "name": "SAMECOPY",
+        "location": {
+          "offset": 0,
+          "length": 0
+        },
+        "incomings": [],
+        "outgoings": [],
+        "parentModule": null,
+        "children": [
+          "module-2011-statement-576",
+          "module-2011-field-162",
+          "module-2011-field-265",
+          "module-2011-field-399",
+          "module-2011-field-136",
+          "module-2011-field-324",
+          "module-2011-statement-530",
+          "module-2011-field-190"
+        ],
+        "sourceLocation": null,
+        "dataInterfaces": []
+      }
+    ]
+  }
+}

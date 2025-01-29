@@ -1,0 +1,102 @@
+<nz-row [nzGutter]="[16, 8]" class="ant-toolbar mining-fixed-page-header" nzAlign="middle"
+    [ngClass]="eclipseView ? 'ant-toolbar--eclipse-view' : showHide">
+    <nz-col nzFlex="auto">
+        <app-module-breadcrumb *ngIf="showBreadCrumb && ! eclipseView" [currentModule]="currentModule"
+            [subPageTitle]="['module.graphs.dependencyGraph' | translate]">
+        </app-module-breadcrumb>
+        <span *ngIf="eclipseView" nz-typography><strong>{{ moduleName }}: {{'module.graphs.dependencyGraph' |
+                translate}}</strong></span>
+    </nz-col>
+    <nz-col nzFlex="auto fit-content">
+        <nz-row [nzGutter]="[16, 8]">
+            <nz-col>
+                <nz-space>
+                    <ng-container *nzSpaceItem>
+                        <button *ngIf="isDPGraphFromCallChain" (click)="redirectToModuleReporting()" nz-button
+                            nz-tooltip nzType="default"
+                            nzTooltipTitle="{{ 'dependencyGraph.moduleReportingButtonToolTip' | translate}} ">
+                            {{ 'dependencyGraph.moduleReportingButtonTitle' | translate }}
+                        </button>
+                    </ng-container>
+                    <nz-input-group *nzSpaceItem nzCompact [formGroup]="graphFilter">
+                        <nz-select *ngIf="showGraphFilters" nzMode="multiple" [nzMaxTagCount]="0"
+                            [nzMaxTagPlaceholder]="tagPlaceHolder"
+                            nzPlaceHolder="{{'dependencyGraph.filterPlaceholder' | translate}}" nzAllowClear
+                            nzShowSearch formControlName="typeControl" class="mining-toolbar__select"
+                            (nzOpenChange)="filterTypeOpen($event)">
+                            <ng-container *ngFor="let opt of filterOptions">
+                              <nz-option [nzCustomContent]="true" [nzLabel]="opt.label" [nzValue]="opt.value">
+                                <img class="mining-toolbar__select__img" [src]="getImagePath(opt.value)"
+                                [ngStyle]="getStyleForImage(opt.value)" />
+                                <span nz-tooltip nzTooltipTitle="{{opt.toolTip | translate}}" nzTooltipPlacement="left">{{opt.label}}</span>
+                                </nz-option>
+                            </ng-container>
+                            <ng-template #tagPlaceHolder let-selectedList> ({{selectedList.length}}
+                                {{'dependencyGraph.selected' | translate}})
+                            </ng-template>
+                        </nz-select>
+                        <nz-select *ngIf="showDepthControl" formControlName="depthControl" [nzOptions]="depthItems"
+                            class="mining-toolbar__select"
+                            [nzPlaceHolder]="'dependencyGraph.depthPlaceholder' | translate"
+                            (ngModelChange)="changeDepth()">
+                        </nz-select>
+                        <nz-select [nzOptions]="layoutItems" formControlName="selectedLayout"
+                            class="mining-toolbar__select"
+                            [nzPlaceHolder]="'dependencyGraph.layoutPlaceholder' | translate"
+                            (ngModelChange)="changeLayout()">
+                        </nz-select>
+                    </nz-input-group>
+                </nz-space>
+            </nz-col>
+            <nz-col>
+                <nz-input-group nzCompact>
+                    <mining-graphs-export *ngIf="showExports && graphComponent" [isGraphEmpty]="isGraphEmpty"
+                        [moduleName]="moduleName" projectId="projectId" moduleId="moduleId"
+                        [graphComponent]="graphComponent">
+                    </mining-graphs-export>
+                </nz-input-group>
+            </nz-col>
+            <nz-col>
+                <button nz-tooltip [nzTooltipTitle]="'dependencyGraph.toggleSidePanelToolTip' | translate" nzTooltipPlacement="top" nz-button
+                    nzType="default" (click)="toggleSidePanel()">
+                    <i nz-icon nzType="profile" nzTheme="outline"></i>
+                </button>
+            </nz-col>
+        </nz-row>
+    </nz-col>
+</nz-row>
+
+<nz-modal [(nzVisible)]="displayModal" [nzFooter]="null" [nzClosable]="false">
+    <mn-loader></mn-loader>
+</nz-modal>
+<div class="dependency-graph__module-sidepanel" [ngClass]="{'graph-global-style--call-chain': isDPGraphFromCallChain }">
+    <div #graphComponentRef
+        [ngClass]="{'graph-global-style--eclipse-view': eclipseView, 'graph-global-style--call-chain': isDPGraphFromCallChain }"
+        class="graph-global-style">
+        <graph-overview-panel></graph-overview-panel>
+        <graph-context-menu
+            [graphDepth] ="graphFilter.value.depthControl"
+            (contextMenuHideNode)="contextMenuHideNode($event)" (openInNewBrowserTab)="openInNewBrowserTab($event)"
+            (openInEclipse)="openInEclipse()" [graphComp]="getGraphComponent()" [selectedNode]="getSelectedNode()"
+            [graphRootNode]="rootNodeEvent.asObservable()" [resetFilterOptions]="resetFilterOptions.asObservable()"
+            [resetGraph]="resetGraph.asObservable()" [eclipseView]="eclipseView" (toggleDPSidePanel)="toggleSidePanel()"
+            [isEclipseFeatureActive]="isEclipseFeatureActive" [disableCodeViewer]="disableCodeViewer"
+            [codeViewerTooltip]="codeViewerTooltip" [projectId]="projectId" [moduleDetails]="moduleDetails"
+            [dependencyGraphComponent]="this" [explorable]="this.explorable">
+            <mn-code-viewer-button [projectId]="projectId" [moduleDetails]="moduleDetails"></mn-code-viewer-button>
+        </graph-context-menu>
+    </div>
+    <ng-container *ngIf="sidePanelIconState">
+        <nz-card [nzExtra]="closeIconTemplate"
+            class="mining__card-drawer shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open shared-module dependency-graph__noData-sidepanel"
+            [ngClass]="{'graph-global-style--call-chain': isDPGraphFromCallChain }">
+            <nz-empty class="dependency-graph__sidepanel" [nzNotFoundContent] ="'dependencyGraph.sidePanelNoDataContent' | translate"></nz-empty>
+        </nz-card>
+        <ng-template #closeIconTemplate>
+            <button nz-button nzType="text" (click)="toggleSidePanel()">
+                <em nz-icon nzType="close" nzTheme="outline"></em>
+            </button>
+        </ng-template>
+    </ng-container>
+    <ng-template #sidePanel></ng-template>
+</div>

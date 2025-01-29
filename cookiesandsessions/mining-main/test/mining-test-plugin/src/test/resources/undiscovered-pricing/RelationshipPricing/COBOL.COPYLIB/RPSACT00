@@ -1,0 +1,193 @@
+000010*01  RPACT00-MESSAGE.                                             00001000
+000020*----------------------------------------------------------------*00002000
+000030*    RPSACT00 - RPS ACCOUNT INCENTIVE PROFILE MESSAGE AREA       *00003000
+000040******************************************************************00004000
+000050     03  RPACT00-RECORD.                                          00005000
+000060         05  RPACT00-GRP-KEY.                                     00006000
+000070             07  RPACT00-INST    PIC 9(04).                       00007000
+000080             07  RPACT00-PRODCODE                                 00008000
+000090                                 PIC X(06).                       00009000
+000100             07  RPACT00-ACCOUNT PIC X(18).                       00010000
+000110         05  RPACT00-AUDIT-STAMP.                                 00011000
+000120             07  RPACT00-AUDIT-STAMP.                             00012000
+000130                 09  RPACT00-UPD-DATE                             00013000
+000140                                 PIC S9(09)      COMP-3.          00014000
+000150                 09  RPACT00-UPD-TIME                             00015000
+000160                                 PIC S9(09)      COMP-3.          00016000
+000170                 09  RPACT00-UPD-USER                             00017000
+000180                                 PIC X(08).                       00018000
+000190                 09  RPACT00-UPD-ORG                              00019000
+000200                                 PIC X(06).                       00020000
+000210             07  RPACT00-GRP-DATA.                                00021000
+000220                 09  RPACT00-SC-INC-OPTION                        00022000
+000230                                 PIC X(01).                       00023000
+000240                 09  RPACT00-SC-INC-QUAL                          00024000
+000250                                 PIC X(01).                       00025000
+000260                 09  RPACT00-SC-MODEL                             00026000
+000270                                 PIC X(10).                       00027000
+000280                 09  RPACT00-DISCOUNT-AMOUNT                      00028000
+000290                                 PIC S9(09)V99   COMP-3.          00029000
+000300                 09  RPACT00-DISCOUNT-PERCENT                     00030000
+000310                                 PIC SV9(05).                     00031000
+000320                 09  RPACT00-RATE-INC-OPTION                      00032000
+000330                                 PIC X(01).                       00033000
+000340                 09  RPACT00-RATE-INC-QUAL                        00034000
+000350                                 PIC X(01).                       00035000
+000360                 09  RPACT00-RATE-MODEL                           00036000
+000370                                 PIC X(10).                       00037000
+000380                 09  RPACT00-RATE-TYPE                            00038000
+000390                                 PIC X(01).                       00039000
+000400                 09  RPACT00-RATE-OPTION                          00040000
+000410                                 PIC X(01).                       00041000
+000420                 09  RPACT00-RATE-PERCENT                         00042000
+000430                                 PIC SV9(09).                     00043000
+000440                 09  RPACT00-PROCOPT                              00044000
+000450                                 PIC X(01).                       00045000
+000460                 09  RPACT00-SPLIT-RATE-TABLE.                    00046000
+000470                     11  RPACT00-RATEAMT-1                        00047000
+000480                                 PIC S9(09)      COMP-3.          00048000
+000490                     11  RPACT00-RATEPCT-1                        00049000
+000500                                 PIC SV9(09)     COMP-3.          00050000
+000510                     11  RPACT00-RATEAMT-2                        00051000
+000520                                 PIC S9(09)      COMP-3.          00052000
+000530                     11  RPACT00-RATEPCT-2                        00053000
+000540                                 PIC SV9(09)     COMP-3.          00054000
+000550                     11  RPACT00-RATEAMT-3                        00055000
+000560                                 PIC S9(09)      COMP-3.          00056000
+000570                     11  RPACT00-RATEPCT-3                        00057000
+000580                                 PIC SV9(09)     COMP-3.          00058000
+000590                     11  RPACT00-RATEAMT-4                        00059000
+000600                                 PIC S9(09)      COMP-3.          00060000
+000610                     11  RPACT00-RATEPCT-4                        00061000
+000620                                 PIC SV9(09)     COMP-3.          00062000
+000630                     11  RPACT00-RATEAMT-5                        00063000
+000640                                 PIC S9(09)      COMP-3.          00064000
+000650                     11  RPACT00-RATEPCT-5                        00065000
+000660                                 PIC SV9(09)     COMP-3.          00066000
+000670                     11  RPACT00-RATEAMT-6                        00067000
+000680                                 PIC S9(09)      COMP-3.          00068000
+000690                     11  RPACT00-RATEPCT-6                        00069000
+000700                                 PIC SV9(09)     COMP-3.          00070000
+000710                     11  RPACT00-RATEAMT-7                        00071000
+000720                                 PIC S9(09)      COMP-3.          00072000
+000730                     11  RPACT00-RATEPCT-7                        00073000
+000740                                 PIC SV9(09)     COMP-3.          00074000
+000750                     11  RPACT00-RATEAMT-8                        00075000
+000760                                 PIC S9(09)      COMP-3.          00076000
+000770                     11  RPACT00-RATEPCT-8                        00077000
+000780                                 PIC SV9(09)     COMP-3.          00078000
+000790                     11  RPACT00-RATEAMT-9                        00079000
+000800                                 PIC S9(09)      COMP-3.          00080000
+000810                     11  RPACT00-RATEPCT-9                        00081000
+000820                                 PIC SV9(09)     COMP-3.          00082000
+000830                     11  RPACT00-RATEAMT-10                       00083000
+000840                                 PIC S9(09)      COMP-3.          00084000
+000850                     11  RPACT00-RATEPCT-10                       00085000
+000860                                 PIC SV9(09)     COMP-3.          00086000
+000870                     11  RPACT00-RATEAMT-11                       00087000
+000880                                 PIC S9(09)      COMP-3.          00088000
+000890                     11  RPACT00-RATEPCT-11                       00089000
+000900                                 PIC SV9(09)     COMP-3.          00090000
+000910                     11  RPACT00-RATEAMT-12                       00091000
+000920                                 PIC S9(09)      COMP-3.          00092000
+000930                     11  RPACT00-RATEPCT-12                       00093000
+000940                                 PIC SV9(09)     COMP-3.          00094000
+000950                     11  RPACT00-RATEAMT-13                       00095000
+000960                                 PIC S9(09)      COMP-3.          00096000
+000970                     11  RPACT00-RATEPCT-13                       00097000
+000980                                 PIC SV9(09)     COMP-3.          00098000
+000990                     11  RPACT00-RATEAMT-14                       00099000
+001000                                 PIC S9(09)      COMP-3.          00100000
+001010                     11  RPACT00-RATEPCT-14                       00101000
+001020                                 PIC SV9(09)     COMP-3.          00102000
+001030                     11  RPACT00-RATEAMT-15                       00103000
+001040                                 PIC S9(09)      COMP-3.          00104000
+001050                     11  RPACT00-RATEPCT-15                       00105000
+001060                                 PIC SV9(09)     COMP-3.          00106000
+001070                 09  RPACT00-SPLIT-RATE-TABLEX                    00107000
+001080                         REDEFINES RPACT00-SPLIT-RATE-TABLE       00108000
+001090                                                 OCCURS 15.       00109000
+001100                     11  RPACT00-RATEAMT                          00110000
+001110                                 PIC S9(09)      COMP-3.          00111000
+001120                     11  RPACT00-RATEPCT                          00112000
+001130                                 PIC SV9(09)     COMP-3.          00113000
+001140                 09  RPACT00-APPL                                 00114000
+001150                                 PIC 9(02).                       00115000
+001160                 09  RPACT00-SECSVCS-INC-OPTION                   00116000
+001170                                 PIC X(01).                       00117000
+001180                 09  RPACT00-SECONDARY-SERVICES.                  00118000
+001190                     11  RPACT00-SECSERV1                         00119000
+001200                                 PIC X(06).                       00120000
+001210                     11  RPACT00-SECSERV2                         00121000
+001220                                 PIC X(06).                       00122000
+001230                     11  RPACT00-SECSERV3                         00123000
+001240                                 PIC X(06).                       00124000
+001250                     11  RPACT00-SECSERV4                         00125000
+001260                                 PIC X(06).                       00126000
+001270                     11  RPACT00-SECSERV5                         00127000
+001280                                 PIC X(06).                       00128000
+001290                     11  RPACT00-SECSERV6                         00129000
+001300                                 PIC X(06).                       00130000
+001310                     11  RPACT00-SECSERV7                         00131000
+001320                                 PIC X(06).                       00132000
+001330                     11  RPACT00-SECSERV8                         00133000
+001340                                 PIC X(06).                       00134000
+001350                     11  RPACT00-SECSERV9                         00135000
+001360                                 PIC X(06).                       00136000
+001370                     11  RPACT00-SECSERV10                        00137000
+001380                                 PIC X(06).                       00138000
+001390                     11  RPACT00-SECSERV11                        00139000
+001400                                 PIC X(06).                       00140000
+001410                     11  RPACT00-SECSERV12                        00141000
+001420                                 PIC X(06).                       00142000
+001430                     11  RPACT00-SECSERV13                        00143000
+001440                                 PIC X(06).                       00144000
+001450                     11  RPACT00-SECSERV14                        00145000
+001460                                 PIC X(06).                       00146000
+001470                     11  RPACT00-SECSERV15                        00147000
+001480                                 PIC X(06).                       00148000
+001490                     11  RPACT00-SECSERV16                        00149000
+001500                                 PIC X(06).                       00150000
+001510                     11  RPACT00-SECSERV17                        00151000
+001520                                 PIC X(06).                       00152000
+001530                     11  RPACT00-SECSERV18                        00153000
+001540                                 PIC X(06).                       00154000
+001550                     11  RPACT00-SECSERV19                        00155000
+001560                                 PIC X(06).                       00156000
+001570                     11  RPACT00-SECSERV20                        00157000
+001580                                 PIC X(06).                       00158000
+001590                 09  RPACT00-SECONDARY-SERVICES-X                 00159000
+001600                         REDEFINES RPACT00-SECONDARY-SERVICES.    00160000
+001610                     11  RPACT00-SECSERV                          00161000
+001620                                 PIC X(06)       OCCURS 20.       00162000
+001630                 09  RPACT00-CASH-RW-AMT                          00163000
+001640                                 PIC S9(13)V99   COMP-3.          00164000
+001650                 09  RPACT00-MISC-OPTION1                         00165000
+001660                                 PIC X(01).                       00166000
+001670                 09  RPACT00-MISC-OPTION2                         00167000
+001680                                 PIC X(01).                       00168000
+001690                 09  RPACT00-MISC-OPTION3                         00169000
+001700                                 PIC X(01).                       00170000
+001710                 09  RPACT00-RSV-FLAG                             00171000
+001720                                 PIC X(01).                       00172000
+001730                 09  RPACT00-RSV-FLAG1                            00173000
+001740                                 PIC X(01).                       00174000
+001750                 09  RPACT00-RSV-FLAG2                            00175000
+001760                                 PIC X(01).                       00176000
+001770                 09  RPACT00-RSV-FLAG3                            00177000
+001780                                 PIC X(01).                       00178000
+001790                 09  RPACT00-RESERVED                             00179000
+001800                                 PIC X(50).                       00180000
+001810     03  RPACT00-MISC-DATA.                                       00181000
+001820         05  RPACT00-KEY-RECORD.                                  00182000
+001830             07  RPACT00-KEY-INST                                 00183000
+001840                                 PIC 9(04).                       00184000
+001850             07  RPACT00-KEY-PRODCODE                             00185000
+001860                                 PIC X(06).                       00186000
+001870             07  RPACT00-KEY-ACCOUNT                              00187000
+001880                                 PIC X(18).                       00188000
+001890         05  RPACT00-CUST-TYPE   PIC X(01).                       00189000
+001900         05  RPACT00-CUST-NAME   PIC X(40).                       00190000
+001910******************************************************************00191000
+001920*       END RPS ACCOUNT RECORD MESSAGE AREA (00)                 *00192000
+001930******************************************************************00193000

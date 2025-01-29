@@ -1,0 +1,21 @@
+//D000019  JOB (JSPBDIS),'DISCO-ESP INTERFACE',CLASS=D,
+//         MSGCLASS=D
+//PROCJCL JCLLIB ORDER=(JSPOPS.TEMP.PROCLIB,
+//           JSPDIS1B.BATCH.PROCLIB)
+/*LOGONID DISBCH
+//**
+//*   Testfile for testing differences between LOGON and LOGONID
+//*   LOGON expects a natural file to follow, LOGONID does not
+//*   There should not be a ::_:: natural file
+//*
+//XMIT1    EXEC PGM=BDTXMIT
+//SYSPRINT DD SYSOUT=*
+//INTRDR   DD SYSOUT=(A,INTRDR)
+//JCL1     DD DATA,DLM='/A'
+//D000019A JOB (JSPBESP),'DISCO-ESP INTERFACE',CLASS=P,
+//         MSGCLASS=D
+/*ROUTE XEQ STEVE              <<<< STV SHARED POOL >>>>
+/*JOBPARM SYSAFF=JXSE          <<<< FOR SYSTEM D >>>>
+/*ROUTE PRINT STEVE
+/*LOGONID JSPEPBH
+::_::

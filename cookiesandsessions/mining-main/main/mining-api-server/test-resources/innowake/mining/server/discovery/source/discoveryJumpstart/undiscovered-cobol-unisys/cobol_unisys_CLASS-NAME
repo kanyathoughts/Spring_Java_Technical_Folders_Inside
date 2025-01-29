@@ -1,0 +1,73 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.  SAMPL05.
+       AUTHOR.
+       INSTALLATION.
+       DATE-WRITTEN.  JUNE 1, 1982.
+       DATE-COMPILED.
+       SECURITY.  FOR OFFICIAL USE ONLY.
+
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      * SOURCE-COMPUTER.  UNIVAC-1100-80.
+      * OBJECT-COMPUTER.  UNIVAC-1100-80, MEMORY SIZE IS 3 MODULES.
+       SPECIAL-NAMES.
+           CLASS-NAME IS BRACKET
+           VALUE IS "]";
+           CLASS-NAME IS ALPHANUMERIC
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9";
+           CLASS-NAME IS VAL-ABC-PRI-NAME-CHAR
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "&", "-", "]",
+             " ";
+           CLASS-NAME IS VAL-ABC-SORT-NAME-CHAR
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "&", "-", "$",
+             " ";
+           CLASS-NAME IS VAL-ABC-CARE-OF-NAME-CHAR
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "&", "-", "$",
+             "%", " ";
+           CLASS-NAME IS SORT-NAME-CHAR-1
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "$";
+           CLASS-NAME IS DOLLAR-SIGN
+           VALUE IS "$";
+           CLASS-NAME IS DOLLAR-SIGN-BLANKS
+           VALUE IS " ";
+           CLASS-NAME IS CARE-OF-CHAR-1
+           VALUE IS "%", "$";
+           CLASS-NAME IS EO-PRIMARY-NAME-LINE-CONT
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "&", "-", "/",
+             "]", "@", " ";
+           CLASS-NAME IS VALID-EO-PRIMARY-NAME-CHAR
+           VALUE IS "A" THROUGH "Z", "0" THROUGH "9", "&", "-", "@",
+             "]", " ".
+      /
+       DATA DIVISION.
+      *
+       WORKING-STORAGE SECTION.
+       01  BRACKET-COUNT                    PIC 99  USAGE COMP.
+       01  BLANK-BRACKET-COUNT              PIC 99  USAGE COMP.
+       01  CHAR-COUNT                       PIC 99  USAGE COMP.
+       01  AT-COUNT                          PIC 99  USAGE COMP.
+       01  DOLLAR-COUNT                     PIC 99  USAGE COMP.
+       01  AT-SIGN-COUNT              PIC 99  USAGE COMP.
+       01  LINE-END-IND                                    PIC X(3).
+           88  END-OF-LINE  VALUE "YES".
+       01  ABC-NAME.
+           02  ABC-NAME-CHAR-1                             PIC X.
+           02  ABC-NAME-CHAR-2                             PIC X.
+           02  REST-OF-ABC-NAME                            PIC X(38).
+       01  ABC-NAME-TABLE REDEFINES ABC-NAME.
+           02  ABC-NAME-CHAR                               PIC X
+               OCCURS 40 TIMES
+               INDEXED BY CHAR-POS-INDEX.
+      /
+       PROCEDURE DIVISION
+              IF ABC-NAME-CHAR-1 IS CLASS-NAME DOLLAR-SIGN
+      *          THEN
+                       NEXT SENTENCE
+                 ELSE
+                   MOVE "NO" TO VALID-NAME-IND.
+               IF ABC-NAME-CHAR-1 IS NOT CLASS-NAME DOLLAR-SIGN
+      *          THEN
+                       NEXT SENTENCE
+                 ELSE
+                   MOVE "NO" TO VALID-NAME-IND.

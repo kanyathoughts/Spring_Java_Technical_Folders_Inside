@@ -1,0 +1,43 @@
+DEFINE DATA
+    PARAMETER 1     PM_PARMS
+               2    PM_ADRSUCH      (I2)
+    LOCAL     1     AKE
+               2    ADRSUCH          (I2)
+               2    KENNZEI          (A6)
+               2    ADRKEY           (A10)
+               2    DATUMVON         (A10)
+               2    DATUMBIS_NULL    (A10)
+               2  N�DATUMBIS_NULL    (I2)
+               2    DATUMBIS_9999    (A10)
+               2    D_DATUMVON       (D)
+               2    D_DATUMBIS_NULL  (D)
+               2    D_DATUMBIS_9999  (D)
+END-DEFINE
+
+PERFORM     P000_INIT
+
+DEFINE SUBROUTINE P000_INIT
+    WITH_CTE
+       AK9 AS (
+    SELECT            ADRSUCH,
+                      KENNZEI,
+                      ADRKEY,
+                      DATUMVON,
+                      DATUMBIS,
+                      COALESCE(DATUMBIS, DATE('2699-12-31'))  AS  DATUMBIS_9999
+           FROM  WMEE2708D
+    )
+    SELECT            *
+           INTO  :AKE.ADRSUCH,
+                 :AKE.KENNZEI,
+                 :AKE.ADRKEY,
+                 :AKE.DATUMVON,
+                 :AKE.DATUMBIS_NULL  INDICATOR  :N�DATUMBIS_NULL,
+                 :AKE.DATUMBIS_9999
+           FROM  AK9
+           WHERE ADRSUCH  =  PM_ADRSUCH
+           ORDER BY KENNZEI, ADRKEY, DATUMVON, DATUMBIS_9999
+        MOVE     EDITED AKE.DATUMVON      TO AKE.D_DATUMVON     (EM=DD.MM.YYYY)
+    END-SELECT
+END-SUBROUTINE
+END

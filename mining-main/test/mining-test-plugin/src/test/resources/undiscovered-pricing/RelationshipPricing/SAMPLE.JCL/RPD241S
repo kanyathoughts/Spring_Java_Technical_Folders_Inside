@@ -1,0 +1,35 @@
+//RPD241S JOB
+//*    *************************************************                00001000
+//*    * RPD241 - ID CROSS-REFERENCE INFORMATION BUILD *                00002000
+//*    *************************************************                00003000
+//RPD241SS EXEC PGM=IEFBR14                                             00004000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDIDX,                               00005000
+//             DISP=(MOD,DELETE,DELETE),                                00006000
+//             UNIT=SYSDA,                                              00007000
+//             SPACE=(TRK,(1,1),RLSE)                                   00008000
+/*                                                                      00009000
+//RPD241S  EXEC PGM=RPD241,PARM='ORG=(1)',REGION=1024K                  00010000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//* ====== OUTPUT FILE ==========================================       00012000
+//SYSUDUMP DD  SYSOUT=*                                                 00013000
+//SYSPRINT DD  SYSOUT=*                                                 00014000
+//SYSOUT   DD  SYSOUT=*                                                 00015000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDIDX,                               00016000
+//             DISP=(NEW,CATLG,DELETE),                                 00017000
+//             UNIT=SYSDA,                                              00018000
+//             SPACE=(CYL,(50,25),RLSE),                                00019000
+//             DCB=(RECFM=VB,LRECL=2019,BLKSIZE=26303)                  00020000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00021000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00022000
+//* ====== WORK FILE ============================================       00023000
+//RPSORT   DD  UNIT=SYSDA,SPACE=(CYL,(2,1))                             00024000
+//* ====== INPUT FILE ===========================================       00025000
+//RPFMSTA  DD  DSN=BNKCAV.IN0.RP50.RPFMSTA,DISP=SHR                     00026000
+//RPFMSTC  DD  DSN=BNKCAV.IN0.RP50.RPFMSTC,DISP=SHR                     00027000
+/*                                                                      00028000
+//*                                                                     00029000
+//

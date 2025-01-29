@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="spring-data-orientdb" default="init-db" basedir=".">
+
+	<!-- ====================================================================== -->
+	<!-- Import maven-build.xml into the current project                        -->
+	<!-- ====================================================================== -->
+
+	<!--<import file="maven-build.xml" /> -->
+
+	<!-- ====================================================================== -->
+	<!-- Help target                                                            -->
+	<!-- ====================================================================== -->
+
+	<target name="help">
+		<echo message="Please run: $ant -projecthelp" />
+	</target>
+
+	<target name="set-dist" if="dist">
+		<property name="distSuffix" value="-dist" />
+		<property name="distPom" value="-Ddist " />
+	</target>
+
+	<target name="set-properties" depends="set-dist">
+		<property environment="env" />
+		<property name="dbport" value="2440" />
+		<property name="dbwebport" value="2460" />
+		<property name="test-target-dir" location="./target/" />
+		<property name="orientdb-version" value="3.1.6" />
+		<property name="dbSchemaLocation" location="${basedir}/src/test/resources/schema.sql" />
+		<property name="orientdbLocation" location="${test-target-dir}/orientdb-community-${orientdb-version}" />
+		<property name="dbSchema" location="${orientdbLocation}\bin" />
+		<property name="orientdbEnvironmentWin" value="cd ${orientdbLocation}\bin &amp;&amp; set 'ORIENTDB_HOME=${orientdbLocation}' &amp;&amp; set ORIENTDB_ROOT_PASSWORD=Worx2000 &amp;&amp; " />
+		<property name="orientdbEnvironmentUnix" value="cd ${orientdbLocation}/bin &amp;&amp; chmod -R a+x ../bin &amp;&amp; export 'ORIENTDB_HOME=${orientdbLocation}' &amp;&amp; export ORIENTDB_ROOT_PASSWORD=Worx2000 &amp;&amp; " />
+		<exec executable="cmd" outputproperty="repoLocation" failonerror="true" osfamily="windows">
+			<arg line="/c mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout" />
+		</exec>
+		<exec executable="sh" outputproperty="repoLocation" failonerror="true" osfamily="unix">
+			<arg line="-c &quot;mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout&quot;" />
+		</exec>
+		<echo>Maven Repo: ${repoLocation}</echo>
+		<property name="orientdbZipLocation" location="${repoLocation}/com/orientechnologies/orientdb-community/${orientdb-version}/orientdb-community-${orientdb-version}.zip" />
+		<echoproperties/>
+	</target>
+
+	<target name="check-maven-repo" depends="set-properties">
+		<fail message="FILE NOT FOUND: ${orientdbZipLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${orientdbZipLocation}" />
+				</not>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="setup-db" depends="check-maven-repo">
+		<delete dir="${test-target-dir}" />
+		<unzip src="${orientdbZipLocation}" dest="${test-target-dir}" />
+		<copy file="${dbSchemaLocation}" todir="${dbSchema}" />
+		<replace file="${orientdbLocation}/config/orientdb-server-config.xml" token="2424-2430" value="${dbport}" />
+		<replace file="${orientdbLocation}/config/orientdb-server-config.xml" token="2480-2490" value="${dbwebport}" />
+		<replace file="${dbSchema}/schema.sql" token="remote:localhost/spring-data-orientdb" value="remote:localhost:${dbport}/spring-data-orientdb" />
+		<echo>${orientdbEnvironmentWin}</echo>
+		<echo>${orientdbLocation}</echo>
+	</target>
+
+	<target name="start-db" depends="setup-db">
+		<parallel>
+			<daemons>
+				<exec executable="cmd" osfamily="windows" resultproperty="orientdbReturnCode">
+					<arg line="/c &quot;${orientdbEnvironmentWin} server.bat &quot;" />
+					<env key="ORIENTDB_HOME" value="${orientdbLocation}" />
+					<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+				</exec>
+				<exec executable="sh" osfamily="unix" resultproperty="orientdbReturnCode">
+					<arg line="-c &quot;${orientdbEnvironmentUnix} ./server.sh &quot;" />
+					<env key="ORIENTDB_HOME" value="${orientdbLocation}" />
+					<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+				</exec>
+			</daemons>
+			<sequential>
+				<echo message="wait for database" />
+				<waitfor maxwait="10" maxwaitunit="minute" checkevery="500">
+					<http url="http://localhost:${dbwebport}/studio/index.html" />
+				</waitfor>
+			</sequential>
+		</parallel>
+	</target>
+
+	<target name="init-db" depends="start-db">
+		<echo>Executing schema.sql</echo>
+		<exec executable="cmd" osfamily="windows">
+			<arg line="/c &quot;${orientdbEnvironmentWin} console.bat ${dbSchema}/schema.sql &quot;" />
+			<env key="ORIENTDB_HOME" value="${orientdbLocation}" />
+			<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000" />
+			<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+		</exec>
+		<exec executable="sh" osfamily="unix">
+			<arg line="-c &quot;${orientdbEnvironmentUnix} ./console.sh ${dbSchema}/schema.sql &quot;" />
+			<env key="ORIENTDB_HOME" value="${orientdbLocation}" />
+			<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000" />
+			<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+		</exec>
+	</target>
+
+	<target name="shutdown-orientdb">
+		<exec executable="cmd" osfamily="windows">
+			<arg line="/c &quot;${orientdbEnvironmentWin} shutdown.bat -u root -p Worx2000&quot;" />
+			<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+		</exec>
+		<exec executable="sh" osfamily="unix">
+			<arg line="-c &quot;${orientdbEnvironmentUnix} ./shutdown.sh -u root -p Worx2000&quot;" />
+			<env key="JAVA_HOME" value="${env.JAVA_HOME11}"/>
+		</exec>
+		<waitfor checkeveryunit="second" checkevery="10" maxwaitunit="minute" maxwait="10">
+			<isset property="orientdbReturnCode" />
+		</waitfor>
+	</target>
+
+</project>

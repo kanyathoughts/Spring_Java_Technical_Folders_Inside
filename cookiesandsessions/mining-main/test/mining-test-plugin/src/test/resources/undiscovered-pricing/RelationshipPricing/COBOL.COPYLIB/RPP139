@@ -1,0 +1,179 @@
+000010******************************************************************00001000
+000020* RPP139   GET SECONDARY ACCOUNT - BATCH                         *00002000
+000030******************************************************************00003000
+000040*GET-A-SECONDARY-CUSTOMER                                         00004000
+000050* ** GET SECONDARY CUSTOMER                                       00005000
+000060 GMSA-START.                                                      00006000
+000070     MOVE 'A' TO RPRF21-FUNC.                                     00007000
+000080     MOVE RPMST-INST TO RPRF21-BASE-ACCT-INST.                    00008000
+000090     MOVE RPMST-PRODCODE TO RPRF21-BASE-ACCT-PRODCODE.            00009000
+000100     MOVE RPMST-ACCOUNT TO RPRF21-BASE-ACCT.                      00010000
+000110     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00011000
+000120         AND MIM-7100ENTERPRISEINST IS NOT EQUAL TO ZEROES        00012000
+000130         MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST.    00013000
+000140     PERFORM REQUEST-CUSTOMER.                                    00014000
+000150     MOVE WS-MSGNBR TO RPXXX03-MSGNBR.                            00015000
+000160     IF WS-FUNCTION IS EQUAL TO 'B'                               00016000
+000170         MOVE SPACES TO WS-FUNCTION                               00017000
+000180         MOVE 'Y' TO RPXXX03-CLOSE-FLAG.                          00018000
+000190     IF WS-FUNCTION IS EQUAL TO SPACES                            00019000
+000200         MOVE RPRF21-BASE-RCIF-KEY TO RPXXX03-RCIF-KEY            00020000
+000210         MOVE RPRF21-NAME TO RPXXX03-CUST-NAME                    00021000
+000220     PERFORM REQUEST-SECONDARY-CUSTOMER.                          00022000
+000230 GMSA-EXIT.                                                       00023000
+000240     EXIT.                                                        00024000
+000250******************************************************************00025000
+000260 REQUEST-SECONDARY-CUSTOMER SECTION.                              00026000
+000270 RSC-START.                                                       00027000
+000280     IF WS-RELCHECK IS NOT EQUAL TO 'Y'                           00028000
+000290         GO TO RSC-EXIT.                                          00029000
+000300     MOVE 'X' TO RPRF21-FUNC.                                     00030000
+000310     MOVE SPACES TO RPRF21-FUNCTION.                              00031000
+000320     MOVE 'N' TO RPRF21-GLOBAL-CLOSE.                             00032000
+000330     MOVE WS-FILEOPTS TO RPRF21-FILEOPTS.                         00033000
+000340     MOVE MIM-7101CLOSEDACCTOPT TO RPRF21-CLOSEDACCTOPT.          00034000
+000350     EXEC CICS LINK                                               00035000
+000360         PROGRAM('RPO0RF21')                                      00036000
+000370         COMMAREA(RPRF21-MESSAGE)                                 00037000
+000380         LENGTH(LENGTH OF RPRF21-MESSAGE)                         00038000
+000390         RESP(WS-CICS-RESPONSE)                                   00039000
+000400         END-EXEC.                                                00040000
+000410     MOVE RPRF21-FUNCTION TO WS-FUNCTION.                         00041000
+000420     IF WS-CICS-RESPONSE IS NOT EQUAL TO ZERO                     00042000
+000430         MOVE 'L' TO WS-FUNCTION                                  00043000
+000440         MOVE 500036 TO WS-MSGNBR                                 00044000
+000450         GO TO RSC-EXIT.                                          00045000
+000460     IF WS-FUNCTION IS EQUAL TO 'B'                               00046000
+000470         MOVE 500045 TO WS-MSGNBR                                 00047000
+000480         GO TO RSC-EXIT.                                          00048000
+000490     IF WS-FUNCTION IS EQUAL TO 'C'                               00049000
+000500         MOVE 500037 TO WS-MSGNBR                                 00050000
+000510         GO TO RSC-EXIT.                                          00051000
+000520     IF WS-FUNCTION IS EQUAL TO 'I'                               00052000
+000530         MOVE 500038 TO WS-MSGNBR.                                00053000
+000540     MOVE RPRF21-RETURNED-OBJECT TO WS-ACC-TABLE.                 00054000
+000550     IF WS-RELCHECK IS EQUAL TO 'Y'                               00055000
+000560         PERFORM READ-MICM-7104SECUST.                            00056000
+000570     PERFORM REMOVE-SECONDARY-CUSTOMERS.                          00057000
+000580 RSC-EXIT.                                                        00058000
+000590     EXIT.                                                        00059000
+000600******************************************************************00060000
+000610 GM-CHECKFORDUP SECTION.                                          00061000
+000620* DETERMINE IF THE NEW SECONDARY ACCOUNT IS ALREADY               00062000
+000630* PART OF THE LIST OF SECONDARY ACCOUNTS                          00063000
+000640 GM-DUPSTART.                                                     00064000
+000650     MOVE +1 TO WS-DUPTEST.                                       00065000
+000660     MOVE 'N' TO WS-DUPSECACCT.                                   00066000
+000670 GMCFD-START.                                                     00067000
+000680     IF WS-DUPTEST IS GREATER THAN +50                            00068000
+000690         GO TO GMCFD-EXIT.                                        00069000
+000700     IF RPXXX03-DISP-ACCOUNT (WS-DUPTEST) IS EQUAL TO SPACE       00070000
+000710         GO TO GMCFD-EXIT.                                        00071000
+000720     IF WS-DUPINST IS EQUAL TO RPXXX03-DISP-INST (WS-DUPTEST)     00072000
+000730         AND WS-DUPPRODCD                                         00073000
+000740             IS EQUAL TO RPXXX03-DISP-PRODCODE (WS-DUPTEST)       00074000
+000750         AND WS-DUPACCOUNT                                        00075000
+000760             IS EQUAL TO RPXXX03-DISP-ACCOUNT (WS-DUPTEST)        00076000
+000770         MOVE 'Y' TO WS-DUPSECACCT                                00077000
+000780         GO TO GMCFD-EXIT.                                        00078000
+000790     ADD +1 TO WS-DUPTEST.                                        00079000
+000800     GO TO GMCFD-START.                                           00080000
+000810 GMCFD-EXIT.                                                      00081000
+000820     EXIT.                                                        00082000
+000830******************************************************************00083000
+000840 REMOVE-SECONDARY-CUSTOMERS SECTION.                              00084000
+000850* DETERMINE IF THE SECONDARY ACCOUNT SHOULD BE                    00085000
+000860* REMOVED BASED ON THE RELATE CODE (7101--7104)                   00086000
+000870     INITIALIZE WS-SECONDARY-CUSTAREA.                            00087000
+000880     MOVE +1 TO WS-SUBSEC1.                                       00088000
+000890     MOVE +1 TO WS-SUBSEC2.                                       00089000
+000900 RSC-LOOP.                                                        00090000
+000910     IF WS-SUBSEC1 IS GREATER THAN +33                            00091000
+000920         SUBTRACT +1 FROM WS-SUBSEC2                              00092000
+000930             GIVING RPXXX03-SECONDARY-CUST                        00093000
+000940         GO TO RSC-EXIT.                                          00094000
+000950     IF WS-ACC-INST (WS-SUBSEC1) IS EQUAL TO ZERO                 00095000
+000960         SUBTRACT +1 FROM WS-SUBSEC2                              00096000
+000970             GIVING RPXXX03-SECONDARY-CUST                        00097000
+000980         GO TO RSC-EXIT.                                          00098000
+000990* ** SKIP PRIMARY CUSTOMER                                        00099000
+001000     IF WS-ACC-PRIM (WS-SUBSEC1) IS EQUAL TO ZERO                 00100000
+001010         GO TO RSC-NEXT.                                          00101000
+001020     IF WS-RELCHECK IS NOT EQUAL TO 'Y'                           00102000
+001030         MOVE 'N' TO WS-BADRELNBR                                 00103000
+001040         GO TO RSC-TEST.                                          00104000
+001050     MOVE WS-ACC-RELNBR (WS-SUBSEC1) TO WS-VALIDREL.              00105000
+001060     PERFORM GM-CHECKFORRELNBR.                                   00106000
+001070 RSC-TEST.                                                        00107000
+001080     IF WS-BADRELNBR IS EQUAL TO 'N'                              00108000
+001090         MOVE WS-ACC-INST (WS-SUBSEC1)                            00109000
+001100             TO WS-SEC-INST (WS-SUBSEC2)                          00110000
+001110         MOVE WS-ACC-CUST-TYPE (WS-SUBSEC1)                       00111000
+001120             TO WS-SEC-CUST-TYPE (WS-SUBSEC2)                     00112000
+001130         MOVE WS-ACC-CUST (WS-SUBSEC1)                            00113000
+001140             TO WS-SEC-CUST (WS-SUBSEC2)                          00114000
+001150         MOVE WS-ACC-RELNBR (WS-SUBSEC1)                          00115000
+001160             TO WS-SEC-RELNBR (WS-SUBSEC2)                        00116000
+001170         MOVE WS-ACC-PRIM (WS-SUBSEC1)                            00117000
+001180             TO WS-SEC-PRIM (WS-SUBSEC2)                          00118000
+001190         MOVE WS-ACC-FILL (WS-SUBSEC1)                            00119000
+001200             TO WS-SEC-FILL (WS-SUBSEC2)                          00120000
+001210         ADD +1 TO WS-SUBSEC2.                                    00121000
+001220 RSC-NEXT.                                                        00122000
+001230     ADD +1 TO WS-SUBSEC1.                                        00123000
+001240     GO TO RSC-LOOP.                                              00124000
+001250 RSC-EXIT.                                                        00125000
+001260     EXIT.                                                        00126000
+001270******************************************************************00127000
+001280 GM-CHECKFORRELNBR SECTION.                                       00128000
+001290* DETERMINE IF THE CUSTOMER SHOULD BE INCLUDED BASED ON           00129000
+001300* THE RELATIONSHIP CODE WITH THE PRIMARY ACCOUNT                  00130000
+001310 GM-CHREL-START.                                                  00131000
+001320     MOVE +1 TO WS-RELSUB.                                        00132000
+001330 GM-CHECKIT.                                                      00133000
+001340     IF WS-RELSUB IS GREATER THAN WS-RELMAX                       00134000
+001350         GO TO GM-NOMATCH.                                        00135000
+001360     IF WS-SECRELCODE (WS-RELSUB) IS EQUAL TO ZEROS               00136000
+001370         GO TO GM-NOMATCH.                                        00137000
+001380     IF WS-VALIDREL IS EQUAL TO WS-SECRELCODE (WS-RELSUB)         00138000
+001390         GO TO GM-MATCH.                                          00139000
+001400     ADD +1 TO WS-RELSUB.                                         00140000
+001410     GO TO GM-CHECKIT.                                            00141000
+001420 GM-MATCH.                                                        00142000
+001430     IF WS-INCLUDEREL IS EQUAL TO 'Y'                             00143000
+001440         MOVE 'N' TO WS-BADRELNBR                                 00144000
+001450         GO TO GMCFR-EXIT.                                        00145000
+001460     MOVE 'Y' TO WS-BADRELNBR.                                    00146000
+001470     GO TO GMCFR-EXIT.                                            00147000
+001480 GM-NOMATCH.                                                      00148000
+001490     IF WS-INCLUDEREL IS EQUAL TO 'Y'                             00149000
+001500         MOVE 'Y' TO WS-BADRELNBR                                 00150000
+001510         GO TO GMCFR-EXIT.                                        00151000
+001520     MOVE 'N' TO WS-BADRELNBR.                                    00152000
+001530     GO TO GMCFR-EXIT.                                            00153000
+001540 GMCFR-EXIT.                                                      00154000
+001550     EXIT.                                                        00155000
+001560******************************************************************00156000
+001570 READ-MICM-7104SECUST SECTION.                                    00157000
+001580 RM7104SC-START.                                                  00158000
+001590     MOVE SPACES TO MI7104-RECORD.                                00159000
+001600     MOVE RPXXX03-KEY-INST TO MIM-7104KINST.                      00160000
+001610     MOVE +7104 TO MIM-7104KREC.                                  00161000
+001620     MOVE WS-RPMIM7104SC TO MIM-7104KRPREC.                       00162000
+001630     MOVE MIC-RPS-7104-PRI TO MIC-MST-REC-PRI.                    00163000
+001640     MOVE MI7104-RECORD TO MIMST-RECORD.                          00164000
+001650     PERFORM MIC-MST-GET-REQUEST.                                 00165000
+001660     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00166000
+001670         MOVE 'N' TO WS-RELCHECK                                  00167000
+001680         GO TO RM7104SC-EXIT.                                     00168000
+001690     MOVE MIMST-RECORD TO MI7104-RECORD.                          00169000
+001700     INITIALIZE WS-RELCODETABLE.                                  00170000
+001710     MOVE MIM-REC7104-DATA TO WS-RELCODETABLE.                    00171000
+001720     MOVE 'N' TO WS-INCLUDEREL.                                   00172000
+001730     IF MIM-7104OPT IS EQUAL TO 'I'                               00173000
+001740         MOVE 'Y' TO WS-INCLUDEREL.                               00174000
+001750 RM7104SC-EXIT.                                                   00175000
+001760     EXIT.                                                        00176000
+001770*----------------------------------------------------------------*00177000
+001780*     END OF RP139 GET SECONDARY ACCOUNTS                        *00178000
+001790*----------------------------------------------------------------*00179000

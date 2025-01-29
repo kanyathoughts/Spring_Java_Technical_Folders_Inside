@@ -1,0 +1,25 @@
+<nz-content class="mining__content-margin">
+  <nz-card>
+  <p nz-typography><nz-switch (ngModelChange)="localShowcaseModeChanged($event)" [(ngModel)]="localShowcaseMode.isInLocalShowcaseMode"></nz-switch> &nbsp;{{ 'configuration.localShowcaseModeToggleLabel' | translate }}</p>
+  <div nz-typography *ngIf="isToggleOn">
+    <nz-alert [nzType]="'info'" nzMessage="{{ 'configuration.viewAlertMessage' | translate }}"></nz-alert>
+  </div>
+  <div class="@text-color-secondary @font-size-sm">
+    <ul nz-typography>
+      <li nz-typography>{{ 'configuration.noDashboardErrors'  | translate }}</li>
+      <li nz-typography>{{ 'configuration.noMetricsError' | translate }}</li>
+    </ul>
+  </div>
+  <br/>
+  <p nz-typography>
+    {{ 'configuration.viewCacheMessage' | translate }}
+  </p>
+  </nz-card>
+</nz-content>
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2000,"","MIN14305A","src/cobol/WMIN14305/programs/MIN14305A.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,22,0,24,0,1,-1,-1
+2001,"","MIN14305B","src/cobol/WMIN14305/programs/MIN14305B.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,14,6,22,0,1,-1,-1
+2003,"","VFSORD1","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2002,"","VPOSN_PNDG_TXN","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2000,"MIN14305A","SELECT",259,2,2,15,13.72,3.23,"SELECT B.PNDG_TXN_ID
+,B.VAST_ACCT_NO
+,B.PORT_ID
+,B.PROCS_DT
+INTO :AD052-PNDG-TXN-ID
+,:WS-VAST-ACCT-NO
+,:WS-PORT-ID
+,:WS-PROCS-DT
+FROM VFSORD1 A
+INNER JOIN VPOSN_PNDG_TXN B
+ON A.FND_CUST_ACCT_ID = B.VAST_ACCT_NO
+WHERE A.NSCC_CL_ID = :VFSORD1-NSCC-CL-ID
+WITH UR"
+2001,"MIN14305B","SELECT",175,2,2,9,11.42,3.00,"SELECT B.PNDG_TXN_ID
+INTO :AD052-PNDG-TXN-ID
+FROM VFSORD1 A
+INNER JOIN VPOSN_PNDG_TXN B
+ON A.FND_CUST_ACCT_ID = B.VAST_ACCT_NO
+WHERE A.NSCC_CL_ID = :VFSORD1-NSCC-CL-ID
+WITH UR"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2000,"MIN14305A",2003,"VFSORD1","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",209,405,-1,-1
+2000,"MIN14305A",2002,"VPOSN_PNDG_TXN","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",209,405,-1,-1
+2001,"MIN14305B",2003,"VFSORD1","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",125,405,-1,-1
+2001,"MIN14305B",2002,"VPOSN_PNDG_TXN","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",125,405,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

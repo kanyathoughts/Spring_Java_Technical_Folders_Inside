@@ -1,0 +1,1 @@
+CREATE PROPERTY Annotation.englishTranslation IF NOT EXISTS STRING;

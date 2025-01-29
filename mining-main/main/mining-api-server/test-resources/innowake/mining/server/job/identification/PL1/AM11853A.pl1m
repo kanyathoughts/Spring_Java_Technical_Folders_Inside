@@ -1,0 +1,52 @@
+ PROGRAM: PROCEDURE OPTIONS(MAIN);
+
+  DCL
+   1 SQLCA  ,
+     2 SQLCAID     CHAR(8),
+     2 SQLCABC     FIXED BIN(31),
+     2 SQLCODE     FIXED BIN(31),
+     2 SQLERRM     CHAR(70) VAR,
+     2 SQLERRP     CHAR(8),
+     2 SQLERRD(6)  FIXED BIN(31),
+     2 SQLWARN,
+       3 SQLWARN0  CHAR(1),
+       3 SQLWARN1  CHAR(1),
+       3 SQLWARN2  CHAR(1),
+       3 SQLWARN3  CHAR(1),
+       3 SQLWARN4  CHAR(1),
+       3 SQLWARN5  CHAR(1),
+       3 SQLWARN6  CHAR(1),
+       3 SQLWARN7  CHAR(1),
+     2 SQLEXT,
+       3 SQLWARN8  CHAR(1),
+       3 SQLWARN9  CHAR(1),
+       3 SQLWARNA  CHAR(1),
+       3 SQLSTATE  CHAR(5);
+
+
+    EXEC SQL CONNECT TO DALLASC;
+
+    DECLARE cnt FIXED BIN(15);
+    DECLARE alpha_short CHAR(50);
+
+    cnt = 0;
+    alpha_short = 'empty';
+
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    EXEC SQL COMMIT;
+
+    EXEC SQL INSERT INTO IW_SQL_TEST ("ALPHA_SHORT") VALUES('HELLO');
+    EXEC SQL COMMIT;
+
+    EXEC SQL SELECT ALPHA_SHORT INTO :alpha_short FROM IW_SQL_TEST;
+    EXEC SQL SELECT COUNT(*) INTO :cnt FROM IW_SQL_TEST;
+
+    put skip list("cnt", cnt, "alpha_short", alpha_short);
+
+    put skip list('code', SQLCODE);
+    
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    
+    EXEC SQL COMMIT;
+
+ END PROGRAM;

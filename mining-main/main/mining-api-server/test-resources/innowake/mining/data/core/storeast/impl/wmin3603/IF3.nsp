@@ -1,0 +1,26 @@
+DEFINE DATA LOCAL
+  1 #A (A1)
+  1 #B (A2)
+END-DEFINE
+
+IF #A = 2 OR #B = 2
+  DISPLAY 'FOO'
+  IF #A = 3 OR #B = 3
+    DISPLAY 'Nested FOO'
+    IF #A = 4 OR #B = 4
+      DISPLAY 'Nested 2 FOO'
+    END-IF
+  END-IF
+END-IF
+
+IF SELECTION NOT UNIQUE #A #B
+  IF SELECTION NOT UNIQUE #A #B
+    IF SELECTION NOT UNIQUE #A #B
+      REINPUT 'Nested 2 BAR'
+    END-IF
+    REINPUT 'Nested 1 BAR'
+  END-IF
+  REINPUT 'BAR'
+END-IF
+
+END

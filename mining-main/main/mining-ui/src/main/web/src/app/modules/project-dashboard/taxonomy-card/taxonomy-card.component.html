@@ -1,0 +1,15 @@
+<nz-card [nzTitle]="taxonomyCardTitle" class="taxonomy-card-container__card-height" [nzExtra]= "exportChartTemplate">
+  <ng-template #exportChartTemplate>
+    <a nz-button nzType="link" (click)="exportChart('.png')" nzSize="small" >{{"module.graphs.png" | translate}}</a>
+  </ng-template>
+  <div #taxonomyChart></div>
+  </nz-card>
+  <ng-template #taxonomyCardTitle>
+    <nz-select nzBorderless [nzDropdownMatchSelectWidth]="false" [(ngModel)]="selectedTaxonomy"
+      class="taxonomy-card-container__card-title" (ngModelChange)="OnInputValueChange($event)" nzSize="small">
+      <nz-option nzValue="all" nzLabel="{{'projectDashboard.taxonomyCardTitle' | translate}}"></nz-option>
+      <nz-option-group nzLabel="{{taxonomy.category}}" *ngFor="let taxonomy of taxonomies">
+        <nz-option nzValue="{{value.name}}" nzLabel="{{value.name}}" *ngFor="let value of taxonomy.taxonomies"></nz-option>
+      </nz-option-group>
+    </nz-select>
+  </ng-template>

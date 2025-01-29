@@ -1,0 +1,30 @@
+DEFINE SUBROUTINE WRITE_RELEASE_VALUE 
+/*-------------------------------------------------------------------*/ 
+* FOR #I = CBS41PD1.C41_PERIOD(1) TO CBS41PD1.C41_PERIOD(2) /*bsc240700* 
+   IF #VALUES_V(#I) = 0 AND #VALUES_F(#I) = 0 
+      ESCAPE TOP 
+   END-IF 
+   MULTIPLY #VALUES_V(#I) BY -1 
+   MULTIPLY #VALUES_F(#I) BY -1 
+   IF CBSRKPD1.CRK_REL_COB NE ' '                     /*bsc170700
+      MOVE CBSRKPD1.CRK_REL_CCA     TO CBSVOPD1.CVO_ACCOUNT 
+      MOVE CBSRKPD1.CRK_REL_COB     TO CBSVOPD1.CVO_TYPE 
+      MOVE CBSRKPD1.CRK_REL_OBJ     TO CBSVOPD1.CVO_OBJECT 
+      MOVE CBSRKPD1.CRK_REL_OBJ_POS TO CBSVOPD1.CVO_OBJECT_POS 
+   END-IF                                             /*bsc170700 
+* 
+   MOVE CBSOCPD1.COC_TYPE TO EBSSCPD4.ESC4_DATA_FORMAT /* nkr231299 >> 
+   RESET                     EBSSCPD4.ESC4_MAP_FORMAT 
+   MOVE 'CBS'             TO EBSSCPD4.ESC4_OBJECT 
+   MOVE '72030'           TO EBSSCPD4.ESC4_FIELD_ID 
+   PERFORM CALLNAT_EBSSCFU1 
+   COMPRESS EBSSCPD4.ESC4_MAP_FORMAT 
+            CBSOCPD1.COC_ID 
+            CBSOCPD1.COC_POS 
+            '/' 
+            CBSDLPD1.CDL_CRED_CCA 
+       INTO CBSVOPD1.CVO_VOU_TEXT                     /* nkr231299 << 
+* 
+   PERFORM WRITE_VOUCHER 
+* END-FOR                                             /*bsc240700* 
+END-SUBROUTINE 

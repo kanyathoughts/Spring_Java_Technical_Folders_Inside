@@ -1,0 +1,24 @@
+ DEAD1: PACKAGE EXPORTS(NOTDEAD1);
+
+ /* should not discovery anything as dead */
+
+ NOTDEAD1: PROC(PARAM1,PARAM2);
+   DCL PARAM1 CHAR(10);
+   DCL PARAM2 FIXED BINARY(31);
+   CALL SHELL1;
+   %CALLME: PROC;
+      PUT SKIP LIST(PARAM2);
+   %END CALLME;
+   SHELL1: PROC;
+      CALL SHELL2;
+      %SHELL2: PROC;
+         CALL SHELL3;
+         SHELL3: PROC;
+            CALL CALLME;
+         END SHELL3;
+      %END SHELL2;
+   END SHELL1;
+ END NOTDEAD1;
+ 
+ END DEAD1;
+  

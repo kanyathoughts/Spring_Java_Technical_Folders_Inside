@@ -1,0 +1,39 @@
+//*---------------------------------------------------------------------        
+//UTP233  PROC                                                                  
+//**********************************************************************        
+//UNCAT   EXEC PGM=IEXUNCAT                                                     
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSIN    DD  SUBSYS=(CCSS,                                                    
+//    'AD&ADBSMF..DUTP2331.W&CRWKCYC',                                          
+//    'AD&ADBSMF..DUTP2332.W&CRWKCYC',                                          
+//    'AD&ADBSMF..DUTP2333.W&CRWKCYC')                                          
+//**********************************************************************        
+//UTP233  EXEC PGM=UTP233&UTP233,PARM='&PARM233'                                
+//STEPLIB    DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                        
+//           DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                            
+//MSGDS    DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=V                                                          
+//TAPEIA DD DUMMY                                                               
+//TAPEOA   DD DSN=&&TOA,UNIT=SYSOUT3,DISP=(,PASS),                              
+//            SPACE=(23108,(10,5),RLSE),                                        
+//            LRECL=11554,BLKSIZE=0,RECFM=VB,AVGREC=K                           
+//SRT1IN   DD DSN=*.TAPEOA,DISP=OLD,VOL=REF=*.TAPEOA                            
+//$ORTPARM DD SUBSYS=(CCSS,' BMSG,DYNALLOC=(SYSOUT3,15)')                       
+//SRT1OUT  DD DSN=&&SRT1,UNIT=SYSOUT3,DISP=(,PASS),                             
+//            SPACE=(23108,(10,5),RLSE),                                        
+//            LRECL=11554,BLKSIZE=0,RECFM=VB,AVGREC=K                           
+//TAPEIB   DD DSN=*.SRT1OUT,DISP=(OLD,PASS),VOL=REF=*.SRT1OUT                   
+//PRINT1   DD SYSOUT=*                                                          
+//PRINT2   DD SYSOUT=*                                                          
+//PRINT3   DD SYSOUT=*                                                          
+//PRINT4   DD SYSOUT=*                                                          
+//PUNCH1   DD DSN=AD&ADBSMF..DUTP2331.W&CRWKCYC,                                
+//            BLKSIZE=0,LRECL=80,RECFM=FB,DISP=(,CATLG),AVGREC=K,               
+//            SPACE=(80,(10,5),RLSE),UNIT=DASD,RETPD=14                         
+//PUNCH2   DD DSN=AD&ADBSMF..DUTP2332.W&CRWKCYC,                                
+//            BLKSIZE=0,LRECL=80,RECFM=FB,DISP=(,CATLG),AVGREC=K,               
+//            SPACE=(80,(10,5),RLSE),UNIT=DASD,RETPD=14                         
+//PUNCH3   DD DSN=AD&ADBSMF..DUTP2333.W&CRWKCYC,                                
+//            BLKSIZE=0,LRECL=80,RECFM=FB,DISP=(,CATLG),AVGREC=K,               
+//            SPACE=(80,(10,5),RLSE),UNIT=DASD,RETPD=14                         
+//*--------------------------------------------------------------               

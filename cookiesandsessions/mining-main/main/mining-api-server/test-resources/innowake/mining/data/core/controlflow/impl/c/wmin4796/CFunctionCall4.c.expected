@@ -1,0 +1,17 @@
+  #38 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#49}
+   #45 CExpressionStatement, FROM={#105}, TO={#53}
+     #47 CFunctionReference, Label: helloworld(display(), print()), FROM={#63}, TO={#79(CALL)}
+      #49 CFunctionReference, Label: display(), FROM={#38}, TO={#68(CALL)}
+      #51 CFunctionReference, Label: print(), FROM={#74}, TO={#57(CALL)}
+   #53 CReturnStatement, FROM={#45}, TO={TestReturnPoint}
+  #57 CFunctionDefinition, Function Name : print, FROM={#51(CALL), TestEntryPoint}, TO={#63}
+   #63 CExpressionStatement, FROM={#57}, TO={#47, TestReturnPoint}
+     #65 CFunctionReference
+  #68 CFunctionDefinition, Function Name : display, FROM={#49(CALL), TestEntryPoint}, TO={#74}
+   #74 CExpressionStatement, FROM={#68}, TO={#51, TestReturnPoint}
+     #76 CFunctionReference
+  #79 CFunctionDefinition, Function Name : helloworld, FROM={#47(CALL), TestEntryPoint}, TO={#101}
+   #101 CExpressionStatement, FROM={#79}, TO={#105}
+     #103 CFunctionReference
+   #105 CExpressionStatement, FROM={#101}, TO={#45, TestReturnPoint}
+     #107 CFunctionReference

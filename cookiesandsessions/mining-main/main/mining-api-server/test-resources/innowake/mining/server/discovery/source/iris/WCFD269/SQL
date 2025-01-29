@@ -1,0 +1,30 @@
+ DB2Samp: PROCEDURE OPTIONS(MAIN);
+
+ EXEC SQL INCLUDE SQLCA;
+ EXEC SQL INCLUDE SQLDA;
+
+ DCL FIRSTNME                 CHAR(30) var init('NOVAL');
+
+ EXEC SQL CONNECT TO sample USER 'USERNAME' using 'PASSWORD';
+
+ EXEC SQL SELECT firstnme
+           INTO :FIRSTNME
+           FROM employee
+           WHERE empno = '000010';
+
+ EXEC SQL SELECT firstnme
+           INTO :FIRSTNME
+           FROM employee2
+           INNER JOIN employee3 ON employee2.empno = employee3.empno;
+
+ EXEC SQL INSERT INTO employee4 SELECT * FROM employee5;
+           
+ EXEC SQL UPDATE employee6
+		   SET firstnme = :FIRSTNME; 
+		   
+ EXEC SQL DELETE FROM employee7
+		   WHERE firstnme = :FIRSTNME;
+
+ EXEC SQL COMMIT;
+
+ END DB2Samp;

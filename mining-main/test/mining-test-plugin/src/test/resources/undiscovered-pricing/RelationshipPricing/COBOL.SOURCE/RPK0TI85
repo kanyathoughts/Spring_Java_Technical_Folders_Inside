@@ -1,0 +1,441 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPK0TI85.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*   RPK0TI85 - RELATIONSHIP PRICING / TIME INVESTMENTS 8.3 EP 2   00005000
+000060*             INTERFACE EXTRACT FOR TIME INVESTMENTS 8.3 EP 2    *00006000
+000070******************************************************************00007000
+000080 ENVIRONMENT DIVISION.                                            00008000
+000090 CONFIGURATION SECTION.                                           00009000
+000100 DATA DIVISION.                                                   00010000
+000110 FILE SECTION.                                                    00011000
+000120******************************************************************00012000
+000130 WORKING-STORAGE SECTION.                                         00013000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00014000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00014001
+000150 01  RPS-RLSELIT.                                                 00015000
+000000 COPY RPWRLSE.                                                    00016000
+000170 01  TIM-RLSELIT.                                                 00017000
+000000 COPY TIWRLSE.                                                    00018000
+000190 01  SRW000-AREAS.                                                00019000
+000000 COPY SRW000.                                                     00020000
+000210 01  SRW009-AREAS.                                                00021000
+000000 COPY SRW009.                                                     00022000
+000230 01  SRW105-AREAS.                                                00023000
+000000 COPY SRW105.                                                     00024000
+000250*01  BICPBPRM.                                                    00025000
+000000 COPY BICPBPRM.                                                   00026000
+000270*01  BICRSRB.                                                     00027000
+000000 COPY BICRSRB.                                                    00028000
+000290*01  BICRPSB.                                                     00029000
+000000 COPY BICRPSB.                                                    00030000
+000310*01  BICRVERB.                                                    00031000
+000000 COPY BICRVERB.                                                   00032000
+000330*01  BICRSTAT.                                                    00033000
+000000 COPY BICRSTAT.                                                   00034000
+000350*01  BICRDBS.                                                     00035000
+000000 COPY BICRDBS.                                                    00036000
+000370*01  BICRLOG.                                                     00037000
+000000 COPY BICRLOG.                                                    00038000
+000390 01  WS-01                       PIC X(06)       VALUE 'TIMST '.  00039000
+000400 01  TIMST-RECORD.                                                00040000
+000000 COPY TISMST.                                                     00041000
+000420 01  WS-02                       PIC X(06)       VALUE 'TIBNK '.  00042000
+000430 01  TIBNK-RECORD.                                                00043000
+000000 COPY TISBNK.                                                     00044000
+000450 01  TIWMST-AREAS.                                                00045000
+000000 COPY TIWMSTA.                                                    00046000
+000470 01  TIWBNK-AREAS.                                                00047000
+000000 COPY TIWBNKA.                                                    00048000
+000490 01  MIWMSTA-AREAS.                                               00049000
+000000 COPY MIWMSTA.                                                    00050000
+000510 01  WS-WORKAREAS.                                                00051000
+000520     03  WS-FILESTATUS.                                           00052000
+000530         05  WS-FSKEY1           PIC X(01)       VALUE SPACES.    00053000
+000540         05  WS-FSKEY2           PIC X(01)       VALUE SPACES.    00054000
+000550     03  WS-TIMOPEN              PIC X(01)       VALUE SPACES.    00055000
+000560     03  WS-BNKOPEN              PIC X(01)       VALUE SPACES.    00056000
+000570     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00057000
+000580     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00058000
+000590     03  WS-READ-SW              PIC X(01)       VALUE SPACES.    00059000
+000600     03  WS-DAYS-FROM-SC         PIC S9(04)      COMP.            00060000
+000610     03  WS-SUB1                 PIC S9(04)      COMP.            00061000
+000620     03  WS-BAL                  PIC S9(11)V99   COMP-3.          00062000
+000630     03  WS-NPROCDTA             PIC S9(07)      COMP-3.          00063000
+000640     03  WS-LASTDATE             PIC S9(07)      COMP-3.          00064000
+000650     03  WS-FIRSTDOM             PIC S9(07)      COMP-3.          00065000
+000660     03  WS-FROM-DATE            PIC 9(08)       VALUE ZERO.      00066000
+000670     03  WS-BAL-MAX              PIC S9(04)      COMP             00067000
+000680                                                 VALUE +20.       00068000
+000690     03  WS-8THISMON             PIC S9(04)      COMP             00069000
+000700                                                 VALUE ZEROS.     00070000
+000710     03  WS-CURYR                PIC S9(04)      COMP-3           00071000
+000720                                                 VALUE ZEROS.     00072000
+000730     03  WS-8SUB1                PIC S9(07)      COMP-3           00073000
+000740                                                 VALUE ZEROS.     00074000
+000750     03  WS-AGR-ENDDATE          PIC S9(07)      COMP-3           00075000
+000760                                                 VALUE ZEROS.     00076000
+000770     03  WS-FILEOPTIONS          PIC X(25)       VALUE SPACES.    00077000
+000780     03  WS-FILEOPTS     REDEFINES WS-FILEOPTIONS.                00078000
+000790         05  WS-FILEOPT          PIC X(01)       OCCURS 25.       00079000
+000800******************************************************************00080000
+000810 LINKAGE SECTION.                                                 00081000
+000820 01  WS-LINKDATA.                                                 00082000
+000000 COPY MISCNT00      REPLACING                                     00083000
+000840     ==:MICNT:== BY ==RPINF00==.                                  00084000
+000000 COPY RPSINF00.                                                   00085000
+000860******************************************************************00086000
+000870 PROCEDURE DIVISION                                               00087000
+000880         USING                                                    00088000
+000890         WS-LINKDATA.                                             00089000
+000900******************************************************************00090000
+000910 INITIALIZATION SECTION.                                          00091000
+000920 IN-START.                                                        00092000
+000930     MOVE 'RPK0TI85' TO SR-APIPROGLIT.                            00093000
+000940     MOVE 'RPK0TI85' TO WS-UPD-USER.                              00094000
+000950     MOVE SPACES TO WS-FUNCTION.                                  00095000
+000960     MOVE ZEROS TO RPINF00-ABTRACE.                               00096000
+000970     IF RPINF00-FUNC IS EQUAL TO 'O'                              00097000
+000980         PERFORM OPEN-ROUTINE                                     00098000
+000990         GO TO RETURN-ROUTINE.                                    00099000
+001000     IF RPINF00-FUNC IS EQUAL TO 'B'                              00100000
+001010         GO TO READ-FIRST.                                        00101000
+001020     IF RPINF00-FUNC IS EQUAL TO 'N'                              00102000
+001030         GO TO READ-NEXT.                                         00103000
+001040     IF RPINF00-FUNC IS EQUAL TO 'R'                              00104000
+001050         GO TO READ-RANDOM.                                       00105000
+001060     IF RPINF00-FUNC IS EQUAL TO 'C'                              00106000
+001070         GO TO CLOSE-ROUTINE.                                     00107000
+001080     MOVE 'X' TO WS-FUNCTION.                                     00108000
+001090     MOVE 'X' TO RPINF00-RETURN.                                  00109000
+001100     MOVE 0001 TO RPINF00-ABTRACE.                                00110000
+001110     GO TO RETURN-ROUTINE.                                        00111000
+001120 IN-EXIT.                                                         00112000
+001130     EXIT.                                                        00113000
+001140******************************************************************00114000
+001150 OPEN-ROUTINE SECTION.                                            00115000
+001160 OR-OPEN.                                                         00116000
+001170     MOVE 'N' TO WS-READ-SW.                                      00117000
+001180     IF WS-BNKOPEN IS EQUAL TO 'Y'                                00118000
+001190         GO TO OR-OPENTIM.                                        00119000
+001200     MOVE 'Y' TO WS-BNKOPEN.                                      00120000
+001210     PERFORM GET-FILE-ORGANIZATION.                               00121000
+001220     MOVE 'N' TO TIM-MST-LOG.                                     00122000
+001230     MOVE RPINF00-INST TO TIBNK-INST.                             00123000
+001240     PERFORM TIM-BNK-OPEN-REQUEST.                                00124000
+001250     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00125000
+001260         MOVE 'O' TO RPINF00-RETURN                               00126000
+001270         MOVE 0002 TO RPINF00-ABTRACE                             00127000
+001280         GO TO RETURN-ROUTINE.                                    00128000
+001290     MOVE RPINF00-INST TO TIBNK-INST.                             00129000
+001300     PERFORM TIM-BNK-GET-REQUEST.                                 00130000
+001310     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00131000
+001320         MOVE 'R' TO RPINF00-RETURN                               00132000
+001330         MOVE 0003 TO RPINF00-ABTRACE                             00133000
+001340         GO TO RETURN-ROUTINE.                                    00134000
+001350     MOVE TIBNK-NPROCDTA TO WS-NPROCDTA.                          00135000
+001360     MOVE TIBNK-FIRSTDOM TO WS-FIRSTDOM.                          00136000
+001370 OR-OPENTIM.                                                      00137000
+001380     IF WS-TIMOPEN IS EQUAL TO 'Y'                                00138000
+001390         GO TO OR-END.                                            00139000
+001400     MOVE 'Y' TO WS-TIMOPEN.                                      00140000
+001410     MOVE RPINF00-INST TO TIMST-INST.                             00141000
+001420     MOVE RPINF00-ACCOUNT TO TIMST-ACCOUNT.                       00142000
+001430     PERFORM TIM-MST-OPEN-REQUEST.                                00143000
+001440     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00144000
+001450         MOVE 'O' TO RPINF00-RETURN                               00145000
+001460         MOVE 0004 TO RPINF00-ABTRACE                             00146000
+001470         GO TO RETURN-ROUTINE.                                    00147000
+001480 OR-END.                                                          00148000
+001490     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00149000
+001500 OR-EXIT.                                                         00150000
+001510     EXIT.                                                        00151000
+001520******************************************************************00152000
+001530 CLOSE-ROUTINE SECTION.                                           00153000
+001540 CR-START.                                                        00154000
+001550     IF WS-BNKOPEN IS NOT EQUAL TO 'Y'                            00155000
+001560         GO TO CR-CLOSETIM.                                       00156000
+001570     PERFORM TIM-BNK-CLOSE-REQUEST.                               00157000
+001580     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00158000
+001590         MOVE 'C' TO RPINF00-RETURN                               00159000
+001600         MOVE 0005 TO RPINF00-ABTRACE                             00160000
+001610         GO TO RETURN-ROUTINE.                                    00161000
+001620     MOVE SPACES TO WS-BNKOPEN.                                   00162000
+001630 CR-CLOSETIM.                                                     00163000
+001640     IF WS-TIMOPEN IS NOT EQUAL TO 'Y'                            00164000
+001650         GO TO CR-END.                                            00165000
+001660     PERFORM TIM-MST-CLOSE-REQUEST.                               00166000
+001670     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00167000
+001680         MOVE 'C' TO RPINF00-RETURN                               00168000
+001690         MOVE 0006 TO RPINF00-ABTRACE                             00169000
+001700         GO TO RETURN-ROUTINE.                                    00170000
+001710     MOVE SPACES TO WS-TIMOPEN.                                   00171000
+001720 CR-END.                                                          00172000
+001730     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00173000
+001740     GO TO RETURN-ROUTINE.                                        00174000
+001750 CR-EXIT.                                                         00175000
+001760     EXIT.                                                        00176000
+001770******************************************************************00177000
+001780 READ-FIRST SECTION.                                              00178000
+001790 RF-START.                                                        00179000
+001800     IF WS-TIMOPEN IS NOT EQUAL TO 'Y'                            00180000
+001810         OR WS-BNKOPEN IS NOT EQUAL TO 'Y'                        00181000
+001820         PERFORM OPEN-ROUTINE.                                    00182000
+001830 RF-READTIM.                                                      00183000
+001840     MOVE RPINF00-INST TO TIMST-INST.                             00184000
+001850     MOVE RPINF00-ACCOUNT TO TIMST-ACCOUNT.                       00185000
+001860     PERFORM TIM-MST-GET-EQUAL-REQUEST.                           00186000
+001870     IF WS-FUNCTION IS EQUAL TO 'E'                               00187000
+001880         OR WS-FUNCTION IS EQUAL TO 'N'                           00188000
+001890         GO TO RF-END.                                            00189000
+001900     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00190000
+001910         MOVE 'B' TO RPINF00-RETURN                               00191000
+001920         MOVE 0007 TO RPINF00-ABTRACE                             00192000
+001930         GO TO RF-END.                                            00193000
+001940     IF RPINF00-INST IS NOT EQUAL TO TIMST-INST                   00194000
+001950         OR RPINF00-ACCOUNT IS NOT EQUAL TO TIMST-ACCOUNT         00195000
+001960         MOVE 'Y' TO WS-READ-SW                                   00196000
+001970         MOVE 'N' TO WS-FUNCTION                                  00197000
+001980         GO TO RF-END.                                            00198000
+001990     IF TIMST-MSTATUS IS EQUAL TO SPACES                          00199000
+002000         GO TO RF-MOVEMST.                                        00200000
+002010     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00201000
+002020         AND TIMST-MSTATUS IS NOT EQUAL TO 'P'                    00202000
+002030         MOVE SPACES TO TIMST-MSTATUS                             00203000
+002040         GO TO RF-MOVEMST.                                        00204000
+002050     IF TIMST-MSTATUS IS EQUAL TO 'C'                             00205000
+002060         MOVE 'D' TO WS-FUNCTION                                  00206000
+002070         GO TO RF-END.                                            00207000
+002080     IF TIMST-MSTATUS IS EQUAL TO 'P'                             00208000
+002090         MOVE 'P' TO WS-FUNCTION                                  00209000
+002100         GO TO RF-END.                                            00210000
+002110     MOVE 'N' TO WS-FUNCTION.                                     00211000
+002120     GO TO RF-END.                                                00212000
+002130 RF-MOVEMST.                                                      00213000
+002140     PERFORM MOVE-TIM-TO-INF.                                     00214000
+002150 RF-END.                                                          00215000
+002160     GO TO RETURN-ROUTINE.                                        00216000
+002170 RF-EXIT.                                                         00217000
+002180     EXIT.                                                        00218000
+002190******************************************************************00219000
+002200 READ-NEXT SECTION.                                               00220000
+002210 RN-START.                                                        00221000
+002220     IF WS-TIMOPEN IS NOT EQUAL TO 'Y'                            00222000
+002230         OR WS-BNKOPEN IS NOT EQUAL TO 'Y'                        00223000
+002240         PERFORM OPEN-ROUTINE.                                    00224000
+002250 RN-TIM.                                                          00225000
+002260     IF WS-READ-SW IS EQUAL TO 'Y'                                00226000
+002270         MOVE 'N' TO WS-READ-SW                                   00227000
+002280         GO TO RN-CHECK-TIM.                                      00228000
+002290 RN-READNEXT-TIM.                                                 00229000
+002300     PERFORM TIM-MST-GET-NEXT-REQUEST.                            00230000
+002310     IF WS-FUNCTION IS EQUAL TO 'E'                               00231000
+002320         OR WS-FUNCTION IS EQUAL TO 'N'                           00232000
+002330         GO TO RN-END.                                            00233000
+002340     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00234000
+002350         MOVE 'N' TO RPINF00-RETURN                               00235000
+002360         MOVE 0008 TO RPINF00-ABTRACE                             00236000
+002370         GO TO RN-END.                                            00237000
+002380 RN-CHECK-TIM.                                                    00238000
+002390     IF TIMST-INST IS LESS THAN RPINF00-INST                      00239000
+002400         OR TIMST-ACCOUNT IS LESS THAN RPINF00-ACCOUNT            00240000
+002410         GO TO RN-READNEXT-TIM.                                   00241000
+002420     IF TIMST-INST IS GREATER THAN RPINF00-INST                   00242000
+002430         OR TIMST-ACCOUNT IS GREATER THAN RPINF00-ACCOUNT         00243000
+002440         MOVE 'Y' TO WS-READ-SW                                   00244000
+002450         MOVE 'N' TO WS-FUNCTION                                  00245000
+002460         GO TO RN-END.                                            00246000
+002470     IF TIMST-MSTATUS IS EQUAL TO SPACES                          00247000
+002480         GO TO RN-MOVEMST.                                        00248000
+002490     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00249000
+002500         AND TIMST-MSTATUS IS NOT EQUAL TO 'P'                    00250000
+002510         MOVE SPACES TO TIMST-MSTATUS                             00251000
+002520         GO TO RN-MOVEMST.                                        00252000
+002530     IF TIMST-MSTATUS IS EQUAL TO 'C'                             00253000
+002540         MOVE 'D' TO WS-FUNCTION                                  00254000
+002550         GO TO RN-END.                                            00255000
+002560     IF TIMST-MSTATUS IS EQUAL TO 'P'                             00256000
+002570         MOVE 'P' TO WS-FUNCTION                                  00257000
+002580         GO TO RN-END.                                            00258000
+002590     MOVE 'N' TO WS-FUNCTION.                                     00259000
+002600     GO TO RN-END.                                                00260000
+002610 RN-MOVEMST.                                                      00261000
+002620     PERFORM MOVE-TIM-TO-INF.                                     00262000
+002630 RN-END.                                                          00263000
+002640     GO TO RETURN-ROUTINE.                                        00264000
+002650 RN-EXIT.                                                         00265000
+002660     EXIT.                                                        00266000
+002670******************************************************************00267000
+002680 READ-RANDOM SECTION.                                             00268000
+002690 RR-START.                                                        00269000
+002700     IF WS-TIMOPEN IS NOT EQUAL TO 'Y'                            00270000
+002710         OR WS-BNKOPEN IS NOT EQUAL TO 'Y'                        00271000
+002720         PERFORM OPEN-ROUTINE.                                    00272000
+002730 RR-READTIM.                                                      00273000
+002740     MOVE RPINF00-INST TO TIMST-INST.                             00274000
+002750     MOVE RPINF00-ACCOUNT TO TIMST-ACCOUNT.                       00275000
+002760     PERFORM TIM-MST-GET-REQUEST.                                 00276000
+002770     IF WS-FUNCTION IS EQUAL TO 'N'                               00277000
+002780         GO TO RR-END.                                            00278000
+002790     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00279000
+002800         MOVE 'R' TO RPINF00-RETURN                               00280000
+002810         MOVE 0009 TO RPINF00-ABTRACE                             00281000
+002820         GO TO RETURN-ROUTINE.                                    00282000
+002830     IF TIMST-MSTATUS IS EQUAL TO SPACES                          00283000
+002840         GO TO RR-MOVEMST.                                        00284000
+002850     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00285000
+002860         AND TIMST-MSTATUS IS NOT EQUAL TO 'P'                    00286000
+002870         MOVE SPACES TO TIMST-MSTATUS                             00287000
+002880         GO TO RR-MOVEMST.                                        00288000
+002890     IF TIMST-MSTATUS IS EQUAL TO 'C'                             00289000
+002900         MOVE 'D' TO WS-FUNCTION                                  00290000
+002910         GO TO RR-END.                                            00291000
+002920     IF TIMST-MSTATUS IS EQUAL TO 'P'                             00292000
+002930         MOVE 'P' TO WS-FUNCTION                                  00293000
+002940         GO TO RR-END.                                            00294000
+002950     MOVE 'N' TO WS-FUNCTION.                                     00295000
+002960     GO TO RR-END.                                                00296000
+002970 RR-MOVEMST.                                                      00297000
+002980     PERFORM MOVE-TIM-TO-INF.                                     00298000
+002990 RR-END.                                                          00299000
+003000     GO TO RETURN-ROUTINE.                                        00300000
+003010 RR-EXIT.                                                         00301000
+003020     EXIT.                                                        00302000
+003030******************************************************************00303000
+003040 MOVE-TIM-TO-INF SECTION.                                         00304000
+003050 MDTI-START.                                                      00305000
+003060     MOVE SPACES TO RPINF00-GRP-DATA.                             00306000
+003070     MOVE TIMST-MSTATUS TO RPINF00-APPL-STATUS.                   00307000
+003080     MOVE TIMST-MNEWBRANCH TO RPINF00-BRANCH.                     00308000
+003090     MOVE TIMST-MNEWTYPE TO RPINF00-ACCT-TYPE.                    00309000
+003100     MOVE ZEROS TO RPINF00-TERM.                                  00310000
+003110     MOVE SPACES TO RPINF00-USEROPT1.                             00311000
+003120     MOVE SPACES TO RPINF00-USEROPT2.                             00312000
+003130     MOVE SPACES TO RPINF00-USEROPT3.                             00313000
+003140     MOVE SPACES TO RPINF00-USEROPT4.                             00314000
+003150 MDTI-TERM.                                                       00315000
+003160     IF TIMST-RENFREQ IS EQUAL TO 'N'                             00316000
+003170         OR (TIMST-RENFREQ IS EQUAL TO 'D'                        00317000
+003180         AND TIMST-RENTERM IS LESS THAN 30)                       00318000
+003190         GO TO MDTI-TERM-CONT.                                    00319000
+003200     IF TIMST-RENFREQ IS EQUAL TO 'M'                             00320000
+003210         MOVE TIMST-RENTERM TO RPINF00-TERM                       00321000
+003220         GO TO MDTI-TERM-CONT.                                    00322000
+003230     IF TIMST-RENLAST IS EQUAL TO ZEROS                           00323000
+003240         MOVE TIMST-ISSDATE TO TIMST-RENLAST.                     00324000
+003250     MOVE TIMST-RENLAST TO SR-FROMJUL.                            00325000
+003260     MOVE TIMST-RENNEXT TO SR-TOJUL.                              00326000
+003270     PERFORM ELAPSED-DAYS-365.                                    00327000
+003280     DIVIDE SR-RESULT BY 30 GIVING RPINF00-TERM.                  00328000
+003290     IF RPINF00-TERM IS LESS THAN 001                             00329000
+003300         MOVE ZEROS TO RPINF00-TERM.                              00330000
+003310 MDTI-TERM-CONT.                                                  00331000
+003320     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00332000
+003330     MOVE TIMST-MDORM TO RPINF00-MDORM.                           00333000
+003340     MOVE ZEROS TO RPINF00-COSTC.                                 00334000
+003350     MOVE ZEROS TO RPINF00-SCNXT.                                 00335000
+003360     MOVE TIMST-BALCUR TO RPINF00-CURBAL.                         00336000
+003370     MOVE TIMST-BALCUR TO WS-BAL.                                 00337000
+003380     MOVE +0 TO WS-SUB1.                                          00338000
+003390 MDTI-CURCUSTCOL-LOOP.                                            00339000
+003400     ADD +1 TO WS-SUB1.                                           00340000
+003410     SUBTRACT TIMST-MFCAMT (WS-SUB1) FROM WS-BAL.                 00341000
+003420     IF WS-SUB1 IS LESS THAN +9                                   00342000
+003430         GO TO MDTI-CURCUSTCOL-LOOP.                              00343000
+003440     MOVE WS-BAL TO RPINF00-CURCUSTCOL.                           00344000
+003450     MOVE TIMST-BALCUR TO WS-BAL.                                 00345000
+003460     MOVE +0 TO WS-SUB1.                                          00346000
+003470 MDTI-CURBANKCOL-LOOP.                                            00347000
+003480     ADD +1 TO WS-SUB1.                                           00348000
+003490     SUBTRACT TIMST-MFBAMT (WS-SUB1) FROM WS-BAL.                 00349000
+003500     IF WS-SUB1 IS LESS THAN +9                                   00350000
+003510         GO TO MDTI-CURBANKCOL-LOOP.                              00351000
+003520     MOVE WS-BAL TO RPINF00-CURBANKCOL.                           00352000
+003530     MOVE TIMST-SCLOWBAL TO RPINF00-LOWBAL.                       00353000
+003540 RR-AVERAGE-BALANCES.                                             00354000
+003550     MOVE WS-NPROCDTA TO SR-FROMJUL.                              00355000
+003560     MOVE 'D' TO SR-PERIOD.                                       00356000
+003570     MOVE 1 TO SR-FREQ.                                           00357000
+003580     PERFORM LAST-DATE-365.                                       00358000
+003590     MOVE SR-TJDAY TO WS-8SUB1.                                   00359000
+003600     MOVE SR-TOJUL TO WS-AGR-ENDDATE.                             00360000
+003610     MOVE SR-TJYR TO WS-CURYR.                                    00361000
+003620     MOVE SR-TOJUL TO SR-FROMJUL.                                 00362000
+003630     PERFORM CALENDAR-365.                                        00363000
+003640     MOVE SR-TCMON TO WS-8THISMON.                                00364000
+003650     MOVE TIMST-ISSDATE TO SR-FROMJUL.                            00365000
+003660     PERFORM CALENDAR-365.                                        00366000
+003670     IF SR-TCMON IS NOT EQUAL TO WS-8THISMON                      00367000
+003680         OR SR-TCYR IS NOT EQUAL TO WS-CURYR                      00368000
+003690         OR TIMST-MFLAG1 IS NOT EQUAL TO 'N'                      00369000
+003700         MOVE TIBNK-FIRSTDOM TO SR-FROMJUL.                       00370000
+003710     SUBTRACT SR-FJDAY FROM WS-8SUB1.                             00371000
+003720     ADD +1 TO WS-8SUB1.                                          00372000
+003730     IF WS-8SUB1 IS NOT GREATER THAN ZERO                         00373000
+003740         MOVE +1 TO WS-8SUB1.                                     00374000
+003750     IF TIMST-BALAGR IS EQUAL TO ZERO                             00375000
+003760         MOVE RPINF00-CURBAL TO RPINF00-AVGBAL                    00376000
+003770     ELSE                                                         00377000
+003780         DIVIDE TIMST-BALAGR BY WS-8SUB1 GIVING RPINF00-AVGBAL.   00378000
+003790     IF TIMST-BALCAGR IS EQUAL TO ZERO                            00379000
+003800         MOVE RPINF00-CURBANKCOL TO RPINF00-AVGCOLBAL             00380000
+003810     ELSE                                                         00381000
+003820         DIVIDE TIMST-BALCAGR BY WS-8SUB1                         00382000
+003830         GIVING RPINF00-AVGCOLBAL.                                00383000
+003840     MOVE ZEROS TO RPINF00-COMMAMT.                               00384000
+003850     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00385000
+003860     MOVE +8 TO WS-SUB1.                                          00386000
+003870 MDTI-LOOP.                                                       00387000
+003880     ADD +1 TO WS-SUB1.                                           00388000
+003890     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00389000
+003900     IF WS-SUB1 IS LESS THAN WS-BAL-MAX                           00390000
+003910         GO TO MDTI-LOOP.                                         00391000
+003920 MDTI-EXIT.                                                       00392000
+003930     EXIT.                                                        00393000
+003940******************************************************************00394000
+003950 GET-FILE-ORGANIZATION SECTION.                                   00395000
+000000 COPY SRP093.                                                     00396000
+003970******************************************************************00397000
+000000 COPY TIPMSTA.                                                    00398000
+003990******************************************************************00399000
+000000 COPY TIPBNKA.                                                    00400000
+004010******************************************************************00401000
+004020 JULIAN-365 SECTION.                                              00402000
+000000 COPY SRP001.                                                     00403000
+004040******************************************************************00404000
+004050 CALENDAR-365 SECTION.                                            00405000
+000000 COPY SRP003.                                                     00406000
+004070******************************************************************00407000
+004080 ELAPSED-DAYS-365 SECTION.                                        00408000
+000000 COPY SRP005.                                                     00409000
+004100******************************************************************00410000
+004110 LAST-DATE-365 SECTION.                                           00411000
+000000 COPY SRP019.                                                     00412000
+004130******************************************************************00413000
+004140 RETURN-ROUTINE SECTION.                                          00414000
+004150 RT-START.                                                        00415000
+004160     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00416000
+004170     GOBACK.                                                      00417000
+004180******************************************************************00418000

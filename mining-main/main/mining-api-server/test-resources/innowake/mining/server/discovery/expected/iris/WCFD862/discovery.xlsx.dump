@@ -1,0 +1,37 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2171,"","$DFPAUT0","src/jcl/WCFD862/jobs/$DFPAUT0.job","JCL","JCL_JOB","PHYSICAL",1,0,6,6,13,1,0,-1,-1
+2174,2171,"$DFPAUT0.STEPUPD.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2178,"","AX52ZM.S00.DCS.DFP85002.AUTOPRV5.UPDCRTBY","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2176,"","AXXXA1.DB2.RUNLIB.LOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2177,"","AXXXA1.DB2.SDSNEXIT","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2175,"","AXXXA1.DB2.SDSNLOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2170,"","DFPAUT5P","src/jcl/WCFD862/procs/DFPAUT5P.proc","JCL","JCL_PROC","PHYSICAL",0,0,41,14,55,2,0,-1,-1
+2172,2170,"DFPAUT5P.STEP044U.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2173,2170,"DFPAUT5P.UPDTUTIL.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2171,"$DFPAUT0","EXEC_PROC","Properties: [PROC=DFPAUT5P,PQEDT=&:PREVQED,PQBDT=&:PREVQBD], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEPUPD,Step name=STEPUPD,Job name=$DFPAUT0]"
+2170,"DFPAUT5P","EXEC","Properties: [PGM=IEXUNCAT], Data Definitions: [SYSIN{SUBSYS=CCSS,'AX52ZM.S00.DCS.DFP85002.AUTOPRV5.UPDCRTBY'}], Additional Properties: [Fully Qualified Step name=STEPUPD.STEP044U,Step name=STEP044U,Job name=$DFPAUT0]"
+2170,"DFPAUT5P","EXEC","Properties: [PGM=IKJEFT01], Data Definitions: [STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.SDSNEXIT},STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.SDSNLOAD},STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.RUNLIB.LOAD},SYSTSPRT{SYSOUT=*},SYSPRINT{DSN=AX52ZM.S00.DCS.DFP85002.AUTOPRV5.UPDCRTBY,DISP=NEW,CATLG,CATLG,UNIT=DASD,SPACE=0,(100,100),RLSE,DCB=RECFM=FBA,BLKSIZE=0,LRECL=133,DSORG=PS,LABEL=RETPD=30},SYSTSIN{SUBSYS=CCSS,'DSN SYSTEM(DBA1)  ','RUN PROGRAM(DSNTEP2) PLAN(DSNTEP2) '},SYSIN{SUBSYS=CCSS,'SELECT STMT_RQST_ID FROM NZNH.STMT_RQST  ','WHERE AC_CLIENT_ID = 1908     ','AND CREATE_BY = 0           ','AND UPDATE_BY = 0           ','AND STMT_TYPE_ID = 5        ','AND STMT_STAT_ID = 1        ','AND ALL_SSN_YN = ''Y''  ','AND AS_OF_FROM_DT = ''&:PREVQBD''  ','AND TO_DT = ''&:PREVQED''  ',';              ','UPDATE NZNH.STMT_RQST               ','SET CREATE_BY = 2456              ',',UPDATE_BY = 2456              ','WHERE AC_CLIENT_ID = 1908             ','AND CREATE_BY = 0           ','AND UPDATE_BY = 0           ','AND STMT_TYPE_ID = 5        ','AND STMT_STAT_ID = 1        ','AND ALL_SSN_YN = ''Y''  ','AND AS_OF_FROM_DT = ''&:PREVQBD''  ','AND TO_DT = ''&:PREVQED''  ',';              ','COMMIT;              '},SYSIN{*=}], Additional Properties: [Fully Qualified Step name=STEPUPD.UPDTUTIL,Step name=UPDTUTIL,Job name=$DFPAUT0]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2171,"$DFPAUT0",2174,"$DFPAUT0.STEPUPD.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+2174,"$DFPAUT0.STEPUPD.EXEC",2170,"DFPAUT5P","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+2170,"DFPAUT5P",2172,"DFPAUT5P.STEP044U.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2170,"DFPAUT5P",2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2172,"DFPAUT5P.STEP044U.EXEC_PGM",0,"IEXUNCAT","UNKNOWN","UTILITY","Calls","[2174]","LATE","{}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",2178,"AX52ZM.S00.DCS.DFP85002.AUTOPRV5.UPDCRTBY","RESOURCE","RESOURCE_FILE","Accesses","[2174]","LATE","{""PROPERTIES"":[{""DCB"":""RECFM=FBA,BLKSIZE=0,LRECL=133,DSORG=PS"",""DISP"":""NEW,CATLG,CATLG"",""UNIT"":""DASD"",""LABEL"":""RETPD=30"",""SPACE"":""0,(100,100),RLSE"",""ID_NAME"":""SYSPRINT""}],""FILE_ACCESS_TYPE"":[""WRITE""]}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",2176,"AXXXA1.DB2.RUNLIB.LOAD","RESOURCE","RESOURCE_LIB","Accesses","[2174]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",2177,"AXXXA1.DB2.SDSNEXIT","RESOURCE","RESOURCE_LIB","Accesses","[2174]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",2175,"AXXXA1.DB2.SDSNLOAD","RESOURCE","RESOURCE_LIB","Accesses","[2174]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",0,"DSNTEP2","UNKNOWN","UTILITY","Calls","[2174]","LATE","{}",-1,-1,-1,-1
+2173,"DFPAUT5P.UPDTUTIL.EXEC_PGM",0,"IKJEFT01","UNKNOWN","UTILITY","Calls","[2174]","LATE","{""INBOUND"":0,""OUTBOUND"":1,""OUTBOUND_TARGETS"":[""DSNTEP2""]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

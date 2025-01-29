@@ -1,0 +1,37 @@
+000010******************************************************************00001000
+000020* RPP7112  7112 - RP SECONDARY SERVICE TABLE LOAD                *00002000
+000030******************************************************************00003000
+000040*LOAD-RPS-7112-SECTION.                                           00004000
+000050 LR7112-START.                                                    00005000
+000060     MOVE HIGH-VALUES TO WS-7112-AREA.                            00006000
+000070     SET INDX-7112 TO +1.                                         00007000
+000080     MOVE SPACES TO MI7112-RECORD.                                00008000
+000090     MOVE WS-RPMIM7112INST TO MIM-7112KINST.                      00009000
+000100     MOVE +7112 TO MIM-7112KREC.                                  00010000
+000110     MOVE SPACES TO MIM-7112KSSTABLE.                             00011000
+000120     MOVE MIC-RPS-7112-PRI TO MIC-MST-REC-PRI.                    00012000
+000130     MOVE MI7112-RECORD TO MIMST-RECORD.                          00013000
+000140     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00014000
+000150     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00015000
+000160         GO TO LR7112-EXIT.                                       00016000
+000170     GO TO LR7112-RECCONT.                                        00017000
+000180 LR7112-RECREAD.                                                  00018000
+000190     PERFORM MIC-MST-GET-NEXT-REQUEST.                            00019000
+000200     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00020000
+000210         GO TO LR7112-EXIT.                                       00021000
+000220 LR7112-RECCONT.                                                  00022000
+000230     MOVE MIMST-RECORD TO MI7112-RECORD.                          00023000
+000240     IF MIM-7112KINST IS NOT EQUAL TO WS-RPMIM7112INST            00024000
+000250         GO TO LR7112-EXIT.                                       00025000
+000260     IF INDX-7112 IS GREATER THAN WS-RPMIM7112MAXSIZE             00026000
+000270         MOVE 'Y' TO WS-RPMIM7112ERROR                            00027000
+000280         GO TO LR7112-EXIT.                                       00028000
+000290     MOVE MIM-7112KSSTABLE TO WS-7112-SSTABLE (INDX-7112).        00029000
+000300     MOVE MIM-REC7112 TO WS-RPMIM7112 (INDX-7112).                00030000
+000310     SET INDX-7112 UP BY +1.                                      00031000
+000320     GO TO LR7112-RECREAD.                                        00032000
+000330 LR7112-EXIT.                                                     00033000
+000340      EXIT.                                                       00034000
+000350*----------------------------------------------------------------*00035000
+000360*     END OF RP SECONDARY SERVICE TABLE 7112 MICM RECORD LOAD    *00036000
+000370*----------------------------------------------------------------*00037000

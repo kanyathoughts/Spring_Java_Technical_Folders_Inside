@@ -1,0 +1,34 @@
+ /* Test case to demonstrate OPTIONAL attribute in entry statements */ 
+ CALLER: PROC OPTIONS(MAIN);
+ 
+    DCL VRTN ENTRY (FIXED BIN, PTR OPTIONAL, FLOAT, * OPTIONAL);
+
+ /* the following calls are valid: */
+    CALL VRTN(10, *, 15.5, 'ABCD');
+    CALL VRTN(10, *, 15.5, *);
+    CALL VRTN(10, ADDR(X), 15.5, *);
+    CALL VRTN(10, *, 15.5);
+    CALL VRTN(10, ADDR(X), 15.5);
+
+ /* the following calls are invalid: */
+ /* CALL VRTN(*, ADDR(X));
+    CALL VRTN(10,ADDR(X));
+    CALL VRTN(10);
+    CALL VRTN; */
+    
+ END CALLER;
+ 
+ VRTN: PROC (FB, P, FL, C1);
+ 
+    DCL FB FIXED BIN,
+    P PTR OPTIONAL,
+    FL FLOAT,
+    C1 CHAR(8) OPTIONAL;
+ 
+    IF ¬OMITTED(C1) THEN 
+        PUT SKIP LIST('C1 is passed as parameter: ', C1);
+ 
+    IF ¬OMITTED(P) THEN 
+        PUT SKIP LIST('P is passed as parameter');
+        
+ END;

@@ -1,0 +1,205 @@
+  <nz-table class="mining-table mining-table__body" [nzSize]="tableSize" [nzScroll]="tableConfig.scroll" #rowSelectionTable
+  [nzTitle]="tableTitleTemplate"
+  #expandTable nzTableLayout="auto" nzOuterBordered="false" [nzData]="value" [nzTotal]="totalRecords"
+  [nzBordered]=" !! tableConfig.tableBorder" [nzShowPagination]="tableConfig.paginator" [nzPageSize]="tableConfig.rows"
+  [nzLoading]="tableConfig.loading" [nzLoadingIndicator]="loadingIndicatorTemplate" [nzFrontPagination]=" ! tableConfig.serverSidePagination" nzSimple
+  [nzPageIndex]="parametersService.currentTableParameters.page ? parametersService.currentTableParameters.page : 1"
+  [nzHideOnSinglePage]="true" (nzQueryParams)="handleSortChange($event)" (nzPageIndexChange)="onPageChange($event)">
+  <thead>
+    <tr>
+      <th nzWidth="60px" *ngIf="tableConfig.bulkActions?.length || allowSelectDeselectRows" class="mining-table__header"
+        [nzChecked]="selectedState === 'ALL'"
+        [nzIndeterminate]="selectedState === 'SOME'"
+        (nzCheckedChange)="selectDeselectAll()"
+        [nzSelections]="multiRowSelectionOptions"
+        [nzShowRowSelection]="! isPreSelected(null, totalRecords)"
+        scope="col"
+        [nzDisabled]="isPreSelected(null, totalRecords)">
+      </th>
+      <ng-container *ngFor="let column of columns">
+        <th nzCustomFilter column
+          class="mining-table__header"
+          [nzSortOrder]="column.sortOrder"
+          [nzWidth] ="column.widthColumn"
+          [nzSortFn]="column.sortFn"
+          [nzSortDirections]=" column.sortFn ? sortDirections :['null']" [nzColumnKey]="column.field"
+          [nzEllipsis]="true" nz-tooltip [nzTooltipTitle]="column.headerToolTip ? column.headerToolTip : column.header | translate"
+          scope="col">{{column.header | translate }}
+          <nz-filter-trigger [nzActive]="column?.filterProperties?.isFilterActive" class="mining-table__trigger-filter" *ngIf="column.filterProperties">
+            <type-based-filter
+              (selectedValue)="handleSelectedFilter($event,column.field)" [filterProperties]="column?.filterProperties"
+               [getLabel]="column?.getLabel" [textSearchTooltip]="'miningTable.toolTipText' | translate"
+              class="mining-table__type-based-filter">
+            </type-based-filter>
+          </nz-filter-trigger>
+          <i *ngIf="column.options && column.options.length && column.options[0]?.icon" nz-tooltip
+            [nzTooltipTitle]="column.options[0]?.title | translate" [ngClass]="column.options[0]?.styleClass" nz-icon
+            [nzType]="column.options[0]?.icon" nzTheme="outline" aria-hidden="true">
+          </i>
+        </th>
+      </ng-container>
+      <th *ngIf="tableConfig?.actions && tableConfig?.actions.length"
+        [nzWidth]="tableConfig?.actionsWidth ? tableConfig.actionsWidth : '55px'"
+        id="mining-table-config">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let value of expandTable.data">
+      <ng-container *ngFor="let item of childValues[value.id]">
+        <tr [ngClass]="item?.rowClassName" *ngIf="(item.parent && item.parent.expand) || !item.parent" mn-table-ellipsis-row class="mining-table__editable-row">
+          <td *ngIf="tableConfig.bulkActions?.length || allowSelectDeselectRows"
+            [nzChecked]="setOfSelectedId.has(item.id) || isPreSelected(item.id)"
+            (nzCheckedChange)="onItemChecked(item?.id, $event, tableConfig.bulkSelectionDataPoints ? item : '')"
+            [nzDisabled]="isPreSelected(item.id)">
+          </td>
+          <ng-container *ngFor="let column of columns; index as i">
+            <td [nzAlign]="getAlign(column)" *ngIf="i === 0"
+              [nzEllipsis]=" ! column?.columnAction" [nzIndentSize]="calculateIndent(item)" [nzShowExpand]=" ! ! item.children"
+              [(nzExpand)]="item.expand" (nzExpandChange)="collapse(childValues[value.id], item, $event)"
+              [rowSpan]="getRowSpanValue(item,column)" [ngClass]="item?.rowspan ? 'mining-table__merged-columns' : ''">
+              <ng-container [ngTemplateOutlet]="tableDataTemplate" [ngTemplateOutletContext]="{data: {item: item, column: column}}">
+              </ng-container>
+            </td>
+            <td [nzAlign]="getAlign(column, item)"
+              [ngClass]="item?.rowspan ? 'mining-table__merged-columns' : ''" [rowSpan]="getRowSpanValue(item,column)"
+              *ngIf="i > 0" nzEllipsis nzBreakWord>
+              <span nz-tooltip [nzTooltipTitle]="titleTemplate" *ngIf="column.toolTipField; else simpleCol">
+                <ng-container [ngTemplateOutlet]="tableDataTemplate"
+                  [ngTemplateOutletContext]="{data: {item: item, column: column}}">
+                </ng-container>
+              </span>
+              <ng-template #simpleCol>
+                <span>
+                  <ng-container [ngTemplateOutlet]="tableDataTemplate"
+                    [ngTemplateOutletContext]="{data: {item: item, column: column}}">
+                  </ng-container>
+                </span>
+              </ng-template>
+            </td>
+          </ng-container>
+          <td nzAlign="center" *ngIf="tableConfig.actions && tableConfig.actions.length">
+            <ng-container
+              [ngTemplateOutlet]="tableActionsTemplate"
+              [ngTemplateOutletContext]="{data: {item: item, actions: tableConfig.actions[item.level], disableActions: tableConfig.disableAllActions}}">
+            </ng-container>
+          </td>
+        </tr>
+      </ng-container>
+    </ng-container>
+  </tbody>
+</nz-table>
+
+<ng-template #titleTemplate>
+  <ng-container [ngTemplateOutlet]="toolTipTemplate || defaultTooltip"
+    [ngTemplateOutletContext]="{ $implicit: tooltip}">
+  </ng-container>
+</ng-template>
+<ng-template #defaultTooltip>{{tooltip}}</ng-template>
+
+<ng-template #tableDataTemplate let-data="data">
+    <ng-container *ngIf="data.column.columnAction; else planeText">
+        <div [ngSwitch]="data.column.columnAction.type">
+            <ng-template [ngSwitchCase]="'button'">
+                <button nz-button nzType="primary" [nzSize]="'small'"
+                    (click)="data.column.columnAction.onClick(data.item)">
+                    {{ resolveFieldData(data.item, data.column.field) }}
+                </button>
+            </ng-template>
+            <ng-template [ngSwitchCase]="'hyperlink'">
+                <app-display-value-as-per-type
+                    [stringList]="getValueAtPath(data.item, data.column.field)" [data]="data.item"
+                    [column]="data.column">
+                </app-display-value-as-per-type>
+                <i *ngIf="resolveFieldWarning(data.item, data.column)" nz-icon nz-tooltip nzTheme="fill" nzType="exclamation-circle"
+                  [nzTooltipTitle]="data.column.warningMessage" class="ant-helper__warning-icon" aria-hidden="true">
+                </i>
+                <i *ngIf="errorWarningIcon(data.item, data.column)" nz-icon nzTheme="fill"
+                  [nzType]="isIdentified(data.item) ? 'close-circle' : 'exclamation-circle'"
+                  [ngClass]="isIdentified(data.item) ? 'ant-helper__error-icon' : 'ant-helper__warning-icon'"
+                  aria-hidden="true">
+                </i>
+            </ng-template>
+            <ng-template [ngSwitchCase]="'string'">
+              <app-display-value-as-per-type [stringList]="getValueAtPath(data.item, data.column.field)"></app-display-value-as-per-type>
+            </ng-template>
+            <ng-template ngSwitchDefault>
+                <app-display-value-as-per-type [stringList]="getValueAtPath(data.item, data.column.field)"></app-display-value-as-per-type>
+            </ng-template>
+        </div>
+    </ng-container>
+    <ng-template #planeText>
+      <app-display-value-as-per-type [stringList]="getValueAtPath(data.item, data.column.field)" [data]="data.item"
+        [currentEditingColumnId]="currentEditingColumnId" [column]="data.column"
+        (selectedBusinessVariable)="handleShowBusinessVariablesReferenced('linkedBusinessVariables', $event)">
+      </app-display-value-as-per-type>
+      <i *ngIf="errorWarningIconForMarker(data.column)" nz-icon nzTheme="fill" [nzType]="getSeverityIcon(data.item).nzType"
+        [ngClass]="getSeverityIcon(data.item).ngClass" aria-hidden="true">
+      </i>
+
+      <i *ngIf="isCodeIconVisible(data.column, data.item)" (click)="handleTableActions(data.item)" class="ant-helper_code-icon" nz-icon
+        nzTheme="outline" nzType="code" aria-hidden="true">
+      </i>
+    </ng-template>
+</ng-template>
+
+<ng-template #tableTitleTemplate>
+  <mining-table-title [tableConfig]="tableConfig" [usage]="usage" [preFiltersObject]="preFiltersObject" [enableOrderedBusinessRuleCsv]="enableOrderedBusinessRuleCsv" [moduleIdForPreFiltering]="moduleIdForPreFiltering" [columns]="columns" [allowSelectDeselectRows]="allowSelectDeselectRows"
+  [selectedRecords]="setOfSelectedId"
+  [rows]="value" [total]="totalRecords"
+  [selectedReachabilityRow] = "selectedReachabilityRow"
+  ></mining-table-title>
+</ng-template>
+
+<ng-template #loadingIndicatorTemplate>
+  <div nz-row [nzGutter]="[10,20]">
+    <div nzSpan="24" nz-col>
+      <mn-loader> </mn-loader>
+    </div>
+    <div nz-col nzSpan="24" *ngIf="tableConfig.loading">
+      <button nz-button nzType="primary" (click)="cancelDataLoading()">Cancel</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #tableActionsTemplate let-data="data">
+  <div nz-row nzJustify="space-between">
+    <div nz-col *ngFor="let action of data.actions" [ngSwitch]="action.type">
+      <ng-container *ngIf="! isActionAvailable(data.item?.removeActions, action.value)">
+        <ng-template ngSwitchCase="dropdown">
+          <button nz-button nz-dropdown nzType="default" nzSize="small" class="dropdown-icon" nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon [nzType]="action.icon" nzTheme="outline" aria-hidden="true"></i>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item *ngFor="let option of action.options" nz-tooltip [nzDisabled]="option?.disableItem(data.item)" [nzTooltipTitle]="option?.disableItem(data.item) ? option?.optionToolTip(data.item) : null" [ngClass]="option.styleClass"
+                (click)="callOptionCallback(option.value, data.item)">
+                {{option.label | translate}}
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </ng-template>
+        <ng-template ngSwitchCase="empty"></ng-template>
+        <!-- Considering Button as default therefore adding button in default and thus there is no switch block for type button -->
+        <ng-template ngSwitchDefault>
+          <span nz-tooltip [nzTooltipTitle]="data.item?.buttonToolTip">
+            <button nz-button
+              [nzType]="action?.prop?.type ? action.prop.type : 'primary'"
+              [nzSize]="action?.prop?.size ? action.prop.size: 'small'"
+              [nzDanger]="action?.prop?.isDelete"
+              [disabled]="action?.disabled || data.disableActions || isActionAvailable(data.item?.disabledActions, action.value)"
+              (click)="callOptionCallback(action.value, data.item)">
+              <i *ngIf="action.icon" nz-icon [nzType]="action.icon" nzTheme="outline" aria-hidden="true"></i>
+              {{action.label | translate}}
+            </button>
+          </span>
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #messageTemplate let-message>
+    <span>{{ 'graphqlErrorMsg' | translate }}</span>
+    <i class="error-message-close-icon" nz-icon nzType="close" (click)="closeErrorMessage()"></i>
+</ng-template>

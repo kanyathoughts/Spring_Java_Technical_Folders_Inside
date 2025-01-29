@@ -1,0 +1,197 @@
+//BCOBONL JOB
+//**********************************************************************00001000
+//** COBOL ONLINE TRANSLATE AND COMPILE                    MVS BCOBONL**00002000
+//**********************************************************************00003000
+//** Infopoint Product: RP  Release: 5.0  Putlevel: 01                **00004000
+//** Description: INFOPOINT RELATIONSHIP PRICING                      **00005000
+//**********************************************************************00006000
+//** BEFORE EXECUTING THIS PROCEDURE:                                 **00007000
+//**                                                                  **00008000
+//**   This procedure will require access to other Infopoint          **00009000
+//**   product libraries as indicated below.  Change these            **00010000
+//**   libraries in this procedure as appropriate to your site.       **00011000
+//**                                                                  **00012000
+//**     Library  Infopoint Product Name                              **00013000
+//**     -------- --------------------------------------------        **00014000
+//**     COPYLIB  BI 15 INFOPOINT RUNTIME COMPONENTS                  **00015000
+//**     COPYLIB  MI 51 INFOPOINT MICM                                **00016000
+//**     COPYLIB  RF 21 INFOPOINT RELATIONSHIP CIF                    **00017000
+//**                                                                  **00018000
+//** 1. Check all symbolics and JCL for your site assignments.        **00019000
+//**    Be sure to change the CLASS and TIME JOB CARD parameters      **00020000
+//**    for a long running job.                                       **00021000
+//**                                                                  **00022000
+//** 2. Verify the $COMPPGM PARM statement:                           **00023000
+//**                                                                  **00024000
+//**     - verify that the 'DATA(31)' option is present unless        **00025000
+//**       instructed differently in the installation guide.          **00026000
+//**     - the options 'NOOFF NOLIST NOS NOX' are included to limit   **00027000
+//**       compiler output; change these as appropriate to your site. **00028000
+//**                                                                  **00029000
+//** 3. If the compiler system libraries are not included in the      **00030000
+//**    system LINK-LIST, uncomment and assign the correct library    **00031000
+//**    to the SYSCOMP symbolic, and uncomment the STEPLIB line in    **00032000
+//**    the COB step.                                                 **00033000
+//**                                                                  **00034000
+//** 4. Change all the system and product library names and add       **00035000
+//**    additional libraries as appropriate to your site.             **00036000
+//**                                                                  **00037000
+//** 5. Change the CPYLIN symbolic library values to the SOURCE       **00038000
+//**    libraries where the un-translated copybooks reside, and       **00039000
+//**    add any additional copybook libraries as required.            **00040000
+//**    The un-translated CICS copybooks are delivered in the         **00041000
+//**    COBOL.SOURCE library, other copybooks are delivered in        **00042000
+//**    the COBOL.COPYLIB library.                                    **00043000
+//**                                                                  **00044000
+//** 6. Review the submission and execution instructions for these    **00045000
+//**    nested procedures at the end of this member.                  **00046000
+//**                                                                  **00047000
+//** 7. After all the mass compiles/assemblies are completed:         **00048000
+//**                                                                  **00049000
+//**     - execute the BNKLKEDD procedure to relink the system if     **00050000
+//**       using the COBOL DYNAM compile option, or                   **00051000
+//**                                                                  **00052000
+//**     - execute the BNKLKED procedure to relink the system if      **00053000
+//**       using the COBOL NODYNAM compile option.                    **00054000
+//**                                                                  **00055000
+//**    NOTE:  If generating MAP DSECTS, the BASSMAD procedure should **00056000
+//**           have been executed prior to the BCOBONL procedure.     **00057000
+//**                                                                  **00058000
+//** NOTE:  This procedure link-edits the program object to the       **00059000
+//**        product library in LKED1.  Change as required.            **00060000
+//**                                                                  **00061000
+//**********************************************************************00062000
+//**********************************************************************00063000
+//BCOBONL PROC M=XXXXXX,                                                00064000
+//        COMPPGM='IGYCRCTL',                     COMPILER              00065000
+//*       SYSCOMP='your.system.compiler.lib',     SYSTEM COBOL LIBRARY  00066000
+//        SRCLIN1='BNKCA.RP50.COBOL.SOURCE',      SOURCE LIBRARY        00067000
+//        CPYLIN1='BNKCA.RP50.COBOL.COPYLIB',     COPYBOOK LIBRARY      00068000
+//        CPYLIN2='BNKCA.BI15.COBOL.COPYLIB',     COPYBOOK LIBRARY      00069000
+//        CPYLIN3='BNKCA.MI51.COBOL.COPYLIB',     COPYBOOK LIBRARY      00070000
+//        CPYLIN4='BNKCA.RF21.COBOL.COPYLIB',     COPYBOOK LIBRARY      00071000
+//        CICSLLB='your.CTS.lib.SDFHLOAD',        CICS LOAD LIBRARY     00072000
+//        CICSCOB='your.CTS.lib.SDFHCOB',         CICS COBOL LIBRARY    00073000
+//**********************************************************************00074000
+//        OBJLOUT='BNKCA.RP50.OBJLIB'             OUTPUT OBJECT LIBRARY 00075000
+//**********************************************************************00076000
+//*                                                                     00077000
+//COB     EXEC PGM=&COMPPGM,                                            00078000
+//             PARM=('OPT(STD),TRUNC(OPT),NOADV,APOST,CICS("SP")',      00079000
+//             LIB,OBJ,NOSEQ,DATA(31),NOOFF,NOLIST,NOS,NOX)             00080000
+//STEPLIB  DD  DSN=&CICSLLB,DISP=SHR                                    00081000
+//****     DD  DSN=&SYSCOMP,DISP=SHR                                    00082000
+//SYSLIB   DD  DSN=&CPYLIN1,DISP=SHR                                    00083000
+//         DD  DSN=&CPYLIN2,DISP=SHR                                    00084000
+//         DD  DSN=&CPYLIN3,DISP=SHR                                    00085000
+//         DD  DSN=&CPYLIN4,DISP=SHR                                    00086000
+//         DD  DSN=&CICSCOB,DISP=SHR                                    00087000
+//SYSPRINT DD  SYSOUT=*                                                 00088000
+//SYSPUNCH DD  SYSOUT=*                                                 00089000
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00090000
+//SYSUT2   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00091000
+//SYSUT3   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00092000
+//SYSUT4   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00093000
+//SYSUT5   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00094000
+//SYSUT6   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00095000
+//SYSUT7   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00096000
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(,PASS),UNIT=SYSDA,SPACE=(CYL,(5,1)), 00097000
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=3120)                     00098000
+//SYSIN    DD  DSN=&SRCLIN1(&M),DISP=SHR                                00099000
+//*                                                                     00100000
+//LKED1   EXEC PGM=IEWL,PARM='REUS,LIST,XREF,NCAL',                     00101000
+//             COND=(5,LT,COB)                                          00102000
+//SYSUDUMP DD  SYSOUT=*                                                 00103000
+//SYSPRINT DD  SYSOUT=*                                                 00104000
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))                             00105000
+//SYSLIB   DD  DSN=&OBJLOUT,DISP=SHR                                    00106000
+//SYSLMOD  DD  DSN=&OBJLOUT(&M),DISP=SHR                                00107000
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(OLD,DELETE)                          00108000
+//*                                                                     00109000
+//**********************************************************************00110000
+//** DELETE LOADSET IF COB FAILS                                      **00111000
+//**********************************************************************00112000
+//DELETE2 EXEC PGM=IEFBR14,COND=(5,GT,COB)                              00113000
+//LOADSET  DD  DSN=&&LOADSET,DISP=(OLD,DELETE)                          00114000
+//*                                                                     00115000
+//        PEND                                                          00116000
+//*                                                                     00117000
+//********************************************************************  00118000
+//* PART 1                                                              00119000
+//********************************************************************  00120000
+//PART1   PROC                                                          00121000
+//RPLACT00 EXEC BCOBONL,M=RPLACT00 *Account Incentives Profile Functio  00122000
+//RPLCRW00 EXEC BCOBONL,M=RPLCRW00 *Cash Rewards Function Module        00123000
+//RPLCRW01 EXEC BCOBONL,M=RPLCRW01 *Cash Rewards Incentives Profile Fu  00124000
+//RPLQUA00 EXEC BCOBONL,M=RPLQUA00 *Qualified Relationships Function    00125000
+//RPLSEC00 EXEC BCOBONL,M=RPLSEC00 *Relationships Profile Function      00126000
+//RPLTRM00 EXEC BCOBONL,M=RPLTRM00 *Trans Accum Maintenance Function    00127000
+//RPLTRM01 EXEC BCOBONL,M=RPLTRM01 *Trans Accum Inquiry Function        00128000
+//RPLEVT01 EXEC BCOBONL,M=RPLEVT01 *Event Activity Inquiry Function     00129000
+//RPLXXX01 EXEC BCOBONL,M=RPLXXX01 *Relationship Inquiry Function       00130000
+//RPLXXX02 EXEC BCOBONL,M=RPLXXX02 *Relationship New Function           00131000
+//RPLXXX03 EXEC BCOBONL,M=RPLXXX03 *Relationship Maintenance Function   00132000
+//RPLXXX04 EXEC BCOBONL,M=RPLXXX04 *Outside Relationship Function       00133000
+//RPLXXX05 EXEC BCOBONL,M=RPLXXX05 *Add-on Relationship Function        00134000
+//RPLXXX06 EXEC BCOBONL,M=RPLXXX06 *Add-on Relationship Review Functio  00135000
+//RPLXXX07 EXEC BCOBONL,M=RPLXXX07 *Secondary Services Available Funct  00136000
+//RPLXXX08 EXEC BCOBONL,M=RPLXXX08 *Validation Failure Date Update Fun  00137000
+//RPLXXX10 EXEC BCOBONL,M=RPLXXX10 *Account Incentive Override Functio  00138000
+//RPLXXX11 EXEC BCOBONL,M=RPLXXX11 *Secondary Services Inquiry Functio  00139000
+//RPLXXX12 EXEC BCOBONL,M=RPLXXX12 *Rel New Function - Minimal edit cr  00140000
+//RPLXXX13 EXEC BCOBONL,M=RPLXXX13 *Expiration Date Maintenance Functi  00141000
+//RPLXXX30 EXEC BCOBONL,M=RPLXXX30 *RP Real Time Processing Driver Prg  00142000
+//RPLXXX31 EXEC BCOBONL,M=RPLXXX31 *RP Real Time Processing Qualify Pr  00143000
+//RPLXXX32 EXEC BCOBONL,M=RPLXXX32 *RP Real Time Processing Validate P  00144000
+//RPLXXX33 EXEC BCOBONL,M=RPLXXX33 *RP Real Time Processing Enroll Prg  00145000
+//RPLXXX36 EXEC BCOBONL,M=RPLXXX36 *RP Real Time Add, Delete, Inq Prgm  00146000
+//RPLXXX37 EXEC BCOBONL,M=RPLXXX37 *RP Real Time Processing Inquire Pr  00147000
+//RPLXXX38 EXEC BCOBONL,M=RPLXXX38 *RP Real Time Processing History Pr  00148000
+//RPLXXX39 EXEC BCOBONL,M=RPLXXX39 *RP Real Time Processing History Pr  00149000
+//RPL100   EXEC BCOBONL,M=RPL100   *RPINQ 1 - Relationship Inquiry 1    00150000
+//RPL102   EXEC BCOBONL,M=RPL102   *RPINQ 2 - Relationship Inquiry 2    00151000
+//RPL110   EXEC BCOBONL,M=RPL110   *RPPRO1 - Incentives Profile         00152000
+//RPL115   EXEC BCOBONL,M=RPL115   *RPPRO2 - Cash Rewards Profile       00153000
+//RPL120   EXEC BCOBONL,M=RPL120   *RPPRO3 - Relationships Profile      00154000
+//RPL130   EXEC BCOBONL,M=RPL130   *RPSSAVL - Secondary Services Avail  00155000
+//RPL135   EXEC BCOBONL,M=RPL135   *RPSSINQ - Secondary Services Inqui  00156000
+//RPL140   EXEC BCOBONL,M=RPL140   *RPEVENT - Event Activity Inquiry    00157000
+//RPL300   EXEC BCOBONL,M=RPL300   *RPNEW - Relationship New            00158000
+//RPL310   EXEC BCOBONL,M=RPL310   *RPMAINT - Relationship Maintenance  00159000
+//RPL315   EXEC BCOBONL,M=RPL315   *RPVFDU - Validation Failure Dt Upd  00160000
+//RPL320   EXEC BCOBONL,M=RPL320   *RPRELO - Outside Relationship       00161000
+//RPL330   EXEC BCOBONL,M=RPL330   *RPNEWREV - Rel New Review           00162000
+//RPL340   EXEC BCOBONL,M=RPL340   *RPMHIST - Maintenance History       00163000
+//RPL350   EXEC BCOBONL,M=RPL350   *RPADDON - Add-on Relationship       00164000
+//RPL355   EXEC BCOBONL,M=RPL355   *RPADDONR - Add-on Relationship Rev  00165000
+//RPL360   EXEC BCOBONL,M=RPL360   *RPCASHRW - Cash Reward              00166000
+//RPL365   EXEC BCOBONL,M=RPL365   *RPINCOVR - Account Incentive Overr  00167000
+//RPL370   EXEC BCOBONL,M=RPL370   *RPTRACCI - Transaction Accum Inqui  00168000
+//RPL375   EXEC BCOBONL,M=RPL375   *RPTRACCM - Transaction Accum Maint  00169000
+//RPL380   EXEC BCOBONL,M=RPL380   *RPEXPDT - Maintenance Expiration D  00170000
+//RPO0DP81 EXEC BCOBONL,M=RPO0DP81 *Deposit Interface                   00171000
+//        PEND                                                          00172000
+//*                                                                     00173000
+//********************************************************************  00174000
+//* PART 2                                                              00175000
+//********************************************************************  00176000
+//PART2   PROC                                                          00177000
+//RPO0DP85 EXEC BCOBONL,M=RPO0DP85 *Deposit Interface 8.5               00178000
+//RPO0DP86 EXEC BCOBONL,M=RPO0DP86 *Deposit Interface 8.6               00179000
+//RPO0RF21 EXEC BCOBONL,M=RPO0RF21 *RCIF Interface                      00180000
+//RPO0TI83 EXEC BCOBONL,M=RPO0TI83 *Time 8.3 Interface                  00181000
+//RPO0TI85 EXEC BCOBONL,M=RPO0TI85 *Time 8.3 EP 2 Interface             00182000
+//RPO0TI86 EXEC BCOBONL,M=RPO0TI86 *Time 8.6 Interface                  00183000
+//RPO7105  EXEC BCOBONL,M=RPO7105  *Online User Exit (7105)             00184000
+//        PEND                                                          00185000
+//*                                                                     00186000
+//********************************************************************  00187000
+//** Separately uncomment each one of the following execute             00188000
+//** procedure statements, and submit this job for execution.           00189000
+//** The separate execution of each nested procedure will avoid         00190000
+//** the EXCESSIVE NUMBER OF EXECUTE STATEMENTS error.                  00191000
+//********************************************************************  00192000
+//*        EXEC PROC=PART1                                              00193000
+//*        EXEC PROC=PART2                                              00194000
+//*                                                                     00195000
+//

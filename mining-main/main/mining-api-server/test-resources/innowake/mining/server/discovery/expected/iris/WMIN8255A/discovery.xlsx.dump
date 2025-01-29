@@ -1,0 +1,74 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3995,"","DBD8255A","src/ims/WMIN8255A/A/dbd/DBDA.dbd","IMS","IMS_DBD","PHYSICAL",0,0,15,0,16,1,0,-1,-1
+3993,3996,"DBD8255A","","IMS","IMS_PCB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3998,"","DBD8255B","src/ims/WMIN8255A/B/dbd/DBDB.dbd","IMS","IMS_DBD","PHYSICAL",0,0,15,0,16,1,0,-1,-1
+3997,3999,"DBD8255B","","IMS","IMS_PCB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3981,"","DLIFUNCT","src/cobol/WMIN8255A/shared/copies/DLIFUNCT.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,13,0,14,0,0,-1,-1
+3988,"","INVENPCB","src/cobol/WMIN8255A/shared/copies/INVENPCB.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,10,0,11,0,0,-1,-1
+3985,"","LOADPCB","src/cobol/WMIN8255A/shared/copies/LOADPCB.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,10,0,11,0,0,-1,-1
+3983,"","LOADSEGS","src/cobol/WMIN8255A/shared/copies/LOADSEGS.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,18,0,20,0,0,-1,-1
+3979,"","LOADSSAS","src/cobol/WMIN8255A/shared/copies/LOADSSAS.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,18,0,23,0,0,-1,-1
+3977,"","M8255A","src/jcl/WMIN8255A/A/jobs/M8255A.job","JCL","JCL_JOB","PHYSICAL",1,0,9,7,16,1,0,-1,-1
+3984,3977,"M8255A.EXECPGM1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3978,"","M8255B","src/jcl/WMIN8255A/B/jobs/M8255B.job","JCL","JCL_JOB","PHYSICAL",1,0,7,5,12,1,0,-1,-1
+3982,3978,"M8255B.EXECPGM1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3980,"","P8255A","src/cobol/WMIN8255A/A/programs/P8255A.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",3,0,90,0,108,1,0,-1,-1
+3991,"","P8255B","src/cobol/WMIN8255A/B/programs/P8255B.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",3,0,47,0,63,4,0,-1,-1
+3996,"","PSB8255A","src/ims/WMIN8255A/A/psb/PSBA.psb","IMS","IMS_PSB","PHYSICAL",2,0,10,3,14,0,0,-1,-1
+3999,"","PSB8255B","src/ims/WMIN8255A/B/psb/PSBB.psb","IMS","IMS_PSB","PHYSICAL",2,0,10,3,14,0,0,-1,-1
+3992,3995,"QRSTCASE","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3994,3998,"QRSTCASE","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3986,"","SEGS0001","src/cobol/WMIN8255A/shared/copies/SEGS0001.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,20,0,23,0,0,-1,-1
+3987,"","SSAS0001","src/cobol/WMIN8255A/shared/copies/SSAS0001.cpy","COBOL","COBOL_COPYBOOK","PHYSICAL",0,0,27,0,33,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3995,"DBD8255A","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""PHDAM"",""IMS_OS_ACCESS_TYPE"":""OSAM""}"
+3998,"DBD8255B","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""PHDAM"",""IMS_OS_ACCESS_TYPE"":""OSAM""}"
+3977,"M8255A","EXEC","Properties: [PGM=DFSRRC00,PARM=DLI,P8255A,PSB8255A,,,,,,,,,,N,N], Data Definitions: [], Additional Properties: [Fully Qualified Step name=EXECPGM1,Step name=EXECPGM1,Job name=M8255A]"
+3978,"M8255B","EXEC","Properties: [PGM=DFSRRC00,PARM=DLI,P8255B,PSB8255B,,,,,,,,,,N,N], Data Definitions: [], Additional Properties: [Fully Qualified Step name=EXECPGM1,Step name=EXECPGM1,Job name=M8255B]"
+3980,"P8255A","CALL","CALL 'CBLTDLI' USING: ['GHN ', INVENTORY-PCB-MASK, SEGMENT-I-O-AREA, VENDOR-SSA-UNQUALIFIED]{calltype : IMS-DB-MNGMNT}"
+3991,"P8255B","CALL","CALL 'CBLTDLI' USING: ['GN  ', INVENTORY-PCB-MASK, SEGMENT-I-O-AREA, LOCATION-SSA-UNQUALIFIED]{calltype : IMS-DB-MNGMNT}"
+3991,"P8255B","CONDITIONAL","IF IPCB-STATUS-CODE EQ 'GB'"
+3991,"P8255B","CONDITIONAL","IF IPCB-STATUS-CODE NE 'GA' AND IPCB-STATUS-CODE NE SPACE"
+3991,"P8255B","ENTRY","ENTRY DLITCBL USING: [INVENTORY-PCB-MASK]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3995,"DBD8255A",3992,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_COMPRTN"":""[ABCD02C1, DATA, INIT]"",""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+3993,"DBD8255A",3995,"DBD8255A","IMS","IMS_DBD","References","","EARLY","{}",-1,-1,-1,-1
+3993,"DBD8255A",3992,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+3998,"DBD8255B",3994,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_COMPRTN"":""[ABCD02C1, DATA, INIT]"",""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+3997,"DBD8255B",3998,"DBD8255B","IMS","IMS_DBD","References","","EARLY","{}",-1,-1,-1,-1
+3997,"DBD8255B",3994,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+3977,"M8255A",3984,"M8255A.EXECPGM1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+3984,"M8255A.EXECPGM1.EXEC_PGM",0,"DFSRRC00","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":2,""OUTBOUND_TARGETS"":[""P8255A"",""PSB8255A""]}",-1,-1,-1,-1
+3984,"M8255A.EXECPGM1.EXEC_PGM",3980,"P8255A","COBOL","COBOL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+3984,"M8255A.EXECPGM1.EXEC_PGM",3996,"PSB8255A","IMS","IMS_PSB","References","","LATE","{}",-1,-1,-1,-1
+3978,"M8255B",3982,"M8255B.EXECPGM1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+3982,"M8255B.EXECPGM1.EXEC_PGM",0,"DFSRRC00","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":2,""OUTBOUND_TARGETS"":[""P8255B"",""PSB8255B""]}",-1,-1,-1,-1
+3982,"M8255B.EXECPGM1.EXEC_PGM",3991,"P8255B","COBOL","COBOL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+3982,"M8255B.EXECPGM1.EXEC_PGM",3999,"PSB8255B","IMS","IMS_PSB","References","","LATE","{}",-1,-1,-1,-1
+3980,"P8255A",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""IMS_SSA"":[""INVENSEG""],""CALL_TYPE"":""IMS_DB"",""DB_ACCESS_TYPE"":[""READ""],""DB_ACCESS_OPERATION"":[""GHN""]}",4290,143,-1,-1
+3980,"P8255A",3993,"DBD8255A","IMS","IMS_PCB","References","","LATE","{}",4290,143,-1,-1
+3980,"P8255A",3995,"DBD8255A","IMS","IMS_DBD","References","","LATE","{""IMS_SSA"":[""INVENSEG""],""IMS_SEGMENTS"":""[QRSTCASE]"",""DB_ACCESS_TYPE"":[""READ""],""DB_ACCESS_OPERATION"":[""GHN""]}",4290,143,-1,-1
+3980,"P8255A",3992,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","LATE","{}",4290,143,-1,-1
+3991,"P8255B",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""IMS_SSA"":[""INLOCSEG""],""CALL_TYPE"":""IMS_DB"",""DB_ACCESS_TYPE"":[""READ""],""DB_ACCESS_OPERATION"":[""GN""]}",956,140,-1,-1
+3991,"P8255B",3998,"DBD8255B","IMS","IMS_DBD","References","","LATE","{""IMS_SSA"":[""INLOCSEG""],""IMS_SEGMENTS"":""[QRSTCASE]"",""DB_ACCESS_TYPE"":[""READ""],""DB_ACCESS_OPERATION"":[""GN""]}",956,140,-1,-1
+3991,"P8255B",3997,"DBD8255B","IMS","IMS_PCB","References","","LATE","{}",956,140,-1,-1
+3991,"P8255B",3981,"DLIFUNCT","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3991,"P8255B",3988,"INVENPCB","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3991,"P8255B",3994,"QRSTCASE","IMS","IMS_DBD_SEGMENT","References","","LATE","{}",956,140,-1,-1
+3991,"P8255B",3986,"SEGS0001","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3991,"P8255B",3987,"SSAS0001","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3996,"PSB8255A",3993,"DBD8255A","IMS","IMS_PCB","References","","EARLY","{""IMS_DBD_NAME"":""DBD8255A"",""IMS_PCB_PROCOPT"":""GOTP"",""IMS_PCB_SENSEG"":""QRSTCASE"",""IMS_PCB_TYPE"":""DB""}",-1,-1,-1,-1
+3996,"PSB8255A",3995,"DBD8255A","IMS","IMS_DBD","References","","EARLY","{}",-1,-1,-1,-1
+3999,"PSB8255B",3998,"DBD8255B","IMS","IMS_DBD","References","","EARLY","{}",-1,-1,-1,-1
+3999,"PSB8255B",3997,"DBD8255B","IMS","IMS_PCB","References","","EARLY","{""IMS_DBD_NAME"":""DBD8255B"",""IMS_PCB_PROCOPT"":""GOTP"",""IMS_PCB_SENSEG"":""QRSTCASE"",""IMS_PCB_TYPE"":""DB""}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

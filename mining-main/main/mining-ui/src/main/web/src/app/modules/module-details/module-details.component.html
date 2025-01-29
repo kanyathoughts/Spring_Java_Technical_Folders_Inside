@@ -1,0 +1,218 @@
+<nz-page-header class="module-details-page-header" [nzGhost]="false">
+  <nz-breadcrumb nz-page-header-breadcrumb>
+    <app-module-breadcrumb [currentModule]="selectedModule"></app-module-breadcrumb>
+  </nz-breadcrumb>
+  <nz-avatar [nzShape]="'square'" nz-page-header-avatar [nzSrc]="getIconSource()"> </nz-avatar>
+  <nz-page-header-title>
+    {{selectedModule?.name}}
+  </nz-page-header-title>
+  <nz-page-header-subtitle>
+    {{moduleSubtitle}}
+  </nz-page-header-subtitle>
+  <nz-page-header-extra>
+    <mn-toolbar-button>
+      <ng-template mn-toolbar-button-dir>
+        <button nz-button nzType="default" class="buttonTruncTemplate" [routerLink]="routeDependencies">
+          <em nz-icon nzType="branches" nzTheme="outline"></em>
+          {{'module.graphs.dependencyGraph' | translate}}
+        </button>
+      </ng-template>
+      <ng-template mn-toolbar-button-dir *ngIf="isDataLineageExtensionAvailable">
+        <span class="buttonTruncTemplate" [nzTooltipTrigger]=" ! (isDataLineageAvailable) ? 'hover' : null" nz-tooltip
+          nzTooltipTitle="{{'module.dataLineageTooltip' | translate}}">
+          <button [disabled]=" ! (isDataLineageAvailable)" nz-button nzType="default"
+            (click)="openModalForLineageExport()">
+            <em nz-icon nzType="partition" nzTheme="outline"></em>
+            {{'module.graphs.dataLineage' | translate}}
+          </button>
+        </span>
+      </ng-template>
+      <ng-template mn-toolbar-button-dir>
+        <span class="buttonTruncTemplate" nz-tooltip [nzTooltipTitle]="( ! viewCFG ? controlFlowMessage : '')"
+          nzTooltipPlacement="bottom">
+          <button nz-button nzType="default" [routerLink]="routeControlFlow" [disabled]="! viewCFG">
+            <em nz-icon nzType="apartment" nzTheme="outline"></em>
+            {{'module.graphs.controlFlowGraph' | translate}}
+          </button>
+        </span>
+      </ng-template>
+      <ng-template mn-toolbar-button-dir>
+        <mn-code-viewer-button class="buttonTruncTemplate" [moduleDetails]="selectedModule" [projectId]="projectId"
+          label="module.codeViewer"></mn-code-viewer-button>
+      </ng-template>
+      <ng-template mn-toolbar-button-dir [alwaysHidden]="true" *ngIf="isEclipseLinkActive">
+        <mn-eclipse-button [isLabelVisible]="true" (clicked)="openInEclipse()">
+        </mn-eclipse-button>
+      </ng-template>
+    </mn-toolbar-button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<nz-content>
+  <nz-tabset class="module-details__tabset" [nzAnimated]="false" nzLinkRouter nzSize="small">
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+      [routerLink]="routeToDetails('overview')"> {{'module.overview' |
+        translate}}
+      </a>
+      <nz-space nzDirection="vertical" class="mining__card-grid-layout">
+        <ng-container *ngIf="hasRequiresReviewFlag()">
+          <nz-alert *nzSpaceItem  nzType="warning" [nzMessage]="alertContent" nzShowIcon></nz-alert>
+        </ng-container>
+        <nz-list *nzSpaceItem nzGrid>
+          <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 16, lg: 16, xl: 16, xxl: 16 }">
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="12" [nzXl]="12" [nzXXl]="12">
+              <nz-list-item>
+                <nz-card nzTitle="{{'module.characteristics.title' | translate}}">
+                  <mn-module-characteristics [module]="selectedModule" [moduleComplexity]="moduleComplexity" [numberOfErrors]="errorResponse?.length">
+                  </mn-module-characteristics>
+                </nz-card>
+              </nz-list-item>
+              <nz-list-item *ngIf="virtualModuleDetail && virtualModuleDetail.length && selectedModule">
+                <virtual-module-details [selectedModule]="selectedModule" [virtualModuleDetails]="virtualModuleDetail">
+                </virtual-module-details>
+              </nz-list-item>
+              <nz-list-item *ngIf="dnaCardList.length">
+                <nz-card [nzTitle]="titleTemplate" *appLoader="loadState">
+                  <nz-row *ngFor="let dnaCardData of dnaCardList; index as i">
+                    <mn-module-dna [dnaCardData]="dnaCardData" [projectId]="projectId" [moduleId]="moduleId" [chartFilterData]="dnaCardData.chartFilterData"></mn-module-dna>
+                  </nz-row>
+                </nz-card>
+              </nz-list-item>
+            </div>
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="12" [nzXl]="12" [nzXXl]="12">
+              <nz-list-item>
+                <nz-card nzTitle="{{'module.description' | translate}}" [nzExtra]="editModuleDescription">
+                    <p class="module-details__card-description">{{selectedModule?.description}}</p>
+                    <div *ngIf=" ! selectedModule?.description || ! selectedModule?.description.trim()">
+                      <nz-empty></nz-empty>
+                    </div>
+                </nz-card>
+                <ng-template #editModuleDescription>
+                  <button *ngIf="isEditor" nz-button nzType="link" nzSize="small"
+                    (click)="editModuleDetails($event)">
+                    {{'btnLabel.edit' | translate}}
+                  </button>
+                </ng-template>
+              </nz-list-item>
+              <nz-list-item>
+                <custom-properties-card [currentClient]="currentClient" [selectedModule]="selectedModule"
+                  [customProperties]="selectedModule?.customProperties"></custom-properties-card>
+              </nz-list-item>
+              <nz-list-item>
+                <nz-card [nzTitle]="iconTemplate" [nzExtra]="taxonomyListLength> 0 ? editBtnTemplate : ''" *ngIf = "taxonomyResponse?.taxonomies?.length">
+                  <module-overview-taxonomy [isEditor]="isEditor" [moduleIdArray]="moduleIdArray" [moduleName]="moduleName" [projectId]="projectId" (taxonomyListLength) ="getTaxonomyListLength($event)" (closeModal)="getShowModalfromOverviewTaxonomy($event)" [showModalfromModuleDetails]="showModal" [taxonomyResponse] = "taxonomyResponse"></module-overview-taxonomy>
+                </nz-card>
+                <ng-template #editBtnTemplate>
+                  <button *ngIf="isEditor" nz-button nzType="link"
+                    (click)="assignTaxonomies()">
+                    {{'btnLabel.edit' | translate}}
+                  </button>
+                </ng-template>
+                <ng-template #iconTemplate>
+                  {{'module.taxonomies' | translate}}
+                  <i class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                    nzTooltipTitle="{{'module.taxonomiesTooltip' | translate}}"></i>
+                </ng-template>
+              </nz-list-item>
+            </div>
+          </div>
+        </nz-list>
+      </nz-space>
+    </nz-tab>
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/annotations']">
+        {{'module.annotations' | translate}}
+        <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="badgeObject.annotationCount" class="module-details__badge" nzShowZero>
+        </nz-badge>
+      </a>
+      <ng-template nz-tab>
+        <mn-module-annotations [projectId]="projectId" [moduleId]="moduleId" [module]="selectedModule">
+        </mn-module-annotations>
+      </ng-template>
+    </nz-tab>
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/data-dictionary']">
+        {{'module.dataDictionary' | translate}}
+        <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="badgeObject.dataDictionaryCount" class="module-details__badge" nzShowZero>
+        </nz-badge>
+      </a>
+      <ng-template nz-tab>
+        <mn-module-data-dictionary [projectId]="projectId" [module]="selectedModule" [moduleIdForPreFiltering]="moduleIdForPreFiltering">
+        </mn-module-data-dictionary>
+      </ng-template>
+    </nz-tab>
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/dependencies']">
+        {{'module.dependencies' | translate}}
+        <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="badgeObject.dependencyCount" class="module-details__badge" nzShowZero>
+        </nz-badge>
+      </a>
+      <ng-template nz-tab>
+        <mn-module-dependencies [projectId]="projectId" [moduleId]="moduleId" [moduleHash] = "moduleHash" [undiscoveredDependencies]="undiscoveredDependencies">
+        </mn-module-dependencies>
+      </ng-template>
+    </nz-tab>
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/errors']">
+        {{'module.errors' | translate}}
+        <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="errorResponse?.length" [ngClass]="! errorResponse?.length ? 'module-details__badge': ''" nzShowZero>
+        </nz-badge>
+      </a>
+      <ng-template nz-tab>
+        <mn-module-errors [projectId]="projectId" [moduleId]="moduleId" [code] ="code">
+        </mn-module-errors>
+      </ng-template>
+    </nz-tab>
+    <nz-tab>
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/call-chain']">
+        {{'module.callChain' | translate}}
+      </a>
+      <ng-template nz-tab>
+        <mn-call-chain-export *ngIf="selectedModule" [currentModuleDetails]="moduleProjectDetails.moduleDetails">
+        </mn-call-chain-export>
+      </ng-template>
+    </nz-tab>
+    <nz-tab *ngIf="badgeObject.schemaFieldCount || activeTabAsPerRoute === 'data-schema'">
+      <a class="mining__tabs" *nzTabLink nz-tab-link [routerLinkActive]="['mining__tabs-active']"
+        [routerLink]="['/project-' + projectId + '/module-' + moduleHash + '/details/data-schema']"> {{schemaTabHeader}}
+        <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="badgeObject.schemaFieldCount" class="module-details__badge" nzShowZero>
+        </nz-badge>
+      </a>
+      <ng-template nz-tab>
+        <mn-module-schema-info [projectId]="projectId" [moduleId]="moduleId">
+        </mn-module-schema-info>
+      </ng-template>
+    </nz-tab>
+  </nz-tabset>
+</nz-content>
+<ng-template #alertContent>
+  <div nz-row nz-justify="space-between">
+    <div nz-col nzFlex="auto">
+      <span>{{'modifiedAlert' | translate}}</span>
+    </div>
+    <span nz-col>
+      <button nz-button nzSize="small" nzType="link" nz-popconfirm
+        nzPopconfirmTitle="{{ 'popConfirmDelete' | translate }}" nzPopconfirmPlacement="bottomRight"
+        (nzOnConfirm)="updateRequiresReviewStatus()" nzOkText="{{ 'btnLabel.delete' | translate }}"
+        nzCancelText="{{ 'btnLabel.cancel' | translate }}">
+        {{'deleteWarning' | translate}}
+      </button>
+    </span>
+  </div>
+</ng-template>
+<ng-template #titleTemplate>
+  {{'navigation.dna' | translate}}
+  <em class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+    [nzTooltipTitle]="toolTipTemplate"></em>
+</ng-template>
+<ng-template #toolTipTemplate>
+  {{ 'dnaCardToolTip' | translate }}
+  <a href="http://appmod-documentation.deloitte.com/innowake-documentation/trunk/mining/mining-manual/mining-web-ui/#58-DNA"
+    target="_blank" rel="noopener">{{ 'updateProjectMember.learnMore' | translate }}</a>.
+</ng-template>

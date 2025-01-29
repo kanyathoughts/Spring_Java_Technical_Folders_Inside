@@ -1,0 +1,9 @@
+  CREATE TABLE TESTVIEW
+  (
+   TEST_VIEW_ID  CHAR(10)
+   NOT NULL
+   )
+  )
+  IN TESTSCHEMA
+  ;
+  

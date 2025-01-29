@@ -1,0 +1,348 @@
+--*********************************************************************         
+--**  CHANGE VALUE                         !!!!!!!!!!!!!!!!!        ***         
+--*********************************************************************         
+--*                                                                             
+--*********************************************************************         
+--**  DELETE FROM TABLES WITH NO RELATIONSHIPS TO PLAN PART         ***         
+--*********************************************************************         
+ SELECT COUNT(*) FROM   IW_NO.TEIL_LETR_TRIGGER                         00010001
+   WHERE IW_NO = '00000';                                               00010001
+ DELETE FROM   IW.TEIL_LETR_TRIGGER                                     00010001
+   WHERE IW_NO = '00000';                                               00010001
+ SELECT COUNT(*) FROM   IW.TEIL_LETR_TRIGGER                            00010001
+   WHERE IW_NO = '00000';                                               00010001
+ COMMIT;                                                                        
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.SUSP_NON_EDTS_TEIL                           00020001
+   WHERE IW_NO = '00000';                                               00020001
+ DELETE FROM   IW.SUSP_NON_EDTS_TEIL                                    00020001
+   WHERE IW_NO = '00000';                                               00020001
+ SELECT COUNT(*) FROM   IW.SUSP_NON_EDTS_TEIL                           00020001
+   WHERE IW_NO = '00000';                                               00020001
+ COMMIT;                                                                        
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.RPT_TEIL_DATA                                00020001
+   WHERE IW_NO = '00000';                                               00020001
+ DELETE FROM   IW.RPT_TEIL_DATA                                         00020001
+   WHERE IW_NO = '00000';                                               00020001
+ SELECT COUNT(*) FROM   IW.RPT_TEIL_DATA                                00020001
+   WHERE IW_NO = '00000';                                               00020001
+ COMMIT;                                                                        
+--*                                                                             
+--*********************************************************************         
+--**  DELETE FROM TABLES WITH INDIRECT RELATIONSHIPS TO PLAN_TEIL   ***         
+--*********************************************************************         
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.TEIL_COMP_RSLT_FOA                           00300001
+   WHERE IW_NO = '00000';                                               00300001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_FOA_GRS                             00410001
+   WHERE IW_NO = '00000';                                               00410001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_FOA_NONQ                            00420001
+   WHERE IW_NO = '00000';                                               00420001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_SUP_GRS                             00430001
+   WHERE IW_NO = '00000';                                               00430001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_SUP_NONQ                            00440001
+   WHERE IW_NO = '00000';                                               00440001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_ACD                               00370001
+   WHERE IW_NO = '00000';                                               00370001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_FOA                               00380001
+   WHERE IW_NO = '00000';                                               00380001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_SUP_FOA                           00390001
+   WHERE IW_NO = '00000';                                               00390001
+ SELECT COUNT(*) FROM   IW.SUSP_ERR                                     00100001
+   WHERE IW_NO = '00000';                                               00100001
+ DELETE FROM   IW.TEIL_COMP_RSLT_FOA                                    00300001
+   WHERE IW_NO = '00000';                                               00300001
+ DELETE FROM   IW.TEIL_STM_FOA_GRS                                      00410001
+   WHERE IW_NO = '00000';                                               00410001
+ DELETE FROM   IW.TEIL_STM_FOA_NONQ                                     00420001
+   WHERE IW_NO = '00000';                                               00420001
+ DELETE FROM   IW.TEIL_STM_SUP_GRS                                      00430001
+   WHERE IW_NO = '00000';                                               00430001
+ DELETE FROM   IW.TEIL_STM_SUP_NONQ                                     00440001
+   WHERE IW_NO = '00000';                                               00440001
+ DELETE FROM   IW.TEIL_STMNT_ACD                                        00370001
+   WHERE IW_NO = '00000';                                               00370001
+ DELETE FROM   IW.TEIL_STMNT_FOA                                        00380001
+   WHERE IW_NO = '00000';                                               00380001
+ DELETE FROM   IW.TEIL_STMNT_SUP_FOA                                    00390001
+   WHERE IW_NO = '00000';                                               00390001
+ DELETE FROM   IW.SUSP_ERR                                              00100001
+   WHERE IW_NO = '00000';                                               00100001
+ SELECT COUNT(*) FROM   IW.TEIL_COMP_RSLT_FOA                           00300001
+   WHERE IW_NO = '00000';                                               00300001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_FOA_GRS                             00410001
+   WHERE IW_NO = '00000';                                               00410001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_FOA_NONQ                            00420001
+   WHERE IW_NO = '00000';                                               00420001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_SUP_GRS                             00430001
+   WHERE IW_NO = '00000';                                               00430001
+ SELECT COUNT(*) FROM   IW.TEIL_STM_SUP_NONQ                            00440001
+   WHERE IW_NO = '00000';                                               00440001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_ACD                               00370001
+   WHERE IW_NO = '00000';                                               00370001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_FOA                               00380001
+   WHERE IW_NO = '00000';                                               00380001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_SUP_FOA                           00390001
+   WHERE IW_NO = '00000';                                               00390001
+ SELECT COUNT(*) FROM   IW.SUSP_ERR                                     00100001
+   WHERE IW_NO = '00000';                                               00100001
+ COMMIT;                                                                        
+--*                                                                             
+--*********************************************************************         
+--**  DELETE FROM TABLES WITH DIRECT RELATIONSHIPS TO PLAN_TEIL     ***         
+--*********************************************************************         
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.TEIL_STAT_HIST                               00030001
+   WHERE IW_NO = '00000';                                               00030001
+ SELECT COUNT(*) FROM   IW.RPTD_SVC_HIST                                00040001
+   WHERE IW_NO = '00000';                                               00040001
+ SELECT COUNT(*) FROM   IW.TEIL_CB_CONV_DATA                            00050001
+   WHERE IW_NO = '00000';                                               00050001
+ SELECT COUNT(*) FROM   IW.CALCD_BENES_HIST                             00060001
+   WHERE IW_NO = '00000';                                               00060001
+ SELECT COUNT(*) FROM   IW.TEIL_LVL                                     00070001
+   WHERE IW_NO = '00000';                                               00070001
+ SELECT COUNT(*) FROM   IW.TEIL_SPCL_HNDLG                              00080001
+   WHERE IW_NO = '00000';                                               00080001
+ SELECT COUNT(*) FROM   IW.SUSP_TEIL                                    00090001
+   WHERE IW_NO = '00000';                                               00090001
+ SELECT COUNT(*) FROM   IW.TEIL_PSB_COVRGE                              00110001
+   WHERE IW_NO = '00000';                                               00110001
+ SELECT COUNT(*) FROM   IW.TEIL_REL                                     00120001
+   WHERE IW_NO = '00000';                                               00120001
+ SELECT COUNT(*) FROM   IW.TEIL_KEY_EE_INFO                             00130001
+   WHERE IW_NO = '00000';                                               00130001
+ SELECT COUNT(*) FROM   IW.TEIL_RPTD_BEN_CRD                            00140001
+   WHERE IW_NO = '00000';                                               00140001
+ SELECT COUNT(*) FROM   IW.TEIL_RPT_CNTRB_HST                           00150001
+   WHERE IW_NO = '00000';                                               00150001
+ SELECT COUNT(*) FROM   IW.TEIL_RPTD_HRS_HIST                           00160001
+   WHERE IW_NO = '00000';                                               00160001
+ SELECT COUNT(*) FROM   IW.CRD_SVC_BUCKETS                              00180001
+   WHERE IW_NO = '00000';                                               00180001
+ SELECT COUNT(*) FROM   IW.MISC_ACCT_HIST                               00190001
+   WHERE IW_NO = '00000';                                               00190001
+ SELECT COUNT(*) FROM   IW.TOTAL_SVC_HIST                               00210001
+   WHERE IW_NO = '00000';                                               00210001
+ SELECT COUNT(*) FROM   IW.VSTNG_STATUS_HIST                            00220001
+   WHERE IW_NO = '00000';                                               00220001
+ SELECT COUNT(*) FROM   IW.TEIL_CASH_BAL_ACCT                           00230001
+   WHERE IW_NO = '00000';                                               00230001
+ SELECT COUNT(*) FROM   IW.TEIL_CIGNA_TXN_DTA                           00240001
+   WHERE IW_NO = '00000';                                               00240001
+ SELECT COUNT(*) FROM   IW.TEIL_CLC_PROJ_PARM                           00250001
+   WHERE IW_NO = '00000';                                               00250001
+ SELECT COUNT(*) FROM   IW.TEIL_CLCD_CTRB_HST                           00260001
+   WHERE IW_NO = '00000';                                               00260001
+ SELECT COUNT(*) FROM   IW.TEIL_CB_GRAND_BEN                            00270001
+   WHERE IW_NO = '00000';                                               00270001
+ SELECT COUNT(*) FROM   IW.TEIL_CI_CMPNT_HIST                           00280001
+   WHERE IW_NO = '00000';                                               00280001
+ SELECT COUNT(*) FROM   IW.TEIL_COMP_RSLT_DOT                           00290001
+   WHERE IW_NO = '00000';                                               00290001
+ SELECT COUNT(*) FROM   IW.TEIL_EST_AUDIT                               00310001
+   WHERE IW_NO = '00000';                                               00310001
+ SELECT COUNT(*) FROM   IW.MISC_BENE_HIST                               00320001
+   WHERE IW_NO = '00000';                                               00320001
+ SELECT COUNT(*) FROM   IW.TEIL_ANNL_CB_HIST                            00330001
+   WHERE IW_NO = '00000';                                               00330001
+ SELECT COUNT(*) FROM   IW.TEIL_CASH_BAL_HIST                           00340001
+   WHERE IW_NO = '00000';                                               00340001
+ SELECT COUNT(*) FROM   IW.TEIL_EVENT                                   00350001
+   WHERE IW_NO = '00000';                                               00350001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_DOT                               00360001
+   WHERE IW_NO = '00000';                                               00360001
+ SELECT COUNT(*) FROM   IW.TEIL_DR_CR_HIST                              00400001
+   WHERE IW_NO = '00000';                                               00400001
+ SELECT COUNT(*) FROM   IW.TEIL_MRD                                     00200001
+   WHERE IW_NO = '00000';                                               00200001
+ SELECT COUNT(*) FROM   IW.TEIL_ERNGS_HIST                              00200001
+   WHERE IW_NO = '00000';                                               00200001
+ DELETE FROM   IW.TEIL_STAT_HIST                                        00030001
+   WHERE IW_NO = '00000';                                               00030001
+ DELETE FROM   IW.RPTD_SVC_HIST                                         00040001
+   WHERE IW_NO = '00000';                                               00040001
+ DELETE FROM   IW.TEIL_CB_CONV_DATA                                     00050001
+   WHERE IW_NO = '00000';                                               00050001
+ DELETE FROM   IW.CALCD_BENES_HIST                                      00060001
+   WHERE IW_NO = '00000';                                               00060001
+ DELETE FROM   IW.TEIL_LVL                                              00070001
+   WHERE IW_NO = '00000';                                               00070001
+ DELETE FROM   IW.TEIL_SPCL_HNDLG                                       00080001
+   WHERE IW_NO = '00000';                                               00080001
+ DELETE FROM   IW.SUSP_TEIL                                             00090001
+   WHERE IW_NO = '00000';                                               00090001
+ DELETE FROM   IW.TEIL_PSB_COVRGE                                       00110001
+   WHERE IW_NO = '00000';                                               00110001
+ DELETE FROM   IW.TEIL_REL                                              00120001
+   WHERE IW_NO = '00000';                                               00120001
+ DELETE FROM   IW.TEIL_KEY_EE_INFO                                      00130001
+   WHERE IW_NO = '00000';                                               00130001
+ DELETE FROM   IW.TEIL_RPTD_BEN_CRD                                     00140001
+   WHERE IW_NO = '00000';                                               00140001
+ DELETE FROM   IW.TEIL_RPT_CNTRB_HST                                    00150001
+   WHERE IW_NO = '00000';                                               00150001
+ DELETE FROM   IW.TEIL_RPTD_HRS_HIST                                    00160001
+   WHERE IW_NO = '00000';                                               00160001
+ DELETE FROM   IW.CRD_SVC_BUCKETS                                       00180001
+   WHERE IW_NO = '00000';                                               00180001
+ DELETE FROM   IW.MISC_ACCT_HIST                                        00190001
+   WHERE IW_NO = '00000';                                               00190001
+ DELETE FROM   IW.TOTAL_SVC_HIST                                        00210001
+   WHERE IW_NO = '00000';                                               00210001
+ DELETE FROM   IW.VSTNG_STATUS_HIST                                     00220001
+   WHERE IW_NO = '00000';                                               00220001
+ DELETE FROM   IW.TEIL_CASH_BAL_ACCT                                    00230001
+   WHERE IW_NO = '00000';                                               00230001
+ DELETE FROM   IW.TEIL_CIGNA_TXN_DTA                                    00240001
+   WHERE IW_NO = '00000';                                               00240001
+ DELETE FROM   IW.TEIL_CLC_PROJ_PARM                                    00250001
+   WHERE IW_NO = '00000';                                               00250001
+ DELETE FROM   IW.TEIL_CLCD_CTRB_HST                                    00260001
+   WHERE IW_NO = '00000';                                               00260001
+ DELETE FROM   IW.TEIL_CB_GRAND_BEN                                     00270001
+   WHERE IW_NO = '00000';                                               00270001
+ DELETE FROM   IW.TEIL_CI_CMPNT_HIST                                    00280001
+   WHERE IW_NO = '00000';                                               00280001
+ DELETE FROM   IW.TEIL_COMP_RSLT_DOT                                    00290001
+   WHERE IW_NO = '00000';                                               00290001
+ DELETE FROM   IW.TEIL_EST_AUDIT                                        00310001
+   WHERE IW_NO = '00000';                                               00310001
+ DELETE FROM   IW.MISC_BENE_HIST                                        00320001
+   WHERE IW_NO = '00000';                                               00320001
+ DELETE FROM   IW.TEIL_ANNL_CB_HIST                                     00330001
+   WHERE IW_NO = '00000';                                               00330001
+ DELETE FROM   IW.TEIL_CASH_BAL_HIST                                    00340001
+   WHERE IW_NO = '00000';                                               00340001
+ DELETE FROM   IW.TEIL_EVENT                                            00350001
+   WHERE IW_NO = '00000';                                               00350001
+ DELETE FROM   IW.TEIL_STMNT_DOT                                        00360001
+   WHERE IW_NO = '00000';                                               00360001
+ DELETE FROM   IW.TEIL_DR_CR_HIST                                       00400001
+   WHERE IW_NO = '00000';                                               00400001
+ DELETE FROM   IW.TEIL_MRD                                              00400001
+   WHERE IW_NO = '00000';                                               00400001
+--*                                                                             
+--*******************************************************************           
+--** COMMIT PRIOR TO TEIL_ERNGS_HIST DELETE BECAUSE OF SIZE ISSUES **           
+--** THIS ONE CAN TIME OUT, PARTICULARY ON THE CIGNA PLAN          **           
+--*******************************************************************           
+--*                                                                             
+ COMMIT;                                                                        
+ DELETE FROM   IW.TEIL_ERNGS_HIST                                       00200001
+   WHERE IW_NO = '00000';                                               00200001
+--*                                                                             
+--*******************************************************************           
+--** IF TEIL_ERNGS_HIST DELETE TIMES OUT, BREAK IT DOWN BY RANGES  **           
+--** OF SOCIAL SECURITY NUMBERS                                    **           
+--*******************************************************************           
+--*                                                                             
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '099999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '199999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '299999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '399999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '499999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '599999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '699999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000' AND SSN < '799999999';                         0020
+--*  COMMIT;                                                                    
+--*  DELETE FROM   IW.TEIL_ERNGS_HIST                                       0020
+--*    WHERE IW_NO = '00000';                                               0020
+--*  COMMIT;                                                                    
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.TEIL_STAT_HIST                               00030001
+   WHERE IW_NO = '00000';                                               00030001
+ SELECT COUNT(*) FROM   IW.RPTD_SVC_HIST                                00040001
+   WHERE IW_NO = '00000';                                               00040001
+ SELECT COUNT(*) FROM   IW.TEIL_CB_CONV_DATA                            00050001
+   WHERE IW_NO = '00000';                                               00050001
+ SELECT COUNT(*) FROM   IW.CALCD_BENES_HIST                             00060001
+   WHERE IW_NO = '00000';                                               00060001
+ SELECT COUNT(*) FROM   IW.TEIL_LVL                                     00070001
+   WHERE IW_NO = '00000';                                               00070001
+ SELECT COUNT(*) FROM   IW.TEIL_SPCL_HNDLG                              00080001
+   WHERE IW_NO = '00000';                                               00080001
+ SELECT COUNT(*) FROM   IW.SUSP_TEIL                                    00090001
+   WHERE IW_NO = '00000';                                               00090001
+ SELECT COUNT(*) FROM   IW.TEIL_PSB_COVRGE                              00110001
+   WHERE IW_NO = '00000';                                               00110001
+ SELECT COUNT(*) FROM   IW.TEIL_REL                                     00120001
+   WHERE IW_NO = '00000';                                               00120001
+ SELECT COUNT(*) FROM   IW.TEIL_KEY_EE_INFO                             00130001
+   WHERE IW_NO = '00000';                                               00130001
+ SELECT COUNT(*) FROM   IW.TEIL_RPTD_BEN_CRD                            00140001
+   WHERE IW_NO = '00000';                                               00140001
+ SELECT COUNT(*) FROM   IW.TEIL_RPT_CNTRB_HST                           00150001
+   WHERE IW_NO = '00000';                                               00150001
+ SELECT COUNT(*) FROM   IW.TEIL_RPTD_HRS_HIST                           00160001
+   WHERE IW_NO = '00000';                                               00160001
+ SELECT COUNT(*) FROM   IW.CRD_SVC_BUCKETS                              00180001
+   WHERE IW_NO = '00000';                                               00180001
+ SELECT COUNT(*) FROM   IW.MISC_ACCT_HIST                               00190001
+   WHERE IW_NO = '00000';                                               00190001
+ SELECT COUNT(*) FROM   IW.TOTAL_SVC_HIST                               00210001
+   WHERE IW_NO = '00000';                                               00210001
+ SELECT COUNT(*) FROM   IW.VSTNG_STATUS_HIST                            00220001
+   WHERE IW_NO = '00000';                                               00220001
+ SELECT COUNT(*) FROM   IW.TEIL_CASH_BAL_ACCT                           00230001
+   WHERE IW_NO = '00000';                                               00230001
+ SELECT COUNT(*) FROM   IW.TEIL_CIGNA_TXN_DTA                           00240001
+   WHERE IW_NO = '00000';                                               00240001
+ SELECT COUNT(*) FROM   IW.TEIL_CLC_PROJ_PARM                           00250001
+   WHERE IW_NO = '00000';                                               00250001
+ SELECT COUNT(*) FROM   IW.TEIL_CLCD_CTRB_HST                           00260001
+   WHERE IW_NO = '00000';                                               00260001
+ SELECT COUNT(*) FROM   IW.TEIL_CB_GRAND_BEN                            00270001
+   WHERE IW_NO = '00000';                                               00270001
+ SELECT COUNT(*) FROM   IW.TEIL_CI_CMPNT_HIST                           00280001
+   WHERE IW_NO = '00000';                                               00280001
+ SELECT COUNT(*) FROM   IW.TEIL_COMP_RSLT_DOT                           00290001
+   WHERE IW_NO = '00000';                                               00290001
+ SELECT COUNT(*) FROM   IW.TEIL_EST_AUDIT                               00310001
+   WHERE IW_NO = '00000';                                               00310001
+ SELECT COUNT(*) FROM   IW.MISC_BENE_HIST                               00320001
+   WHERE IW_NO = '00000';                                               00320001
+ SELECT COUNT(*) FROM   IW.TEIL_ANNL_CB_HIST                            00330001
+   WHERE IW_NO = '00000';                                               00330001
+ SELECT COUNT(*) FROM   IW.TEIL_CASH_BAL_HIST                           00340001
+   WHERE IW_NO = '00000';                                               00340001
+ SELECT COUNT(*) FROM   IW.TEIL_EVENT                                   00350001
+   WHERE IW_NO = '00000';                                               00350001
+ SELECT COUNT(*) FROM   IW.TEIL_STMNT_DOT                               00360001
+   WHERE IW_NO = '00000';                                               00360001
+ SELECT COUNT(*) FROM   IW.TEIL_DR_CR_HIST                              00400001
+   WHERE IW_NO = '00000';                                               00400001
+ SELECT COUNT(*) FROM   IW.TEIL_MRD                                     00400001
+   WHERE IW_NO = '00000';                                               00400001
+ SELECT COUNT(*) FROM   IW.TEIL_ERNGS_HIST                              00200001
+   WHERE IW_NO = '00000';                                               00200001
+ COMMIT;                                                                        
+--*                                                                             
+--*********************************************************************         
+--**  DELETE                                                        ***         
+--*********************************************************************         
+--*                                                                             
+ SELECT COUNT(*) FROM   IW.PLAN_TEIL                                    00170001
+   WHERE IW_NO = '00000';                                               00170001
+ DELETE FROM   IW.PLAN_TEIL                                             00170001
+   WHERE IW_NO = '00000';                                               00170001
+ SELECT COUNT(*) FROM   IW.PLAN_TEIL                                    00170001
+   WHERE IW_NO = '00000';                                               00170001
+ COMMIT;                                                                        
+--*                                                                             

@@ -1,0 +1,32 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3936,"","FILE","src/jcl/WMIN7094/PROD/PDS/controlcards/controlcards/FILE.crd","JCL","JCL_CONTROLCARD","PHYSICAL",0,0,0,0,5,0,0,-1,-1
+3937,"","FILE","src/jcl/WMIN7094/TEST/PDS/controlcards/controlcards/FILE.crd","JCL","JCL_CONTROLCARD","PHYSICAL",0,0,0,0,5,0,0,-1,-1
+3939,"","M4030A","src/jcl/WMIN7094/jobs/jobs/M4030A.job","JCL","JCL_JOB","PHYSICAL",1,0,7,2,9,1,0,-1,-1
+3940,3939,"M4030A.STEP1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3942,"","PROD.PDS","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3938,"","PROG1","src/cobol/WMIN7094/programs/PROG1.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,11,0,11,1,0,-1,-1
+3941,"","TEST.PDS","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3939,"M4030A","EXEC","Properties: [PGM=IKJEFT01], Data Definitions: [SYSIN{DSN=TEST.PDS(FILE),DISP=SHR},SYSTSIN{DSN=PROD.PDS(FILE),DISP=SHR}], Additional Properties: [Fully Qualified Step name=STEP1,Step name=STEP1,Job name=M4018A]"
+3938,"PROG1","CALL","CALL DYN-CALL USING: []"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3939,"M4030A",3940,"M4030A.STEP1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",3937,"FILE","JCL","JCL_CONTROLCARD","Calls","","LATE","{""PROPERTIES"":[{""DSN"":""TEST.PDS(FILE)"",""DISP"":""SHR"",""ID_NAME"":""SYSIN""}]}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",3936,"FILE","JCL","JCL_CONTROLCARD","Calls","","LATE","{""PROPERTIES"":[{""DSN"":""PROD.PDS(FILE)"",""DISP"":""SHR"",""ID_NAME"":""SYSTSIN""}]}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",0,"IKJEFT01","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":2,""OUTBOUND_TARGETS"":[""PROG1"",""PRG2""]}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",-1,"PRG2","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",3942,"PROD.PDS","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSTSIN""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",3938,"PROG1","COBOL","COBOL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+3940,"M4030A.STEP1.EXEC_PGM",3941,"TEST.PDS","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSIN""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+3938,"PROG1",-1,"CBLC002","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",308,13,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

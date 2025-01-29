@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "972801b2-0ca0-418d-ba99-5b9d56318e64",
+		"name": "Identity Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get token for user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd5f576e-4c78-4622-b812-f9eac9f2a437",
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "mining",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "mla",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "mla",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8180/auth/realms/MAD/protocol/openid-connect/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"realms",
+						"MAD",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1ae10165-bb3a-4386-920c-478e3e1b2e56",
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/projects/4712/discovery/editor?access_token=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ4N203WVZnbVk0c1ZQTnJCNXg5MExaS0g0X3NqbHhZZEU1R2xoaFdwT1Y4In0.eyJleHAiOjE1ODkzNjAwMTMsImlhdCI6MTU4OTM1OTcxMywianRpIjoiY2JmNGU0NzQtYzRjMi00ZjY2LWE5OGItMDU1ZmNmNjdkMWE1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL01BRCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI4ZDM3NmRjNy1kODE2LTQzYTAtYTZkMC0zM2UyZjU2YTdkOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtaW5pbmciLCJzZXNzaW9uX3N0YXRlIjoiNDlhMjMxMDYtNDc2Mi00NjAyLWI2ZmMtMDZhYzNkNGRmMmE1IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJlZGl0b3JfNDcxMiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6Im1sYSJ9.ZGZThaZ4x7-O8SKGY0w9LgI1NN1nme6bV4w2lqrbzLY9F3BSwxR6FzJNc16UDHxDjkPyVNHr0wvgty6Dsl3D7TG-Ay5tRahRmrs6uZ-LR7OmD13DARU9AqTbKx5KnIEZYXkl9Rn_M5G0PS--QRDXjFG2YvwUcaWOBcy40-lUUhUgkclWTdIFtWpKN-xH0ACuwTM0MGj-Ubvo1WJzYx9b1S9X5hrwxD7O5fjMn0MmUrcP4SneTXdFfYTCSGyvzJ_qIU5NDgpYJ3LuNTBIoKst5BAgpMaDqftHkXStq48EvDAickrowz9hmHTSn7m3qiLR1ebUOKUf8tHpCPynsGCIkA",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"projects",
+						"4712",
+						"discovery",
+						"editor"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ4N203WVZnbVk0c1ZQTnJCNXg5MExaS0g0X3NqbHhZZEU1R2xoaFdwT1Y4In0.eyJleHAiOjE1ODkzNjAwMTMsImlhdCI6MTU4OTM1OTcxMywianRpIjoiY2JmNGU0NzQtYzRjMi00ZjY2LWE5OGItMDU1ZmNmNjdkMWE1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL01BRCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI4ZDM3NmRjNy1kODE2LTQzYTAtYTZkMC0zM2UyZjU2YTdkOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtaW5pbmciLCJzZXNzaW9uX3N0YXRlIjoiNDlhMjMxMDYtNDc2Mi00NjAyLWI2ZmMtMDZhYzNkNGRmMmE1IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJlZGl0b3JfNDcxMiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6Im1sYSJ9.ZGZThaZ4x7-O8SKGY0w9LgI1NN1nme6bV4w2lqrbzLY9F3BSwxR6FzJNc16UDHxDjkPyVNHr0wvgty6Dsl3D7TG-Ay5tRahRmrs6uZ-LR7OmD13DARU9AqTbKx5KnIEZYXkl9Rn_M5G0PS--QRDXjFG2YvwUcaWOBcy40-lUUhUgkclWTdIFtWpKN-xH0ACuwTM0MGj-Ubvo1WJzYx9b1S9X5hrwxD7O5fjMn0MmUrcP4SneTXdFfYTCSGyvzJ_qIU5NDgpYJ3LuNTBIoKst5BAgpMaDqftHkXStq48EvDAickrowz9hmHTSn7m3qiLR1ebUOKUf8tHpCPynsGCIkA"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Public Call",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ee09b71c-ec17-4b4a-ba67-e15dbe4366cb",
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/public/projects/4711",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"projects",
+						"4711"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KC Get Admin Token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "root",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Worx2000",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-cli",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8180/auth/realms/master/protocol/openid-connect/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"realms",
+						"master",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KC List MAD Users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJvOGxTeTdzNWQ3S0NrWlBSTmlMTzBVa1R6SlZXREgwZWJBY1NZNVZzVG9NIn0.eyJleHAiOjE1ODk0MzkzNzAsImlhdCI6MTU4OTQzOTMxMCwianRpIjoiYTk2MWJkOTItNjYyOS00OTM4LTlkZWMtN2E3OTY1ZjQzMTI2IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL21hc3RlciIsInN1YiI6IjMwNGZlOTJhLWIxMzAtNGUyNy04NDQ1LWQzNDg0YjlmMWUyZSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluLWNsaSIsInNlc3Npb25fc3RhdGUiOiI4MDIzMDY0YS05ZWUxLTQ0NGItYWExNS1mOTFmYmIwMzU3OWUiLCJhY3IiOiIxIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJyb290In0.h0jeeB5slXryITnBgnRuKwWbUZ8LjvuSHlZ8qO7eCWz4sM4jEUvd1-vLl6SMpSM9ZR_FHHbnpuy-Ax5XnqnAmiE9gqrFmAaKAP0rxKeT8lhzHAdPRURXBPDhkSOC2CFqyfrWSufYWMxNUaoGGulSc0MP-0zBnSzGM7xpNjunKm2WkhtPOXKXSzj8Fxo-eCNdmu3RxiNbBX5hv7ZaFvnNk2_9PcvkT8AKBg15_CGNKhzFLoGktNgUxmwoJsvaWbvlsJINMUAGRv13_NTy3rHRtV-K_aoS77nZvc3r4bgVX1k_1adaBz9WEgsDjhYE1NhSj5SEkrkG3mHAs5GQMrVhLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8180/auth/admin/realms/MAD/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"MAD",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KC Get Mining Clients",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJvOGxTeTdzNWQ3S0NrWlBSTmlMTzBVa1R6SlZXREgwZWJBY1NZNVZzVG9NIn0.eyJleHAiOjE1ODk0Mzk2NjMsImlhdCI6MTU4OTQzOTYwMywianRpIjoiYjdkNzEzODctMDMxYS00MGZjLThkMjQtY2YyM2MzOTM0NDliIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL21hc3RlciIsInN1YiI6IjMwNGZlOTJhLWIxMzAtNGUyNy04NDQ1LWQzNDg0YjlmMWUyZSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluLWNsaSIsInNlc3Npb25fc3RhdGUiOiIwZGQ3NjZlMi05MTFmLTQzYjYtOTM0Zi02MmJmYTYzNWRiM2MiLCJhY3IiOiIxIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJyb290In0.LKTrcI33SlDejMYOAwqM_clU8aqClpBygP55IG9_VnupBZ34Dxn9iZqYcjv7RdJ50IEAreso7rRET2Y0WpeSmVS3Af-n2GFbH0xB16LRiGsQFml7BVkxg--tQWEdHY_DGqQwOoX7OHeSOvKpmGI7f3RkgHE6UQZ_k_bss0B3emTfOv68wR153yWO9Fws_QQWuN7Ymk3aJoZTokSU7v0qudb8b0nkso2dDac4rg2Ao40RNMVS7cGtAP_d_noLzzzO7aNAWD9kI_ibRzJFloqSElWMcb3812JLr5yL_j9urxjIUNdxgR0z6-YGVhaV4gEL8Hv1tRltJw9bjdFMXyNuWQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8180/auth/admin/realms/MAD/clients",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"MAD",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KC Get MAD Roles",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJvOGxTeTdzNWQ3S0NrWlBSTmlMTzBVa1R6SlZXREgwZWJBY1NZNVZzVG9NIn0.eyJleHAiOjE1ODk0Mzk4ODAsImlhdCI6MTU4OTQzOTgyMCwianRpIjoiMGQ2ZDQxYzItYWQ3Mi00NzMwLWIyMTYtZmIzZjBlNDJlMjRlIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL21hc3RlciIsInN1YiI6IjMwNGZlOTJhLWIxMzAtNGUyNy04NDQ1LWQzNDg0YjlmMWUyZSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluLWNsaSIsInNlc3Npb25fc3RhdGUiOiI5Yzk3NzQ1MS04YmZiLTQzMTgtOGJmMC0zNTRmZWMxYTYyMDUiLCJhY3IiOiIxIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJyb290In0.Sa7Zq_w4Z3-_RFXl9gHWENlN9RKGPa1fpximLqr0ivivXgH_BXJ-GbUeMyqorpNqIPKvcCghsWSkoUJ-wmhoameTnHIPj28IIa1Jq4ouE2OlnVVJrbFkNXOK_qKCXOQmNdZ8j-m1dJQSCc0ogaTPYvJHNWC7X_n3GPCrYWGEPNRN6bKQHztF0zxlF2eXrmt-LtWq-Bs7msyhzdzEN7Anjq8IgjAEBQa4obMPzGII53I4ySMoKSVLbD1ul-cWmdorUtO5R4y-b_O0kEuhhhWCCZJxOxppIjHVdyrIUo8sJcP99Ch4hc09XRWay0mcP-hbR-73aFQPLt-Iq9QZSCdaPA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8180/auth/admin/realms/MAD/roles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"MAD",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KC Create MAD Role",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJvOGxTeTdzNWQ3S0NrWlBSTmlMTzBVa1R6SlZXREgwZWJBY1NZNVZzVG9NIn0.eyJleHAiOjE1ODk0NDAxNTksImlhdCI6MTU4OTQ0MDA5OSwianRpIjoiY2ZiMzAyMDgtMzg4MS00NTNkLWExMzAtZGQ1ZmZiYTllYTg5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL2F1dGgvcmVhbG1zL21hc3RlciIsInN1YiI6IjMwNGZlOTJhLWIxMzAtNGUyNy04NDQ1LWQzNDg0YjlmMWUyZSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluLWNsaSIsInNlc3Npb25fc3RhdGUiOiJhOWQyMGU2MC02OGE1LTQ1ODctYjVhNy0wNGZkNTE4MWYwNGQiLCJhY3IiOiIxIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJyb290In0.IMpHwRVYVmwulV0cy4aHp8Hyo8wo9UgfFaWLgsIqLtS9GoBzEMNqQ8Sr9kzMDIXkNvNIC5qPmFCfj6txkaAv_P-ycur6j8O6XSg5WR0VdeVuUdLp8CLbmtHEhD5u-EqwWy7je1At7kX4wKa36V9PdUiihAuM_0o26yIyabzl5AqyDEUo9LDNiJyvt8vXOQioiQia6-bMXIYdGTfig7QPpeAUA-uBvazmi8vHQ-cGf8jvYv7YDY2C2uMusvBu1c9mE9yLAqiwyPl_I_sXNAGtFe63qVm7Nr4VU5JOMqLgOU5hrjsxPsTNbm3CJu-LfiqpitJT3a2YpgJ4yC7SJ-ZBoQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"name\": \"manager_NEW\",\r\n        \"description\" : \"Created via REST call\",\r\n        \"composite\": false,\r\n        \"clientRole\": false,\r\n        \"containerId\": \"MAD\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8180/auth/admin/realms/MAD/roles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8180",
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"MAD",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

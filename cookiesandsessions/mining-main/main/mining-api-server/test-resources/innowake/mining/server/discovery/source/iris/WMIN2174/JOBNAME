@@ -1,0 +1,32 @@
+//JOBNAME  JOB (051000,A30),'UCF ASSET SYNC',                                  
+//           CLASS=A,MSGCLASS=Y                                                 
+//*  
+//JOBSTP1 EXEC PROCNAME                                                                           
+//*
+//JOBSTP2 EXEC PGM=IKJEFT01                                                   
+//*                                                                            
+//SYSTSIN  DD DSN=TEST.CTL.CRD(PHYCRD4),                                          
+//            DISP=SHR         
+// DD *
+       RUN PROGRAM(PHYPGM1) PLAN(EAMPL001) -                                        
+//  DD DSN=TEST.CTL.CRD(PHYCRD5),                                          
+//            DISP=SHR                                                        
+//*
+//JOBSTP3 EXEC PGM=IKJEFT01                                                    
+//*                                                                             
+//SYSTSIN  DD DSN=TEST.CTL.CRD(PHYCRD6),                                           
+//            DISP=SHR          
+//  DD DISP=SHR,
+//  DSN=TEST.CTL.CRD(PHYCRD7)                                       
+//  DD DSN=TEST.CTL.CRD(PHYCRD8),                                           
+//            DISP=SHR                                                         
+//*
+//JOBSTP4 EXEC PGM=IKJEFT01                                                    
+//*                                                                             
+//SYSIN   DD DSN=TEST.CTL.CRD(PHYCRD9),                                           
+//            DISP=SHR          
+//  DD DISP=SHR,
+//  DSN=TEST.CTL.CRD(PHYCRD10)                                       
+//  DD DSN=TEST.CTL.CRD(PHYCRD11),                                           
+//            DISP=SHR                                                         
+//*

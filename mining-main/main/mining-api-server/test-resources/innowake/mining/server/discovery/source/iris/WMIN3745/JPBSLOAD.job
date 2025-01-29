@@ -1,0 +1,27 @@
+//JPBSLOA JOB (JSPBBCS,BCS),
+//        'BCAS PB LOAD TB011',
+//        CLASS=P,
+//        MSGCLASS=D,
+//        REGION=2M
+//*
+/*LOGONID JPBSBH
+//*
+//**********************************************************************
+//*     Testfile for using LOGONID
+//**********************************************************************
+//JOBLIB  DD DSN=SYSDBJ.#S00.DB12.DSNLOAD,DISP=SHR
+//*
+//LOADJCL  EXEC PGM=IKJEFT01,DYNAMNBR=20
+//*
+//SYSTSIN  DD DSN=PRODBCS.BATCH.PARMLIB(DSNTIAD),DISP=SHR
+//SYSIN DD *
+INSERT INTO JPBSBH.BCSTB011                                             00000278
+VALUES ('MASTJCL1'                                                      00000279
+         ,'003'                                                         00000280
+         ,'/*LOGONID JPBSBH')                                           00000281
+;                                                                       00000282
+/*
+//SYSTSPRT DD SYSOUT=*
+//SYSOUD   DD SYSOUT=*
+//SYSPRINT DD SYSOUT=*
+//*

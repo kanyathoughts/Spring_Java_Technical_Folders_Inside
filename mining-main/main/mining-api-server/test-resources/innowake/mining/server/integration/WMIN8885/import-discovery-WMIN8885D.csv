@@ -1,0 +1,35 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+132,"","APROC","src/jcl/procs/APROC.proc","JCL","JCL_PROC","PHYSICAL",0,0,4,1,5,0,0,-1,-1
+130,132,"APROC.PSTEP.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+137,"","PROD","src/jcl/jobs/PROD.job","JCL","JCL_JOB","PHYSICAL",1,0,4,1,5,2,0,-1,-1
+135,"","PROD.FILE2","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+136,137,"PROD.STEP010.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+133,"","PROD1","src/jcl/jobs/PROD1.job","JCL","JCL_JOB","PHYSICAL",1,0,4,1,5,2,0,-1,-1
+131,133,"PROD1.STEP010.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+134,"","TEST.FILE3","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+132,"APROC","EXEC","Properties: [PGM=JCLPGM], Data Definitions: [DD1{DISP=SHR,DSN=TEST.FILE3},DD2{DISP=SHR,DSN=PROD.FILE2}], Additional Properties: [Fully Qualified Step name=STEP010.PSTEP,Step name=PSTEP,Job name=PROD1]"
+132,"APROC","EXEC","Properties: [PGM=JCLPGM], Data Definitions: [DD1{DISP=SHR,DSN=TEST.FILE3},DD2{DISP=SHR,DSN=PROD.FILE2}], Additional Properties: [Fully Qualified Step name=STEP010.PSTEP,Step name=PSTEP,Job name=PROD]"
+137,"PROD","EXEC_PROC","Properties: [PROC=APROC,QUAL=PROD,PGM1=JCLPGM], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEP010,Step name=STEP010,Job name=PROD]"
+133,"PROD1","EXEC_PROC","Properties: [PROC=APROC,QUAL=PROD,PGM1=JCLPGM], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEP010,Step name=STEP010,Job name=PROD1]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+136,"PROD.STEP010.EXEC",132,"APROC","JCL","JCL_PROC","Calls","LATE","{}",-1,-1,-1,-1
+131,"PROD1.STEP010.EXEC",132,"APROC","JCL","JCL_PROC","Calls","LATE","{}",-1,-1,-1,-1
+132,"APROC",130,"APROC.PSTEP.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","LATE","{}",-1,-1,-1,-1
+137,"PROD",136,"PROD.STEP010.EXEC","JCL","JCL_EXEC","Calls","LATE","{}",-1,-1,-1,-1
+133,"PROD1",131,"PROD1.STEP010.EXEC","JCL","JCL_EXEC","Calls","LATE","{}",-1,-1,-1,-1
+130,"APROC.PSTEP.EXEC_PGM",-1,"JCLPGM","UNKNOWN","UNKNOWN","References","LATE","{}",-1,-1,-1,-1
+130,"APROC.PSTEP.EXEC_PGM",135,"PROD.FILE2","RESOURCE","RESOURCE_FILE","Accesses","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""DD2""}]}",-1,-1,-1,-1
+130,"APROC.PSTEP.EXEC_PGM",134,"TEST.FILE3","RESOURCE","RESOURCE_FILE","Accesses","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""DD1""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+1,"jclconfig.cfg","src/jcl/jclconfig.cfg"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

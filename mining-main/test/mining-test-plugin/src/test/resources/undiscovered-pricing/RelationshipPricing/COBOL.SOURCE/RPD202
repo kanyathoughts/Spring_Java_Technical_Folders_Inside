@@ -1,0 +1,321 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPD202.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*                                                                *00005000
+000060*    RPD202 - RELATIONSHIP PRICING DUPLICATE ACCOUNT INCENTIVE   *00006000
+000070*             REPORT                                             *00007000
+000080*                                                                *00008000
+000090******************************************************************00009000
+000100 ENVIRONMENT DIVISION.                                            00010000
+000110 CONFIGURATION SECTION.                                           00011000
+000120 SPECIAL-NAMES.                                                   00012000
+000130     C01 IS C-01, C02 IS C-02, C03 IS C-03.                       00013000
+000140 INPUT-OUTPUT SECTION.                                            00014000
+000150 FILE-CONTROL.                                                    00015000
+000000 COPY RPACTES.                                                    00016000
+000170 DATA DIVISION.                                                   00017000
+000180 FILE SECTION.                                                    00018000
+000000 COPY RPACTEF.                                                    00019000
+000200 01  RPACTE-RECORD.                                               00020000
+000210     03  RPACTE-GRP-KEY.                                          00021000
+000220         05  RPACTE-ACCT1-GRP.                                    00022000
+000230             07  RPACTE-INST     PIC 9(04).                       00023000
+000240             07  RPACTE-PRODCODE PIC X(06).                       00024000
+000250             07  RPACTE-ACCOUNT  PIC X(18).                       00025000
+000260         05  RPACTE-ACCT2-GRP.                                    00026000
+000270             07  RPACTE-INST2    PIC 9(04).                       00027000
+000280             07  RPACTE-PRODCODE2                                 00028000
+000290                                 PIC X(06).                       00029000
+000300             07  RPACTE-ACCOUNT2 PIC X(18).                       00030000
+000310             07  RPACTE-MODEL    PIC X(10).                       00031000
+000320     03  RPACTE-GRP-DATA.                                         00032000
+000330         05  RPACTE-SC-INC-OPTION                                 00033000
+000340                                 PIC X(01).                       00034000
+000350         05  RPACTE-RATE-INC-OPTION                               00035000
+000360                                 PIC X(01).                       00036000
+000370         05  RPACTE-APPL         PIC 9(02).                       00037000
+000380         05  FILLER              PIC X(10).                       00038000
+000390 WORKING-STORAGE SECTION.                                         00039000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00040000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00040001
+000410 01  RPS-RLSELIT.                                                 00041000
+000000 COPY RPWRLSE.                                                    00042000
+000430 01  MIC-RLSELIT.                                                 00043000
+000000 COPY MIWRLSE.                                                    00044000
+000450 01  RPWPRI-AREAS.                                                00045000
+000000 COPY RPWPRI.                                                     00046000
+000470 01  MIWPRI-AREAS.                                                00047000
+000000 COPY MIWPRI.                                                     00048000
+000490 01  SRW105-AREAS.                                                00049000
+000000 COPY SRW105.                                                     00050000
+000510*01  BICPBPRM.                                                    00051000
+000000 COPY BICPBPRM.                                                   00052000
+000530*01  BICRSRB.                                                     00053000
+000000 COPY BICRSRB.                                                    00054000
+000550*01  BICRPSB.                                                     00055000
+000000 COPY BICRPSB.                                                    00056000
+000570*01  BICRVERB.                                                    00057000
+000000 COPY BICRVERB.                                                   00058000
+000590*01  BICRSTAT.                                                    00059000
+000000 COPY BICRSTAT.                                                   00060000
+000610*01  BICRDBS.                                                     00061000
+000000 COPY BICRDBS.                                                    00062000
+000630 01  RPBNK-RECORD.                                                00063000
+000000 COPY RPSBNK.                                                     00064000
+000650 01  RPRPTS-RECORD.                                               00065000
+000000 COPY RPSRPTS.                                                    00066000
+000670 01  RPBNKA-AREA.                                                 00067000
+000000 COPY RPWBNKA.                                                    00068000
+000690 01  RPRPTSA-AREA.                                                00069000
+000000 COPY RPWRPTS.                                                    00070000
+000710 01  FILLER                      PIC X(08)       VALUE '*MISMST*'.00071000
+000720 01  MIMST-RECORD.                                                00072000
+000000 COPY MISMST.                                                     00073000
+000740 01  FILLER                      PIC X(08)       VALUE '*MI0307*'.00074000
+000750 01  MI0307-RECORD.                                               00075000
+000000 COPY MIS0307A.                                                   00076000
+000770 01  FILLER                      PIC X(08)       VALUE '*MI2023*'.00077000
+000780 01  MI2023-RECORD.                                               00078000
+000000 COPY MIS2023A.                                                   00079000
+000800 01  MIWMSTA-AREAS.                                               00080000
+000000 COPY MIWMSTA.                                                    00081000
+000820 01  RPW015-AREA.                                                 00082000
+000000 COPY RPW015.                                                     00083000
+000840 01  WS-RPMIM2023AREAS.                                           00084000
+000000 COPY RPW2023.                                                    00085000
+000860***************************************************************** 00086000
+000870 01  SRW000-AREAS.                                                00087000
+000000 COPY SRW000.                                                     00088000
+000890 01  SRW015-AREAS.                                                00089000
+000000 COPY SRW015.                                                     00090000
+000910 01  SRW025-AREAS.                                                00091000
+000000 COPY SRW025.                                                     00092000
+000930 01  WS-ABEND.                                                    00093000
+000000 COPY SRW028.                                                     00094000
+000950 01  SRW033-AREAS.                                                00095000
+000000 COPY SRW033.                                                     00096000
+000970 01  SRW044-AREAS.                                                00097000
+000000 COPY SRW044.                                                     00098000
+000990 01  SRW060-AREAS.                                                00099000
+000000 COPY SRW060.                                                     00100000
+001010 01  WS-STORAGE.                                                  00101000
+001020     03  FILLER                  PIC X(18)       VALUE            00102000
+001030         '*** WS-STORAGE ***'.                                    00103000
+001040     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00104000
+001050     03  WS-CYEAR-FIRST          PIC X(08).                       00105000
+001060     03  FILLER          REDEFINES WS-CYEAR-FIRST.                00106000
+001070         05  WS-CYYYY            PIC 9(04).                       00107000
+001080         05  WS-CMM              PIC 9(02).                       00108000
+001090         05  WS-CDD              PIC 9(02).                       00109000
+001100     03  WS-CURDATE              PIC 9(08)       VALUE ZERO.      00110000
+001110     03  FILLER          REDEFINES WS-CURDATE.                    00111000
+001120         05  WS-CURMM            PIC 9(02).                       00112000
+001130         05  WS-CURDD            PIC 9(02).                       00113000
+001140         05  WS-CURYYYY          PIC 9(04).                       00114000
+001150     03  WS-LINES                PIC S9(03)      COMP-3           00115000
+001160                                                 VALUE +0.        00116000
+001170     03  WS-PRINT-SW             PIC X(01)       VALUE 'P'.       00117000
+001180     03  WS-ACT-SW               PIC X(01)       VALUE 'N'.       00118000
+001190     03  WS-WORK-APPL            PIC 9(02)       VALUE ZEROS.     00119000
+001200     03  WS-WORK-PRODCODE        PIC X(06)       VALUE SPACES.    00120000
+001210     03  WS-WORK-ACCOUNT         PIC X(18)       VALUE SPACES.    00121000
+001220     03  WS-NUMOFACTREC          PIC S9(05)      COMP-3           00122000
+001230                                                 VALUE ZEROS.     00123000
+001240     03  WS-NUMOFDUPREC          PIC S9(05)      COMP-3           00124000
+001250                                                 VALUE ZEROS.     00125000
+001260     03  WS-TOTOFACTREC          PIC S9(05)      COMP-3           00126000
+001270                                                 VALUE ZEROS.     00127000
+001280     03  WS-CURDTYYYYMMDD        PIC 9(08)       VALUE ZEROS.     00128000
+001290     03  FILLER          REDEFINES WS-CURDTYYYYMMDD.              00129000
+001300         05  WS-CURDTYYYY        PIC 9(04).                       00130000
+001310         05  WS-CURDTMMDD        PIC 9(04).                       00131000
+001320         05  FILLER      REDEFINES WS-CURDTMMDD.                  00132000
+001330             07  WS-CURDTMM      PIC 9(02).                       00133000
+001340             07  WS-CURDTDD      PIC 9(02).                       00134000
+001350     03  WS-DATEDDMMYYYY         PIC 9(08)       VALUE ZEROS.     00135000
+001360     03  FILLER          REDEFINES WS-DATEDDMMYYYY.               00136000
+001370         05  WS-DATEMM           PIC 9(02).                       00137000
+001380         05  WS-DATEDD           PIC 9(02).                       00138000
+001390         05  WS-DATEYYYY         PIC 9(04).                       00139000
+001400     03  WS-SUB1                 PIC S9(04)      COMP             00140000
+001410                                                 VALUE +0.        00141000
+001420     03  WS-ALLSW                PIC X(01)       VALUE SPACES.    00142000
+001430     03  WS-INST-SW              PIC X(01)       VALUE SPACES.    00143000
+001440     03  WS-DEFAULT-SWITCH       PIC X(01)       VALUE SPACES.    00144000
+001450     03  WS-DEFAULT-REC          PIC X(80)       VALUE SPACES.    00145000
+001460     03  WS-SAVE-CDTBLE.                                          00146000
+001470         05  WS-SAVE-CDREC       PIC X(80)       OCCURS           00147000
+001480                                                 9999 TIMES.      00148000
+001490     03  WS-RRPTCTL.                                              00149000
+001500         05  FILLER              PIC X(04).                       00150000
+001510         05  WS-RRPTPFC          PIC X(01)       VALUE SPACES.    00151000
+001520******************************************************************00152000
+001530 PROCEDURE DIVISION.                                              00153000
+001540******************************************************************00154000
+001550 INITIALIZATION SECTION.                                          00155000
+001560 IN-START.                                                        00156000
+001570     MOVE 'RPD202' TO SR-APIPROGLIT.                              00157000
+001580     MOVE 'RPD202' TO WS-ABPROGID.                                00158000
+001590     OPEN INPUT RP-ACTEFIL.                                       00159000
+001600 IN-EXIT.                                                         00160000
+001610     EXIT.                                                        00161000
+001620******************************************************************00162000
+001630 OPEN-API-FILES SECTION.                                          00163000
+001640 OAF-START.                                                       00164000
+001650     MOVE 'O R' TO SR-APIFUNC.                                    00165000
+001660     PERFORM CALL-RPS-BNK.                                        00166000
+001670     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00167000
+001680         GO TO AR-0001.                                           00168000
+001690 OAF-EXIT.                                                        00169000
+001700     EXIT.                                                        00170000
+001710******************************************************************00171000
+001720 MAIN-LOGIC SECTION.                                              00172000
+001730 ML-START.                                                        00173000
+001740     MOVE ZEROS TO RPBNK-GRP-KEY.                                 00174000
+001750 ML-READ-NEXT.                                                    00175000
+001760     READ RP-ACTEFIL                                              00176000
+001770         AT END                                                   00177000
+001780         GO TO ML-END.                                            00178000
+001790     ADD +1 TO WS-TOTOFACTREC.                                    00179000
+001800     IF RPACTE-INST IS NOT EQUAL TO RPBNK-INST                    00180000
+001810         PERFORM CHANGE-BANK.                                     00181000
+001820 ML-PROCESS.                                                      00182000
+001830     ADD +1 TO WS-NUMOFDUPREC.                                    00183000
+001840     PERFORM PRINT-ACTE-RECORD.                                   00184000
+001850     GO TO ML-READ-NEXT.                                          00185000
+001860 ML-END.                                                          00186000
+001870     IF WS-TOTOFACTREC IS EQUAL TO ZEROS                          00187000
+001880         DISPLAY '** RPD202 - DUPLICATE ACCOUNT INCENTIVES  **'   00188000
+001890         DISPLAY 'NO DUPLICATE ACCOUNT INCENTIVE RECORDS FOUND'.  00189000
+001900     GO TO END-ROUTINE.                                           00190000
+001910 ML-EXIT.                                                         00191000
+001920     EXIT.                                                        00192000
+001930******************************************************************00193000
+001940 PRINT-ACTE-RECORD SECTION.                                       00194000
+001950 PAR-START.                                                       00195000
+001960     MOVE SPACES TO RPRPTS-RECORD.                                00196000
+001970     MOVE WS-TOTOFACTREC TO RPRPTS-SRTNUMBER.                     00197000
+001980     MOVE 53 TO RPRPTS-RPTNBR.                                    00198000
+001990     MOVE 0 TO RPRPTS-BRANCH                                      00199000
+002000               RPRPTS-TYPE.                                       00200000
+002010     MOVE RPACTE-INST TO RPRPTS-INST.                             00201000
+002020     MOVE RPACTE-PRODCODE TO RPRPTS-PRODCODE.                     00202000
+002030     MOVE RPACTE-ACCOUNT TO RPRPTS-ACCOUNT.                       00203000
+002040     MOVE RPACTE-MODEL TO RPRPTS-MODEL.                           00204000
+002050     MOVE RPACTE-APPL TO RPRPTS-APPL.                             00205000
+002060     MOVE WS-RRPTCTL TO RPRPTS-RPTCTL.                            00206000
+002070     MOVE RPACTE-SC-INC-OPTION TO RPRPTS-053SCOPTION.             00207000
+002080     MOVE RPACTE-RATE-INC-OPTION TO RPRPTS-053RTOPTION.           00208000
+002090     MOVE RPACTE-INST2 TO RPRPTS-053PRIMINST.                     00209000
+002100     MOVE RPACTE-PRODCODE2 TO RPRPTS-053PRIMPRCD.                 00210000
+002110     MOVE RPACTE-ACCOUNT2 TO RPRPTS-053PRIMACCT.                  00211000
+002120     IF WS-RRPTPFC IS EQUAL TO '0'                                00212000
+002130         GO TO PAR-EXIT.                                          00213000
+002140 PAR-WRITE.                                                       00214000
+002150     MOVE 'ASE' TO WS-RRPTS.                                      00215000
+002160     PERFORM CALL-RPRPTS.                                         00216000
+002170     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00217000
+002180         GO TO AR-0005.                                           00218000
+002190 PAR-EXIT.                                                        00219000
+002200     EXIT.                                                        00220000
+002210******************************************************************00221000
+002220 CHANGE-BANK SECTION.                                             00222000
+002230 CB-START.                                                        00223000
+002240     MOVE 'R  ' TO SR-APIFUNC.                                    00224000
+002250     MOVE RPACTE-INST TO RPBNK-INST.                              00225000
+002260     PERFORM CALL-RPS-BNK.                                        00226000
+002270     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00227000
+002280         GO TO AR-0002.                                           00228000
+002290     MOVE RPBNK-CURDT TO WS-CURDTYYYYMMDD.                        00229000
+002300     MOVE WS-CURDTMM TO WS-DATEMM.                                00230000
+002310     MOVE WS-CURDTDD TO WS-DATEDD.                                00231000
+002320     MOVE WS-CURDTYYYY TO WS-DATEYYYY.                            00232000
+002330     MOVE WS-DATEDDMMYYYY TO SR-TODAY.                            00233000
+002340     MOVE SPACES TO MI0307-RECORD.                                00234000
+002350     MOVE RPBNK-INST TO MIM-0307KINST.                            00235000
+002360     MOVE 50 TO MIM-0307KAPPL.                                    00236000
+002370     MOVE 3 TO MIM-0307KRECNBR.                                   00237000
+002380     MOVE +0307 TO MIM-0307KREC.                                  00238000
+002390     MOVE MIC-MST-0307-PRI TO MIC-MST-REC-PRI.                    00239000
+002400     MOVE MI0307-RECORD TO MIMST-RECORD.                          00240000
+002410     PERFORM MIC-MST-GET-REQUEST.                                 00241000
+002420     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00242000
+002430         GO TO AR-0003.                                           00243000
+002440     MOVE MIMST-RECORD TO MI0307-RECORD.                          00244000
+002450     MOVE MIM-DSRPTCTL (13) TO WS-RRPTCTL.                        00245000
+002460 CB-REC2023.                                                      00246000
+002470     MOVE RPBNK-INST TO WS-RPMIM2023INST.                         00247000
+002480     PERFORM LOAD-RPS-2023.                                       00248000
+002490     IF WS-RPMIM2023ERROR IS EQUAL TO 'Y'                         00249000
+002500         GO TO AR-0004.                                           00250000
+002510 CB-EXIT.                                                         00251000
+002520     EXIT.                                                        00252000
+002530******************************************************************00253000
+002540 LOAD-RPS-2023 SECTION.                                           00254000
+000000 COPY RPP2023.                                                    00255000
+002560******************************************************************00256000
+002570 SEARCH-RPS-2023 SECTION.                                         00257000
+000000 COPY RPP2023S.                                                   00258000
+002590******************************************************************00259000
+002600*MIC-MST-API SECTION.                                             00260000
+000000 COPY MIPMSTA.                                                    00261000
+002620***************************************************************** 00262000
+002630 CALL-RPS-BNK SECTION.                                            00263000
+000000 COPY RPPBNKB.                                                    00264000
+002650******************************************************************00265000
+002660 CALL-RPRPTS SECTION.                                             00266000
+000000 COPY RPPRPTS.                                                    00267000
+002680******************************************************************00268000
+002690 ABORT-ROUTINE SECTION.                                           00269000
+002700 AR-0001.                                                         00270000
+002710     MOVE 1 TO WS-ABCODE.                                         00271000
+002720     GO TO AR-MSG.                                                00272000
+002730 AR-0002.                                                         00273000
+002740     MOVE 2 TO WS-ABCODE.                                         00274000
+002750     GO TO AR-MSG.                                                00275000
+002760 AR-0003.                                                         00276000
+002770     MOVE 3 TO WS-ABCODE.                                         00277000
+002780     GO TO AR-MSG.                                                00278000
+002790 AR-0004.                                                         00279000
+002800     MOVE 4 TO WS-ABCODE.                                         00280000
+002810     GO TO AR-MSG.                                                00281000
+002820 AR-0005.                                                         00282000
+002830     MOVE 5 TO WS-ABCODE.                                         00283000
+002840     GO TO AR-MSG.                                                00284000
+002850 AR-0006.                                                         00285000
+002860     MOVE 6 TO WS-ABCODE.                                         00286000
+002870     GO TO AR-MSG.                                                00287000
+002880 AR-MSG.                                                          00288000
+002890     MOVE WS-FUNCTION TO WS-ABFC.                                 00289000
+002900 AR-PRINT.                                                        00290000
+000000 COPY SRP029.                                                     00291000
+002920******************************************************************00292000
+002930 END-ROUTINE SECTION.                                             00293000
+002940 ER-START.                                                        00294000
+002950     CLOSE RP-ACTEFIL.                                            00295000
+002960     MOVE 'GC ' TO SR-APIFUNC.                                    00296000
+002970     PERFORM CALL-RPS-BNK.                                        00297000
+002980     STOP RUN.                                                    00298000

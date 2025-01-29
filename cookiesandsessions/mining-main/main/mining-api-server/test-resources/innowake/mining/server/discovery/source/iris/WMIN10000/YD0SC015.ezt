@@ -1,0 +1,15 @@
+LIST OFF                                                                00010000
+PARM LINK(DECSZ031 R)
+*
+FILE CLERK
+  REC-IN                 1   124   A                                      )
+  REC-REQUIRED           1     8   A
+FILE CLERKO
+  REC-OUT                1   124   A                                      )
+*
+**     PROCESSING  ACTIVITIES
+*
+JOB INPUT CLERK
+  REC-OUT = REC-IN
+  PUT CLERKO
+  GOTO JOB

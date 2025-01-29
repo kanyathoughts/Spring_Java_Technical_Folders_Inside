@@ -1,0 +1,26 @@
+//MYPROC   PROC EXITLIB=DUMMY,
+//             SYSDA=SYSDA,
+//             SYSOUT='*',SYSDUMP=D
+//*********************************************************************
+//*                         M Y P R O C                               *
+//*    SOME                                                           *
+//*    COMMENTS                                                       *
+//*                                                                   *
+//*    DESCRIBING                                                     *
+//*    THIS                                                           *
+//*    PROCEDURE                                                      *
+//*********************************************************************
+//SORT     EXEC  PGM=SORT,REGION=&RGN
+//*ORT     EXEC  PGM=SORT,REGION=&RGN,PARM='DEBUG'
+//* SOME COMMENTED LINE                                                
+//*PYSET   DD  SYSOUT=&SYSOUT                      
+//*
+//EXITLIB  DD  DISP=SHR,DSN=SYS1.&EXITLIB
+//SYSOUT   DD  SYSOUT=&SYSOUT
+//STDOUT   DD  SYSOUT=&SYSOUT
+//STDERR   DD  SYSOUT=&SYSOUT
+//SYSUDUMP DD  SYSOUT=&SYSDUMP
+//SORTDIAG DD  DUMMY
+//DUMMY    DD  DUMMY,SPACE=(TRK,(&SPACE.,&SPACE2)),UNIT=&SYSDA
+//SORTMODS DD  UNIT=VIO,SPACE=(TRK,(&EXSPACE,,&EXSPACE))
+//* SOME FINAL COMMENT

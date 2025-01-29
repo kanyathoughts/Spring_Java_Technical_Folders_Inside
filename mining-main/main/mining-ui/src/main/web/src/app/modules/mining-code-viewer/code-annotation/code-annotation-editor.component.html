@@ -1,0 +1,63 @@
+<nz-row>
+  <nz-col nzSpan="24">
+    <div class="code-annotation-editor-component" [ngStyle]="{'border-color': data.borderColor,'border-width': data.isEdit ? '2px' : '1px' ,'z-index': showAllContent || showFgAllContent ? '2' : '1' ,annotationViewDiv}"
+      [ngClass] ="isCfg ? 'cfg-annotation' : ''">
+      <nz-row [nzGutter]="20" class="code-annotation-editor-component__column-display">
+        <nz-col nzFlex="auto" class="code-annotation-editor-component__categoryName">
+          <span nz-icon nzType="message" nzTheme="outline"></span>
+          <span class="code-annotation-fields__type">{{ data.typeLabel }}</span>
+          <span *ngIf="(data.annotation.categoryName)" nz-tooltip nzTooltipTitle="{{ data.annotation.categoryName}}" class="code-annotation-fields__type">
+            ({{ data.annotation.categoryName }})
+          </span>
+        </nz-col>
+        <nz-col nzFlex="auto" class="code-annotation-editor-component__stateLabel">
+          <span>{{ data.stateLabel }} </span>
+        </nz-col>
+        <nz-col #annotationContent *ngIf="data?.annotation.name"  nzFlex="auto" class="code-annotation-editor-component__column-width">
+          <div class="code-annotation-editor-component__description"
+            [ngClass]="{'code-annotation-editor-component__description--show-more': ! showAllContent , 'code-annotation-editor-component__description--scroll': showAllContent}" id="content">
+            <span [ngClass]="{'code-annotation-editor-component__description--expand': ! showAllContent}">
+             {{ data.annotation.name }}</span>
+            <span *ngIf="data?.functionalBlockDetails?.listOfFunctionalGroupNames && ! disableActionButtons ? (contentLengthCompare && data.annotation.name.length > contentLengthCompare) || (data.annotation.name.includes('\n'))
+            :(contentLengthCompare && data.annotation.name.length > contentLengthCompareNofg) || (data.annotation.name.includes('\n'))"
+              class="code-annotation-editor-component__show-more" (click)="toggleContentView()">
+              {{ (showAllContent ? 'codeViewer.showLess' : 'codeViewer.showMore') | translate }}
+            </span>
+          </div>
+        </nz-col>
+        <nz-col  #functionalGcontent *ngIf="data?.functionalBlockDetails?.listOfFunctionalGroupNames && ! disableActionButtons"  nzFlex="auto" class="code-annotation-editor-component__column-width">
+          <div class="code-annotation-editor-component__description"
+            [ngClass]="{'code-annotation-editor-component__description--show-more': ! showFgAllContent, 'code-annotation-editor-component__description--scroll': showFgAllContent}" id="fgContent" >
+            <span [ngClass]="{'code-annotation-editor-component__description--expand': ! showFgAllContent}">
+              {{ data?.functionalBlockDetails?.listOfFunctionalGroupNames }}</span>
+            <span  *ngIf="data?.annotation.name ? (data?.functionalBlockDetails?.listOfFunctionalGroupNames.length > fgContentLengthCompare)
+            :(data?.functionalBlockDetails?.listOfFunctionalGroupNames.length > contentLengthCompareNoAnnotation)"
+              class="code-annotation-editor-component__show-more" (click)="toggleFunctionalGroupContentView()">
+              {{ (showFgAllContent ? 'codeViewer.showLess' : 'codeViewer.showMore') | translate }}
+            </span>
+          </div>
+        </nz-col>
+        <nz-col  *ngIf="! disableActionButtons" nzFlex="auto" class="code-annotation-editor-component__dynamic">
+          <nz-row [nzGutter]="4" class="code-annotation-editor-component__actions">
+            <nz-col nzSpan="auto" *ngIf="data.canCopyAnnotation" (click)="openFunctionalGroupModals()"
+              class="code-annotation-editor-component__actions--icon">
+                <img class= "code-annotation-editor-component__actions--fbimg" src="assets/Functional Block_icon.svg" alt = "Functional Block Icon" />
+            </nz-col>
+            <nz-col nzSpan="auto" (click)="openAnnotationEditor()" class="code-annotation-editor-component__actions--icon">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </nz-col>
+            <nz-col nzSpan="auto" nz-popconfirm nzPopconfirmTitle="{{ 'codeViewer.popConfirmDeleteAnnotation' | translate }}"
+              nzPopconfirmPlacement="bottom" (nzOnConfirm)="deleteAnnotation()" nzOkText="{{ 'btnLabel.delete' | translate}}"
+              nzCancelText="Cancel" class="code-annotation-editor-component__actions--icon">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </nz-col>
+            <nz-col *ngIf="data.canCopyAnnotation" nzSpan="auto" (click)="copyAnnotationDetails()"
+              class="code-annotation-editor-component__actions--icon">
+              <span nz-icon nzType="copy" nzTheme="outline"></span>
+            </nz-col>
+          </nz-row>
+        </nz-col>
+      </nz-row>
+    </div>
+  </nz-col>
+</nz-row>

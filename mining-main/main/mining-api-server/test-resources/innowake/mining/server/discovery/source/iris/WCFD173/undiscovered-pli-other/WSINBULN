@@ -1,0 +1,57 @@
+   DCL  CHRS_REMAIN             FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  CHRS_NAME               FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  CHRS_NAME_LAST          FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  CHRS_NAME_FIRST         FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  CHRS_NAME_MIDDLE        FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  CHRS_NAME_SUFFIX        FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  SUBSCRIPT_2             FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  SUBSCRIPT               FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL  BLANK_CTR               FIXED BINARY (15,0) STATIC INIT(0);     
+   DCL SPACE_SWITCH             CHAR (3) STATIC INIT ('OFF');           
+                                                                        
+   DECLARE                                                              
+       SUBSTR                   BUILTIN,                                
+       VERIFY                   BUILTIN,                                
+       INDEX                    BUILTIN;                                
+  DECLARE                                                               
+    NAME_OUT      CHAR (23) INIT (' ');                                 
+                                                                        
+  DECLARE                                                               
+    LAST_NAME_35       CHAR (35),                                       
+    WS_LAST_NAME (35)  CHAR (1) DEFINED LAST_NAME_35,                   
+    FIRST_NAME_32      CHAR (32),                                       
+    WS_FIRST_NAME (32) CHAR (1) DEFINED FIRST_NAME_32,                  
+    MIDDLE_NAME_30     CHAR (30),                                       
+    WS_MIDDLE_NAME (30) CHAR (1) DEFINED MIDDLE_NAME_30,                
+    NAME_SUFFIX_1      CHAR (3),                                        
+    WS_NAME_SUFFIX (3) CHAR (1) DEFINED NAME_SUFFIX_1;                  
+                                                                        
+  DECLARE                                                               
+    BLD_NAME           CHAR (35);                                       
+                                                                        
+  DECLARE                                                               
+    BLD_LAST_NAME      CHAR (35) INIT (' '),                            
+    BLD_FIRST_NAME     CHAR (32) INIT (' '),                            
+    BLD_MID_NAME       CHAR (30) INIT (' '),                            
+    BLD_SUFFIX_NAME    CHAR (3)  INIT (' ');                            
+                                                                        
+  DECLARE                                                               
+    TEMP_BLD_FIRST_NAME   CHAR (32);                                    
+                                                                        
+  DECLARE                                                               
+    WS_POS               FIXED BINARY (15) INIT (0),                    
+    WS_POS_1             FIXED BINARY (15) INIT (0),                    
+    WS_POS_2             FIXED BINARY (15) INIT (0),                    
+    NEW_POS              FIXED BINARY (15) INIT (0),                    
+    NEW_POS_1            FIXED BINARY (15) INIT (0),                    
+    NEW_POS_2            FIXED BINARY (15) INIT (0);                    
+                                                                        
+  DECLARE                                                               
+    WS_SEMI_COLON                                                       
+    CHAR (29) INIT (', -ABCDEFGHIJKLMNOPQRSTUVWXYZ'),                   
+    WS_COMMA                                                            
+    CHAR (28) INIT (' -ABCDEFGHIJKLMNOPQRSTUVWXYZ'),                    
+    WS_SPACE             CHAR (1) INIT (' '),                           
+    WS_SEMI              CHAR (1) INIT (';'),                           
+    WS_COMM              CHAR (1) INIT (',');                           
+                                                                        

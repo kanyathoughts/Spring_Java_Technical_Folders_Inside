@@ -1,0 +1,13 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGMCPY01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       COPY CopybookWithMultipleReferences
+
+       PROCEDURE DIVISION.
+
+         DISPLAY B.
+         MOVE HIGH-VALUES TO B.
+
+       END PROGRAM PGMCPY01.

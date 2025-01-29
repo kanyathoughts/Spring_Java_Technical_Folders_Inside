@@ -1,0 +1,30 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7100                                             *
+*   Description  . . Validation Option                                 *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(17,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                  Validation Option - Help
+
+    Used to determine how to handle relationships that have
+    failed validation requirements.  Valid entries are:
+
+      D  Remove the relationship immediately.
+      N  Set relationship to a "Validation Failed" status if
+         the relationship failed the validation requirements.
+      Y  Set relationship to a "Validation Failed" status and
+         calculate the VF Expiration Date based on the validation
+         failure options on MICM Record 7100 (Institution
+         Parameters) and MICM Record 7101 (Model Definition).
+                                                                _
+    F12=Cancel                                            M00055S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

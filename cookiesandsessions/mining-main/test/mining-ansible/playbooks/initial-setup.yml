@@ -1,0 +1,88 @@
+# This script initially prepares a RHEL based mining testserver.
+---
+- hosts: all
+  become: yes
+  
+  tasks:
+     # We have to remove the existing one to ensure that the Azul Zulu JDK gets the default one
+   - name: Remove existing JDK
+     yum:
+       name: java-1.7.0-openjdk-headless-1.7.0.251-2.6.21.0.el7_7.x86_64
+       state: absent
+   
+   - name: Import Azul GPG Key
+     rpm_key:
+       key: "http://repos.azulsystems.com/RPM-GPG-KEY-azulsystems"
+       state: present
+       
+   - name: Add Azul repo
+     get_url:
+       url: http://repos.azulsystems.com/rhel/zulu.repo
+       dest: /etc/yum.repos.d/zulu.repo
+     
+   - name: Install Azul Zulu JDK 11
+     yum:
+       name: zulu-11
+       state: present
+       
+   - name: Install docker requirements
+     yum:
+       name:
+         - yum-utils
+         - device-mapper-persistent-data
+         - lvm2
+       state: present
+       
+     # RHEL is no official supported platform for docker. Therefore we have to use CentOS binaries
+   - name: Install newer container-selinux version from CentOS
+     yum:
+       name: http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-3.el7.noarch.rpm
+       state: present
+       
+     # RHEL is no official supported platform for docker. Therefore we have to use CentOS binaries
+   - name: Add CentOS docker repo
+     get_url:
+       url: https://download.docker.com/linux/centos/docker-ce.repo
+       dest: /etc/yum.repos.d/docker-ce.repo
+       
+   - name: Install docker
+     yum:
+       name: docker-ce
+       state: present
+       
+   - name: Stop docker just to ensure its not running
+     command: systemctl stop docker
+     
+     # Only the /data partition has enough free space
+   - name: Create new docker data directory
+     file:
+       path: /data/docker
+       state: directory
+     
+   - name: Create link for docker to the data directory
+     file:
+       src: /data/docker
+       dest: /var/lib/docker
+       state: link
+     
+   - name: Start docker
+     command: systemctl start docker
+     
+   - name: Enable docker
+     command: systemctl enable docker
+       
+   - name: Download docker-compose
+     get_url:
+       url: https://github.com/docker/compose/releases/download/1.25.4/docker-compose-Linux-x86_64
+       dest: /usr/local/bin/docker-compose
+     
+   - name: Make docker-compose executable
+     file:
+       dest: /usr/local/bin/docker-compose
+       mode: a+x
+   
+   - name: Create link for docker-compose
+     file:
+       src: /usr/local/bin/docker-compose
+       dest: /usr/bin/docker-compose
+       state: link

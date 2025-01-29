@@ -1,0 +1,102 @@
+//RPAUTOUD JOB
+//*    ****************************************************             00001000
+//*    * RPAUTOUP - RELATIONSHIP PRICING AUTOMATIC UPDATE *             00002000
+//*    ****************************************************             00003000
+//JOBLIB   DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.DP86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.TI86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//         DD  DSN=CICSTS22.CICS.SDFHEXCI,DISP=SHR                      00005000
+//*                                                                     00006000
+//*    *****************************                                    00007000
+//*    * RPR150 - AUTOMATIC UPDATE *                                    00008000
+//*    *****************************                                    00009000
+//STEP010  EXEC PGM=IEFBR14,COND=(0,LT)                                 00010000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00011000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00012000
+//*                                                                     00013000
+//STEP015  EXEC PGM=RPR150,REGION=1024K,COND=(0,LT)                     00014000
+//SYSPRINT DD  SYSOUT=*                                                 00015000
+//SYSUDUMP DD  SYSOUT=*                                                 00016000
+//SYSOUT   DD  SYSOUT=*                                                 00017000
+//PRINTR   DD  SYSOUT=*                                                 00018000
+//PRFICH   DD  SYSOUT=*                                                 00019000
+//PRINTA   DD  SYSOUT=*                                                 00020000
+//PRINTB   DD  SYSOUT=*                                                 00021000
+//PRINTC   DD  SYSOUT=*                                                 00022000
+//PRINTD   DD  SYSOUT=*                                                 00023000
+//PRINTE   DD  SYSOUT=*                                                 00024000
+//PRINTF   DD  SYSOUT=*                                                 00025000
+//PRINTG   DD  SYSOUT=*                                                 00026000
+//PRINTH   DD  SYSOUT=*                                                 00027000
+//PRINTI   DD  SYSOUT=*                                                 00028000
+//PRINTJ   DD  SYSOUT=*                                                 00029000
+//PRNTR01  DD  SYSOUT=3                                                 00030000
+//PRNTRST  DD  SYSOUT=*                                                 00031000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00032000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),      00033000
+//             SPACE=(CYL,(1,1),RLSE)                                   00034000
+//*                                                                     00035000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR150),DISP=SHR              00036000
+//*                                                                     00037000
+/*                                                                      00038000
+//*                                                                     00039000
+//*    ***********************************************                  00040000
+//*    * RPD240 - SECONDARY RECORD INFORMATION BUILD *                  00041000
+//*    ***********************************************                  00042000
+//STEP025  EXEC PGM=IEFBR14,COND=(0,LT)                                 00043000
+//MIAPIB   DD   DSN=BNKCA.IN0.RP50.BLDSEC,                              00044000
+//         DISP=(MOD,DELETE,DELETE),                                    00045000
+//         UNIT=SYSDA,                                                  00046000
+//         SPACE=(TRK,(1,1),RLSE)                                       00047000
+//*                                                                     00048000
+//STEP030  EXEC PGM=RPD240,REGION=1024K,COND=(0,LT)                     00049000
+//SYSUDUMP DD   SYSOUT=*                                                00050000
+//SYSPRINT DD   SYSOUT=*                                                00051000
+//SYSOUT   DD   SYSOUT=*                                                00052000
+//MIAPIB   DD   DSN=BNKCA.IN0.RP50.BLDSEC,                              00053000
+//         DISP=(NEW,CATLG,DELETE),                                     00054000
+//         UNIT=SYSDA,                                                  00055000
+//         SPACE=(CYL,(50,25),RLSE),                                    00056000
+//         DCB=(RECFM=VB,LRECL=2019,BLKSIZE=26303)                      00057000
+//RPSORT   DD   UNIT=SYSDA,SPACE=(CYL,(2,1))                            00058000
+//*                                                                     00059000
+//*                                                                     00060000
+//STEP035  EXEC PGM=BIS864B,REGION=1024K                                00061000
+//BNKPRT1  DD SYSOUT=*                                                  00062000
+//SYSOUT   DD SYSOUT=*                                                  00063000
+//SYSPRINT DD SYSOUT=*                                                  00064000
+//SYSUDUMP DD SYSOUT=*                                                  00065000
+//* DSNTRACE DD SYSOUT=*                                                00066000
+//SYSIN    DD   *                                                       00067000
+IPRP BNK RPDBSDEF EN          N                                         00068000
+END                                                                     00069000
+SAI                                                                     00070000
+END                                                                     00071000
+/*                                                                      00072000
+//STEP040  EXEC PGM=BIS863B,REGION=4096K,COND=(0,LT)                    00073000
+//BIPUTIL  DD  DSN=BNKCA.IN0.RP50.BLDSEC,                               00074000
+//             DISP=(OLD,KEEP,KEEP),                                    00075000
+//             DCB=BUFNO=20                                             00076000
+//BIPDSK1  DD  DSN=&&BIPDSK1,DISP=(,DELETE,DELETE),                     00077000
+//             UNIT=SYSDA,SPACE=(CYL,(2,2),RLSE),                       00078000
+//             DCB=(RECFM=VB,LRECL=2015,BLKSIZE=16300)                  00079000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//BNKPRT1  DD  SYSOUT=*                                                 00081000
+//SYSOUT   DD  SYSOUT=*                                                 00082000
+//SYSPRINT DD  SYSOUT=*                                                 00083000
+//* DSNTRACE DD  DUMMY                                                  00084000
+//SYSIN    DD   *                                                       00085000
+IPRP BNK INFOPNT  EN BIS863B  0 L 0                                     00086000
+END                                                                     00087000
+SAI                                                                     00088000
+//*                                                                     00089000
+/*                                                                      00090000
+//*                                                                     00091000
+//

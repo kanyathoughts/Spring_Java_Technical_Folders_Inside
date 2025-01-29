@@ -1,0 +1,1743 @@
+**************************************************                              
+*   THIS BMS MACRO FOR UTORNAC WAS CREATED       *                              
+*   AS THE ACCOUNT MAINTENANCE PROGRAM           *                              
+*   FOR CCF604 - GA PURPOSE SCREENS              *                              
+**************************************************                              
+         PRINT NOGEN                                                            
+UTACTM2  DFHMSD  TYPE=&SYSPARM,                                        X        
+               LANG=COBOL,                                             X        
+               MODE=INOUT,                                             X        
+               CTRL=(FREEKB,FRSET),                                    X        
+               TIOAPFX=YES,                                            X        
+               STORAGE=AUTO                                                     
+*                                                                               
+UMACTM4  DFHMDI  SIZE=(24,80),                                         X        
+               LINE=01,                                                X        
+               COLUMN=01,                                              X        
+               MAPATTS=(COLOR,HILIGHT),                                X        
+               DSATTS=(COLOR,HILIGHT)                                          
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMACTM2                                             
+* MAP-NAME OF UTMACTM4                                                          
+*                                                                               
+MAPNAM4  DFHMDF POS=(01,01),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTMACTM4'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* TITLE OF UTMORNAC                                                             
+*                                                                               
+*PTITLE  DFHMDF POS=(01,24),                                                    
+MPTIT4E  DFHMDF POS=(01,20),                                           X        
+               LENGTH=22,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT MAINTENANCE - '                                 
+*                                                                               
+MPTIT4X  DFHMDF POS=(01,43),                                           X        
+               LENGTH=28,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT TYPE AND NAME COMBO '                           
+*              INITIAL='ACCOUNT NAME                '                           
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* DIALOG-NAME OF UTMACTM2                                                       
+*                                                                               
+MPDIALG4 DFHMDF POS=(01,72),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTDACTM2'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* NATIONAL ACCOUNT SLECTION LITERAL OF UTMORNAC                                 
+*                                                                               
+HDLINEL4 DFHMDF POS=(04,04),                                           X        
+               LENGTH=54,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='SELECT ANY ONE OF THE FOLLOWING OPTIONS '               
+*                                                                               
+PGSTAT4  DFHMDF POS=(04,60),                                           X        
+               LENGTH=17,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+ADDOPT4  DFHMDF POS=(06,10),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(IC,NORM,FSET),                                   X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='_'                                                      
+*                                                                               
+         DFHMDF POS=(06,12),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ADDLIT4  DFHMDF POS=(06,13),                                           X        
+               LENGTH=3,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ADD'                                                    
+*                                                                               
+CHGOPT4  DFHMDF POS=(06,30),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='_'                                                      
+*                                                                               
+         DFHMDF POS=(06,32),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+CHGLIT4  DFHMDF POS=(06,33),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='CHANGE'                                                 
+*                                                                               
+DELOPT4  DFHMDF POS=(06,50),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='_'                                                      
+*                                                                               
+         DFHMDF POS=(06,52),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+DELLIT4  DFHMDF POS=(06,53),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='DELETE'                                                 
+*                                                                               
+HDLIN24  DFHMDF POS=(08,04),                                           X        
+               LENGTH=20,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT TYPE       '                                    
+*                                                                               
+HDLIN34  DFHMDF POS=(08,42),                                           X        
+               LENGTH=20,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT NAME       '                                    
+*                                                                               
+ACTYPNW  DFHMDF POS=(09,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(09,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACNAMNW  DFHMDF POS=(09,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(09,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM401  DFHMDF POS=(10,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC01 DFHMDF POS=(10,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACNAMC01 DFHMDF POS=(10,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM402  DFHMDF POS=(11,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACTYPC02 DFHMDF POS=(11,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACNAMC02 DFHMDF POS=(11,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SELM403  DFHMDF POS=(12,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(12,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC03 DFHMDF POS=(12,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(12,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC03 DFHMDF POS=(12,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(12,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM404  DFHMDF POS=(13,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(13,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC04 DFHMDF POS=(13,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(13,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC04 DFHMDF POS=(13,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(13,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM405  DFHMDF POS=(14,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(14,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC05 DFHMDF POS=(14,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(14,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC05 DFHMDF POS=(14,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(14,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+                                                                                
+SELM406  DFHMDF POS=(15,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(15,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC06 DFHMDF POS=(15,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(15,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC06 DFHMDF POS=(15,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(15,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM407  DFHMDF POS=(16,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(16,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC07 DFHMDF POS=(16,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(16,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC07 DFHMDF POS=(16,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(16,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM408  DFHMDF POS=(17,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(17,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC08 DFHMDF POS=(17,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(17,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC08 DFHMDF POS=(17,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(17,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM409  DFHMDF POS=(18,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(18,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC09 DFHMDF POS=(18,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(18,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC09 DFHMDF POS=(18,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(18,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM410  DFHMDF POS=(19,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(19,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC10 DFHMDF POS=(19,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(19,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC10 DFHMDF POS=(19,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(19,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM411  DFHMDF POS=(20,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(20,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACTYPC11 DFHMDF POS=(20,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(20,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACNAMC11 DFHMDF POS=(20,42),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(20,78),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+PGLGC4   DFHMDF POS=(21,04),                                           X        
+               LENGTH=13,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+RECCNT4  DFHMDF POS=(21,66),                                           X        
+               LENGTH=04,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+CORRTXT4 DFHMDF POS=(22,01),                                           X        
+               LENGTH=25,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='IS THIS A CORRECTION (Y) '                              
+*                                                                               
+CORRIND4 DFHMDF POS=(22,27),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,29),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+CHNGTXT4 DFHMDF POS=(22,32),                                           X        
+               LENGTH=24,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='OR AN ACTUAL CHANGE (Y) '                               
+*                                                                               
+CHNGIND4 DFHMDF POS=(22,57),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,59),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SCROLLM4 DFHMDF POS=(22,62),                                           X        
+               LENGTH=11,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='           '                                            
+*                                                                               
+MSGFLD4  DFHMDF POS=(22,80),                                           X        
+               LENGTH=80,                                              X        
+               ATTRB=(PROT,BRT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+PFKEYS4  DFHMDF POS=(24,01),                                           X        
+               LENGTH=77,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*'PF2-PAGE FORWARD, PF3-PAGE BACK, PF5 REFRESH, PF11-PRIOR, PF12 MAIN'          
+UMACTM2  DFHMDI  SIZE=(24,80),                                         X        
+               LINE=01,                                                X        
+               COLUMN=01,                                              X        
+               MAPATTS=(COLOR,HILIGHT),                                X        
+               DSATTS=(COLOR,HILIGHT)        
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMACTM2                                             
+* MAP-NAME OF UTMACTM2                                                          
+*                                                                               
+MAPNAME  DFHMDF POS=(01,01),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTMACTM2'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* TITLE OF UTMORNAC                                                             
+*                                                                               
+*PTITLE  DFHMDF POS=(01,24),                                                    
+MPTITLE  DFHMDF POS=(01,20),                                           X        
+               LENGTH=22,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT MAINTENANCE - '                                 
+*                                                                               
+MPTITLX  DFHMDF POS=(01,43),                                           X        
+               LENGTH=28,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT TYPE                '                           
+*              INITIAL='ACCOUNT NAME                '                           
+*              INITIAL='ACCOUNT TYPE AND NAME COMBO '                           
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* DIALOG-NAME OF UTMACTM2                                                       
+*                                                                               
+MPDIALG  DFHMDF POS=(01,72),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTDACTM2'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* NATIONAL ACCOUNT SLECTION LITERAL OF UTMORNAC                                 
+*                                                                               
+HDLINEL  DFHMDF POS=(04,04),                                           X        
+               LENGTH=54,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='SELECT ANY ONE OF THE FOLLOWING OPTIONS '               
+*                                                                               
+PGSTATS  DFHMDF POS=(04,60),                                           X        
+               LENGTH=17,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+ADDOPTS  DFHMDF POS=(06,10),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,12),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ADDLITS  DFHMDF POS=(06,13),                                           X        
+               LENGTH=3,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ADD'                                                    
+*                                                                               
+CHGOPTS  DFHMDF POS=(06,30),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,32),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+CHGLITS  DFHMDF POS=(06,33),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='CHANGE'                                                 
+*                                                                               
+DELOPTS  DFHMDF POS=(06,50),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,52),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+DELLITS  DFHMDF POS=(06,53),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='DELETE'                                                 
+*                                                                               
+HDLIN2L  DFHMDF POS=(08,04),                                           X        
+               LENGTH=20,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT TYPES      '                                    
+*                                                                               
+ACCTYPNW DFHMDF POS=(09,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(09,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELEC01  DFHMDF POS=(10,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,IC,FSET),                            X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP01 DFHMDF POS=(10,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELEC02  DFHMDF POS=(11,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACCTYP02 DFHMDF POS=(11,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SELEC03  DFHMDF POS=(12,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(12,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP03 DFHMDF POS=(12,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(12,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELEC04  DFHMDF POS=(13,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(13,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP04 DFHMDF POS=(13,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(13,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELEC05  DFHMDF POS=(14,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(14,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP05 DFHMDF POS=(14,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(14,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC06  DFHMDF POS=(15,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(15,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP06 DFHMDF POS=(15,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(15,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC07  DFHMDF POS=(16,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(16,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP07 DFHMDF POS=(16,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(16,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC08  DFHMDF POS=(17,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(17,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP08 DFHMDF POS=(17,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(17,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC09  DFHMDF POS=(18,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(18,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP09 DFHMDF POS=(18,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(18,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC10  DFHMDF POS=(19,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(19,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP10 DFHMDF POS=(19,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(19,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELEC11  DFHMDF POS=(20,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(20,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCTYP11 DFHMDF POS=(20,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(20,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+PGLGC    DFHMDF POS=(21,04),                                           X        
+               LENGTH=13,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+RECCNT   DFHMDF POS=(21,66),                                           X        
+               LENGTH=04,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+CORRTXT  DFHMDF POS=(22,01),                                           X        
+               LENGTH=25,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='IS THIS A CORRECTION (Y) '                              
+*                                                                               
+CORRIND  DFHMDF POS=(22,27),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,29),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+CHNGTXT  DFHMDF POS=(22,32),                                           X        
+               LENGTH=24,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='OR AN ACTUAL CHANGE (Y) '                               
+*                                                                               
+CHNGIND  DFHMDF POS=(22,57),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,59),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SCROLLM  DFHMDF POS=(22,62),                                           X        
+               LENGTH=11,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='           '                                            
+*                                                                               
+MSGFLD   DFHMDF POS=(22,80),                                           X        
+               LENGTH=80,                                              X        
+               ATTRB=(PROT,BRT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+PFKEYS   DFHMDF POS=(24,01),                                           X        
+               LENGTH=77,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*'PF2-PAGE FORWARD, PF3-PAGE BACK, PF5 REFRESH, PF11-PRIOR, PF12 MAIN'          
+*                                                                               
+UMACTM3  DFHMDI  SIZE=(24,80),                                         X        
+               LINE=01,                                                X        
+               COLUMN=01,                                              X        
+               MAPATTS=(COLOR,HILIGHT),                                X        
+               DSATTS=(COLOR,HILIGHT)        
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMACTM2                                             
+* MAP-NAME OF UTMACTM3                                                          
+*                                                                               
+MAPNAM3  DFHMDF POS=(01,01),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTMACTM3'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* TITLE OF UTMORNAC                                                             
+*                                                                               
+*PTITLE  DFHMDF POS=(01,24),                                                    
+MPTIT3E  DFHMDF POS=(01,20),                                           X        
+               LENGTH=22,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT MAINTENANCE - '                                 
+*                                                                               
+MPTIT3X  DFHMDF POS=(01,43),                                           X        
+               LENGTH=28,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT NAME                '                           
+*              INITIAL='ACCOUNT TYPE AND NAME COMBO '                           
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* DIALOG-NAME OF UTMACTM2                                                       
+*                                                                               
+MPDIALG3 DFHMDF POS=(01,72),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTDACTM2'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* NATIONAL ACCOUNT SLECTION LITERAL OF UTMORNAC                                 
+*                                                                               
+HDLINEL3 DFHMDF POS=(04,04),                                           X        
+               LENGTH=54,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='SELECT ANY ONE OF THE FOLLOWING OPTIONS '               
+*                                                                               
+PGSTAT3  DFHMDF POS=(04,60),                                           X        
+               LENGTH=17,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+ADDOPT3  DFHMDF POS=(06,10),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,12),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ADDLIT3  DFHMDF POS=(06,13),                                           X        
+               LENGTH=3,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ADD'                                                    
+*                                                                               
+CHGOPT3  DFHMDF POS=(06,30),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,32),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+CHGLIT3  DFHMDF POS=(06,33),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='CHANGE'                                                 
+*                                                                               
+DELOPT3  DFHMDF POS=(06,50),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(NORM,FSET),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(06,52),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+DELLIT3  DFHMDF POS=(06,53),                                           X        
+               LENGTH=6,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='DELETE'                                                 
+*                                                                               
+HDLIN23  DFHMDF POS=(08,04),                                           X        
+               LENGTH=20,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='ACCOUNT NAMES      '                                    
+*                                                                               
+ACCNAMNW DFHMDF POS=(09,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(09,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM301  DFHMDF POS=(10,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,IC,FSET),                            X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM01 DFHMDF POS=(10,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELM302  DFHMDF POS=(11,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACCNAM02 DFHMDF POS=(11,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SELM303  DFHMDF POS=(12,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(12,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM03 DFHMDF POS=(12,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(12,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELM304  DFHMDF POS=(13,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(13,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM04 DFHMDF POS=(13,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(13,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELM305  DFHMDF POS=(14,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(14,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM05 DFHMDF POS=(14,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(14,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM306  DFHMDF POS=(15,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(15,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM06 DFHMDF POS=(15,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(15,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM307  DFHMDF POS=(16,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(16,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM07 DFHMDF POS=(16,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(16,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM308  DFHMDF POS=(17,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(17,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM08 DFHMDF POS=(17,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(17,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM309  DFHMDF POS=(18,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(18,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM09 DFHMDF POS=(18,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(18,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM310  DFHMDF POS=(19,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(19,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM10 DFHMDF POS=(19,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(19,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELM311  DFHMDF POS=(20,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(20,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCNAM11 DFHMDF POS=(20,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(20,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+PGLGC3   DFHMDF POS=(21,04),                                           X        
+               LENGTH=13,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+RECCNT3  DFHMDF POS=(21,66),                                           X        
+               LENGTH=04,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+CORRTXT3 DFHMDF POS=(22,01),                                           X        
+               LENGTH=25,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='IS THIS A CORRECTION (Y) '                              
+*                                                                               
+CORRIND3 DFHMDF POS=(22,27),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,29),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+CHNGTXT3 DFHMDF POS=(22,32),                                           X        
+               LENGTH=24,                                              X        
+               ATTRB=(DRK,ASKIP),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='OR AN ACTUAL CHANGE (Y) '                               
+*                                                                               
+CHNGIND3 DFHMDF POS=(22,57),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(DRK,PROT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+         DFHMDF POS=(22,59),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SCROLLM3 DFHMDF POS=(22,62),                                           X        
+               LENGTH=11,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='           '                                            
+*                                                                               
+MSGFLD3  DFHMDF POS=(22,80),                                           X        
+               LENGTH=80,                                              X        
+               ATTRB=(PROT,BRT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+PFKEYS3  DFHMDF POS=(24,01),                                           X        
+               LENGTH=77,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+UMACTVA  DFHMDI  SIZE=(24,80),                                         X        
+               LINE=01,                                                X        
+               COLUMN=01,                                              X        
+               MAPATTS=(COLOR,HILIGHT),                                X        
+               DSATTS=(COLOR,HILIGHT)        
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMACTM2                                             
+* MAP-NAME OF UTMACTM2                                                          
+*                                                                               
+MAPNAMV  DFHMDF POS=(01,01),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTMACTVA'                                               
+*                                                                               
+*                                                                               
+*PTITLE  DFHMDF POS=(01,24),                                                    
+MPTITV1  DFHMDF POS=(01,20),                                           X        
+               LENGTH=22,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL=' INIT  ACCOUNT TYPE - '                                 
+*                                                                               
+MPTITV2  DFHMDF POS=(01,43),                                           X        
+               LENGTH=28,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='VALID VALUES                '                           
+*              INITIAL='ACCOUNT NAME                '                           
+*              INITIAL='ACCOUNT TYPE AND NAME COMBO '                           
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* DIALOG-NAME OF UTMACTM2                                                       
+*                                                                               
+MPDIALV  DFHMDF POS=(01,72),                                           X        
+               LENGTH=8,                                               X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='UTDACTM2'                                               
+*                                                                               
+* MAP-FIELD DEFINITION FOR UTMORNAC                                             
+* NATIONAL ACCOUNT SLECTION LITERAL OF UTMORNAC                                 
+*                                                                               
+HDLINEV  DFHMDF POS=(04,04),                                           X        
+               LENGTH=54,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='                                        '               
+*                                                                               
+PGSTATV  DFHMDF POS=(04,60),                                           X        
+               LENGTH=17,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+MSUBTV1  DFHMDF POS=(06,04),                                           X        
+               LENGTH=33,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL=' SELECT ANY ONE OF THE FOLLOWING '                      
+*                                                                               
+MSUBTV2  DFHMDF POS=(06,38),                                           X        
+               LENGTH=15,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='<ACCOUNT ZZZZS>'                                        
+*                                                                               
+HDLIN2V  DFHMDF POS=(08,04),                                           X        
+               LENGTH=20,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='                   '                                    
+*                                                                               
+                                                                                
+SELVA01  DFHMDF POS=(10,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,IC,FSET),                            X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT01 DFHMDF POS=(10,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(10,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+SELVA02  DFHMDF POS=(11,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+ACCDAT02 DFHMDF POS=(11,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(11,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+*                                                                               
+SELVA03  DFHMDF POS=(12,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(12,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT03 DFHMDF POS=(12,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(12,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELVA04  DFHMDF POS=(13,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(13,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT04 DFHMDF POS=(13,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(13,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+SELVA05  DFHMDF POS=(14,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(14,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT05 DFHMDF POS=(14,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(14,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA06  DFHMDF POS=(15,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(15,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT06 DFHMDF POS=(15,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(15,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA07  DFHMDF POS=(16,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(16,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT07 DFHMDF POS=(16,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(16,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA08  DFHMDF POS=(17,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(17,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT08 DFHMDF POS=(17,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(17,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA09  DFHMDF POS=(18,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(18,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT09 DFHMDF POS=(18,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(18,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA10  DFHMDF POS=(19,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(19,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT10 DFHMDF POS=(19,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(19,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+SELVA11  DFHMDF POS=(20,01),                                           X        
+               LENGTH=01,                                              X        
+               ATTRB=(UNPROT,NORM,FSET),                               X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+         DFHMDF POS=(20,03),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+                                                                                
+ACCDAT11 DFHMDF POS=(20,04),                                           X        
+               LENGTH=35,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+*                                                                               
+         DFHMDF POS=(20,40),                                           X        
+               LENGTH=0,                                               X        
+               ATTRB=ASKIP                                                      
+*                                                                               
+                                                                                
+PGLGCV   DFHMDF POS=(21,04),                                           X        
+               LENGTH=13,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+*                                                                               
+SCROLLV  DFHMDF POS=(22,62),                                           X        
+               LENGTH=11,                                              X        
+               ATTRB=(PROT,NORM),                                      X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='           '                                            
+*                                                                               
+MSGFLDV  DFHMDF POS=(22,80),                                           X        
+               LENGTH=80,                                              X        
+               ATTRB=(PROT,BRT,FSET),                                  X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF                                                      
+                                                                                
+PFKEYSV  DFHMDF POS=(24,01),                                           X        
+               LENGTH=77,                                              X        
+               ATTRB=(PROT,NORM,FSET),                                 X        
+               COLOR=DEFAULT,                                          X        
+               HILIGHT=OFF,                                            X        
+               INITIAL='PF2-PAGE FORWARD, PF3-PAGE BACKWARD, PA1-EXIT'          
+*                                                                               
+         DFHMSD TYPE=FINAL                                                      
+                END                                                             

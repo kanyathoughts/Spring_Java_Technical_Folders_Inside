@@ -1,0 +1,22 @@
+package com.example.demo1;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.example.demo1.beanConfig.ControllerKanya;
+import com.example.demo1.beanConfig.VegPizza;
+
+@SpringBootApplication
+public class Demo1Application {
+
+	public static void main(String[] args) {
+		//context is nothing but Spring IOC container and which handles all of the beans 
+		var context = SpringApplication.run(Demo1Application.class, args);
+		
+		
+		//getting beans 
+		ControllerKanya  controllerKanya = context.getBean(ControllerKanya.class);
+		controllerKanya.getPizzaFromController();
+	}
+
+}

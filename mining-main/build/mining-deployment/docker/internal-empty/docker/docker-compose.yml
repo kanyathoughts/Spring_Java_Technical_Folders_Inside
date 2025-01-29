@@ -1,0 +1,102 @@
+version: '3'
+
+services:
+
+  orientdb:
+    image: mining_orientdb
+    ports:
+      - "${orient_db_connection_port:-2424}:2424" # DBConnection
+      - "${orient_db_studio_port:-2480}:2480" # OrientDB Studio (web UI)
+    environment:
+      - ORIENTDB_ROOT_PASSWORD=Worx2000
+    # Uncomment and modify the following example command to configure OrientDB
+    # command: server.sh -Ddistributed=true -Xmx12g
+    # Uncomment and change the following volume path to store the database on the host
+    # volumes: 
+    #   - <databases_path>:/orientdb/databases
+
+  keycloak:
+    image: mining_keycloak
+    ports:
+      - "${keycloak_port:-8180}:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=Worx2000
+      - MINING_ADMIN_USER=admin
+      - MINING_ADMIN_PASSWORD=Worx2000
+      - API_SERVER_URL=http://localhost:${apiserver_port:-8080} # Used for redirects, no slash at end!
+      - DB_VENDOR=POSTGRES # Use postgres to store keycloak data
+      - KC_DB_URL_HOST=postgres_keycloak
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USER=keycloak
+      - KC_DB_SCHEMA=public
+      - KC_DB_PASSWORD=UDJZnZvJcsQNjuqqyfZRcbLS
+      - KC_HOSTNAME=localhost
+      - KC_HOSTNAME_ADMIN=localhost
+    depends_on:
+      - postgres_keycloak
+
+  postgres_keycloak:
+    image: postgres:15-bullseye
+    ports:
+      - "5432" #automatic port assignment, look at 'docker container ls' to get the port for this container
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=UDJZnZvJcsQNjuqqyfZRcbLS
+    # Uncomment and change the following volume path to store the database on the host
+    # volumes:
+    #   - <path_to_postgres_db>:/var/lib/postgresql/data
+
+  postgres_api_server:
+    image: postgres:15-bullseye
+    ports:
+      # - "5432" # ommit to let the system specify the port
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mining
+      POSTGRES_USER: mining
+      POSTGRES_PASSWORD: Worx2000
+
+  apiserver:
+    image: mining_apiserver
+    ports:
+      - "${apiserver_port:-8080}:8080"
+    environment:
+      - KEYCLOAK_PORT=${keycloak_port:-8180}
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - orientdb
+      - keycloak
+      - postgres_api_server
+      
+# Special configuration is required for this, see 
+# https://amiconfluence.deloitte.com/pages/viewpage.action?spaceKey=PROD&title=Health+Indicators for more information
+#   prometheus:
+#     image: prom/prometheus
+#     container_name: prometheus1
+#     command:
+#       - --config.file=/etc/prometheus/prometheus.yml
+#     ports:
+#       - 9090:9090
+#     restart: unless-stopped
+#     volumes:
+#       - ./prometheus:/etc/prometheus
+#       - prom_data:/prometheus
+#     depends_on:
+#       - apiserver
+
+#   grafana:
+#     image: grafana/grafana
+#     container_name: grafana1
+#     ports:
+#       - 3000:3000
+#     restart: unless-stopped
+#     volumes:
+#       - ./grafana:/etc/grafana/provisioning/datasources
+#     depends_on:
+#       - prometheus
+# volumes:
+#   prom_data:

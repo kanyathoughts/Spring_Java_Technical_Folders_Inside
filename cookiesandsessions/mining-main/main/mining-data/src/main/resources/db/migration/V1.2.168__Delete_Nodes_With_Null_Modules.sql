@@ -1,0 +1,2 @@
+DELETE FROM DataFlowNode WHERE module IS NULL OR module.id IS NULL UNSAFE;
+DELETE FROM AstNode WHERE module IS NULL OR module.id IS NULL UNSAFE;

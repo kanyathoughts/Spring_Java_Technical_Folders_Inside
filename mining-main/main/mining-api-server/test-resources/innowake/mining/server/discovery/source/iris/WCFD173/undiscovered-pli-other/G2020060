@@ -1,0 +1,80 @@
+ %PAGE;                                                                 
+           /*************************************/                      
+           /*  CONVERT DATE FROM YYDDD TO Y,M,D */                      
+           /*************************************/                      
+                                                                        
+ J_TO_G:  PROCEDURE;                                                    
+                                                                        
+ IF SUBSTR(DATE_PARAMETER,1,5)    =    ' '              THEN            
+    DO;                                                                 
+    DATE_PARAMETER = '      ';                                          
+    RETURN;                                                             
+    END;                                                                
+                                                                        
+ IF SUBSTR(DATE_PARAMETER,1,5)    =    '00000'          THEN            
+    DO;                                                                 
+    DATE_PARAMETER = '000000';                                          
+    RETURN;                                                             
+    END;                                                                
+                                                                        
+ IF MOD (JULIAN_YEAR,4)  =  0         THEN                              
+   DAYS (2)  =  29;                                                     
+ ELSE                                                                   
+   DAYS (2)  =  28;                                                     
+                                                                        
+ DONE  =  NO;                                                           
+                                                                        
+ DO  I  =  1  TO  12    WHILE (DONE = NO);                              
+  IF DAYS (I)  <  JULIAN_DAY       THEN                                 
+     JULIAN_DAY  =  JULIAN_DAY - DAYS (I);                              
+                                                                        
+  ELSE                                                                  
+    DO;                                                                 
+      GREGORIAN_DAY    =   JULIAN_DAY;                                  
+      GREGORIAN_YEAR   =   JULIAN_YEAR;                                 
+      GREGORIAN_MONTH  =   MONTH (I);                                   
+      DONE  =  YES;                                                     
+    END;                                                                
+                                                                        
+ END;                                                                   
+                                                                        
+ END  J_TO_G;                                                           
+                                                                        
+                                                                        
+ /********************************************************************/ 
+           /*************************************/                      
+           /*  CONVERT DATE FROM Y,M,D TO YYDDD */                      
+           /*************************************/                      
+                                                                        
+ G_TO_J:       PROCEDURE;                                               
+                                                                        
+ IF DATE_PARAMETER  =  ' '            THEN         RETURN;              
+                                                                        
+ IF MOD (GREGORIAN_YEAR,4)  =  0         THEN                           
+   DAYS (2)  =  29;                                                     
+ ELSE                                                                   
+   DAYS (2)  =  28;                                                     
+                                                                        
+ SAVE_DAYS  =  0;                                                       
+ DONE  =  NO;                                                           
+                                                                        
+ SAVE_YEAR = GREGORIAN_YEAR;                                            
+                                                                        
+ DO  I  =  1    TO  12     WHILE (DONE  =  NO);                         
+                                                                        
+  IF GREGORIAN_MONTH  =  MONTH (I)         THEN                         
+    DO;                                                                 
+      JULIAN_DAY   =  SAVE_DAYS  +  GREGORIAN_DAY;                      
+      JULIAN_YEAR  =  SAVE_YEAR;                                        
+      DONE  =  YES;                                                     
+    END;                                                                
+                                                                        
+  ELSE                                                                  
+    DO;                                                                 
+      SAVE_DAYS  =  SAVE_DAYS  +  DAYS (I);                             
+    END;                                                                
+                                                                        
+ END;                                                                   
+                                                                        
+ END G_TO_J;                                                            
+                                                                        

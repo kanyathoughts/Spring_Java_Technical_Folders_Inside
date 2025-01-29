@@ -1,0 +1,122 @@
+<!-- with header comment  -->
+<?xml version="1.0" ?>
+<definitions targetNamespace="http://www.exampleApp.dispatchOrder.com"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:reqns="http://www.exampleApp.dispatchOrder.Request.com"
+    xmlns:resns="http://www.exampleApp.dispatchOrder.Response.com"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.exampleApp.dispatchOrder.com">
+    <types>
+       <xsd:schema attributeFormDefault="qualified"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.exampleApp.dispatchOrder.Request.com"
+            xmlns:tns="http://www.exampleApp.dispatchOrder.Request.com"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:reqns="http://www.exampleApp.dispatchOrder.Request.com">
+            <xsd:element name="dispatchOrderRequest" nillable="false">
+                <xsd:complexType mixed="false">
+                    <xsd:sequence>
+                			<xsd:element name="itemReferenceNumber" nillable="false">
+                				<xsd:simpleType>
+                					<xsd:restriction base="xsd:short">
+                						<xsd:maxInclusive value="9911" />
+                						<xsd:minInclusive value="0" />
+                					</xsd:restriction>
+                				</xsd:simpleType>
+                			</xsd:element>
+                			<xsd:element name="quantityRequired" nillable="false">
+                				<xsd:simpleType>
+                					<xsd:restriction base="xsd:short">
+                						<xsd:maxInclusive value="999" />
+                						<xsd:minInclusive value="0" />
+                					</xsd:restriction>
+                				</xsd:simpleType>
+                			</xsd:element>
+ 
+                			<xsd:element name="customerId" nillable="false">
+                				<xsd:simpleType>
+                					<xsd:restriction base="xsd:string">
+                						<xsd:length value="8" />
+                						<xsd:whiteSpace value="preserve" />
+                					</xsd:restriction>
+                				</xsd:simpleType>
+                			</xsd:element>
+                			<xsd:element name="chargeDepartment" nillable="false">
+                				<xsd:simpleType>
+                					<xsd:restriction base="xsd:string">
+                						<xsd:length value="8" />
+                						<xsd:whiteSpace value="preserve" />
+                					</xsd:restriction>
+                				</xsd:simpleType>
+                			</xsd:element></xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+        <xsd:schema attributeFormDefault="qualified"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.exampleApp.dispatchOrder.Response.com"
+            xmlns:tns="http://www.exampleApp.dispatchOrder.Response.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:complexType abstract="false" block="#all" final="#all"
+                mixed="false" name="ProgramInterface">
+                <xsd:annotation>
+                    <xsd:documentation source="http://www.ibm.com">This schema was generated for use with CICS.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:complexType>
+            <xsd:element name="dispatchOrderResponse" nillable="false">
+                <xsd:complexType mixed="false">
+                    <xsd:sequence>
+ 
+                    <xsd:element name="confirmation" nillable="false">
+                    	<xsd:simpleType>
+                    		<xsd:restriction base="xsd:string">
+                    			<xsd:length value="20" />
+                    			<xsd:whiteSpace value="preserve" />
+                    		</xsd:restriction>
+                    	</xsd:simpleType>
+                    </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+       </xsd:schema>
+    </types>
+    <message name="dispatchOrderResponse">
+        <part element="resns:dispatchOrderResponse" name="ResponsePart"/>
+    </message>
+    <message name="dispatchOrderRequest">
+        <part element="reqns:dispatchOrderRequest" name="RequestPart"/>
+    </message>
+    <portType name="dispatchOrderPort">
+        <operation name="dispatchOrder">
+            <input message="tns:dispatchOrderRequest" name="DFH0XODSRequest"/>
+            <output message="tns:dispatchOrderResponse" name="DFH0XODSResponse"/>
+        </operation>
+    </portType>
+    <binding name="dispatchOrderSoapBindingMQ" type="tns:dispatchOrderPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="dispatchOrder">
+            <soap:operation soapAction="" style="document"/>
+            <input name="DFH0XODSRequest">
+                <soap:body parts="RequestPart" use="literal"/>
+            </input>
+            <output name="DFH0XODSResponse">
+                <soap:body parts="ResponsePart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="dispatchOrderSoapBinding" type="tns:dispatchOrderPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="dispatchOrder">
+            <soap:operation soapAction="" style="document"/>
+            <input name="DFH0XODSRequest">
+                <soap:body parts="RequestPart" use="literal"/>
+            </input>
+            <output name="DFH0XODSResponse">
+                <soap:body parts="ResponsePart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="dispatchOrderService">
+        <port binding="tns:dispatchOrderSoapBinding" name="dispatchOrderPort">
+            <soap:address location="http://my-server:9080/exampleApp/dispatchOrder"/>
+        </port>
+    </service>
+</definitions>

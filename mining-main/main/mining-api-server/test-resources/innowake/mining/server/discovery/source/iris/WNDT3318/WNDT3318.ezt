@@ -1,0 +1,10 @@
+JOB INPUT NULL
+  IF SQLCODE NE 0, +100, +200
+   DISPLAY 'ABORTING'
+  END-IF
+  CASE SQLCODE
+          WHEN -904, -913 123
+            DISPLAY '*** RESOURCE'
+          OTHERWISE
+            DISPLAY '*** ERROR'
+       END-CASE

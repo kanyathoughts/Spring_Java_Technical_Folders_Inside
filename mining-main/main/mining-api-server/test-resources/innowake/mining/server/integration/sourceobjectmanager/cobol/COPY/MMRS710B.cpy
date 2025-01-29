@@ -1,0 +1,2 @@
+       01   MMRS710B.
+            10 MMRS-M02-GLOBAL-NAME PIC X(10) VALUE 'MMRS-M02: '.

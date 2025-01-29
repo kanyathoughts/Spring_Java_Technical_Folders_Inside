@@ -1,0 +1,29 @@
+CLASS-ID. EXAMPLE INHERITS    
+                FROM BASE.           
+ENVIRONMENT DIVISION.         
+...
+OBJECT SECTION.               
+CLASS-CONTROL.                
+EXAMPLE IS CLASS "EXMP"         
+BASE IS CLASS "BASE" 
+CHARACTERARRAY
+     IS CLASS "CHARARRY".                         
+DATA DIVISION.                
+...
+   CLASS-OBJECT
+   DATA DIVISION.               
+   OBJECT-STORAGE SECTION.    
+   ...
+        METHOD-ID. "NEWWITHDATA".     
+        ...
+        END METHOD "NEWWITHDATA".     
+   END CLASS-OBJECT.         
+
+   OBJECT.                     
+   OBJECT-STORAGE SECTION.    
+    ...
+        METHOD-ID. "SAYHELLO".
+        ...
+        END METHOD "SAYHELLO". 
+   END OBJECT.                  
+END CLASS EXAMPLE. 

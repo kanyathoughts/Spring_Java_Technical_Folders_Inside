@@ -1,0 +1,9 @@
+//J8858K80 JOB 8858,'DO/LSN/AA',CLASS=B,MSGCLASS=X,
+//     USER=PBU8858
+//REPORT EXEC PGM=IKJEFT01,DYNAMNBR=10                                  00051000
+//SYSTSIN  DD *                                                         00059400
+  RACFRW TITLE('RACF LOGON REVOKE SUMMARY')                             00059500
+  SELECT VIOLATIONS PROCESS                                             00059600
+  EVENT LOGON EVQUAL(7)                                                 00059700
+  LIST SORT(DATE TIME)                                                  00059800
+  END                                                                   00060200

@@ -1,0 +1,33 @@
+
+ ARITEXPR: PROCEDURE OPTIONS(MAIN);
+
+   DCL F1 FIXED BINARY(31) INIT(    10);
+   DCL F2 FIXED BINARY(31) INIT(    10);
+   DCL F3 FIXED BINARY(31) INIT(     5);
+   DCL F4 FIXED BINARY(31) INIT(     2);
+   DCL F5 FIXED BINARY(31) INIT(   100);
+   DCL F6 FIXED BINARY(31) INIT(     3);
+   DCL F7 FIXED BINARY(31) INIT(100000);
+   DCL F8 FIXED BINARY(31) INIT(     7);
+   DCL F9 FIXED BINARY(31) INIT(     9);
+   
+   DCL RS FIXED BINARY(63) INIT (0);
+
+    /* candidates: inside branches */
+    if (RS > 0) then
+    	RS = F1 + F2;
+    if (RS > 0) then
+    	RS = F1 - F3;
+    if (RS > 0) then
+    	RS = F1 * 4;
+    if (RS > 0) then
+    	RS = F1 / 5;
+    
+    /* no candidates: outside branches */
+    RS = F1 + F6;
+    RS = F1 - F7;
+    RS = F1 * 8;
+    RS = F1 / 9;
+    
+ END ARITEXPR;
+ 

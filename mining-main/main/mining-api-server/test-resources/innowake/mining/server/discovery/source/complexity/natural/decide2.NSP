@@ -1,0 +1,14 @@
+DECIDE FOR EVERY CONDITION                                              
+  WHEN #FIELD1 >= 0                                                     
+    WRITE '#FIELD1 is positive or zero.'                                
+  WHEN #FIELD1 <= 0                                                     
+    WRITE '#FIELD1 is negative or zero.'                                
+  WHEN FRAC(#FIELD1) = 0                                                
+    WRITE '#FIELD1 has no decimal digits.'                              
+  WHEN ANY                                                              
+    WRITE 'Any of the above conditions is true.'                        
+  WHEN ALL                                                              
+    WRITE '#FIELD1 is zero.'
+  WHEN NONE
+    IGNORE 
+END-DECIDE

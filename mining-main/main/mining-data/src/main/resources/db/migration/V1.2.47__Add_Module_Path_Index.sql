@@ -1,0 +1,1 @@
+CREATE INDEX Module_path_idx ON Module (projectLink, path) UNIQUE METADATA {ignoreNullValues: true};

@@ -1,0 +1,79 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=RELATIONSHIP CASH REWARD                                00002000
+000030*    PROD=RPS WU=CRW0                                             00003000
+000040*    LDB=BKI136                                                   00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPCRW-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSCRW - RP RELATIONSHIP CASH REWARD RECORD           -CRW- *00010000
+000110******************************************************************00011000
+000120     03  RPCRW-GRP-KEY.                                           00012000
+000130         05  RPCRW-ACCT1-GRP.                                     00013000
+000140             07  RPCRW-INST      PIC 9(04).                       00014000
+000150             07  RPCRW-PRODCODE  PIC X(06).                       00015000
+000160             07  RPCRW-ACCOUNT   PIC X(18).                       00016000
+000170             07  RPCRW-MODEL     PIC X(10).                       00017000
+000180         05  RPCRW-GRP-AIX1.                                      00018000
+000190             07  RPCRW-ACCT2-GRP.                                 00019000
+000200                 09  RPCRW-INST2 PIC 9(04).                       00020000
+000210                 09  RPCRW-PRODCODE2                              00021000
+000220                                 PIC X(06).                       00022000
+000230                 09  RPCRW-ACCOUNT2                               00023000
+000240                                 PIC X(18).                       00024000
+000250*----------------------------------------------------------------*00025000
+000260     03  RPCRW-AUDIT-STAMP.                                       00026000
+000270         05  RPCRW-UPD-DATE      PIC S9(09)      COMP-3.          00027000
+000280         05  RPCRW-UPD-TIME      PIC S9(09)      COMP-3.          00028000
+000290         05  RPCRW-UPD-USER      PIC X(08).                       00029000
+000300         05  RPCRW-UPD-ORG       PIC X(06).                       00030000
+000310*----------------------------------------------------------------*00031000
+000320     03  RPCRW-GRP-DATA.                                          00032000
+000330         05  RPCRW-IDNUMBER      PIC X(18).                       00033000
+000340         05  RPCRW-BALOPT        PIC X(01).                       00034000
+000350         05  RPCRW-PCT-USED      PIC SV9(09)     COMP-3.          00035000
+000360         05  RPCRW-LSTCOMBBALUSED                                 00036000
+000370                                 PIC S9(13)V99   COMP-3.          00037000
+000380         05  RPCRW-FREQ          PIC X(01).                       00038000
+000390         05  RPCRW-TERM          PIC S9(03)      COMP-3.          00039000
+000400         05  RPCRW-DAY           PIC 9(02).                       00040000
+000410         05  RPCRW-NXTDATE       PIC S9(09)      COMP-3.          00041000
+000420         05  RPCRW-LSTDATE       PIC S9(09)      COMP-3.          00042000
+000430         05  RPCRW-AMOUNT        PIC S9(09)V99   COMP-3.          00043000
+000440         05  RPCRW-LAST-AMT      PIC S9(09)V99   COMP-3.          00044000
+000450         05  RPCRW-AMT-YTD       PIC S9(13)V99   COMP-3.          00045000
+000460         05  RPCRW-MONTHLY-COMBBAL.                               00046000
+000470             07  RPCRW-MCOMBBAL-1                                 00047000
+000480                                 PIC S9(13)V99   COMP-3.          00048000
+000490             07  RPCRW-MCOMBBAL-2                                 00049000
+000500                                 PIC S9(13)V99   COMP-3.          00050000
+000510             07  RPCRW-MCOMBBAL-3                                 00051000
+000520                                 PIC S9(13)V99   COMP-3.          00052000
+000530             07  RPCRW-MCOMBBAL-4                                 00053000
+000540                                 PIC S9(13)V99   COMP-3.          00054000
+000550             07  RPCRW-MCOMBBAL-5                                 00055000
+000560                                 PIC S9(13)V99   COMP-3.          00056000
+000570             07  RPCRW-MCOMBBAL-6                                 00057000
+000580                                 PIC S9(13)V99   COMP-3.          00058000
+000590             07  RPCRW-MCOMBBAL-7                                 00059000
+000600                                 PIC S9(13)V99   COMP-3.          00060000
+000610             07  RPCRW-MCOMBBAL-8                                 00061000
+000620                                 PIC S9(13)V99   COMP-3.          00062000
+000630             07  RPCRW-MCOMBBAL-9                                 00063000
+000640                                 PIC S9(13)V99   COMP-3.          00064000
+000650             07  RPCRW-MCOMBBAL-10                                00065000
+000660                                 PIC S9(13)V99   COMP-3.          00066000
+000670             07  RPCRW-MCOMBBAL-11                                00067000
+000680                                 PIC S9(13)V99   COMP-3.          00068000
+000690             07  RPCRW-MCOMBBAL-12                                00069000
+000700                                 PIC S9(13)V99   COMP-3.          00070000
+000710         05  RPCRW-MONTHLY-COMBBAL-R                              00071000
+000720                         REDEFINES RPCRW-MONTHLY-COMBBAL.         00072000
+000730             07  RPCRW-MCOMBBAL  PIC S9(13)V99   COMP-3           00073000
+000740                                                 OCCURS 12.       00074000
+000750         05  RPCRW-DATE-OPEN     PIC S9(09)      COMP-3.          00075000
+000760         05  RPCRW-RESERVED      PIC X(45).                       00076000
+000770***************************************************************** 00077000
+000780*        END  RP RELATIONSHIP CASH REWARD RECORD (CRW)            00078000
+000790***************************************************************** 00079000

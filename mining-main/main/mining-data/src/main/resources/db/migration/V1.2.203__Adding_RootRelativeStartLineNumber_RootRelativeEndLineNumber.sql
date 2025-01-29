@@ -1,0 +1,2 @@
+CREATE PROPERTY AdvancedModuleLocation.rootRelativeStartLineNumber IF NOT EXISTS INTEGER;
+CREATE PROPERTY AdvancedModuleLocation.rootRelativeEndLineNumber IF NOT EXISTS INTEGER;

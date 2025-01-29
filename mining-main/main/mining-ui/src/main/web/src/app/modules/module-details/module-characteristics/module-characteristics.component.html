@@ -1,0 +1,28 @@
+<nz-descriptions nzSize="small" nzBordered [nzColumn]="1" class="module-details__description">
+    <nz-descriptions-item [nzTitle]="title">{{lastScanDate}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'module.characteristics.errors' | translate}}">
+      <span *ngIf="! numberOfErrors; else errorText">{{numberOfErrors}}</span>
+      <ng-template #errorText>
+        <span nz-typography nzType="danger">{{numberOfErrors}}</span>
+      </ng-template>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'technology' | translate}}">{{technology}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'module.characteristics.type' | translate}}">{{moduleType}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'module.characteristics.path' | translate}}">{{modulePath}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'module.characteristics.inCodebase' | translate}}">{{module?.sourceCodeAvailable}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'module.characteristics.complexity' | translate}}">
+        <nz-badge *ngIf="moduleComplexity?.color; else plainText" [nzColor]="moduleComplexity.color" [nzText]="moduleComplexity.description"></nz-badge>
+        <ng-template #plainText>
+            {{moduleComplexity?.description}}
+        </ng-template>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'sourceLinesOfCode' | translate}}">{{moduleMetricsDetailsService.getSourceMetricsDetails(module.sourceMetrics?.codeLines)}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'commentLinesOfCode' | translate}}">{{getNumberOfLinesOfComment()}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'physicalLinesOfCode' | translate}}">{{moduleMetricsDetailsService.getSourceMetricsDetails(module.sourceMetrics?.physicalLines)}}</nz-descriptions-item>
+    <ng-template #title> 
+        <td class="ant-descriptions-item-label">
+            {{'lastScan.header' | translate}}
+            <i class="ant-helper-secondary-text" nz-icon nzType="info-circle" nz-tooltip nzTooltipTitle="{{'lastScan.title' | translate}}"></i>
+        </td>
+    </ng-template>
+</nz-descriptions>

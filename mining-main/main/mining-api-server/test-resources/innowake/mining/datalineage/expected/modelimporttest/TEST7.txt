@@ -1,0 +1,234 @@
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = A-GROUP,
+	 LOCATION = ModuleLocation[offset=230,length=11],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [A-GROUP-FIELD, A-REDEFINED-GROUP-FIELD, A-REDEFINED-GROUP-FIELD-2, ANOTHER-GROUP-REDEFINED],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = A-GROUP-FIELD,
+	 LOCATION = ModuleLocation[offset=253,length=27],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [A-GROUP],
+	 READACCESSES = [Call, Move],
+	 WRITEACCESSES = [Call, Move]]
+
+DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = A-GROUP-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [PARAMETER-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Call]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = A-REDEFINED-GROUP-FIELD,
+	 LOCATION = ModuleLocation[offset=484,length=36],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [A-GROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = A-REDEFINED-GROUP-FIELD-2,
+	 LOCATION = ModuleLocation[offset=532,length=38],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [A-GROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = ANOTHER-GROUP,
+	 LOCATION = ModuleLocation[offset=300,length=17],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [ANOTHER-GROUP-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = ANOTHER-GROUP-FIELD,
+	 LOCATION = ModuleLocation[offset=329,length=32],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [ANOTHER-GROUP],
+	 READACCESSES = [Call],
+	 WRITEACCESSES = [Call, Move]]
+
+DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = ANOTHER-GROUP-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Call]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = ANOTHER-GROUP-REDEFINED,
+	 LOCATION = ModuleLocation[offset=427,length=45],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [A-GROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Call,
+	 LOCATION = ModuleLocation[offset=765,length=54],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [A-GROUP-FIELD, ANOTHER-GROUP-FIELD],
+	 WRITEACCESSES = [A-GROUP-FIELD, A-GROUP-FIELD, ANOTHER-GROUP-FIELD, ANOTHER-GROUP-FIELD]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Display,
+	 LOCATION = ModuleLocation[offset=609,length=34],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [MY-PROGRAM-NAME],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Display,
+	 LOCATION = ModuleLocation[offset=383,length=35],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [MY-PROGNAM-NAME],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = LINKAGE-STUFF,
+	 LOCATION = ModuleLocation[offset=201,length=17],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [PARAMETER-FIELD, PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=656,length=30],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = [A-GROUP-FIELD]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=699,length=41],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [A-GROUP-FIELD],
+	 WRITEACCESSES = [ANOTHER-GROUP-FIELD]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = MY-PROGNAM-NAME,
+	 LOCATION = ModuleLocation[offset=125,length=43],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [Display],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = MY-PROGRAM-NAME,
+	 LOCATION = ModuleLocation[offset=123,length=43],
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [Display],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = PARAMETER-FIELD,
+	 LOCATION = ModuleLocation[offset=230,length=29],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [LINKAGE-STUFF, PARAMETER-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = PARAMETER-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [A-GROUP-FIELD, PARAMETER-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = PARAMETER-FIELD-2,
+	 LOCATION = ModuleLocation[offset=271,length=30],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [LINKAGE-STUFF, PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = PARAMETER-FIELD-2,
+	 LOCATION = null,
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [ANOTHER-GROUP-FIELD, PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Procedure Division,
+	 LOCATION = ModuleLocation[offset=310,length=18],
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+ProxyContainer [type=FIELD_TRACING_META_DATA, moduleId=2006, properties={FIELD_TRACING_META_DATA_TRACE_ALL_EXECUTED=true}, fields=[], statementLocation=null]
+
+ProxyContainer [type=CALL, moduleId=2006, properties={}, fields=[DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = A-GROUP-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [PARAMETER-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Call]], DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = ANOTHER-GROUP-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2006,
+	 RELATEDFIELDS = [PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Call]]], statementLocation=ModuleLocation[offset=765,length=54]]
+
+ProxyContainer [type=FIELD_TRACING_META_DATA, moduleId=2007, properties={FIELD_TRACING_META_DATA_TRACE_ENTRY_POINT_EXECUTED=true}, fields=[], statementLocation=null]
+
+ProxyContainer [type=ENTRY_POINT, moduleId=2007, properties={}, fields=[DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = PARAMETER-FIELD,
+	 LOCATION = null,
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [A-GROUP-FIELD, PARAMETER-FIELD],
+	 READACCESSES = [],
+	 WRITEACCESSES = []], DataFlowNode 
+ 	 [TYPE = PROXY_FIELD,
+	 NAME = PARAMETER-FIELD-2,
+	 LOCATION = null,
+	 MODULEID = 2007,
+	 RELATEDFIELDS = [ANOTHER-GROUP-FIELD, PARAMETER-FIELD-2],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]], statementLocation=ModuleLocation[offset=310,length=18]]
+

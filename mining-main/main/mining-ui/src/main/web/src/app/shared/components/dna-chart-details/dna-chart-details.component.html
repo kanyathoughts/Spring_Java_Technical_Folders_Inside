@@ -1,0 +1,69 @@
+<nz-drawer [nzClosable]="true" [nzVisible]="true" nzPlacement="right" [nzTitle]="chartDetailTitleTemplate"
+  (nzOnClose)="closeChartDetails()" nzWidth="100%">
+  <ng-container *nzDrawerContent>
+    <ng-container *ngIf ="selectedClusterDetails.length">
+      <!-- Label -->
+      <nz-space *ngIf="disableEdit" nzSize="middle" nzDirection="horizontal" class="dna-chart-details__label-position">
+        <ng-container *nzSpaceItem>
+          <span nz-typography nzType="secondary">Cluster : </span>
+          <span>{{SubmitForm.get('name').value}}</span>
+        </ng-container>
+        <ng-container *ngIf="selectedClusterDetails[0]?.description || SubmitForm.get('description').value">
+          <ng-container *nzSpaceItem>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span nz-typography nzType="secondary">{{'description' | translate}} : </span>
+            <span>{{SubmitForm.get('description').value}}</span>
+          </ng-container>
+        </ng-container>
+        <button *nzSpaceItem nz-button (click)="enableEdit()">{{'btnLabel.edit' | translate}}</button>
+      </nz-space>
+      <!--DNA DetailsForm -->
+      <form nz-form [formGroup]="SubmitForm" nzLayout="vertical" *ngIf=" ! disableEdit">
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label nzFor="name" nzRequired>{{'name' | translate}}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="name" autofocus/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="14">
+            <nz-form-item>
+              <nz-form-label nzFor="description">
+                {{'description' | translate}} &nbsp;
+                <span nz-typography nzType="secondary">{{'optional' | translate}}</span>
+              </nz-form-label>
+              <nz-form-control>
+                <textarea  nz-input formControlName="description" rows="1"
+                placeholder="{{'dnaAnalysis.descriptionPlaceHolder' | translate}}"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="2" class="dna-chart-details__save-btn">
+            <nz-form-item>
+              <nz-form-control>
+                <button nz-button type="submit" [nzLoading] ="loadSave" (click)="onSubmit(SubmitForm)"
+                  [disabled]=" ! SubmitForm.valid">{{'btnLabel.save' | translate}}</button>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+    <nz-space nzSize="middle" nzDirection="vertical" *ngIf="showChartDetails">
+      <!-- Details Table -->
+      <mn-customizable-table-core-component *nzSpaceItem [usage]="usage" [graphQlType]="graphQlType"
+        [projectId]="projectId" [internalDataPoints]="internalDataPoints" [pageType]="pageType"
+        [rowActions]="rowActions" [additionalGraphQLParams]="additionalGraphQlParams"
+        (optionSelected)="handleSelectedOption($event)" [filterResult]="filterResult">
+      </mn-customizable-table-core-component>
+    </nz-space>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #chartDetailTitleTemplate>
+  <nz-page-header class="ant-helper__no-padding" nzBackIcon (nzBack)="closeChartDetails()">
+    <nz-page-header-title>{{ chartTitle }}</nz-page-header-title>
+  </nz-page-header>
+</ng-template>

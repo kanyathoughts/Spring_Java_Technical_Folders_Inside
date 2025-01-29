@@ -1,0 +1,75 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3922,"","DQBQD30","src/cics/WMIN6811/maps/DQBQD30.map","CICS","CICS_BMS_MAPSET","PHYSICAL",1,0,6,0,7,0,0,-1,-1
+3923,"","DQBQU54","src/cics/WMIN6811/maps/DQBQU54.map","CICS","CICS_BMS_MAPSET","PHYSICAL",1,0,11,1,13,0,0,-1,-1
+3925,"","DQCQD30","src/cobol/WMIN6811/programs/DQCQD30.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,12,15,0,16,1,0,-1,-1
+3926,"","DQCQU54","src/cobol/WMIN6811/programs/DQCQU54.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,32,52,0,53,4,0,-1,-1
+3924,3922,"MAP4","","CICS","CICS_BMS_MAP","VIRTUAL",2,0,4,0,5,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3925,"DQCQD30","EXEC_CICS","EXEC CICS SEND MAP('MAP4') MAPSET('DQBQD30') ERASE ACCUM FREEKB END-EXEC"
+3926,"DQCQU54","EXEC_CICS","EXEC CICS RECEIVE MAP('MAP4') MAPSET('DQBQU54') END-EXEC"
+3926,"DQCQU54","EXEC_CICS","EXEC CICS RETURN TRANSID('QU54') COMMAREA(QU32-PARMS) LENGTH(212) END-EXEC."
+3926,"DQCQU54","EXEC_CICS","EXEC CICS SEND MAP('MAP4') MAPSET('DQBQU54') DATAONLY CURSOR FREEKB END-EXEC"
+3926,"DQCQU54","EXEC_CICS","EXEC CICS SEND MAP('MAP4') MAPSET('DQBQU54') ERASE FREEKB END-EXEC"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3925,"DQCQD30",3924,"MAP4","CICS","CICS_BMS_MAP","Includes","","LATE","{""CALL_TYPE"":[""MAP""],""SEND_RECEIVE_ACCESS_TYPE"":[""SEND""]}",673,433,-1,-1
+3926,"DQCQU54",3924,"MAP4","CICS","CICS_BMS_MAP","Includes","","LATE","{""CALL_TYPE"":[""MAP""],""SEND_RECEIVE_ACCESS_TYPE"":[""RECEIVE""]}",733,116,-1,-1
+3926,"DQCQU54",3924,"MAP4","CICS","CICS_BMS_MAP","Includes","","LATE","{""CALL_TYPE"":[""MAP""],""SEND_RECEIVE_ACCESS_TYPE"":[""SEND""]}",1239,211,-1,-1
+3926,"DQCQU54",3924,"MAP4","CICS","CICS_BMS_MAP","Includes","","LATE","{""CALL_TYPE"":[""MAP""],""SEND_RECEIVE_ACCESS_TYPE"":[""SEND""]}",1731,93,-1,-1
+3926,"DQCQU54",-1,"QU54","CSD","CSD_TRANSACTION","References","","LATE","{""CALL_TYPE"":[""EXECCICSRETURN""]}",1509,104,-1,-1
+3926,"DQCQU54",-1,"QU54","CSD","CSD_TRANSACTION","References","","LATE","{""CALL_TYPE"":[""EXECCICSRETURN""]}",1838,104,-1,-1
+3924,"MAP4",3922,"DQBQD30","CICS","CICS_BMS_MAPSET","Includes","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 427 length:4 line:6 column:17 firstTokenInLine:true lastTokenInLine:false",427,4
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token ['   RETRIEVE AGAIN TO VIEW'] offset: 432 length:27 line:6 column:22 firstTokenInLine:false lastTokenInLine:false",432,27
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 461 length:2 line:6 column:51 firstTokenInLine:false lastTokenInLine:false",461,2
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [MESS1O] offset: 465 length:6 line:6 column:55 firstTokenInLine:false lastTokenInLine:true",465,6
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 509 length:4 line:7 column:17 firstTokenInLine:true lastTokenInLine:false",509,4
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token ['INFORMATION'] offset: 514 length:13 line:7 column:22 firstTokenInLine:false lastTokenInLine:false",514,13
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 543 length:2 line:7 column:51 firstTokenInLine:false lastTokenInLine:false",543,2
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [MESS2O] offset: 547 length:6 line:7 column:55 firstTokenInLine:false lastTokenInLine:true",547,6
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 591 length:4 line:8 column:17 firstTokenInLine:true lastTokenInLine:false",591,4
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [EIBTRMID] offset: 596 length:8 line:8 column:22 firstTokenInLine:false lastTokenInLine:false",596,8
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 605 length:2 line:8 column:31 firstTokenInLine:false lastTokenInLine:false",605,2
+3925,"DQCQD30","ERROR","PARSE_ERROR","Unknown cobol token [TERMO] offset: 608 length:5 line:8 column:34 firstTokenInLine:false lastTokenInLine:true",608,5
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [GOBACK] offset: 863 length:6 line:23 column:11 firstTokenInLine:true lastTokenInLine:true",863,6
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [100-INVALID-KEY] offset: 897 length:15 line:25 column:7 firstTokenInLine:true lastTokenInLine:true",897,15
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [PERFORM] offset: 944 length:7 line:27 column:11 firstTokenInLine:true lastTokenInLine:false",944,7
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [120-SETMDT] offset: 952 length:10 line:27 column:19 firstTokenInLine:false lastTokenInLine:false",952,10
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [THRU] offset: 963 length:4 line:27 column:30 firstTokenInLine:false lastTokenInLine:false",963,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [120-EXIT] offset: 968 length:8 line:27 column:35 firstTokenInLine:false lastTokenInLine:true",968,8
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [VARYING] offset: 997 length:7 line:28 column:19 firstTokenInLine:true lastTokenInLine:false",997,7
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [FILE-INDEX] offset: 1005 length:10 line:28 column:27 firstTokenInLine:false lastTokenInLine:false",1005,10
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [FROM] offset: 1016 length:4 line:28 column:38 firstTokenInLine:false lastTokenInLine:false",1016,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [FILE-INDEX] offset: 1054 length:10 line:29 column:25 firstTokenInLine:false lastTokenInLine:false",1054,10
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [IS] offset: 1065 length:2 line:29 column:36 firstTokenInLine:false lastTokenInLine:false",1065,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [EQUAL] offset: 1068 length:5 line:29 column:39 firstTokenInLine:false lastTokenInLine:false",1068,5
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 1093 length:4 line:30 column:11 firstTokenInLine:true lastTokenInLine:false",1093,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [-1] offset: 1098 length:2 line:30 column:16 firstTokenInLine:false lastTokenInLine:false",1098,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 1101 length:2 line:30 column:19 firstTokenInLine:false lastTokenInLine:false",1101,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [M4OPT1L] offset: 1104 length:7 line:30 column:22 firstTokenInLine:false lastTokenInLine:true",1104,7
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 1125 length:4 line:31 column:11 firstTokenInLine:true lastTokenInLine:false",1125,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token ['***INVALID KEY PRESSED***'] offset: 1130 length:27 line:31 column:16 firstTokenInLine:false lastTokenInLine:false",1130,27
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 1158 length:2 line:31 column:44 firstTokenInLine:false lastTokenInLine:false",1158,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [M4MSGO] offset: 1161 length:6 line:31 column:47 firstTokenInLine:false lastTokenInLine:true",1161,6
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [110-SEND-MAP] offset: 1195 length:12 line:33 column:7 firstTokenInLine:true lastTokenInLine:true",1195,12
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 1464 length:4 line:41 column:11 firstTokenInLine:true lastTokenInLine:false",1464,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [HIGH-VALUE] offset: 1469 length:10 line:41 column:16 firstTokenInLine:false lastTokenInLine:false",1469,10
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 1480 length:2 line:41 column:27 firstTokenInLine:false lastTokenInLine:false",1480,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [QU32-OPTION1] offset: 1483 length:12 line:41 column:30 firstTokenInLine:false lastTokenInLine:true",1483,12
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [620-SEND-ERASE] offset: 1640 length:14 line:45 column:7 firstTokenInLine:true lastTokenInLine:true",1640,14
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [MOVE] offset: 1686 length:4 line:47 column:11 firstTokenInLine:true lastTokenInLine:false",1686,4
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [HIGH-VALUE] offset: 1691 length:10 line:47 column:16 firstTokenInLine:false lastTokenInLine:false",1691,10
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [TO] offset: 1702 length:2 line:47 column:27 firstTokenInLine:false lastTokenInLine:false",1702,2
+3926,"DQCQU54","ERROR","PARSE_ERROR","Unknown cobol token [QU32-OPTION1] offset: 1705 length:12 line:47 column:30 firstTokenInLine:false lastTokenInLine:true",1705,12
+3926,"DQCQU54","WARNING","DEPENDENCY_RESOLUTION_ERROR","Unable to determine name of trans id for QU54",1509,104
+3926,"DQCQU54","WARNING","DEPENDENCY_RESOLUTION_ERROR","Unable to determine name of trans id for QU54",1838,104
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,378 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPJ0DP81.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*   RPJ0DP81 - RELATIONSHIP PRICING / DEPOSITS 8.1                00005000
+000060*             INTERFACE EXTRACT FOR DEPOSITS RELEASE 8.1         *00006000
+000070******************************************************************00007000
+000080 ENVIRONMENT DIVISION.                                            00008000
+000090 CONFIGURATION SECTION.                                           00009000
+000100 DATA DIVISION.                                                   00010000
+000110 FILE SECTION.                                                    00011000
+000120******************************************************************00012000
+000130 WORKING-STORAGE SECTION.                                         00013000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00014000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00014001
+000150 01  RPS-RLSELIT.                                                 00015000
+000000 COPY RPWRLSE.                                                    00016000
+000170 01  DEP-RLSELIT.                                                 00017000
+000000 COPY DPWRLSE.                                                    00018000
+000190 01  SRW105-AREAS.                                                00019000
+000000 COPY SRW105.                                                     00020000
+000210*01  BICPBPRM.                                                    00021000
+000000 COPY BICPBPRM.                                                   00022000
+000230*01  BICRSRB.                                                     00023000
+000000 COPY BICRSRB.                                                    00024000
+000250*01  BICRPSB.                                                     00025000
+000000 COPY BICRPSB.                                                    00026000
+000270*01  BICRVERB.                                                    00027000
+000000 COPY BICRVERB.                                                   00028000
+000290*01  BICRSTAT.                                                    00029000
+000000 COPY BICRSTAT.                                                   00030000
+000310*01  BICRDBS.                                                     00031000
+000000 COPY BICRDBS.                                                    00032000
+000330*01  BICRLOG.                                                     00033000
+000000 COPY BICRLOG.                                                    00034000
+000350 01  FILLER                      PIC X(06)       VALUE 'DPDDM '.  00035000
+000360 01  DPDDM-RECORD.                                                00036000
+000000 COPY DPSDDM.                                                     00037000
+000380 01  FILLER                      PIC X(06)       VALUE 'DPDDN '.  00038000
+000390 01  DPDDN-RECORD.                                                00039000
+000000 COPY DPSDDN.                                                     00040000
+000410 01  FILLER                      PIC X(06)       VALUE 'DPSVM '.  00041000
+000420 01  DPSVM-RECORD.                                                00042000
+000000 COPY DPSSVM.                                                     00043000
+000440 01  FILLER                      PIC X(06)       VALUE 'DPSVN '.  00044000
+000450 01  DPSVN-RECORD.                                                00045000
+000000 COPY DPSSVN.                                                     00046000
+000470 01  DPWDDM-AREAS.                                                00047000
+000000 COPY DPWDDMA.                                                    00048000
+000490 01  DPWDDN-AREAS.                                                00049000
+000000 COPY DPWDDNA.                                                    00050000
+000510 01  DPWSVM-AREAS.                                                00051000
+000000 COPY DPWSVMA.                                                    00052000
+000530 01  DPWSVN-AREAS.                                                00053000
+000000 COPY DPWSVNA.                                                    00054000
+000550 01  MIWMSTA-AREAS.                                               00055000
+000000 COPY MIWMSTA.                                                    00056000
+000570 01  WS-WORKAREAS.                                                00057000
+000580     03  WS-FILESTATUS.                                           00058000
+000590         05  WS-FSKEY1           PIC X(01)       VALUE SPACES.    00059000
+000600         05  WS-FSKEY2           PIC X(01)       VALUE SPACES.    00060000
+000610     03  WS-DDMOPEN              PIC X(01)       VALUE SPACES.    00061000
+000620     03  WS-DDNOPEN              PIC X(01)       VALUE SPACES.    00062000
+000630     03  WS-SVMOPEN              PIC X(01)       VALUE SPACES.    00063000
+000640     03  WS-SVNOPEN              PIC X(01)       VALUE SPACES.    00064000
+000650     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00065000
+000660     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00066000
+000670     03  WS-INST-CHANGE-FLAG     PIC X(01)       VALUE SPACES.    00067000
+000680     03  WS-SUB1                 PIC S9(04)      COMP.            00068000
+000690     03  WS-ACCT-MAX             PIC S9(04)      COMP             00069000
+000700                                                 VALUE +500.      00070000
+000710******************************************************************00071000
+000720 LINKAGE SECTION.                                                 00072000
+000730 01  WS-LINKDATA.                                                 00073000
+000000 COPY MISCNT00      REPLACING                                     00074000
+000750     ==:MICNT:== BY ==RPEXT00==.                                  00075000
+000000 COPY RPSEXT00.                                                   00076000
+000770******************************************************************00077000
+000780 PROCEDURE DIVISION                                               00078000
+000790         USING                                                    00079000
+000800         WS-LINKDATA.                                             00080000
+000810******************************************************************00081000
+000820 INITIALIZATION SECTION.                                          00082000
+000830 IN-START.                                                        00083000
+000840     MOVE 'RPJ0DP81' TO SR-APIPROGLIT.                            00084000
+000850     MOVE 'RPJ0DP81' TO WS-UPD-USER.                              00085000
+000860     MOVE SPACES TO WS-FUNCTION.                                  00086000
+000870     MOVE ZEROS TO RPEXT00-ABTRACE.                               00087000
+000880     MOVE 'N' TO WS-INST-CHANGE-FLAG.                             00088000
+000890     IF RPEXT00-APPLR IS NOT EQUAL TO '01'                        00089000
+000900         AND RPEXT00-APPLR IS NOT EQUAL TO '04'                   00090000
+000910         MOVE 'X' TO WS-FUNCTION                                  00091000
+000920         MOVE 'X' TO RPEXT00-RETURN                               00092000
+000930         MOVE 0001 TO RPEXT00-ABTRACE                             00093000
+000940         GO TO RETURN-ROUTINE.                                    00094000
+000950     IF RPEXT00-FUNC IS EQUAL TO 'O'                              00095000
+000960         PERFORM OPEN-ROUTINE                                     00096000
+000970         GO TO RETURN-ROUTINE.                                    00097000
+000980     IF RPEXT00-FUNC IS EQUAL TO 'X'                              00098000
+000990         GO TO EXTRACT-NONRP-ACCT.                                00099000
+001000     IF RPEXT00-FUNC IS EQUAL TO 'C'                              00100000
+001010         GO TO CLOSE-ROUTINE.                                     00101000
+001020     MOVE 'X' TO WS-FUNCTION.                                     00102000
+001030     MOVE 'X' TO RPEXT00-RETURN.                                  00103000
+001040     MOVE 0002 TO RPEXT00-ABTRACE.                                00104000
+001050     GO TO RETURN-ROUTINE.                                        00105000
+001060 IN-EXIT.                                                         00106000
+001070     EXIT.                                                        00107000
+001080******************************************************************00108000
+001090 OPEN-ROUTINE SECTION.                                            00109000
+001100 OR-OPEN.                                                         00110000
+001110     IF WS-DDMOPEN IS EQUAL TO 'Y'                                00111000
+001120         AND WS-DDNOPEN IS EQUAL TO 'Y'                           00112000
+001130         AND WS-SVMOPEN IS EQUAL TO 'Y'                           00113000
+001140         AND WS-SVNOPEN IS EQUAL TO 'Y'                           00114000
+001150         GO TO OR-EXIT.                                           00115000
+001160     PERFORM GET-FILE-ORGANIZATION.                               00116000
+001170     MOVE 'N' TO DEP-DDM-LOG.                                     00117000
+001180     MOVE 'N' TO DEP-DDN-LOG.                                     00118000
+001190     MOVE 'N' TO DEP-SVM-LOG.                                     00119000
+001200     MOVE 'N' TO DEP-SVN-LOG.                                     00120000
+001210     IF WS-DDMOPEN IS EQUAL TO 'Y'                                00121000
+001220         GO TO OR-OPENDDN.                                        00122000
+001230     MOVE 'Y' TO WS-DDMOPEN.                                      00123000
+001240     MOVE RPEXT00-INST TO DPDDM-INST.                             00124000
+001250     MOVE ZEROS TO DPDDM-ACCOUNT.                                 00125000
+001260     PERFORM DEP-DDM-OPEN-REQUEST.                                00126000
+001270     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00127000
+001280         MOVE 'O' TO RPEXT00-RETURN                               00128000
+001290         MOVE 0003 TO RPEXT00-ABTRACE                             00129000
+001300         GO TO RETURN-ROUTINE.                                    00130000
+001310 OR-OPENDDN.                                                      00131000
+001320     IF WS-DDNOPEN IS EQUAL TO 'Y'                                00132000
+001330         GO TO OR-OPENSAV.                                        00133000
+001340     MOVE 'Y' TO WS-DDNOPEN.                                      00134000
+001350     MOVE RPEXT00-INST TO DPDDN-INST.                             00135000
+001360     MOVE ZEROS TO DPDDN-ACCOUNT.                                 00136000
+001370     PERFORM DEP-DDN-OPEN-REQUEST.                                00137000
+001380     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00138000
+001390         MOVE 'O' TO RPEXT00-RETURN                               00139000
+001400         MOVE 0004 TO RPEXT00-ABTRACE                             00140000
+001410         GO TO RETURN-ROUTINE.                                    00141000
+001420 OR-OPENSAV.                                                      00142000
+001430     IF WS-SVMOPEN IS EQUAL TO 'Y'                                00143000
+001440         GO TO OR-OPENSVN.                                        00144000
+001450     MOVE 'Y' TO WS-SVMOPEN.                                      00145000
+001460     MOVE RPEXT00-INST TO DPSVM-INST.                             00146000
+001470     MOVE ZEROS TO DPSVM-ACCOUNT.                                 00147000
+001480     PERFORM DEP-SVM-OPEN-REQUEST.                                00148000
+001490     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00149000
+001500         MOVE 'O' TO RPEXT00-RETURN                               00150000
+001510         MOVE 0005 TO RPEXT00-ABTRACE                             00151000
+001520         GO TO RETURN-ROUTINE.                                    00152000
+001530 OR-OPENSVN.                                                      00153000
+001540     IF WS-SVNOPEN IS EQUAL TO 'Y'                                00154000
+001550         GO TO OR-EXIT.                                           00155000
+001560     MOVE 'Y' TO WS-SVNOPEN.                                      00156000
+001570     MOVE RPEXT00-INST TO DPSVN-INST.                             00157000
+001580     MOVE ZEROS TO DPSVN-ACCOUNT.                                 00158000
+001590     PERFORM DEP-SVN-OPEN-REQUEST.                                00159000
+001600     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00160000
+001610         MOVE 'O' TO RPEXT00-RETURN                               00161000
+001620         MOVE 0006 TO RPEXT00-ABTRACE                             00162000
+001630         GO TO RETURN-ROUTINE.                                    00163000
+001640 OR-END.                                                          00164000
+001650     MOVE WS-FUNCTION TO RPEXT00-FUNCTION.                        00165000
+001660 OR-EXIT.                                                         00166000
+001670     EXIT.                                                        00167000
+001680******************************************************************00168000
+001690 CLOSE-ROUTINE SECTION.                                           00169000
+001700 CR-START.                                                        00170000
+001710     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00171000
+001720         GO TO CR-CLOSEDDN.                                       00172000
+001730     PERFORM DEP-DDM-CLOSE-REQUEST.                               00173000
+001740     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00174000
+001750         MOVE 'C' TO RPEXT00-RETURN                               00175000
+001760         MOVE 0007 TO RPEXT00-ABTRACE                             00176000
+001770         GO TO RETURN-ROUTINE.                                    00177000
+001780     MOVE SPACES TO WS-DDMOPEN.                                   00178000
+001790 CR-CLOSEDDN.                                                     00179000
+001800     IF WS-DDNOPEN IS NOT EQUAL TO 'Y'                            00180000
+001810         GO TO CR-CLOSESAV.                                       00181000
+001820     PERFORM DEP-DDN-CLOSE-REQUEST.                               00182000
+001830     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00183000
+001840         MOVE 'C' TO RPEXT00-RETURN                               00184000
+001850         MOVE 0008 TO RPEXT00-ABTRACE                             00185000
+001860         GO TO RETURN-ROUTINE.                                    00186000
+001870     MOVE SPACES TO WS-DDNOPEN.                                   00187000
+001880 CR-CLOSESAV.                                                     00188000
+001890     IF WS-SVMOPEN IS NOT EQUAL TO 'Y'                            00189000
+001900         GO TO CR-CLOSESVN.                                       00190000
+001910     PERFORM DEP-SVM-CLOSE-REQUEST.                               00191000
+001920     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00192000
+001930         MOVE 'C' TO RPEXT00-RETURN                               00193000
+001940         MOVE 0009 TO RPEXT00-ABTRACE                             00194000
+001950         GO TO RETURN-ROUTINE.                                    00195000
+001960     MOVE SPACES TO WS-SVMOPEN.                                   00196000
+001970 CR-CLOSESVN.                                                     00197000
+001980     IF WS-SVNOPEN IS NOT EQUAL TO 'Y'                            00198000
+001990         GO TO CR-END.                                            00199000
+002000     PERFORM DEP-SVN-CLOSE-REQUEST.                               00200000
+002010     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00201000
+002020         MOVE 'C' TO RPEXT00-RETURN                               00202000
+002030         MOVE 0010 TO RPEXT00-ABTRACE                             00203000
+002040         GO TO RETURN-ROUTINE.                                    00204000
+002050     MOVE SPACES TO WS-SVNOPEN.                                   00205000
+002060 CR-END.                                                          00206000
+002070     MOVE WS-FUNCTION TO RPEXT00-FUNCTION.                        00207000
+002080     GO TO RETURN-ROUTINE.                                        00208000
+002090 CR-EXIT.                                                         00209000
+002100     EXIT.                                                        00210000
+002110******************************************************************00211000
+002120 EXTRACT-NONRP-ACCT SECTION.                                      00212000
+002130 ENA-START.                                                       00213000
+002140     INITIALIZE RPEXT00-ACCOUNTS.                                 00214000
+002150     MOVE +1 TO WS-SUB1.                                          00215000
+002160     IF RPEXT00-APPLR IS NOT EQUAL TO '01'                        00216000
+002170         GO TO ENA-SAVINGS.                                       00217000
+002180     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00218000
+002190         OR WS-DDNOPEN IS NOT EQUAL TO 'Y'                        00219000
+002200         PERFORM OPEN-ROUTINE.                                    00220000
+002210     MOVE 'Y' TO WS-INST-CHANGE-FLAG.                             00221000
+002220     PERFORM DEP-DDM-GET-EQUAL-REQUEST.                           00222000
+002230     GO TO ENA-TEST-DDA.                                          00223000
+002240 ENA-READNEXT-DDA.                                                00224000
+002250     PERFORM DEP-DDM-GET-NEXT-REQUEST.                            00225000
+002260 ENA-TEST-DDA.                                                    00226000
+002270     IF WS-FUNCTION IS EQUAL TO 'E'                               00227000
+002280         MOVE SPACE TO WS-FUNCTION                                00228000
+002290         MOVE 'D' TO RPEXT00-RETURN                               00229000
+002300         GO TO ENA-END.                                           00230000
+002310     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00231000
+002320         MOVE 'X' TO RPEXT00-RETURN                               00232000
+002330         MOVE 0011 TO RPEXT00-ABTRACE                             00233000
+002340         GO TO ENA-END.                                           00234000
+002350     IF DPDDM-INST IS NOT EQUAL TO RPEXT00-INST                   00235000
+002360         MOVE SPACE TO WS-FUNCTION                                00236000
+002370         MOVE 'D' TO RPEXT00-RETURN                               00237000
+002380         GO TO ENA-END.                                           00238000
+002390     IF WS-INST-CHANGE-FLAG IS EQUAL TO 'Y'                       00239000
+002400         MOVE 'N' TO WS-INST-CHANGE-FLAG                          00240000
+002410         PERFORM DEP-DDN-GET-EQUAL-REQUEST                        00241000
+002420         GO TO ENA-TEST-DDN.                                      00242000
+002430 ENA-READNEXT-DDN.                                                00243000
+002440     PERFORM DEP-DDN-GET-NEXT-REQUEST.                            00244000
+002450 ENA-TEST-DDN.                                                    00245000
+002460     IF WS-FUNCTION IS EQUAL TO 'E'                               00246000
+002470         MOVE SPACE TO WS-FUNCTION                                00247000
+002480         MOVE 'D' TO RPEXT00-RETURN                               00248000
+002490         GO TO ENA-END.                                           00249000
+002500     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00250000
+002510         MOVE 'X' TO RPEXT00-RETURN                               00251000
+002520         MOVE 0012 TO RPEXT00-ABTRACE                             00252000
+002530         GO TO ENA-END.                                           00253000
+002540     IF DPDDN-GRP-KEY IS LESS THAN DPDDM-GRP-KEY                  00254000
+002550         GO TO ENA-READNEXT-DDN.                                  00255000
+002560     IF DPDDN-GRP-KEY IS NOT EQUAL TO DPDDM-GRP-KEY               00256000
+002570         MOVE 'X' TO WS-FUNCTION                                  00257000
+002580         MOVE 'X' TO RPEXT00-RETURN                               00258000
+002590         MOVE 0013 TO RPEXT00-ABTRACE                             00259000
+002600         GO TO ENA-END.                                           00260000
+002610 ENA-CHECK-DDA.                                                   00261000
+002620     IF DPDDM-MSTATUS IS NOT EQUAL TO SPACES                      00262000
+002630         GO TO ENA-READNEXT-DDA.                                  00263000
+002640     IF DPDDN-RPSCD IS NOT EQUAL TO 'N'                           00264000
+002650         OR DPDDN-INTRPSCD IS NOT EQUAL TO 'N'                    00265000
+002660         GO TO ENA-READNEXT-DDA.                                  00266000
+002670     MOVE DPDDN-ACCOUNT TO RPEXT00-ACCT (WS-SUB1).                00267000
+002680     MOVE DPDDM-MTYPE TO RPEXT00-TYPE (WS-SUB1).                  00268000
+002690     ADD +1 TO WS-SUB1.                                           00269000
+002700     IF WS-SUB1 IS GREATER THAN WS-ACCT-MAX                       00270000
+002710         MOVE SPACE TO WS-FUNCTION                                00271000
+002720         MOVE 'M' TO RPEXT00-RETURN                               00272000
+002730         GO TO ENA-END.                                           00273000
+002740     GO TO ENA-READNEXT-DDA.                                      00274000
+002750 ENA-SAVINGS.                                                     00275000
+002760     IF RPEXT00-APPLR IS NOT EQUAL TO '04'                        00276000
+002770         GO TO ENA-END.                                           00277000
+002780     IF WS-SVMOPEN IS NOT EQUAL TO 'Y'                            00278000
+002790         OR WS-SVNOPEN IS NOT EQUAL TO 'Y'                        00279000
+002800         PERFORM OPEN-ROUTINE.                                    00280000
+002810     MOVE 'Y' TO WS-INST-CHANGE-FLAG.                             00281000
+002820     PERFORM DEP-SVM-GET-EQUAL-REQUEST.                           00282000
+002830     GO TO ENA-TEST-SAV.                                          00283000
+002840 ENA-READNEXT-SAV.                                                00284000
+002850     PERFORM DEP-SVM-GET-NEXT-REQUEST.                            00285000
+002860 ENA-TEST-SAV.                                                    00286000
+002870     IF WS-FUNCTION IS EQUAL TO 'E'                               00287000
+002880         MOVE SPACE TO WS-FUNCTION                                00288000
+002890         MOVE 'D' TO RPEXT00-RETURN                               00289000
+002900         GO TO ENA-END.                                           00290000
+002910     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00291000
+002920         MOVE 'X' TO RPEXT00-RETURN                               00292000
+002930         MOVE 0014 TO RPEXT00-ABTRACE                             00293000
+002940         GO TO ENA-END.                                           00294000
+002950     IF DPSVM-INST IS NOT EQUAL TO RPEXT00-INST                   00295000
+002960         MOVE SPACE TO WS-FUNCTION                                00296000
+002970         MOVE 'D' TO RPEXT00-RETURN                               00297000
+002980         GO TO ENA-END.                                           00298000
+002990     IF WS-INST-CHANGE-FLAG IS EQUAL TO 'Y'                       00299000
+003000         MOVE 'N' TO WS-INST-CHANGE-FLAG                          00300000
+003010         PERFORM DEP-SVN-GET-EQUAL-REQUEST                        00301000
+003020         GO TO ENA-TEST-SVN.                                      00302000
+003030 ENA-READNEXT-SVN.                                                00303000
+003040     PERFORM DEP-SVN-GET-NEXT-REQUEST.                            00304000
+003050 ENA-TEST-SVN.                                                    00305000
+003060     IF WS-FUNCTION IS EQUAL TO 'E'                               00306000
+003070         MOVE SPACE TO WS-FUNCTION                                00307000
+003080         MOVE 'D' TO RPEXT00-RETURN                               00308000
+003090         GO TO ENA-END.                                           00309000
+003100     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00310000
+003110         MOVE 'X' TO RPEXT00-RETURN                               00311000
+003120         MOVE 0015 TO RPEXT00-ABTRACE                             00312000
+003130         GO TO ENA-END.                                           00313000
+003140     IF DPSVN-GRP-KEY IS LESS THAN DPSVM-GRP-KEY                  00314000
+003150         GO TO ENA-READNEXT-DDN.                                  00315000
+003160     IF DPSVN-GRP-KEY IS NOT EQUAL TO DPSVM-GRP-KEY               00316000
+003170         MOVE 'X' TO WS-FUNCTION                                  00317000
+003180         MOVE 'X' TO RPEXT00-RETURN                               00318000
+003190         MOVE 0016 TO RPEXT00-ABTRACE                             00319000
+003200         GO TO ENA-END.                                           00320000
+003210 ENA-CHECK-SAV.                                                   00321000
+003220     IF DPSVM-MSTATUS IS NOT EQUAL TO SPACES                      00322000
+003230         GO TO ENA-READNEXT-SAV.                                  00323000
+003240     IF DPSVN-RPSCD IS NOT EQUAL TO 'N'                           00324000
+003250         OR DPSVN-INTRPSCD IS NOT EQUAL TO 'N'                    00325000
+003260         GO TO ENA-READNEXT-SAV.                                  00326000
+003270     MOVE DPSVN-ACCOUNT TO RPEXT00-ACCT (WS-SUB1).                00327000
+003280     MOVE DPSVM-MTYPE TO RPEXT00-TYPE (WS-SUB1).                  00328000
+003290     ADD +1 TO WS-SUB1.                                           00329000
+003300     IF WS-SUB1 IS GREATER THAN WS-ACCT-MAX                       00330000
+003310         MOVE SPACE TO WS-FUNCTION                                00331000
+003320         MOVE 'M' TO RPEXT00-RETURN                               00332000
+003330         GO TO ENA-END.                                           00333000
+003340     GO TO ENA-READNEXT-SAV.                                      00334000
+003350 ENA-END.                                                         00335000
+003360     GO TO RETURN-ROUTINE.                                        00336000
+003370 ENA-EXIT.                                                        00337000
+003380     EXIT.                                                        00338000
+003390******************************************************************00339000
+003400 GET-FILE-ORGANIZATION SECTION.                                   00340000
+000000 COPY SRP093.                                                     00341000
+003420******************************************************************00342000
+000000 COPY DPPDDMA.                                                    00343000
+003440******************************************************************00344000
+000000 COPY DPPDDNA.                                                    00345000
+003460******************************************************************00346000
+000000 COPY DPPSVMA.                                                    00347000
+003480******************************************************************00348000
+000000 COPY DPPSVNA.                                                    00349000
+003500******************************************************************00350000
+003510 RETURN-ROUTINE SECTION.                                          00351000
+003520 RT-START.                                                        00352000
+003530     MOVE WS-FUNCTION TO RPEXT00-FUNCTION.                        00353000
+003540     GOBACK.                                                      00354000
+003550******************************************************************00355000

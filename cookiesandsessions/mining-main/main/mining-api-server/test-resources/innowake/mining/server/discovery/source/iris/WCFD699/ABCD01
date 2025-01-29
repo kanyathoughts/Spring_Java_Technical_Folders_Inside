@@ -1,0 +1,180 @@
+000100 IDENTIFICATION DIVISION.                                                 
+000200 PROGRAM-ID.  CDA009.                                                                                                                    
+001100 ENVIRONMENT DIVISION.                                                    
+001200 CONFIGURATION SECTION.                                                   
+001300 SOURCE-COMPUTER.    IBM-370.                                             
+001400 OBJECT-COMPUTER.    IBM-370.                                             
+001500 DATA DIVISION.                                                           
+001600 WORKING-STORAGE SECTION.                                                 
+001700 77  GU                  PIC X(4)        VALUE 'GU  '.                    
+001800 77  GN                  PIC X(4)        VALUE 'GN  '.                    
+001900 77  GNP                 PIC X(4)        VALUE 'GNP '.                    
+002000 77  ISRT                PIC X(4)        VALUE 'ISRT'.                    
+002100 77  CHNG                PIC X(4)        VALUE 'CHNG'.                    
+002200 77  ROLL                PIC X(4)        VALUE 'ROLL'.                    
+002300 77  IMSCNTRL            PIC X(8)        VALUE 'MTO     '.                
+002400 77  CODA009             PIC X(8)        VALUE 'CODA009 '.                
+002500 01  SPA-AREA.                                                            
+002600     03  FILLER                   PIC X(06).                              
+002700     03  SPA-TRAN                 PIC X(08).                              
+002800     03  FILLER                   PIC X(4082).                            
+002900 01  TERMINAL-INPUT.                                                      
+003000     03  TERM-LL                  PIC S9(4)                 COMP.         
+003100     03  TERM-ZZ                  PIC S9(4)                 COMP.         
+003200     03  TERMINAL-FILLER          PIC X(2000).                            
+003300 01  ERROR-LINE.                                                          
+003400     03  FILLER          PIC S9(4)       VALUE +108  COMP.                
+003500     03  FILLER          PIC S9(4)       VALUE ZERO  COMP.                
+003600     03  FILLER          PIC X(8)        VALUE 'CDA009  '.                
+003700     03  ERROR-MSGNO     PIC X(3)        VALUE SPACES.                    
+003800     03  FILLER          PIC X(14)       VALUE 'STATUS CODE = '.          
+003900     03  ERROR-STATUS    PIC X(2)        VALUE SPACES.                    
+004000     03  FILLER          PIC X(2)        VALUE ', '.                      
+004100     03  ERROR-MSG       PIC X(75)       VALUE SPACES.                    
+004110 01  WSH-WORK-AREA.                                                       
+004120     03  WSH-CURRENT-DATE.                                                
+004130         05  WSH-CURRENT-YEAR                 PIC 9(02).                  
+004140         05  WSH-CURRENT-MONTH                PIC 9(02).                  
+004150         05  WSH-CURRENT-DAY                  PIC 9(02).                  
+004160     03  WSH-CUR-DATE.                                                    
+004170         05  WSH-CURRENT-MONTH                PIC 9(02).                  
+004180         05  FILLER                           PIC X(01) VALUE '/'.        
+004190         05  WSH-CURRENT-DAY                  PIC 9(02).                  
+004191         05  FILLER                           PIC X(01) VALUE '/'.        
+004192         05  WSH-CURRENT-YEAR                 PIC 9(02).                  
+004193     03  WSH-SYS-TIME.                                                    
+004194         05  WSH-CURRENT-HH                   PIC 9(02).                  
+004195         05  WSH-CURRENT-MM                   PIC 9(02).                  
+004196         05  WSH-CURRENT-SS                   PIC 9(04).                  
+004197     03  WSH-CUR-TIME.                                                    
+004198         05  WSH-CURRENT-HH                   PIC 9(02).                  
+004199         05  FILLER                           PIC X(01) VALUE ':'.        
+004200         05  WSH-CURRENT-MM                   PIC 9(02).                  
+004201         05  FILLER                           PIC X(01) VALUE ':'.        
+004202         05  WSH-CURRENT-SS                   PIC 9(04).                  
+004203 COPY QW247TRN.                                                           
+004204                                                                          
+004205 01 INQY-FUNC                      PIC X(4) VALUE 'INQY'.                 
+004206                                                                          
+004207 01 WSH-INQY-IO-AREA.                                                     
+004208    05 WSH-INQY-IMSIDENTIFIER   PIC X(8).                                 
+004209    05 WSH-INQY-IMSRELEASE      PIC X(4).                                 
+004210    05 WSH-INQY-IMSREGIONTYPE   PIC X(8).                                 
+004211    05 WSH-INQY-REGIONIDENTIER  PIC X(4).                                 
+004212    05 FILLER                   PIC X(8).                                 
+004213    05 WSH-INQY-PGMNAME         PIC X(8).                                 
+004214    05 WSH-INQY-PSBNAME         PIC X(8).                                 
+004215    05 WSH-INQY-TRANNAME        PIC X(8).                                 
+004216    05 FILLER                   PIC X(88).                                
+004217                                                                          
+004218 01 WSH-AIB.                                                              
+004219     05 WSH-AIB-ID         PIC X(08)      VALUE 'DFSAIB  '.               
+004220     05 WSH-AIB-LEN        PIC 9(05) COMP VALUE 128.                      
+004221     05 WSH-AIB-SFUNC      PIC X(08)      VALUE 'ENVIRON '.               
+004222     05 WSH-AIB-RSNM1      PIC X(08)      VALUE 'IOPCB   '.               
+004223     05 FILLER             PIC X(16)      VALUE SPACE.                    
+004224                                                                          
+004225     05 WSH-AIB-OALEN      PIC 9(05) COMP VALUE 136.                      
+004226     05 WSH-AIB-OAUSE      PIC 9(05) COMP VALUE ZERO.                     
+004227                                                                          
+004228     05 FILLER             PIC X(12)      VALUE SPACE.                    
+004229                                                                          
+004230     05 WSH-AIB-RETRN      PIC 9(05) COMP VALUE ZERO.                     
+004231                                                                          
+004232     05 WSH-AIB-REASN      PIC 9(05) COMP VALUE ZERO.                     
+004233                                                                          
+004234     05 FILLER             PIC 9(05) COMP VALUE ZERO.                     
+004235                                                                          
+004236     05 WSH-AIB-RSA1       PIC 9(05) COMP VALUE ZERO.                     
+004237     05 FILLER             PIC X(48).                                     
+004238                                                                          
+004240 LINKAGE SECTION.                                                         
+004250 01  IO-PCB-1.                                                            
+004260     05 USER-NAME-1              PIC X(8).                                
+004270     05 IOPCB-FILLER             PIC X(2).                                
+004280     05 IO-STATUS-CODE-1         PIC X(2).                                
+004290     05 IOPCB-JULIAN-DATE        PIC S9(7).                               
+004300     05 IOPCB-TIME-OF-DAY        PIC S9(7).                               
+004400     05 IOPCB-MSG-SEQ            PIC S9(7).                               
+004500     05 IOPCB-MOD-NAME           PIC X(8).                                
+004600     05 IOPCB-USER-ID            PIC X(08).                               
+004700 01  IO-PCB-2.                                                            
+004800     03  USER-NAME-2             PIC X(8).                                
+004900     03  FILLER                  PIC X(2).                                
+005000     03  IO-STATUS-CODE-2        PIC X(2).                                
+005100 01  IO-PCB-3.                                                            
+005200     03  USER-NAME-3             PIC X(8).                                
+005300     03  FILLER                  PIC X(2).                                
+005400     03  IO-STATUS-CODE-3        PIC X(2).                                
+005500 01  IO-PCB-4.                                                            
+005600     03  USER-NAME-4             PIC X(8).                                
+005700     03  FILLER                  PIC X(2).                                
+005800     03  IO-STATUS-CODE-4        PIC X(2).                                
+005900 01  IO-PCB-5.                                                            
+006000     03  USER-NAME-5             PIC X(8).                                
+006100     03  FILLER                  PIC X(2).                                
+006200     03  IO-STATUS-CODE-5        PIC X(2).                                
+008700 PROCEDURE DIVISION.                                                      
+008800 INITIALIZE-ENTRY.                                                        
+009200     ENTRY 'DLITCBL' USING IO-PCB-1, IO-PCB-2, IO-PCB-3, IO-PCB-4,        
+009300       IO-PCB-5.                                                          
+009400 WHAT-TRAN-INVOKED.                                                       
+009500                                                                          
+009600     ACCEPT WSH-CURRENT-DATE       FROM DATE.                             
+009700     ACCEPT WSH-SYS-TIME           FROM TIME.                             
+009710     MOVE CORR WSH-CURRENT-DATE TO WSH-CUR-DATE.                          
+009720     MOVE CORR WSH-SYS-TIME     TO WSH-CUR-TIME.                          
+009730     CALL 'AIBTDLI' USING    INQY-FUNC                                    
+009740                             WSH-AIB                                      
+009750                             WSH-INQY-IO-AREA.                            
+009760                                                                          
+009770     IF IO-STATUS-CODE-1  = '  '                                          
+009780        NEXT SENTENCE                                                     
+009790     ELSE                                                                 
+009791          MOVE 'ERROR FROM ON INQY CALL ' TO ERROR-MSG                    
+009792          MOVE IO-STATUS-CODE-1           TO ERROR-STATUS                 
+009793          GO TO CALL-ERROR                                                
+009794     END-IF.                                                              
+009795                                                                          
+009796     SEARCH ALL WST-24X7-TRAN-ENTRY                                       
+009797      AT END MOVE SPACES TO TERMINAL-FILLER                               
+009798       WHEN WST-24X7-TRANID(WST-INDEX-1) = WSH-INQY-TRANNAME              
+009799         DISPLAY 'ERROR - CDA009 TOOK CONTOL OF 24X7 TRAN: '              
+009800                                    WSH-INQY-TRANNAME                     
+009814     END-SEARCH.                                                          
+009815                                                                          
+009820 GET-TRANSACTION.                                                         
+009900     CALL 'CBLTDLI' USING GU, IO-PCB-1, SPA-AREA.                         
+010400     IF IO-STATUS-CODE-1 IS EQUAL TO 'QC'                                 
+010500                 GO TO END-OF-TRANSACTION.                                
+010600     IF IO-STATUS-CODE-1 IS NOT EQUAL TO SPACES                           
+010700                 MOVE 'ERROR FROM IO GU CALL ' TO ERROR-MSG               
+010800                 MOVE IO-STATUS-CODE-1 TO ERROR-STATUS                    
+010900                 GO TO CALL-ERROR.                                        
+011000     CALL 'CBLTDLI' USING GN, IO-PCB-1, TERMINAL-INPUT.                   
+011500     IF IO-STATUS-CODE-1 IS EQUAL TO SPACES                               
+011510              OR 'QD'                                                     
+011520                 NEXT SENTENCE                                            
+011600             ELSE MOVE 'ERROR FROM IO GN CALL ' TO ERROR-MSG              
+011700                 MOVE IO-STATUS-CODE-1 TO ERROR-STATUS                    
+011800                 GO TO CALL-ERROR.                                        
+011900     MOVE SPACES TO SPA-TRAN.                                             
+012000     CALL 'CBLTDLI' USING ISRT, IO-PCB-1, SPA-AREA.                       
+012500     IF IO-STATUS-CODE-1 IS NOT EQUAL TO SPACES                           
+012600                 MOVE 'ERROR FROM IO ISRT(SPA) CALL '                     
+012700                                                    TO ERROR-MSG          
+012800                 MOVE IO-STATUS-CODE-1 TO ERROR-STATUS                    
+012900                 GO TO CALL-ERROR.                                        
+012910     MOVE 5 TO TERM-LL.                                                   
+013000     CALL 'CBLTDLI' USING ISRT, IO-PCB-1, TERMINAL-INPUT, CODA009.        
+013500     IF IO-STATUS-CODE-1 IS NOT EQUAL TO SPACES                           
+013600                 MOVE 'ERROR FROM IO ISRT CALL (GOOD BYE MESSAGE)'        
+013700                                                    TO ERROR-MSG          
+013800                 MOVE IO-STATUS-CODE-1 TO ERROR-STATUS                    
+013900                 GO TO CALL-ERROR.                                        
+014000     GO TO GET-TRANSACTION.                                               
+014100 CALL-ERROR.                                                              
+014200     DISPLAY ERROR-LINE.                                                  
+014500     CALL 'CBLTDLI' USING ROLL.                                           
+014600 END-OF-TRANSACTION.                                                      
+014700     GOBACK.                                                              

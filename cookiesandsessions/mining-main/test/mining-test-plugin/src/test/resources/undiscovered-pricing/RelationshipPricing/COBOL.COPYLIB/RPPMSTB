@@ -1,0 +1,224 @@
+000010******************************************************************00001000
+000020* RPPMSTB  API ROUTINE FOR MST - BATCH                           *00002000
+000030******************************************************************00003000
+000040*CALL-RPS-MST-SECTION.                                            00004000
+000050 RPMST-START.                                                     00005000
+000060     MOVE 'IPRP' TO SRB-APPL-ID.                                  00006000
+000070     MOVE SR-APIPROGLIT TO SRB-PROG-ID.                           00007000
+000080     MOVE RPS-RLSE-LIT TO SRB-RELEASE.                            00008000
+000090     MOVE 'SAF' TO RPS-MST-REC-PRI.                               00009000
+000100     MOVE SPACE TO WS-FUNCTION.                                   00010000
+000110     MOVE MIC-MST-APPL-ORG TO RPS-MST-ORG-ID.                     00011000
+000120     IF SR-FAPI1 IS EQUAL TO 'S'                                  00012000
+000130         MOVE SPACES TO WS-FUNCTION                               00013000
+000140         GO TO RPMST-EXIT.                                        00014000
+000150     IF SR-FAPI1 IS EQUAL TO 'O'                                  00015000
+000160         GO TO RPMST-OPEN.                                        00016000
+000170     IF RPS-MST-OPEN IS NOT EQUAL TO SPACE                        00017000
+000180         GO TO RPMST-CALLAPI.                                     00018000
+000190     MOVE 'R' TO RPS-MST-OPEN.                                    00019000
+000200     MOVE '0' TO RPS-MST-AIX.                                     00020000
+000210     MOVE '0' TO RPS-MST-REC-ALT.                                 00021000
+000220     MOVE REQ-OPEN TO RPS-MST-REQ-VERB.                           00022000
+000230     PERFORM RPS-MST-APISERVER.                                   00023000
+000240     IF WS-FUNCTION IS NOT EQUAL TO ' '                           00024000
+000250         MOVE RPS-MST-RDBS TO WS-ABORTMSG                         00025000
+000260         GO TO RPMST-EXIT.                                        00026000
+000270     MOVE SPACES TO RPS-MST-KEY.                                  00027000
+000280     GO TO RPMST-CALLAPI.                                         00028000
+000290 RPMST-OPEN.                                                      00029000
+000300     IF SR-FAPI3 IS NOT EQUAL TO 'U'                              00030000
+000310         MOVE 'R' TO SR-FAPI3.                                    00031000
+000320     MOVE SR-FAPI3 TO RPS-MST-OPEN.                               00032000
+000330     MOVE SR-FAPI2 TO RPS-MST-AIX.                                00033000
+000340     IF RPS-MST-AIX IS EQUAL TO SPACE                             00034000
+000350         MOVE '0' TO RPS-MST-AIX.                                 00035000
+000360 RPMST-CALLAPI.                                                   00036000
+000370     IF SR-FAPI3 IS EQUAL TO SPACE                                00037000
+000380         MOVE RPS-MST-OPEN TO SR-FAPI3.                           00038000
+000390     MOVE RPS-MST-AIX TO RPS-MST-REC-ALT.                         00039000
+000400     PERFORM RPS-MST-API.                                         00040000
+000410     IF WS-FUNCTION IS NOT EQUAL TO ' '                           00041000
+000420         MOVE RPS-MST-RDBS TO WS-ABORTMSG                         00042000
+000430     ELSE                                                         00043000
+000440         MOVE SPACES TO WS-ABORTMSG.                              00044000
+000450 RPMST-EXIT.                                                      00045000
+000460     EXIT.                                                        00046000
+000470******************************************************************00047000
+000480 RPS-MST-API SECTION.                                             00048000
+000490 RMSTAPI-START.                                                   00049000
+000500     MOVE SPACE TO WS-FUNCTION.                                   00050000
+000510     IF RPS-MST-LOCK IS EQUAL TO 'Y'                              00051000
+000520         AND SR-FAPI1 IS NOT EQUAL TO 'W'                         00052000
+000530         AND SR-FAPI1 IS NOT EQUAL TO 'D'                         00053000
+000540         AND SR-FAPI1 IS NOT EQUAL TO 'U'                         00054000
+000550         MOVE RPMST-GRP-KEY TO SR-APISVKEY                        00055000
+000560         MOVE RPS-MST-KEY TO RPMST-GRP-KEY                        00056000
+000570         MOVE REQ-UNLOCK TO RPS-MST-REQ-VERB                      00057000
+000580         PERFORM RPS-MST-APISERVER                                00058000
+000590         MOVE SR-APISVKEY TO RPMST-GRP-KEY                        00059000
+000600         MOVE SPACE TO RPS-MST-LOCK.                              00060000
+000610     IF SR-FAPI1 IS EQUAL TO 'A'                                  00061000
+000620         MOVE SR-APIPROGLIT TO BPSB-USER                          00062000
+000630         MOVE REQ-PUT TO RPS-MST-REQ-VERB                         00063000
+000640         PERFORM RPS-MST-APISERVER                                00064000
+000650         ADD +1 TO SR-APIGLOBCNT                                  00065000
+000660         GO TO RMSTAPI-EXIT.                                      00066000
+000670     IF SR-FAPI1 IS EQUAL TO 'N'                                  00067000
+000680         AND RPMST-GRP-KEY IS NOT EQUAL TO RPS-MST-KEY            00068000
+000690         AND SR-FAPI3 IS EQUAL TO 'U'                             00069000
+000700         MOVE REQ-GET-GE-LOCK TO RPS-MST-REQ-VERB                 00070000
+000710         PERFORM RPS-MST-APISERVER                                00071000
+000720         MOVE 'Y' TO RPS-MST-LOCK                                 00072000
+000730         GO TO RMSTAPI-EXIT.                                      00073000
+000740     IF SR-FAPI1 IS EQUAL TO 'N'                                  00074000
+000750         AND RPMST-GRP-KEY IS NOT EQUAL TO RPS-MST-KEY            00075000
+000760         MOVE REQ-GET-GE TO RPS-MST-REQ-VERB                      00076000
+000770         PERFORM RPS-MST-APISERVER                                00077000
+000780         GO TO RMSTAPI-EXIT.                                      00078000
+000790     IF SR-FAPI1 IS EQUAL TO 'B'                                  00079000
+000800         AND SR-FAPI3 IS EQUAL TO 'U'                             00080000
+000810         MOVE REQ-GET-GE-LOCK TO RPS-MST-REQ-VERB                 00081000
+000820         PERFORM RPS-MST-APISERVER                                00082000
+000830         MOVE 'Y' TO RPS-MST-LOCK                                 00083000
+000840         GO TO RMSTAPI-EXIT.                                      00084000
+000850     IF SR-FAPI1 IS EQUAL TO 'B'                                  00085000
+000860         MOVE REQ-GET-GE TO RPS-MST-REQ-VERB                      00086000
+000870         PERFORM RPS-MST-APISERVER                                00087000
+000880         GO TO RMSTAPI-EXIT.                                      00088000
+000890     IF SR-FAPI1 IS EQUAL TO 'C'                                  00089000
+000900         MOVE REQ-CLOSE TO RPS-MST-REQ-VERB                       00090000
+000910         PERFORM RPS-MST-APISERVER                                00091000
+000920         MOVE SPACE TO RPS-MST-OPEN                               00092000
+000930         GO TO RMSTAPI-EXIT.                                      00093000
+000940     IF SR-FAPI1 IS EQUAL TO 'D'                                  00094000
+000950          AND RPS-MST-LOCK IS EQUAL TO ' '                        00095000
+000960          MOVE RPMST-RECORD TO RPS-MST-BIMAGE                     00096000
+000970          MOVE REQ-GET-LOCK TO RPS-MST-REQ-VERB                   00097000
+000980          PERFORM RPS-MST-APISERVER                               00098000
+000990          MOVE RPS-MST-BIMAGE TO RPMST-RECORD.                    00099000
+001000     IF SR-FAPI1 IS EQUAL TO 'D'                                  00100000
+001010         MOVE SR-APIPROGLIT TO BPSB-USER                          00101000
+001020         MOVE REQ-DELETE TO RPS-MST-REQ-VERB                      00102000
+001030         PERFORM RPS-MST-APISERVER                                00103000
+001040         MOVE ' ' TO RPS-MST-LOCK                                 00104000
+001050         GO TO RMSTAPI-EXIT.                                      00105000
+001060     IF SR-FAPI1 IS EQUAL TO 'F'                                  00106000
+001070         MOVE REQ-LOCATE-NEXT TO RPS-MST-REQ-VERB                 00107000
+001080         PERFORM RPS-MST-APISERVER                                00108000
+001090         GO TO RMSTAPI-EXIT.                                      00109000
+001100     IF SR-FAPI1 IS EQUAL TO 'G'                                  00110000
+001110         PERFORM RPS-MST-API-GLOBAL                               00111000
+001120         GO TO RMSTAPI-EXIT.                                      00112000
+001130     IF SR-FAPI1 IS EQUAL TO 'L'                                  00113000
+001140         MOVE REQ-LOCATE TO RPS-MST-REQ-VERB                      00114000
+001150         PERFORM RPS-MST-APISERVER                                00115000
+001160         GO TO RMSTAPI-EXIT.                                      00116000
+001170     IF SR-FAPI1 IS EQUAL TO 'N'                                  00117000
+001180         AND SR-FAPI3 IS EQUAL TO 'U'                             00118000
+001190         MOVE REQ-GET-NEXT-LOCK TO RPS-MST-REQ-VERB               00119000
+001200         PERFORM RPS-MST-APISERVER                                00120000
+001210         MOVE 'Y' TO RPS-MST-LOCK                                 00121000
+001220         GO TO RMSTAPI-EXIT.                                      00122000
+001230     IF SR-FAPI1 IS EQUAL TO 'N'                                  00123000
+001240         MOVE REQ-GET-NEXT TO RPS-MST-REQ-VERB                    00124000
+001250         PERFORM RPS-MST-APISERVER                                00125000
+001260         GO TO RMSTAPI-EXIT.                                      00126000
+001270     IF SR-FAPI1 IS EQUAL TO 'O'                                  00127000
+001280         MOVE REQ-OPEN TO RPS-MST-REQ-VERB                        00128000
+001290         PERFORM RPS-MST-APISERVER                                00129000
+001300         MOVE SPACES TO RPS-MST-KEY                               00130000
+001310         GO TO RMSTAPI-EXIT.                                      00131000
+001320     IF SR-FAPI1 IS EQUAL TO 'R'                                  00132000
+001330         AND SR-FAPI3 IS EQUAL TO 'U'                             00133000
+001340         MOVE REQ-GET-LOCK TO RPS-MST-REQ-VERB                    00134000
+001350         PERFORM RPS-MST-APISERVER                                00135000
+001360         MOVE 'Y' TO RPS-MST-LOCK                                 00136000
+001370         GO TO RMSTAPI-EXIT.                                      00137000
+001380     IF SR-FAPI1 IS EQUAL TO 'R'                                  00138000
+001390         MOVE REQ-GET TO RPS-MST-REQ-VERB                         00139000
+001400         PERFORM RPS-MST-APISERVER                                00140000
+001410         GO TO RMSTAPI-EXIT.                                      00141000
+001420     IF SR-FAPI1 IS EQUAL TO 'U'                                  00142000
+001430         MOVE REQ-UNLOCK TO RPS-MST-REQ-VERB                      00143000
+001440         PERFORM RPS-MST-APISERVER                                00144000
+001450         MOVE ' ' TO RPS-MST-LOCK                                 00145000
+001460         GO TO RMSTAPI-EXIT.                                      00146000
+001470     IF SR-FAPI1 IS EQUAL TO 'W'                                  00147000
+001480          AND RPS-MST-LOCK IS EQUAL TO ' '                        00148000
+001490          MOVE RPMST-RECORD TO RPS-MST-BIMAGE                     00149000
+001500          MOVE REQ-GET-LOCK TO RPS-MST-REQ-VERB                   00150000
+001510          PERFORM RPS-MST-APISERVER                               00151000
+001520          MOVE RPS-MST-BIMAGE TO RPMST-RECORD.                    00152000
+001530     IF SR-FAPI1 IS EQUAL TO 'W'                                  00153000
+001540         MOVE SR-APIPROGLIT TO BPSB-USER                          00154000
+001550         MOVE REQ-REPUT TO RPS-MST-REQ-VERB                       00155000
+001560         ADD +1 TO SR-APIGLOBCNT                                  00156000
+001570         PERFORM RPS-MST-APISERVER                                00157000
+001580         MOVE ' ' TO RPS-MST-LOCK                                 00158000
+001590         GO TO RMSTAPI-EXIT.                                      00159000
+001600     MOVE 'X' TO WS-FUNCTION.                                     00160000
+001610 RMSTAPI-EXIT.                                                    00161000
+001620     EXIT.                                                        00162000
+001630******************************************************************00163000
+001640 RPS-MST-API-GLOBAL SECTION.                                      00164000
+001650 RMSTGLB-START.                                                   00165000
+001660     MOVE SPACES TO RPS-MST-REC-ID.                               00166000
+001670     IF SR-FAPI2 IS EQUAL TO 'C'                                  00167000
+001680         MOVE REQ-GLOBAL-CLOSE TO RPS-MST-REQ-VERB.               00168000
+001690     IF SR-FAPI2 IS EQUAL TO 'M'                                  00169000
+001700         MOVE +0 TO SR-APIGLOBCNT                                 00170000
+001710         MOVE REQ-GLOBAL-COMMIT TO RPS-MST-REQ-VERB.              00171000
+001720     IF SR-FAPI2 IS NOT EQUAL TO 'M'                              00172000
+001730         AND SR-FAPI2 IS NOT EQUAL TO 'C'                         00173000
+001740         MOVE REQ-GLOBAL-ABORT TO RPS-MST-REQ-VERB.               00174000
+001750     PERFORM RPS-MST-APISERVER.                                   00175000
+001760 RMSTGLB-EXIT.                                                    00176000
+001770     EXIT.                                                        00177000
+001780******************************************************************00178000
+001790 RPS-MST-APISERVER  SECTION.                                      00179000
+001800 RPSMSTSRV-START.                                                 00180000
+000000     CALL 'BISDBS' USING                                          00181000
+001820         BICRPSB                                                  00182000
+001830         BICRSRB                                                  00183000
+001840         RPS-MST-RDBS                                             00184000
+001850         RPMST-RECORD                                             00185000
+001860         RPS-MST-PARM.                                            00186000
+001870     MOVE RPMST-GRP-KEY TO RPS-MST-KEY.                           00187000
+001880     IF RPS-MST-STAT IS EQUAL TO STAT-OK                          00188000
+001890         MOVE ' ' TO WS-FUNCTION                                  00189000
+001900         GO TO RPSMSTSRV-EXIT.                                    00190000
+001910     IF RPS-MST-STAT IS EQUAL TO STAT-LOG1                        00191000
+001920         AND RPS-MST-REQ-VERB IS EQUAL TO REQ-OPEN                00192000
+001930         MOVE STAT-OK TO RPS-MST-STAT                             00193000
+001940         MOVE ' ' TO WS-FUNCTION                                  00194000
+001950         GO TO RPSMSTSRV-EXIT.                                    00195000
+001960     IF RPS-MST-STAT IS EQUAL TO STAT-END                         00196000
+001970         MOVE 'E' TO WS-FUNCTION                                  00197000
+001980         GO TO RPSMSTSRV-EXIT.                                    00198000
+001990     IF RPS-MST-STAT IS EQUAL TO STAT-KEY                         00199000
+002000         AND SR-FAPI1 IS EQUAL TO 'A'                             00200000
+002010         MOVE '=' TO WS-FUNCTION                                  00201000
+002020         GO TO RPSMSTSRV-EXIT.                                    00202000
+002030     IF RPS-MST-STAT IS EQUAL TO STAT-KEY                         00203000
+002040         AND (SR-FAPI1 IS EQUAL TO 'N'                            00204000
+002050         OR SR-FAPI1 IS EQUAL TO 'B')                             00205000
+002060         MOVE 'E' TO WS-FUNCTION                                  00206000
+002070         GO TO RPSMSTSRV-EXIT.                                    00207000
+002080     IF RPS-MST-STAT IS EQUAL TO STAT-KEY                         00208000
+002090         MOVE 'N' TO WS-FUNCTION                                  00209000
+002100         GO TO RPSMSTSRV-EXIT.                                    00210000
+002110     IF RPS-MST-STAT IS EQUAL TO STAT-CONC                        00211000
+002120         OR RPS-MST-STAT IS EQUAL TO STAT-LOG1                    00212000
+002130         OR RPS-MST-STAT IS EQUAL TO STAT-LOG2                    00213000
+002140         OR RPS-MST-STAT IS EQUAL TO STAT-LOG3                    00214000
+002150         OR RPS-MST-STAT IS EQUAL TO STAT-LOG6                    00215000
+002160         OR RPS-MST-STAT IS EQUAL TO STAT-LOG7                    00216000
+002170         OR RPS-MST-STAT IS EQUAL TO STAT-LOG8                    00217000
+002180         OR RPS-MST-STAT IS EQUAL TO STAT-LOG9                    00218000
+002190         MOVE 'O' TO WS-FUNCTION                                  00219000
+002200         GO TO RPSMSTSRV-EXIT.                                    00220000
+002210      MOVE 'X' TO WS-FUNCTION.                                    00221000
+002220 RPSMSTSRV-EXIT.                                                  00222000
+002230      EXIT.                                                       00223000
+002240******************************************************************00224000

@@ -1,0 +1,25 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2186,"","MEED2101","src/jcl/WMIN1876A/jobs/MEED2101.job","JCL","JCL_JOB","PHYSICAL",1,5,27,1,29,1,0,-1,-1
+2187,2186,"MEED2101.DPSPROP.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2186,"MEED2101","EXEC_PROC","Properties: [PROC=GV2QPROP,VOLSEC=ADA51F,DBPARMS=ERPARMS,APPL=VSTA,DBID=210,EXTRPRI=200,RESTVOL=PLOG02,VOLPRI=ADA51E,NEXTJOB=ME002102,EXTRSEC=200], Data Definitions: [SYSIN{*=HOSTADDR=151.110.228.33STATPORT=8028FILENAME=/opt/tre/repl/vsta220.doneLOGON MENTORUPDATE OFFME0180P1DBAQ.DB211.PLOG.COPY.G0003V00FIN}], Additional Properties: [Fully Qualified Step name=DPSPROP,Step name=DPSPROP,Job name=ME002101]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2186,"MEED2101",2187,"MEED2101.DPSPROP.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+2187,"MEED2101.DPSPROP.EXEC",-1,"GV2QPROP","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+2187,"MEED2101.DPSPROP.EXEC",-1,"ME0180P1","NATURAL","NATURAL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2186,"MEED2101","ERROR","PARSE_ERROR","Line 14: OVERRIDDEN STEP: DPSPROP.DSUCHK NOT FOUND DUE TO MISSING FILE: GV2QPROP",-1,-1
+2186,"MEED2101","ERROR","PARSE_ERROR","Line 19: OVERRIDDEN STEP: DPSPROP.TRAN NOT FOUND DUE TO MISSING FILE: GV2QPROP",-1,-1
+2186,"MEED2101","ERROR","PARSE_ERROR","Line 20: OVERRIDDEN STEP: DPSPROP.TRAN NOT FOUND DUE TO MISSING FILE: GV2QPROP",-1,-1
+2186,"MEED2101","ERROR","PARSE_ERROR","Line 22: OVERRIDDEN STEP: DPSPROP.COPYCMDS NOT FOUND DUE TO MISSING FILE: GV2QPROP",-1,-1
+2186,"MEED2101","ERROR","PARSE_ERROR","Line 3: Unable to locate procedure file or possible instream procedure not properly terminated with 'PEND': GV2QPROP",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

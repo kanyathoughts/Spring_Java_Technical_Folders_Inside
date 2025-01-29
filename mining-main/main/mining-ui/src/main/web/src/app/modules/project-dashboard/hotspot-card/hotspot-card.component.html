@@ -1,0 +1,11 @@
+<nz-card [nzTitle]="cardTitle" class="hotspot-card__container ant-helper__no-padding-card">
+  <mn-table *appLoader="config.loadState; noContentMessage: config.noContentMessage; errorMessage: config.errorMessage"
+    [config]="config.tableConfig" [value]="config.modules" (optionSelected)="handleSelectedOption($event)" [tableSize]="'small'">
+  </mn-table>
+</nz-card>
+
+<ng-template #cardTitle>
+  <nz-skeleton [nzLoading]="config.loadState === loadState.loading" [nzActive]="true" [nzTitle]="false">
+    {{config.header | translate}}
+  </nz-skeleton>
+</ng-template>

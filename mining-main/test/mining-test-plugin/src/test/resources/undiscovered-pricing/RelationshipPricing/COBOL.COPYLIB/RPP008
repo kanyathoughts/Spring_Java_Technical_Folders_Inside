@@ -1,0 +1,47 @@
+000010******************************************************************00001000
+000020* RPP008   VALIDATE PRIMARY ACCOUNT RELATIONSHIP CODE - ONLINE   *00002000
+000030******************************************************************00003000
+000040*VALIDATE-PRIM-RELCD.                                             00004000
+000050 VPC-START.                                                       00005000
+000060     MOVE 'N' TO WS-PRIMRELCD-ERROR.                              00006000
+000070     MOVE SPACES TO MI7104-RECORD.                                00007000
+000080     MOVE WS-RPW008-INST TO MIM-7104KINST.                        00008000
+000090     MOVE +7104 TO MIM-7104KREC.                                  00009000
+000100     MOVE WS-RPW008-RELCODE TO MIM-7104KRPREC.                    00010000
+000110     MOVE MIC-RPS-7104-PRI TO MIC-MST-REC-PRI.                    00011000
+000120     MOVE MI7104-RECORD TO MIMST-RECORD.                          00012000
+000130     PERFORM MIC-MST-GET-REQUEST.                                 00013000
+000140     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00014000
+000150         GO TO VPC-EXIT.                                          00015000
+000160     MOVE MIMST-RECORD TO MI7104-RECORD.                          00016000
+000170     MOVE ZEROS TO WS-RPW008-SUB.                                 00017000
+000180     IF MIM-7104OPT IS EQUAL TO 'I'                               00018000
+000190         GO TO VPC-PRIMRELCDI.                                    00019000
+000200 VPC-PRIMRELCDE.                                                  00020000
+000210     ADD +1 TO WS-RPW008-SUB.                                     00021000
+000220     IF WS-RPW008-SUB IS GREATER THAN 50                          00022000
+000230        GO TO VPC-EXIT.                                           00023000
+000240     IF MIM-7104RLSP (WS-RPW008-SUB)                              00024000
+000250         IS EQUAL TO WS-RPW008-RELNBR                             00025000
+000260         MOVE 'Y' TO WS-PRIMRELCD-ERROR                           00026000
+000270         GO TO VPC-EXIT.                                          00027000
+000280     IF MIM-7104RLSP (WS-RPW008-SUB) IS EQUAL TO ZEROS            00028000
+000290         GO TO VPC-EXIT.                                          00029000
+000300     GO TO VPC-PRIMRELCDE.                                        00030000
+000310 VPC-PRIMRELCDI.                                                  00031000
+000320     ADD +1 TO WS-RPW008-SUB.                                     00032000
+000330     IF WS-RPW008-SUB IS GREATER THAN 50                          00033000
+000340         MOVE 'Y' TO WS-PRIMRELCD-ERROR                           00034000
+000350         GO TO VPC-EXIT.                                          00035000
+000360     IF MIM-7104RLSP (WS-RPW008-SUB)                              00036000
+000370         IS EQUAL TO WS-RPW008-RELNBR                             00037000
+000380         GO TO VPC-EXIT.                                          00038000
+000390     IF MIM-7104RLSP (WS-RPW008-SUB) IS EQUAL TO ZEROS            00039000
+000400         MOVE 'Y' TO WS-PRIMRELCD-ERROR                           00040000
+000410         GO TO VPC-EXIT.                                          00041000
+000420     GO TO VPC-PRIMRELCDI.                                        00042000
+000430 VPC-EXIT.                                                        00043000
+000440     EXIT.                                                        00044000
+000450*----------------------------------------------------------------*00045000
+000460*    END VALIDATE PRIMARY ACCOUNT RELATIONSHIP CODE SECTION      *00046000
+000470*----------------------------------------------------------------*00047000

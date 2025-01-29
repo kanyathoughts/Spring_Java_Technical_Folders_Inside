@@ -1,0 +1,21 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 DoGroup, Label: SAMPLE_LABEL : do loop; PUT SKIP LIST("LEAVE"); LEAVE; end;, FROM={#6}, TO={#23(LOOP BODY), #44(LOOP END)}
+   #19 DoStatement
+   #23 PutStatement, FROM={#15(LOOP BODY)}, TO={#38}
+   #38 LeaveStatement, FROM={#23}, TO={#44}
+   #41 EndStatement
+  #44 DoGroup, Label: LABEL1 : DO FOREVER; J = J + 1; PUT SKIP LIST('INSIDE FOREVER LOOP'); IF( J < 3) THEN LEAVE; ELSE ITERATE LABEL1; END;, FROM={#104, #15(LOOP END), #38}, TO={#111(LOOP END), #52(LOOP BODY)}
+   #48 DoStatement
+   #52 AssignmentStatement, FROM={#44(LOOP BODY)}, TO={#68}
+   #68 PutStatement, FROM={#52}, TO={#83}
+   #83 IfStatement, Label: IF( J < 3) THEN LEAVE; ELSE ITERATE LABEL1;, FROM={#68}, TO={#104(FALSE), #99(TRUE)}
+     #99 LeaveStatement, FROM={#83(TRUE)}, TO={#111}
+     #104 IterateStatement, FROM={#83(FALSE)}, TO={#44}
+   #108 EndStatement
+  #111 DoGroup, Label: LABEL2 : do loop; PUT SKIP LIST("LEAVE"); ITERATE LABEL2; end;, FROM={#134, #44(LOOP END), #99}, TO={#119(LOOP BODY), #141(LOOP END)}
+   #115 DoStatement
+   #119 PutStatement, FROM={#111(LOOP BODY)}, TO={#134}
+   #134 IterateStatement, FROM={#119}, TO={#111}
+   #138 EndStatement
+  #141 EndStatement, FROM={#111(LOOP END)}, TO={TestHaltPoint}

@@ -1,0 +1,23 @@
+<form *ngIf="formGroup" nz-form nzLayout="vertical" [formGroup]="formGroup" class="shared-annotation-editor">
+  <div class="shared-annotation-editor__scroll">
+    <nz-form-item *ngFor="let formField of formFields">
+      <nz-form-label [nzFor]="formField.key">{{formField.label}}</nz-form-label>
+      <nz-form-control [ngSwitch]="formField.editAs">
+        <textarea *ngSwitchCase="'textArea'" rows="4" [nzAutosize]="{minRows: 4, maxRows: 16}"
+          nz-input [name]="formField.key" [formControlName]="formField.key"></textarea>
+        <input *ngSwitchDefault [name]="formField.key" type="text" [formControlName]="formField.key"/>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div nz-row nzJustify="end" class="shared-annotation-editor__button-bar">
+    <nz-divider></nz-divider>
+    <div nz-coll>
+      <nz-space>
+        <button *nzSpaceItem type="button" nz-button class="cancel_editor" nzType="default" (click)="onCancel()">
+          {{ 'btnLabel.cancel' | translate }}</button>
+        <button *nzSpaceItem type="button" [disabled]=" ! canSubmitForm()" [nzLoading]="isSaving" nz-button
+          nzType="primary" (click)="onSubmit()">{{ 'btnLabel.save' | translate }}</button>
+      </nz-space>
+    </div>
+  </div>
+</form>

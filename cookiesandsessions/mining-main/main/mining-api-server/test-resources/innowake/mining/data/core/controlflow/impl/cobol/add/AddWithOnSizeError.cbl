@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN518B.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TESTFIELD PIC 9(10).
+       PROCEDURE DIVISION.
+           PERFORM TESTPARA
+           GOBACK.
+       TESTPARA.
+            ADD 1 TO TESTFIELD
+            ON SIZE ERROR
+            DISPLAY 'A'
+            NOT ON SIZE ERROR
+            DISPLAY 'B'.
+       UNREACHABLE.
+            DISPLAY 'UNREACHABLE'

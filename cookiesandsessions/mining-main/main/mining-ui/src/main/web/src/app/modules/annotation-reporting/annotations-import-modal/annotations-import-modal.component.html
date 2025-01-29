@@ -1,0 +1,67 @@
+<div *nzModalTitle>
+    <nz-space *ngIf="showInitialContent">
+        <span *nzSpaceItem><b>{{ 'annotationReporting.importAnnotations' | translate }}</b></span></nz-space>
+    <nz-space *ngIf="loading || finished">
+        <i *nzSpaceItem nz-icon nzTheme="outline" [nzType]="titleIconType" [ngClass]="tileIconClass"></i>
+        <span *nzSpaceItem><b>{{ 'annotationReporting.csvImporter' | translate }}</b></span>
+    </nz-space>
+</div>
+<div *ngIf="loading">
+    <nz-progress [nzPercent]="showPercent" nzSize="small"></nz-progress>
+</div>
+<p *ngIf="finished">{{ finalMessage }}</p>
+<nz-space nzDirection="vertical" *ngIf="finished">
+    <nz-content *nzSpaceItem>
+        <nz-alert [nzType]="alertType" [nzMessage]="messageTemplate"></nz-alert>
+    </nz-content>
+    <ng-template #messageTemplate>
+        <p *ngIf="alertType === 'success'">{{ 'annotationReporting.updatedCount' | translate:importResult }}</p>
+        <div *ngIf="alertType !== 'success' && (importResult?.errors?.length > 0)" id="error">
+            <p><b>{{ 'annotationReporting.dataErrors' | translate }}</b></p>
+            <nz-space class="text-container-error-warning">
+                <div *nzSpaceItem>
+                    <pre>{{ errorMessage }}</pre>
+                </div>
+            </nz-space>
+            <nz-divider></nz-divider>
+            <button nz-button nzType="text" nzSize="small" (click)="onDownloadLog()">
+                <i nz-icon nzType="download"></i>{{ 'taxonomyReportingComponent.downloadLog' | translate }}
+            </button>
+        </div>
+    </ng-template>
+</nz-space>
+<div *ngIf="showInitialContent">
+    <p>{{ 'annotationReporting.importAnnotaitonsModelContent' | translate }}
+    </p>
+    <ol>
+        <li>{{ 'annotationReporting.importContentLine1' | translate }}</li>
+        <li>{{ 'annotationReporting.importContentLine2' | translate }}</li>
+        <li>{{ 'annotationReporting.importContentLine3' | translate }}</li>
+        <li>{{ 'annotationReporting.importContentLine4' | translate }}</li>
+    </ol>
+</div>
+<nz-space nzDirection="vertical" *ngIf="showInitialContent">
+    <nz-upload *nzSpaceItem [nzFileList]="$any(fileList)" [nzBeforeUpload]="$any(beforeUpload)" nzAccept=".csv">
+        <button nz-button nzType="primary" [disabled]="fileList.length > 0">
+            <i nz-icon nzType="upload"></i>
+            {{ 'annotationReporting.selectFile' | translate }}
+        </button>
+    </nz-upload>
+</nz-space>
+<div *nzModalFooter>
+    <button nz-button nzType="default" id="cancel-import" (click)="closeModal()" *ngIf="showInitialContent">
+        {{ 'btnLabel.cancel' | translate }}
+    </button>
+    <button nz-button nzType="primary" *ngIf="showInitialContent" (click)="onImport()" id="start-import"
+        [disabled]="(fileList.length === 0)">
+        <i class="import-icon" nz-icon nzType="import"></i>
+        {{ 'annotationReporting.startImport' | translate }}
+    </button>
+    <button nz-button nzType="primary" *ngIf="alertType === 'success'" (click)="onDone('done')" id="import-done">
+        {{ 'annotationReporting.done' | translate }}
+    </button>
+    <button nz-button nzType="primary" *ngIf="alertType === 'warning' || alertType === 'error'"
+        (click)="onDone('retry')" id="import-retry">
+        {{ 'annotationReporting.retry' | translate }}
+    </button>
+</div>

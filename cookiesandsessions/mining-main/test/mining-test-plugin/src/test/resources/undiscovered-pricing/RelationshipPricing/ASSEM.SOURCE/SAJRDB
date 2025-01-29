@@ -1,0 +1,839 @@
+**********************************************************************  00001000
+*                                                                       00002000
+*  SAJRDB .... STATIC SQL READ MODULE                                   00003000
+*                                                                       00004000
+*  CREATION DATE: 04/25/16                                              00005000
+*                                                                       00006000
+*  FUNCTIONAL DESCRIPTION: THIS PROGRAM CONTAINS THE STATIC SQL         00007000
+*  VECTORS REQUIRED TO SUPPORT I/O TO THE SAJ TABLE.  IT IS LOADED      00008000
+*  BY THE DB2 I/O MANAGER (BIPDB2X).  THIS PROGRAM WILL BE USED         00009000
+*  IN BOTH A CICS AND BATCH ENVIRONMENT AND MUST BE RE-ENTRANT          00010000
+*  AND VOID OF SVC CALLS.                                               00011000
+*                                                                       00012000
+*     ***************************************************************   00013000
+*     *                                                             *   00013001
+*     *                           NOTICE                            *   00013002
+*     *                                                             *   00013003
+*     *   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00013004
+*     *   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00013005
+*     *   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00013006
+*     *   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00013007
+*     *   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00013008
+*     *   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00013009
+*     *   ALL OTHER RIGHTS RESERVED.                                *   00013010
+*     *                                                             *   00013011
+*     *   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00013012
+*     *   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00013013
+*     *   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00013014
+*     *   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00013015
+*     *   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00013016
+*     *   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00013017
+*     *                                                             *   00013018
+*     ***************************************************************   00013019
+*     *     Infopoint Relationship Pricing                          *   00013020
+*     *     RP 5.0.01                                               *   00013021
+*     ***************************************************************   00013022
+*                                                                       00014000
+**********************************************************************  00015000
+* SQI COMMUNICATION AREA DSECT ADDRESSED BY REGISTER 11                 00016000
+**********************************************************************  00017000
+*                                                                       00018000
+COM#AREA DSECT                         SQI COMMUNICATION AREA           00019000
+SQW@CAF  DS    F                       ADDRESS OF CALL ATTACH FACILITY  00020000
+SQW@RET  DS    F                       RETURN TO THIS SQI ADDRESS       00021000
+SQWSQLCA DS    XL136                   SQLCA FOR I/O MODULE USE         00022000
+         ORG   SQWSQLCA                                                 00023000
+         EXEC  SQL INCLUDE SQLCA                                        00024000
+SQWSQLDL DS    F                       LENGTH OF DYNAMIC SQLDSECT       00025000
+SQWSQLD  DS    F                       DYNAMIC SQLDSECT                 00026000
+SQW@SQRX DS    F                       SQI INTERFACE ROUTINE ADDRESS    00027000
+SQWPARM1 DS    F                       SQI PARAMETER 1 (MODULE ADDRESS) 00028000
+SQWINTHV DS    F                       INTEGER HOST VARIABLE            00029000
+SQWCSRBR DS    F                       CURSOR ROUTINE BASE REGISTER     00030000
+SQWCSRRA DS    F                       CURSOR ROUTINE RETURN ADDRESS    00031000
+SQWRSFVC DS    H                       ROWSET FETCH SQLVAR COUNT        00032000
+SQWKMRP  DS    CL1                     SQI KEY MASK / ROUTINE POINTER   00033000
+         DS    CL5                     RESERVED                         00034000
+SQWIOSI  DS    0CL24                   I/O MODULE STATE INFORMATION     00035000
+SQWSQLDA DS    F                       ROWSET SQLDA STORAGE ADDRESS     00036000
+SQWRSRMX DS    H                       ROWSET MAX NUMBER OF ROWS        00037000
+SQWRSRCT DS    H                       ROWSET RETURNED ROW COUNT        00038000
+SQWRSROC DS    H                       ROWSET ROW OCCURS COUNT          00039000
+SQWRSFCD DS    H                       ROWSET FETCH SQLCODE             00040000
+SQWCSRCA DS    F                       READ CURSOR CLOSE ROUTINE ADDR   00041000
+SQWCSUCA DS    F                       UPDATE CURSOR CLOSE ROUTINE ADDR 00042000
+SQWCSRLV DS    CL1                     CURSOR CASCADE LEVEL LIMIT       00043000
+SQWCSRCC DS    CL1                     CURSOR CASCADE COUNT             00044000
+SQWCSRSP DS    H                       CURSOR ROUTINE POINTER           00045000
+         DS    CL4                     RESERVED                         00046000
+SQWCMD   DS    CL2                     DBS COMMAND CODE                 00047000
+SQWORG   DS    CL6                     RECORD ORG CODE                  00048000
+ASMREC   DS    0F                      ASSEMBLER RECORD (ALIGNED)       00049000
+INST     DS    CL4                                                      00050000
+APPLNBR  DS    CL2                                                      00051000
+ACCTNBR  DS    CL18                                                     00052000
+AUDDATE  DS    PL5'0.'                                                  00053000
+AUDTIME  DS    PL5'0.'                                                  00054000
+AUDUSER  DS    CL8                                                      00055000
+AUDORG   DS    CL6                                                      00056000
+PRODCODE DS    CL6                                                      00057000
+SCINCENO DS    CL1                                                      00058000
+INCENQ   DS    CL1                                                      00059000
+RINCENO  DS    CL1                                                      00060000
+RINCENQ  DS    CL1                                                      00061000
+PROCOPT  DS    CL1                                                      00062000
+INCENU1  DS    CL1                                                      00063000
+INCENU2  DS    CL1                                                      00064000
+INCENU3  DS    CL1                                                      00065000
+INCENU4  DS    CL1                                                      00066000
+INCENU5  DS    CL1                                                      00067000
+RAREA    DS    CL47                                                     00068000
+*                                                                       00069000
+         ORG   ASMREC+(2000-L'SQWADATA) POINT TO ADDITIONAL DATA        00070000
+SQWADATA DS    0CL400                  ADDITIONAL DATA PASSED TO MODULE 00071000
+SQWSEGF  DS    CL102                   SEGMENTED FROM KEY VALUE         00072000
+SQWSEGT  DS    CL102                   SEGMENTED TO KEY VALUE           00073000
+SQWAUDIT DS    CL99                    CALLERS AUDIT DATA               00074000
+         DS    CL97                    RESERVED                         00075000
+*                                                                       00076000
+INDVARS  DS    0H                      NULL INDICATOR VARIABLES         00077000
+INDVARX  DS    0H                                                       00078000
+INDVARL  EQU   INDVARX-INDVARS         NULL INDICATOR AREA LENGTH       00079000
+*                                                                       00080000
+*                                                                       00081000
+**********************************************************************  00082000
+* ROWSET SQLDA AREA ADDRESSED BY REGISTER 2                             00083000
+**********************************************************************  00084000
+*                                                                       00085000
+SQDSQLDA DSECT                         ROWSET SQLDA AREA                00086000
+*                                                                       00087000
+**********************************************************************  00088000
+* PROGRAM TABLE HEADER SECTION:                                         00089000
+*   THIS SECTION CONTAINS STATIC DESCRIPTIVE FIELDS.                    00090000
+**********************************************************************  00091000
+*                                                                       00092000
+SAJRDB   CSECT                         PROGRAM TABLE SECTION            00093000
+SAJRDB   AMODE ANY                                                      00094000
+SAJRDB   RMODE ANY                                                      00095000
+         DC    CL8'SAJRDB  '           PROGRAM ID                       00096000
+         DC    CL1' '                                                   00097000
+         DC    CL8'&SYSDATE'           ASSEMBLY DATE                    00098000
+         DC    CL1' '                                                   00099000
+         DC    CL5'&SYSTIME'           ASSEMBLY TIME                    00100000
+         DC    CL1' '                                                   00101000
+         DC    A(SQLDLEN)              SQLDSECT SIZE                    00102000
+         DC    5A(0)                   RESERVED                         00103000
+         DC    AL2(0)                  RESERVED                         00104000
+         DC    AL2(INDVARL)            NULL INDICATOR AREA LENGTH       00105000
+         DC    A(CONVTAB1)             RECORD/HOST CONVERSION TABLE     00106000
+         DC    A(CONVTAB2)             SQLDA DATA TYPE/LENGTH TABLE     00107000
+         DC    A(STM#TAB)              STATEMENT TABLE ADDRESS          00108000
+         DC    CL43'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. '        00109000
+         DC    CL29'WWW.INFOR.COM                '                      00109001
+*                                                                       00110000
+**********************************************************************  00111000
+* STATEMENT TABLE SECTION:                                              00112000
+*   THIS SECTION DEFINES AN ENTRY VECTOR FOR EACH SQL STATEMENT.        00113000
+**********************************************************************  00114000
+*                                                                       00115000
+STM#TAB  CSECT                         STATEMENT TABLE SECTION          00116000
+STM#TAB  AMODE ANY                                                      00117000
+STM#TAB  RMODE ANY                                                      00118000
+         DC    A(SELIN0)               SELECT INTO (KEY 0)              00119000
+         DC    A(SELIN1)               SELECT INTO (KEY 1)              00120000
+         DC    A(SELIN2)               SELECT INTO (KEY 2)              00121000
+         DC    A(SELIN3)               SELECT INTO (KEY 3)              00122000
+         DC    12A(0)                  UDB MODULE VECTORS               00123000
+         DC    A(SELXC0)               SELECT SEQ CURSOR (KEY 0)        00124000
+         DC    A(SELXC1)               SELECT SEQ CURSOR (KEY 1)        00125000
+         DC    A(SELXC2)               SELECT SEQ CURSOR (KEY 2)        00126000
+         DC    A(SELXC3)               SELECT SEQ CURSOR (KEY 3)        00127000
+         DC    A(FETDC0)               FETCH SEQ DATA CURSOR (KEY 0)    00128000
+         DC    A(FETDC1)               FETCH SEQ DATA CURSOR (KEY 1)    00129000
+         DC    A(FETDC2)               FETCH SEQ DATA CURSOR (KEY 2)    00130000
+         DC    A(FETDC3)               FETCH SEQ DATA CURSOR (KEY 3)    00131000
+         DC    A(FETKC0)               FETCH SEQ KEY CURSOR (KEY 0)     00132000
+         DC    A(FETKC1)               FETCH SEQ KEY CURSOR (KEY 1)     00133000
+         DC    A(FETKC2)               FETCH SEQ KEY CURSOR (KEY 2)     00134000
+         DC    A(FETKC3)               FETCH SEQ KEY CURSOR (KEY 3)     00135000
+         DC    A(CLSXC0)               CLOSE SEQ CURSOR (KEY 0)         00136000
+         DC    A(CLSXC1)               CLOSE SEQ CURSOR (KEY 1)         00137000
+         DC    A(CLSXC2)               CLOSE SEQ CURSOR (KEY 2)         00138000
+         DC    A(CLSXC3)               CLOSE SEQ CURSOR (KEY 3)         00139000
+         DC    A(SELKY0)               SELECT KEY (KEY 0)               00140000
+         DC    A(SELKY1)               SELECT KEY (KEY 1)               00141000
+         DC    A(SELKY2)               SELECT KEY (KEY 2)               00142000
+         DC    A(SELKY3)               SELECT KEY (KEY 3)               00143000
+         DC    10A(0)                  UDB MODULE VECTORS               00144000
+         DC    4X'FF'                                                   00145000
+*                                                                       00146000
+**********************************************************************  00147000
+* SQL STATEMENT SECTION:                                                00148000
+*   THIS SECTION CONTAINS ALL THE STATIC SQL STATEMENTS REQUIRED        00149000
+*     TO SUPPORT THIS TABLE.                                            00150000
+*   THE INDICATED STATEMENTS MAY BE MODIFIED, AS LONG AS THE RESULTS    00151000
+*     ARE EQUIVALENT.                                                   00152000
+**********************************************************************  00153000
+*                                                                       00154000
+SQL#STMT CSECT                         SQL STATEMENT SECTION            00155000
+SQL#STMT AMODE ANY                                                      00156000
+SQL#STMT RMODE ANY                                                      00157000
+         USING SQDSQLDA,2              ADDRESS ROWSET SQLDA AREA        00158000
+         USING SQLDSECT,10             ADDRESS SQLDSECT                 00159000
+         USING COM#AREA,11             ADDRESS COMMAREA                 00160000
+*                                                                       00161000
+**********************************************************************  00162000
+* SELECT INTO STATEMENT BY PRIMARY KEY:                                 00163000
+*   THIS STATEMENT SUPPORTS THE GET (WITHOUT LOCK) VERB.                00164000
+**********************************************************************  00165000
+*                                                                       00166000
+SELIN0   DS    0H                                                       00167000
+         USING SELIN0,12               ESTABLISH BASE REGISTER          00168000
+         MVI   SQWKMRP,X'80'           MOVE RECORD TO HOST FOR KEY 0    00169000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00170000
+         BALR  14,15                   MOVE REQUESTED DATA              00171000
+         EXEC  SQL SELECT                                              *00172000
+                   AUDIT_DATE,                                         *00173000
+                   AUDIT_TIME,                                         *00174000
+                   AUDIT_USER,                                         *00175000
+                   AUDIT_ORG,                                          *00176000
+                   PROD_CODE,                                          *00177000
+                   SVC_INCEN_OPT,                                      *00178000
+                   SVC_INCEN_QLFY,                                     *00179000
+                   RATE_INCEN_OPT,                                     *00180000
+                   RATE_INCEN_QLFY,                                    *00181000
+                   PROCESS_OPTION,                                     *00182000
+                   INCTIVE_USER_1,                                     *00183000
+                   INCTIVE_USER_2,                                     *00184000
+                   INCTIVE_USER_3,                                     *00185000
+                   INCTIVE_USER_4,                                     *00186000
+                   INCTIVE_USER_5,                                     *00187000
+                   RSV_AREA                                            *00188000
+                 INTO                                                  *00189000
+                   :AUDDATE,                                           *00190000
+                   :AUDTIME,                                           *00191000
+                   :AUDUSER,                                           *00192000
+                   :AUDORG,                                            *00193000
+                   :PRODCODE,                                          *00194000
+                   :SCINCENO,                                          *00195000
+                   :INCENQ,                                            *00196000
+                   :RINCENO,                                           *00197000
+                   :RINCENQ,                                           *00198000
+                   :PROCOPT,                                           *00199000
+                   :INCENU1,                                           *00200000
+                   :INCENU2,                                           *00201000
+                   :INCENU3,                                           *00202000
+                   :INCENU4,                                           *00203000
+                   :INCENU5,                                           *00204000
+                   :RAREA                                              *00205000
+                 FROM SAJ                                              *00206000
+                 WHERE                                                 *00207000
+                   INST_NBR = :INST AND                                *00208000
+                   APPL_NBR = :APPLNBR AND                             *00209000
+                   ACCT_NBR = :ACCTNBR                                 *00210000
+                 FETCH FIRST 1 ROW ONLY                                 00211000
+         MVI   SQWKMRP,X'03'           MOVE HOST VARIABLES TO RECORD    00212000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00213000
+         BALR  14,15                   MOVE REQUESTED DATA              00214000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00215000
+         BR    14                      RETURN TO CALLER                 00216000
+         LTORG                                                          00217000
+*                                                                       00218000
+**********************************************************************  00219000
+* SELECT COUNT STATEMENT BY PRIMARY KEY:                                00220000
+*   THIS STATEMENT SUPPORTS THE LOCATE VERB.                            00221000
+**********************************************************************  00222000
+*                                                                       00223000
+SELKY0   DS    0H                                                       00224000
+         USING SELKY0,12               ESTABLISH BASE REGISTER          00225000
+         MVI   SQWKMRP,X'80'           MOVE RECORD TO HOST FOR KEY 0    00226000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00227000
+         BALR  14,15                   MOVE REQUESTED DATA              00228000
+         EXEC  SQL SELECT                                              *00229000
+                   COUNT(*)                                            *00230000
+                 INTO                                                  *00231000
+                   :SQWINTHV                                           *00232000
+                 FROM SAJ                                              *00233000
+                 WHERE                                                 *00234000
+                   INST_NBR = :INST AND                                *00235000
+                   APPL_NBR = :APPLNBR AND                             *00236000
+                   ACCT_NBR = :ACCTNBR                                 *00237000
+                 FETCH FIRST 1 ROW ONLY                                 00238000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00239000
+         CLC   SQLCODE,=F'0'           GOOD RETURN FROM SQL?            00240000
+         BNER  14                      NO - RETURN TO CALLER            00241000
+         CLC   SQWINTHV,=F'0'          ANY ROWS MATCH WHERE CLAUSE?     00242000
+         BNER  14                      YES - RETURN ZERO SQLCODE        00243000
+         MVC   SQLCODE,=F'+100'        SET SQLCODE TO ROW NOT FOUND     00244000
+         BR    14                      RETURN TO CALLER                 00245000
+         LTORG                                                          00246000
+*                                                                       00247000
+**********************************************************************  00248000
+* SELECT SEQUENTIAL AND OPEN SEQUENTIAL CURSOR STATEMENTS BY PRIMARY    00249000
+* KEY:                                                                  00250000
+*   THESE STATEMENTS SUPPORT THE GET-GE, GET-GE-LOCK, GET-NEXT,         00251000
+*     AND GET-NEXT-LOCK VERBS.                                          00252000
+*   A SELECT UPDATE STATEMENT WILL FOLLOW IN THE CASE OF A              00253000
+*     GET-GE-LOCK OR GET-NEXT-LOCK VERB.                                00254000
+**********************************************************************  00255000
+*                                                                       00256000
+SELXC0   DS    0H                                                       00257000
+         USING SELXC0,12               ESTABLISH BASE REGISTER          00258000
+         MVI   SQWKMRP,X'86'           SET HOST KEY 0 & CURSOR POINTER  00259000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00260000
+         BALR  14,15                   MOVE DATA & SET CURSOR POINTER   00261000
+         LA    12,SELXC0P              LOAD VECTOR TABLE ADDRESS        00262000
+         AH    12,SQWCSRSP             COMPUTE POINTER TO OPEN ROUTINE  00263000
+         L     12,0(12)                LOAD OPEN ROUTINE ADDRESS        00264000
+         BR    12                      GO TO CURSOR OPEN ROUTINE        00265000
+SELXC0P  DC    A(SELGE001)                                              00266000
+         DC    (KY0COLMS-01)A(0)                                        00267000
+         DC    A(SELGE002)                                              00268000
+         DC    (KY0COLMS-02)A(0)                                        00269000
+         DC    A(SELGE003)                                              00270000
+         LTORG                                                          00271000
+*                                                                       00272000
+SELGE001 DS    0H                                                       00273000
+         USING SELGE001,12             ESTABLISH BASE REGISTER          00274000
+         EXEC  SQL DECLARE SAJGE001 CURSOR                             *00275000
+               WITH ROWSET POSITIONING                                 *00276000
+               FOR SELECT                                              *00277000
+                   INST_NBR,                                           *00278000
+                   APPL_NBR,                                           *00279000
+                   ACCT_NBR,                                           *00280000
+                   AUDIT_DATE,                                         *00281000
+                   AUDIT_TIME,                                         *00282000
+                   AUDIT_USER,                                         *00283000
+                   AUDIT_ORG,                                          *00284000
+                   PROD_CODE,                                          *00285000
+                   SVC_INCEN_OPT,                                      *00286000
+                   SVC_INCEN_QLFY,                                     *00287000
+                   RATE_INCEN_OPT,                                     *00288000
+                   RATE_INCEN_QLFY,                                    *00289000
+                   PROCESS_OPTION,                                     *00290000
+                   INCTIVE_USER_1,                                     *00291000
+                   INCTIVE_USER_2,                                     *00292000
+                   INCTIVE_USER_3,                                     *00293000
+                   INCTIVE_USER_4,                                     *00294000
+                   INCTIVE_USER_5,                                     *00295000
+                   RSV_AREA                                            *00296000
+                 FROM SAJ                                              *00297000
+                 WHERE                                                 *00298000
+                   INST_NBR = :INST AND                                *00299000
+                   APPL_NBR = :APPLNBR AND                             *00300000
+                   ACCT_NBR >=                                         *00301000
+                     :ACCTNBR                                          *00302000
+                 ORDER BY ACCT_NBR ASC                                 *00303000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00304000
+         EXEC  SQL OPEN SAJGE001                                        00305000
+         MVC   SQWCSRCA,=A(CLSGE001)   SET CURSOR CLOSE ROUTINE ADDRESS 00306000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00307000
+         BR    14                      RETURN TO CALLER                 00308000
+         LTORG                                                          00309000
+*                                                                       00310000
+SELGE002 DS    0H                                                       00311000
+         USING SELGE002,12             ESTABLISH BASE REGISTER          00312000
+         EXEC  SQL DECLARE SAJGE002 CURSOR                             *00313000
+               WITH ROWSET POSITIONING                                 *00314000
+               FOR SELECT                                              *00315000
+                   INST_NBR,                                           *00316000
+                   APPL_NBR,                                           *00317000
+                   ACCT_NBR,                                           *00318000
+                   AUDIT_DATE,                                         *00319000
+                   AUDIT_TIME,                                         *00320000
+                   AUDIT_USER,                                         *00321000
+                   AUDIT_ORG,                                          *00322000
+                   PROD_CODE,                                          *00323000
+                   SVC_INCEN_OPT,                                      *00324000
+                   SVC_INCEN_QLFY,                                     *00325000
+                   RATE_INCEN_OPT,                                     *00326000
+                   RATE_INCEN_QLFY,                                    *00327000
+                   PROCESS_OPTION,                                     *00328000
+                   INCTIVE_USER_1,                                     *00329000
+                   INCTIVE_USER_2,                                     *00330000
+                   INCTIVE_USER_3,                                     *00331000
+                   INCTIVE_USER_4,                                     *00332000
+                   INCTIVE_USER_5,                                     *00333000
+                   RSV_AREA                                            *00334000
+                 FROM SAJ                                              *00335000
+                 WHERE                                                 *00336000
+                   INST_NBR = :INST AND                                *00337000
+                   APPL_NBR >=                                         *00338000
+                     :APPLNBR                                          *00339000
+                 ORDER BY APPL_NBR ASC,                                *00340000
+                   ACCT_NBR ASC                                        *00341000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00342000
+         EXEC  SQL OPEN SAJGE002                                        00343000
+         MVC   SQWCSRCA,=A(CLSGE002)   SET CURSOR CLOSE ROUTINE ADDRESS 00344000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00345000
+         BR    14                      RETURN TO CALLER                 00346000
+         LTORG                                                          00347000
+*                                                                       00348000
+SELGE003 DS    0H                                                       00349000
+         USING SELGE003,12             ESTABLISH BASE REGISTER          00350000
+         EXEC  SQL DECLARE SAJGE003 CURSOR                             *00351000
+               WITH ROWSET POSITIONING                                 *00352000
+               FOR SELECT                                              *00353000
+                   INST_NBR,                                           *00354000
+                   APPL_NBR,                                           *00355000
+                   ACCT_NBR,                                           *00356000
+                   AUDIT_DATE,                                         *00357000
+                   AUDIT_TIME,                                         *00358000
+                   AUDIT_USER,                                         *00359000
+                   AUDIT_ORG,                                          *00360000
+                   PROD_CODE,                                          *00361000
+                   SVC_INCEN_OPT,                                      *00362000
+                   SVC_INCEN_QLFY,                                     *00363000
+                   RATE_INCEN_OPT,                                     *00364000
+                   RATE_INCEN_QLFY,                                    *00365000
+                   PROCESS_OPTION,                                     *00366000
+                   INCTIVE_USER_1,                                     *00367000
+                   INCTIVE_USER_2,                                     *00368000
+                   INCTIVE_USER_3,                                     *00369000
+                   INCTIVE_USER_4,                                     *00370000
+                   INCTIVE_USER_5,                                     *00371000
+                   RSV_AREA                                            *00372000
+                 FROM SAJ                                              *00373000
+                 WHERE                                                 *00374000
+                   INST_NBR >=                                         *00375000
+                     :INST                                             *00376000
+                 ORDER BY INST_NBR ASC,                                *00377000
+                   APPL_NBR ASC,                                       *00378000
+                   ACCT_NBR ASC                                        *00379000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00380000
+         EXEC  SQL OPEN SAJGE003                                        00381000
+         MVC   SQWCSRCA,=A(CLSGE003)   SET CURSOR CLOSE ROUTINE ADDRESS 00382000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00383000
+         BR    14                      RETURN TO CALLER                 00384000
+         LTORG                                                          00385000
+*                                                                       00386000
+**********************************************************************  00387000
+* SELECT AND OPEN SEQUENTIAL CURSOR STATEMENTS BY PRIMARY KEY:          00388000
+*   THIS ROUTINE HANDLES PRIMARY KEY SEQUENTIAL CURSORS.                00389000
+**********************************************************************  00390000
+*                                                                       00391000
+NXTXC0   DS    0H                                                       00392000
+         USING NXTXC0,12               ESTABLISH BASE REGISTER          00393000
+         MVI   SQWKMRP,X'87'           CLOSE CURSOR & SET HOST KEY 0    00394000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00395000
+         BALR  14,15                   MOVE REQUESTED DATA              00396000
+         LH    1,SQWCSRSP              LOAD CURRENT CURSOR POINTER      00397000
+         LA    1,4(1)                  INCREMENT TO NEXT CURSOR         00398000
+         STH   1,SQWCSRSP              SAVE POINTER FOR NEXT CALL       00399000
+         LA    12,NXTXC0P(1)           LOAD POINTER TO NEXT CURSOR      00400000
+         L     12,0(12)                LOAD CURSOR ROUTINE ADDRESS      00401000
+         BR    12                      GO TO CURRENT CURSOR ROUTINE     00402000
+NXTXC0P  DC    A(0)                                                     00403000
+         DC    A(NXTGT002)                                              00404000
+         DC    A(NXTGT003)                                              00405000
+         DC    A(NXTGT099)                                              00406000
+         DC    A(NXTGT003)                                              00407000
+         DC    A(NXTGT099)                                              00408000
+         DC    A(NXTGT099)                                              00409000
+NXTGT099 LA    0,4                     LOAD VALUE 4 IN REGISTER 0       00410000
+         SR    1,0                     ADJUST BACK TO CURRENT POINTER   00411000
+         STH   1,SQWCSRSP              SAVE POINTER FOR CURSOR CLOSE    00412000
+         LA    0,100                   LOAD VALUE 100 IN REGISTER 0     00413000
+         ST    0,SQLCODE               SET SQLCODE TO NO MORE ROWS      00414000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00415000
+         BR    14                      RETURN TO SQI                    00416000
+         LTORG                                                          00417000
+*                                                                       00418000
+NXTGT002 DS    0H                                                       00419000
+         USING NXTGT002,12             ESTABLISH BASE REGISTER          00420000
+         EXEC  SQL DECLARE SAJGT002 CURSOR                             *00421000
+               WITH ROWSET POSITIONING                                 *00422000
+               FOR SELECT                                              *00423000
+                   INST_NBR,                                           *00424000
+                   APPL_NBR,                                           *00425000
+                   ACCT_NBR,                                           *00426000
+                   AUDIT_DATE,                                         *00427000
+                   AUDIT_TIME,                                         *00428000
+                   AUDIT_USER,                                         *00429000
+                   AUDIT_ORG,                                          *00430000
+                   PROD_CODE,                                          *00431000
+                   SVC_INCEN_OPT,                                      *00432000
+                   SVC_INCEN_QLFY,                                     *00433000
+                   RATE_INCEN_OPT,                                     *00434000
+                   RATE_INCEN_QLFY,                                    *00435000
+                   PROCESS_OPTION,                                     *00436000
+                   INCTIVE_USER_1,                                     *00437000
+                   INCTIVE_USER_2,                                     *00438000
+                   INCTIVE_USER_3,                                     *00439000
+                   INCTIVE_USER_4,                                     *00440000
+                   INCTIVE_USER_5,                                     *00441000
+                   RSV_AREA                                            *00442000
+                 FROM SAJ                                              *00443000
+                 WHERE                                                 *00444000
+                   INST_NBR = :INST AND                                *00445000
+                   APPL_NBR >                                          *00446000
+                     :APPLNBR                                          *00447000
+                 ORDER BY APPL_NBR ASC,                                *00448000
+                   ACCT_NBR ASC                                        *00449000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00450000
+         EXEC  SQL OPEN SAJGT002                                        00451000
+         ICM   15,B'1111',SQLCODE      IS RETURN CODE ZERO ?            00452000
+         BNZ   *+14                    NO - RETURN ERROR                00453000
+         MVC   SQWCSRCA,=A(CLSGT002)   SET CURSOR CLOSE ROUTINE ADDRESS 00454000
+         L     12,SQWCSRRA             LOAD RETURN ADDRESS              00455000
+         BR    12                      RETURN TO FETCH ROUTINE          00456000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00457000
+         BR    14                      RETURN TO CALLER                 00458000
+         LTORG                                                          00459000
+*                                                                       00460000
+NXTGT003 DS    0H                                                       00461000
+         USING NXTGT003,12             ESTABLISH BASE REGISTER          00462000
+         EXEC  SQL DECLARE SAJGT003 CURSOR                             *00463000
+               WITH ROWSET POSITIONING                                 *00464000
+               FOR SELECT                                              *00465000
+                   INST_NBR,                                           *00466000
+                   APPL_NBR,                                           *00467000
+                   ACCT_NBR,                                           *00468000
+                   AUDIT_DATE,                                         *00469000
+                   AUDIT_TIME,                                         *00470000
+                   AUDIT_USER,                                         *00471000
+                   AUDIT_ORG,                                          *00472000
+                   PROD_CODE,                                          *00473000
+                   SVC_INCEN_OPT,                                      *00474000
+                   SVC_INCEN_QLFY,                                     *00475000
+                   RATE_INCEN_OPT,                                     *00476000
+                   RATE_INCEN_QLFY,                                    *00477000
+                   PROCESS_OPTION,                                     *00478000
+                   INCTIVE_USER_1,                                     *00479000
+                   INCTIVE_USER_2,                                     *00480000
+                   INCTIVE_USER_3,                                     *00481000
+                   INCTIVE_USER_4,                                     *00482000
+                   INCTIVE_USER_5,                                     *00483000
+                   RSV_AREA                                            *00484000
+                 FROM SAJ                                              *00485000
+                 WHERE                                                 *00486000
+                   INST_NBR >                                          *00487000
+                     :INST                                             *00488000
+                 ORDER BY INST_NBR ASC,                                *00489000
+                   APPL_NBR ASC,                                       *00490000
+                   ACCT_NBR ASC                                        *00491000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00492000
+         EXEC  SQL OPEN SAJGT003                                        00493000
+         ICM   15,B'1111',SQLCODE      IS RETURN CODE ZERO ?            00494000
+         BNZ   *+14                    NO - RETURN ERROR                00495000
+         MVC   SQWCSRCA,=A(CLSGT003)   SET CURSOR CLOSE ROUTINE ADDRESS 00496000
+         L     12,SQWCSRRA             LOAD RETURN ADDRESS              00497000
+         BR    12                      RETURN TO FETCH ROUTINE          00498000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00499000
+         BR    14                      RETURN TO CALLER                 00500000
+         LTORG                                                          00501000
+*                                                                       00502000
+**********************************************************************  00503000
+* FETCH FROM SEQUENTIAL CURSOR STATEMENT FOR PRIMARY KEY:               00504000
+*   THIS STATEMENT SUPPORTS THE GET-GE AND GET-NEXT VERBS.              00505000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00506000
+*     RETRIEVE THE ACTUAL ROW.                                          00507000
+*   THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS USE A DIFFERENT             00508000
+*     FETCH STATEMENT AS ONLY THE KEY FIELDS ARE NEEDED.                00509000
+**********************************************************************  00510000
+*                                                                       00511000
+FETDC0   DS    0H                                                       00512000
+         USING FETDC0,12               ESTABLISH BASE REGISTER          00513000
+         MVC   SQWCSRRA,=A(FETDC0)     SET RETURN ROUTINE ADDRESS       00514000
+         MVC   SQWCSRBR,=A(NXTXC0)     SET CURSOR ROUTINE ADDRESS       00515000
+         MVC   SQWRSFVC,=AL2(TBLCOLMS) FETCH ALL COLUMNS IN TABLE       00516000
+         LH    1,SQWCSRSP              LOAD CURRENT CURSOR POINTER      00517000
+         LA    12,FETDC0P(1)           LOAD POINTER TO FETCH ROUTINE    00518000
+         L     12,0(12)                LOAD FETCH ROUTINE ADDRESS       00519000
+         BR    12                      GO TO CURRENT FETCH ROUTINE      00520000
+FETDC0P  DC    A(FETGE001)                                              00521000
+         DC    A(FETGT002)                                              00522000
+         DC    A(FETGT003)                                              00523000
+         DC    A(FETGE002)                                              00524000
+         DC    A(FETGT003)                                              00525000
+         DC    A(FETGE003)                                              00526000
+         DC    A(0)                                                     00527000
+         LTORG                                                          00528000
+*                                                                       00529000
+**********************************************************************  00530000
+* FETCH FROM SEQUENTIAL CURSOR FOR EVENTUAL UPDATE STATEMENT FOR        00531000
+* THE PRIMARY KEY:                                                      00532000
+*   THIS STATEMENT SUPPORTS THE GET-GE-LOCK AND GET-NEXT-LOCK           00533000
+*     VERBS.                                                            00534000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00535000
+*     RETRIEVE THE ACTUAL ROW.                                          00536000
+*   ONLY THE PRIMARY KEY FIELDS ARE RETRIEVED AS A SELECT FOR UPDATE    00537000
+*     STATEMENT WILL FOLLOW AND RETREIVAL OF THE ACTUAL ROW             00538000
+*     WILL BE THRU THE UPDATE CURSOR.                                   00539000
+**********************************************************************  00540000
+*                                                                       00541000
+FETKC0   DS    0H                                                       00542000
+         USING FETKC0,12               ESTABLISH BASE REGISTER          00543000
+         MVC   SQWCSRRA,=A(FETKC0)     SET RETURN ROUTINE ADDRESS       00544000
+         MVC   SQWCSRBR,=A(NXTXC0)     SET CURSOR ROUTINE ADDRESS       00545000
+         MVC   SQWRSFVC,=AL2(KY0COLMS) ONLY FETCH KEY COLUMNS           00546000
+         LH    1,SQWCSRSP              LOAD CURRENT CURSOR POINTER      00547000
+         LA    12,FETKC0P(1)           LOAD POINTER TO FETCH ROUTINE    00548000
+         L     12,0(12)                LOAD FETCH ROUTINE ADDRESS       00549000
+         BR    12                      GO TO CURRENT FETCH ROUTINE      00550000
+FETKC0P  DC    A(FETGE001)                                              00551000
+         DC    A(FETGT002)                                              00552000
+         DC    A(FETGT003)                                              00553000
+         DC    A(FETGE002)                                              00554000
+         DC    A(FETGT003)                                              00555000
+         DC    A(FETGE003)                                              00556000
+         DC    A(0)                                                     00557000
+         LTORG                                                          00558000
+*                                                                       00559000
+FETGE001 DS    0H                                                       00560000
+         USING FETGE001,12             ESTABLISH BASE REGISTER          00561000
+         MVI   SQWKMRP,X'04'           CHECK FOR MORE ROWS IN ROWSET    00562000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00563000
+         BALR  14,15                   MOVE REQUESTED DATA              00564000
+         EXEC  SQL FETCH NEXT ROWSET FROM SAJGE001                     *00565000
+               FOR :SQWRSRMX ROWS INTO DESCRIPTOR :SQDSQLDA             00566000
+         MVI   SQWKMRP,X'05'           MOVE HOST ARRAY DATA TO RECORD   00567000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00568000
+         BALR  14,15                   MOVE REQUESTED DATA              00569000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00570000
+         BR    14                      RETURN TO CALLER                 00571000
+         LTORG                                                          00572000
+*                                                                       00573000
+FETGE002 DS    0H                                                       00574000
+         USING FETGE002,12             ESTABLISH BASE REGISTER          00575000
+         MVI   SQWKMRP,X'04'           CHECK FOR MORE ROWS IN ROWSET    00576000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00577000
+         BALR  14,15                   MOVE REQUESTED DATA              00578000
+         EXEC  SQL FETCH NEXT ROWSET FROM SAJGE002                     *00579000
+               FOR :SQWRSRMX ROWS INTO DESCRIPTOR :SQDSQLDA             00580000
+         MVI   SQWKMRP,X'05'           MOVE HOST ARRAY DATA TO RECORD   00581000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00582000
+         BALR  14,15                   MOVE REQUESTED DATA              00583000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00584000
+         BR    14                      RETURN TO CALLER                 00585000
+         LTORG                                                          00586000
+*                                                                       00587000
+FETGE003 DS    0H                                                       00588000
+         USING FETGE003,12             ESTABLISH BASE REGISTER          00589000
+         MVI   SQWKMRP,X'04'           CHECK FOR MORE ROWS IN ROWSET    00590000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00591000
+         BALR  14,15                   MOVE REQUESTED DATA              00592000
+         EXEC  SQL FETCH NEXT ROWSET FROM SAJGE003                     *00593000
+               FOR :SQWRSRMX ROWS INTO DESCRIPTOR :SQDSQLDA             00594000
+         MVI   SQWKMRP,X'05'           MOVE HOST ARRAY DATA TO RECORD   00595000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00596000
+         BALR  14,15                   MOVE REQUESTED DATA              00597000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00598000
+         BR    14                      RETURN TO CALLER                 00599000
+         LTORG                                                          00600000
+*                                                                       00601000
+FETGT002 DS    0H                                                       00602000
+         USING FETGT002,12             ESTABLISH BASE REGISTER          00603000
+         MVI   SQWKMRP,X'04'           CHECK FOR MORE ROWS IN ROWSET    00604000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00605000
+         BALR  14,15                   MOVE REQUESTED DATA              00606000
+         EXEC  SQL FETCH NEXT ROWSET FROM SAJGT002                     *00607000
+               FOR :SQWRSRMX ROWS INTO DESCRIPTOR :SQDSQLDA             00608000
+         MVI   SQWKMRP,X'05'           MOVE HOST ARRAY DATA TO RECORD   00609000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00610000
+         BALR  14,15                   MOVE REQUESTED DATA              00611000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00612000
+         BR    14                      RETURN TO CALLER                 00613000
+         LTORG                                                          00614000
+*                                                                       00615000
+FETGT003 DS    0H                                                       00616000
+         USING FETGT003,12             ESTABLISH BASE REGISTER          00617000
+         MVI   SQWKMRP,X'04'           CHECK FOR MORE ROWS IN ROWSET    00618000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00619000
+         BALR  14,15                   MOVE REQUESTED DATA              00620000
+         EXEC  SQL FETCH NEXT ROWSET FROM SAJGT003                     *00621000
+               FOR :SQWRSRMX ROWS INTO DESCRIPTOR :SQDSQLDA             00622000
+         MVI   SQWKMRP,X'05'           MOVE HOST ARRAY DATA TO RECORD   00623000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00624000
+         BALR  14,15                   MOVE REQUESTED DATA              00625000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00626000
+         BR    14                      RETURN TO CALLER                 00627000
+         LTORG                                                          00628000
+*                                                                       00629000
+**********************************************************************  00630000
+* CLOSE SEQUENTIAL CURSOR STATEMENT FOR PRIMARY KEY:                    00631000
+*   THIS STATEMENT SUPPORTS THE GET-GE, GET-GE-LOCK, GET-NEXT,          00632000
+*     AND GET-NEXT-LOCK VERBS.                                          00633000
+*   IT WILL FOLLOW THE LAST FETCH FROM SEQUENTIAL CURSOR STATEMENT      00634000
+*     TO CLOSE THE SEQUENTIAL CURSOR.                                   00635000
+**********************************************************************  00636000
+*                                                                       00637000
+CLSXC0   DS    0H                                                       00638000
+         USING CLSXC0,12               ESTABLISH BASE REGISTER          00639000
+         L     12,SQWCSRCA             SET CURSOR CLOSE ROUTINE ADDRESS 00640000
+         XC    SQWCSRCA,SQWCSRCA       CLEAR CURSOR CLOSE ROUTINE ADDR  00641000
+         BR    12                      GO TO CURSOR CLOSE ROUTINE       00642000
+         LTORG                                                          00643000
+*                                                                       00644000
+CLSGE001 DS    0H                                                       00645000
+         USING CLSGE001,12             ESTABLISH BASE REGISTER          00646000
+         EXEC  SQL CLOSE SAJGE001                                       00647000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00648000
+         BR    14                      RETURN TO CALLER                 00649000
+         LTORG                                                          00650000
+*                                                                       00651000
+CLSGE002 DS    0H                                                       00652000
+         USING CLSGE002,12             ESTABLISH BASE REGISTER          00653000
+         EXEC  SQL CLOSE SAJGE002                                       00654000
+         L     14,SQW@RET                                               00655000
+         BR    14                                                       00656000
+         LTORG                                                          00657000
+*                                                                       00658000
+CLSGE003 DS    0H                                                       00659000
+         USING CLSGE003,12             ESTABLISH BASE REGISTER          00660000
+         EXEC  SQL CLOSE SAJGE003                                       00661000
+         L     14,SQW@RET                                               00662000
+         BR    14                                                       00663000
+         LTORG                                                          00664000
+*                                                                       00665000
+CLSGT002 DS    0H                                                       00666000
+         USING CLSGT002,12             ESTABLISH BASE REGISTER          00667000
+         EXEC  SQL CLOSE SAJGT002                                       00668000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00669000
+         BR    14                      RETURN TO CALLER                 00670000
+         LTORG                                                          00671000
+*                                                                       00672000
+CLSGT003 DS    0H                                                       00673000
+         USING CLSGT003,12             ESTABLISH BASE REGISTER          00674000
+         EXEC  SQL CLOSE SAJGT003                                       00675000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00676000
+         BR    14                      RETURN TO CALLER                 00677000
+         LTORG                                                          00678000
+*                                                                       00679000
+**********************************************************************  00680000
+* ALTERNATE KEY 1 NOT DEFINED                                           00681000
+**********************************************************************  00682000
+*                                                                       00683000
+SELIN1   DS    0H                                                       00684000
+SELKY1   DS    0H                                                       00685000
+SELXC1   DS    0H                                                       00686000
+FETDC1   DS    0H                                                       00687000
+FETKC1   DS    0H                                                       00688000
+CLSXC1   DS    0H                                                       00689000
+         DC    X'00DEAD01'             FORCE S0C1 ABEND                 00690000
+*                                                                       00691000
+**********************************************************************  00692000
+* ALTERNATE KEY 2 NOT DEFINED                                           00693000
+**********************************************************************  00694000
+*                                                                       00695000
+SELIN2   DS    0H                                                       00696000
+SELKY2   DS    0H                                                       00697000
+SELXC2   DS    0H                                                       00698000
+FETDC2   DS    0H                                                       00699000
+FETKC2   DS    0H                                                       00700000
+CLSXC2   DS    0H                                                       00701000
+         DC    X'00DEAD02'             FORCE S0C1 ABEND                 00702000
+*                                                                       00703000
+**********************************************************************  00704000
+* ALTERNATE KEY 3 NOT DEFINED                                           00705000
+**********************************************************************  00706000
+*                                                                       00707000
+SELIN3   DS    0H                                                       00708000
+SELKY3   DS    0H                                                       00709000
+SELXC3   DS    0H                                                       00710000
+FETDC3   DS    0H                                                       00711000
+FETKC3   DS    0H                                                       00712000
+CLSXC3   DS    0H                                                       00713000
+         DC    X'00DEAD03'             FORCE S0C1 ABEND                 00714000
+*                                                                       00715000
+         DS    0H                      END OF SQL STATEMENTS            00716000
+         DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'                   00717000
+*                                                                       00718000
+**********************************************************************  00719000
+* DUMMY ENTRY POINT DSNHLI                                              00720000
+**********************************************************************  00721000
+*                                                                       00722000
+         ENTRY DSNHLI                                                   00723000
+DSNHLI   DS    0H                                                       00724000
+         L     15,SQW@CAF              LOAD ENTRY POINT TO ATTACH       00725000
+         BR    15                      BRANCH TO ATTACH FACILITY        00726000
+*                                                                       00727000
+**********************************************************************  00728000
+* CONVERSION TABLE VALUES FOR ALL FIELDS IN THIS TABLE                  00729000
+**********************************************************************  00730000
+*                                                                       00731000
+* CONVTAB1 TABLE ENTRY FORMAT IS:                                       00732000
+*        DC    H'RRRR',H'VVVV',H'LLLL',X'KK',X'DD'                      00733000
+* OR:                                                                   00734000
+*        DC    H'RRRR',H'VVVV',X'ZZPP',X'KK',X'DD'                      00735000
+* WHERE:                                                                00736000
+*   RRRR = RECORD AREA OFFSET                                           00737000
+*   VVVV = HOST VARIABLE AREA OFFSET                                    00738000
+*   LLLL = HALFWORD LENGTH TO MOVE                                      00739000
+*   ZZPP = CONVERT ZONED/PACKED LENGTHS (MINUS 1)                       00740000
+*   KK   = KEY FIELD MASK:                                              00741000
+*            80 = KEY 0 FIELD                                           00742000
+*            40 = KEY 1 FIELD                                           00743000
+*            20 = KEY 2 FIELD                                           00744000
+*            10 = KEY 3 FIELD                                           00745000
+*   DD   = DATA FIELD MASK:                                             00746000
+*            80 = RECORD FIELD IS PACKED                                00747000
+*            40 = HOST VARIABLE IS PACKED                               00748000
+*            20 = NULLABLE FIELD                                        00749000
+*            01 = DATE FIELD                                            00750000
+*            02 = TIME FIELD                                            00751000
+*                                                                       00752000
+CONVTAB1 DS    0H                      RECORD/HOST VARIABLE CONVERSIONS 00753000
+         DC    H'0000',H'0000',H'0024',X'80',X'00'                      00754000
+         DC    H'0024',H'0024',H'0087',X'00',X'00'                      00755000
+         DC    8X'FF'                                                   00756000
+*                                                                       00757000
+* CONVTAB2 TABLE COLUMNS ENTRY FORMAT IS:                               00758000
+*        DC    H'RRRR',H'LLLL',H'TTTT'                                  00759000
+* OR:                                                                   00760000
+*        DC    H'RRRR',X'PPSS',H'TTTT'                                  00761000
+* WHERE:                                                                00762000
+*   RRRR = RECORD AREA OFFSET                                           00763000
+*   LLLL = HALFWORD LENGTH OF HOST VARIABLE (NON-DECIMAL DATA TYPE)     00764000
+*   PPSS = PRECISION AND SCALE (DECIMAL DATA TYPE)                      00765000
+*   TTTT = SQLDA DATA TYPE:                                             00766000
+*            452 = CHAR       453 = CHAR NULLABLE                       00767000
+*            484 = DECIMAL    485 = DECIMAL NULLABLE                    00768000
+*            496 = INTEGER    497 = INTEGER NULLABLE                    00769000
+*            500 = SMALLINT   501 = SMALLINT NULLABLE                   00770000
+*                                                                       00771000
+CONVTAB2 DS    0F                      RECORD DATA ATTRIBUTE TABLE      00772000
+         DC    AL4(TBLCOLMS*44+16)     TOTAL SQLDA SIZE                 00773000
+         DC    AL2(TBLCOLMS)           NUMBER OF COLUMNS IN TABLE       00774000
+         DC    AL2(KY0COLMS)           NUMBER OF PRIMARY KEY COLUMNS    00775000
+         DC    AL2(KY1COLMS)           NUMBER OF ALT1 KEY COLUMNS       00776000
+         DC    AL2(KY2COLMS)           NUMBER OF ALT2 KEY COLUMNS       00777000
+         DC    AL2(KY3COLMS)           NUMBER OF ALT3 KEY COLUMNS       00778000
+         DC    AL2(00111)              SUMMATION OF ALL COLUMN LENGTHS  00779000
+         DC    AL2(01000)              PRIMARY MULTIROW FETCH ARRAY     00780000
+         DC    AL2(00000)              ALT 1 MULTIROW FETCH ARRAY       00781000
+         DC    AL2(00000)              ALT 2 MULTIROW FETCH ARRAY       00782000
+         DC    AL2(00000)              ALT 3 MULTIROW FETCH ARRAY       00783000
+         DC    AL2(00000)              PRIMARY KEY LOW VALUE LEVEL      00784000
+         DC    AL2(00000)              ALT 1 KEY LOW VALUE LEVEL        00785000
+         DC    AL2(00000)              ALT 2 KEY LOW VALUE LEVEL        00786000
+         DC    AL2(00000)              ALT 3 KEY LOW VALUE LEVEL        00787000
+CONVDATA DS    0H                                                       00788000
+         DC    H'0000',H'0004',H'452'  INST_NBR                         00789000
+         DC    H'0004',H'0002',H'452'  APPL_NBR                         00790000
+         DC    H'0006',H'0018',H'452'  ACCT_NBR                         00791000
+KEYCOLMS EQU   (*-CONVDATA)/6          NUMBER OF KEY COLUMNS IN TABLE   00792000
+         DC    H'0024',X'0900',H'484'  AUDIT_DATE                       00793000
+         DC    H'0029',X'0900',H'484'  AUDIT_TIME                       00794000
+         DC    H'0034',H'0008',H'452'  AUDIT_USER                       00795000
+         DC    H'0042',H'0006',H'452'  AUDIT_ORG                        00796000
+         DC    H'0048',H'0006',H'452'  PROD_CODE                        00797000
+         DC    H'0054',H'0001',H'452'  SVC_INCEN_OPT                    00798000
+         DC    H'0055',H'0001',H'452'  SVC_INCEN_QLFY                   00799000
+         DC    H'0056',H'0001',H'452'  RATE_INCEN_OPT                   00800000
+         DC    H'0057',H'0001',H'452'  RATE_INCEN_QLFY                  00801000
+         DC    H'0058',H'0001',H'452'  PROCESS_OPTION                   00802000
+         DC    H'0059',H'0001',H'452'  INCTIVE_USER_1                   00803000
+         DC    H'0060',H'0001',H'452'  INCTIVE_USER_2                   00804000
+         DC    H'0061',H'0001',H'452'  INCTIVE_USER_3                   00805000
+         DC    H'0062',H'0001',H'452'  INCTIVE_USER_4                   00806000
+         DC    H'0063',H'0001',H'452'  INCTIVE_USER_5                   00807000
+         DC    H'0064',H'0047',H'452'  RSV_AREA                         00808000
+TBLCOLMS EQU   (*-CONVDATA)/6          NUMBER OF COLUMNS IN TABLE       00809000
+KY0COLMS EQU   00003                   NUMBER OF PRIMARY KEY COLUMNS    00810000
+KY1COLMS EQU   00000                   NUMBER OF ALT 1 KEY COLUMNS      00811000
+KY2COLMS EQU   00000                   NUMBER OF ALT 2 KEY COLUMNS      00812000
+KY3COLMS EQU   00000                   NUMBER OF ALT 3 KEY COLUMNS      00813000
+*                                                                       00814000
+         LTORG                                                          00815000
+         END                                                            00816000

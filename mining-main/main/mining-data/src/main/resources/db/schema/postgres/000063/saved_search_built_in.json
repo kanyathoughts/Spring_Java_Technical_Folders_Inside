@@ -1,0 +1,95 @@
+[
+    {
+        "name": "Business Rule Candidates",
+        "savedSearch": "columns=Annotation.type&columns=Annotation.categoryName&columns=Annotation.reasons&columns=Module.name&columns=Annotation.sourceAttachment&columns=Annotation.state&columns=Module.technology&columns=Module.type&columns=Annotation.name&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"type\",\"value\":[\"RULE\"]},{\"key\":\"categoryName\",\"value\":[\"Business Rule\"]},{\"key\":\"state\",\"value\":[\"CANDIDATE\"]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.annotationsTable",
+        "modifiers": null
+    },
+    {
+        "name": "Database Candidates",
+        "savedSearch": "columns=Annotation.type&columns=Annotation.categoryName&columns=Module.name&columns=Annotation.sourceAttachment&columns=Annotation.state&columns=Module.technology&columns=Module.type&columns=Annotation.name&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"type\",\"value\":[\"DATABASE\"]},{\"key\":\"state\",\"value\":[\"CANDIDATE\"]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.annotationsTable",
+        "modifiers": null
+    },
+    {
+        "name": "Dead Code",
+        "savedSearch": "columns=Annotation.type&columns=Annotation.categoryName&columns=Module.name&columns=Annotation.sourceAttachment&columns=Module.technology&columns=Module.type&columns=Annotation.name&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"type\",\"value\":[\"DEAD_CODE\"]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.annotationsTable",
+        "modifiers": null
+    },
+    {
+        "name": "Ungrouped Annotations",
+        "savedSearch": "columns=Module.name&columns=Annotation.type&columns=Annotation.categoryName&columns=Annotation.state&columns=Annotation.name&columns=Annotation.sourceAttachment&columns=Annotation.englishTranslation&columns=AnnotationFunctionalGroup.name&columns=Annotation.updatedByUserName&page=1&&sort={content_module_name: ASC}&filter=[{\"key\":\"functionalGroups.name\",\"value\":[{\"operator\":\"is\",\"value\":null}]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.annotationsTable",
+        "modifiers": null
+    },
+    {
+        "name": "Business Related DD Entries",
+        "savedSearch": "columns=DataDictionaryEntry.isBusiness&columns=DataDictionaryEntry.dataElementName&columns=DataDictionaryEntry.format&columns=DataDictionaryEntry.length&columns=Module.name&columns=DataDictionaryEntry.description&columns=DataDictionaryEntry.created_by&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"isBusiness\",\"value\":[true]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.dataDictionaryTable",
+        "modifiers": null
+    },
+    {
+        "name": "Copybook Defined DD Entries",
+        "savedSearch": "columns=DataDictionaryEntry.definedLocation&columns=DataDictionaryEntry.dataElementName&columns=DataDictionaryEntry.format&columns=DataDictionaryEntry.length&columns=Module.name&columns=DataDictionaryEntry.description&columns=DataDictionaryEntry.created_by&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"definedLocation\",\"value\":[\"COPYBOOK\"]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.dataDictionaryTable",
+        "modifiers": null
+    },
+    {
+        "name": "Not Referenced DD entries",
+        "savedSearch": "columns=DataDictionaryEntry.isReferenced&columns=DataDictionaryEntry.dataElementName&columns=DataDictionaryEntry.format&columns=DataDictionaryEntry.length&columns=Module.name&columns=DataDictionaryEntry.description&columns=DataDictionaryEntry.created_by&page=1&sort={content_module_name: ASC}&filter=[{\"key\":\"isReferenced\",\"value\":[false]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.dataDictionaryTable",
+        "modifiers": null
+    },
+    {
+        "name": "Missing Source Files",
+        "savedSearch": "columns=Module.name&columns=Module.technology&columns=Module.type&columns=Module.identification&page=1&sort={content_name: ASC}&filter=[{\"key\":\"identification\",\"value\":[\"MISSING\"]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": null
+    },
+    {
+        "name": "Modules with Errors",
+        "savedSearch": "columns=Module.name&columns=Module.technology&columns=Module.type&columns=Module.errorCount&page=1&sort={content_name: ASC}&filter=[{\"key\":\"errorCount\",\"value\":[{\"operator\":\"gte\",\"value\":1}]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": null
+    },
+    {
+        "name": "No Taxonomies Assigned",
+        "savedSearch": "columns=Module.name&columns=Module.technology&columns=Module.type&columns=Module.taxonomyCount&page=1&sort={content_name: ASC}&filter=[{\"key\":\"taxonomyCount\",\"value\":[{\"operator\":\"eq\",\"value\":0}]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": null
+    },
+    {
+        "name": "Not Referenced",
+        "savedSearch": "columns=Module.name&columns=Module.technology&columns=Module.type&columns=Module.inboundDependencyCount&page=1&sort={content_name: ASC}&filter=[{\"key\":\"inboundDependencyCount\",\"value\":[{\"operator\":\"eq\",\"value\":0}]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": null
+    },
+    {
+        "name": "Requires Review",
+        "savedSearch": "columns=Module.name&columns=Module.requiresReview&columns=Module.technology&columns=Module.type&page=1&sort={content_name: ASC}&filter=[{\"key\":\"requiresReview\",\"value\":[true]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": null
+    },
+    {
+        "name": "Taxonomy Assignments",
+        "savedSearch": "columns=Module.name&columns=Module.technology&columns=Module.type&columns=Module.taxonomyCount&page=1&sort={content_name: ASC}&filter=[{\"key\":\"taxonomyCount\",\"value\":[{\"operator\":\"gte\",\"value\":1}]}]",
+        "scope": "GLOBAL",
+        "usage": "miningUi.modulesTable",
+        "modifiers": [
+            "ADD_ALL_TAXONOMIES"
+        ]
+    }
+]

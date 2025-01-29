@@ -1,0 +1,30 @@
+<div nz-row [nzGutter]="[48,16]" class="web-annotation-editor-container">
+  <!-- Marked Code -->
+  <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="12" [nzXl]="14" [nzXXl]="14">
+    <nz-space nzSize="small" nzDirection="vertical">
+      <nz-page-header *nzSpaceItem>
+        <nz-page-header-title class="web-annotation-editor-container__title" translate>codeViewer.markedCode
+        </nz-page-header-title>
+        <nz-page-header-extra>
+          <nz-space nzSize="small">
+            <button *nzSpaceItem nz-button nzType="default" (click)="openCFGInNewTab()">
+              <em nz-icon nzType="apartment" nzTheme="outline"></em>
+              {{'module.graphs.controlFlowGraph' | translate}}
+            </button>
+            <mn-eclipse-button *nzSpaceItem (clicked)="openInEclipse()"></mn-eclipse-button>
+            <mn-code-viewer-button *nzSpaceItem label="module.codeViewer" [moduleDetails]="moduleDetails" [projectId]="projectId" [offset]="offset">
+            </mn-code-viewer-button>
+          </nz-space>
+        </nz-page-header-extra>
+      </nz-page-header>
+      <ng-container *ngIf="showEditor">
+        <mining-monaco-editor *nzSpaceItem [options]="editorOptions" [code]="annotation.sourceAttachment" [dynamicHeight]="true"></mining-monaco-editor>
+      </ng-container>
+    </nz-space>
+  </div>
+  <!-- Web Component -->
+  <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="12" [nzXl]="10" [nzXXl]="10">
+    <app-shared-annotation-editor [annotation]="annotation" [parentComponent]="parentComponent" [moduleId]="moduleId" [canCopyPasteAnnotation]="canCopyPasteAnnotation"
+      [isCreateMode]="isCreateMode" (formResult)="handleSharedFormResult($event)"></app-shared-annotation-editor>
+  </div>
+</div>

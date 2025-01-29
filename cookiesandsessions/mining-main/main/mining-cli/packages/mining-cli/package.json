@@ -1,0 +1,55 @@
+{
+  "name": "mining-cli",
+  "version": "0.0.0",
+  "description": "Mining CLI",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.app.json",
+    "clean": "rimraf bin dist",
+    "pkg": "rimraf bin && pkg .",
+    "rollup": "rollup -c",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nodelib/fs.walk": "^1.2.6",
+    "archiver": "^5.3.0",
+    "awilix": "^4.2.6",
+    "axios": "^0.27.2",
+    "byte-size": "^7.0.1",
+    "commander": "^7.2.0",
+    "form-data": "^4.0.0",
+    "fs-extra": "^9.1.0",
+    "iw-ioc": "^0.0.1",
+    "mining-api-client": "^0.0.0",
+    "node-stream-zip": "^1.15.0",
+    "terminal-kit": "^2.0.7",
+    "tmp-promise": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@types/fs-extra": "^5.0.2",
+    "@types/archiver": "^2.1.1",
+    "@types/jest": "^22.2.3",
+    "@types/terminal-kit": "^1.28.2",
+    "@types/tmp": "^0.2.0",
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.44.0",
+    "pkg": "^4.4.9",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.0.3",
+    "ts-essentials": "^7.0.1",
+    "tslint": "^6.1.3"
+  },
+  "bin": "dist/index.js",
+  "pkg": {
+    "scripts": "node_modules/terminal-kit/lib/**/*.js",
+    "outputPath": "bin",
+    "targets": ["node14-linux-x64", "node14-macos-x64", "node14-win-x64"]
+  }
+}

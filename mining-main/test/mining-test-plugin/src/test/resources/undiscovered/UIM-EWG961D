@@ -1,0 +1,1219 @@
+*          DATA SET EWG961D    AT LEVEL 005 AS OF 08/26/02
+*                                                                       
+         TITLE 'EWG961D - VSAM DATABASE ACCESS MODULE'                  
+         PRINT NOGEN                                                    
+EWG961D  CSECT                         ESTABLISH CONTROL SECTION        
+*********************************************************************** 
+*********************************************************************** 
+**                                                                   ** 
+**               EWG961D - VSAM DATABASE ACCESS MODULE               ** 
+**                                                                   ** 
+*********************************************************************** 
+*********************************************************************** 
+         SPACE                                                          
+         SAVE  (14,12),,*              SAVE CALLING PGM REGISTERS       
+         BALR  R11,R0                  LOAD FIRST BASE REGISTER         
+         USING *,R11,R12               BASE REGISTERS ELEVEN AND TWELVE 
+         USING HDRDSECT,R5             USING FOR HEADER RECORD          
+         USING VSMDBCA,R9              USING FOR VSAM CONTROL BLOCK     
+         LA    R12,2048(R11)           LOAD SECOND BASE REGISTER        
+         LA    R12,2048(R12)           LOAD SECOND BASE REGISTER        
+         ST    R13,SAVE+FOUR           STORE CALLING SAVE AREA ADDRESS  
+         LA    R15,SAVE                LOAD SAVE AREA ADDRESS           
+         ST    R15,EIGHT(R13)          STORE NEW SAVE AREA ADDRESS      
+         LR    R13,R15                 LOAD NEW SAVE AREA ADDRESS       
+         LM    R9,R10,ZERO(R1)         LOAD PASSED PARAMETER ADDRESS    
+         ST    R10,SEGADDR             STORE CALLING SEGMENT ADDRESS    
+         MVC   RECDKEY,DBRECKEY        MOVE RECORD KEY TO SAVE AREA     
+         SPACE 2                                                        
+PROC100  DS    0H                                                       
+         BAL   R8,INIT100              BUILD VSAM ACB - RPL - EXLST     
+         BAL   R8,PRMD100              VALIDATE PROCESSING MODE         
+         BAL   R8,CMCD100              VALIDATE COMMAND CODE            
+         BAL   R8,SGNM100              VALIDATE SEGMENT NAME            
+         BAL   R8,HDR100               CHECK FOR HEADER RECORD UPDATE   
+         BAL   R8,SET100               SET SEGMENT OCCURRENCE           
+         LA    R8,TERM100              LOAD RETURN ADDRESS              
+         CLI   DBCMDCDE,CHARR          READ FUNCTION REQUESTED          
+         BE    READ100                 YES - GO READ SEGMENT DATA       
+         CLI   DBCMDCDE,CHARA          ADD FUNCTION REQUESTED           
+         BE    ADD100                  YES - GO ADD SEGMENT DATA        
+         CLI   DBCMDCDE,CHARF          ADD FIRST SEGMENT REQUESTED      
+         BE    ADD100                  YES - GO ADD SEGMENT             
+         CLI   DBCMDCDE,CHARD          DELETE FUNCTION REQUESTED        
+         BE    DEL100                  YES - GO DELETE SEGMENT DATA     
+         CLI   DBCMDCDE,CHARW          REWRITE FUNCTION REQUESTED       
+         BE    UPD100                  YES - GO UPDATE SEGMENT          
+         CLI   DBCMDCDE,CHARC          CLOSE FUNCTION REQUESTED         
+         BE    CLOS100                 YES - GO CLOSE DATASET           
+         SPACE 2                                                        
+TERM100  DS    0H                                                       
+         XC    DBOCCUR,DBOCCUR         ZERO SEGMENT OCCURRENCE          
+         BAL   R8,PRCB100              CHECK CONTROL BLOCK TRACE        
+         L     R13,FOUR(R13)           RESTORE SAVE AREA ADDRESS        
+         RETURN (14,12),RC=0           RETURN TO CALLING PROGRAM        
+         TITLE 'INIT100 - GENERATE VSAM CONTROL BLOCKS'                 
+*********************************************************************** 
+*                        INITIALIZATION ROUTINE                       * 
+*********************************************************************** 
+         SPACE                                                          
+INIT100  DS    0H                                                       
+         NOPR  R8                      FIRST TIME NO BRANCH             
+         OI    INIT100+ONE,CHAR0       SET FIRST TIME BRANCH            
+         OPEN  (PRINTER,(OUTPUT))      OPEN OUTPUT PRINTER DATASET      
+         GENCB BLK=EXLST,              GENERATE AN EXIT LIST           *
+               EODAD=(EOD100,A),       END OF DATA EXIT                *
+               LERAD=(VRM100,A),       LOGICAL ERROR EXIT              *
+               SYNAD=(SYN100,A)        PHYSICAL ERROR EXIT              
+         LTR   R15,R15                 GENCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         ST    R1,EXLADDR              STORE EXIT LIST ADDRESS          
+         GENCB BLK=ACB,                GENERATE AN ACB                 *
+               DDNAME=EWG960F1,        DATASET DD NAME                 *
+               EXLST=(*,EXLADDR),      EXIT LIST ADDRESS               *
+               MACRF=(SEQ,DIR,SKP,OUT) KINDS OF PROCESSING              
+         LTR   R15,R15                 GENCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         ST    R1,ACBADDR              STORE ACB ADDRESS                
+         GENCB BLK=RPL,                GENERATE AN RPL                 *
+               ACB=(*,ACBADDR),        ACB ADDRESS                     *
+               AREA=VSAMWORK,          VSAM WORK AREA ADDRESS          *
+               AREALEN=32768,          VSAM WORK AREA LENGTH           *
+               MSGAREA=SYNMSGA,        PHYSICAL I/O ERROR MSG AREA     *
+               MSGLEN=128,             PHYSICAL I/O ERROR MSG LENGTH   *
+               ARG=RECDKEY,            VSAM SEARCH ARGUMENT            *
+               KEYLEN=9,               KEY LENGTH FOR GENERIC SEARCH   *
+               OPTCD=(MVE,UPD)         INITIAL RPL OPTIONS              
+         LTR   R15,R15                 GENCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         ST    R1,RPLADDR              STORE RPL ADDRESS                
+         L     R4,ACBADDR              LOAD ACB ADDRESS                 
+         MVC   OCTYPE,OPN              MOVE OPEN TO OPEN/CLOSE TYPE     
+         OPEN  ((R4))                  OPEN VSAM DATASET                
+         LTR   R15,R15                 OPEN SUCCESSFUL                  
+         BNZ   OCER100                 NO - GO PROCESS ERROR            
+         L     R4,RPLADDR              LOAD RPL ADDRESS                 
+         GET   RPL=(R4)                READ HEADER RECORD               
+         CLC   VSRECKEY,ZEROS          RECORD KEY EQUAL ZERO            
+         BE    INIT200                 YES - GO MOVE HEADER RECORD      
+         MVI   ERRINDX,ERROR08         SET ERROR CONDITION INDEX        
+         B     CBE100                  GO PROCESS ERROR                 
+         SPACE                                                          
+INIT200  DS    0H                                                       
+         OC    RECKEY,HIGHKEY          SET LAST READ KEY TO HIGH KEY    
+         LA    R2,HDRECORD             LOAD HEADER SAVE AREA ADDRESS    
+         LA    R4,VSAMWORK             LOAD VSAM WORK AREA ADDRESS      
+         LA    R3,HDRECLEN             LOAD HEADER RECORD LENGTH        
+         LR    R5,R3                   LOAD HEADER RECORD LENGTH        
+         MVCL  R2,R4                   MOVE HEADER RECORD TO SAVE AREA  
+         BR    R8                      RETURN REGISTER EIGHT            
+         TITLE 'PRMD100 - VALIDATE PROCESSING MODE AND MODIFY THE RPL'  
+*********************************************************************** 
+*          VALIDATE PROCESSING MODE AND MODIFY THE RPL                * 
+*********************************************************************** 
+         SPACE 2                                                        
+PRMD100  DS    0H                                                       
+         CLI   DBCMDCDE,CHARS          RESET FUNCTION REQUESTED         
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLI   DBCMDCDE,CHARC          CLOSE FUNCTION REQUESTED         
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLI   DBPRCMDE,CHARS          PROCESSING MODE SEQUENTIAL       
+         BNE   PRMD200                 NO - GO CHECK FOR SKP OR DIR     
+         TM    RPLOPTNS,SEQ            RPL SET FOR SEQUENTIAL           
+         BOR   R8                      YES - RETURN REGISTER EIGHT      
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(SEQ,FKS)         FOR SEQUENTIAL PROCESSING        
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         NI    RPLOPTNS,ALLOFF         SET ACCESS OPTIONS OFF           
+         OI    RPLOPTNS,SEQ            SET SEQ ACCESS ON                
+         BR    R8                      RETURN - REGISTER EIGHT          
+         SPACE 2                                                        
+PRMD200  DS    0H                                                       
+         CLI   DBPRCMDE,CHARK          PROCESSING MODE SKIP             
+         BNE   PRMD300                 NO - GO CHECK FOR DIR            
+         TM    RPLOPTNS,SKP            RPL SET FOR SKIP SEQUENTIAL      
+         BOR   R8                      YES - RETURN REGISTER EIGHT      
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(SKP,FKS)         FOR SKIP SEQUENTIAL PROCESSING   
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         NI    RPLOPTNS,ALLOFF         SET ACCESS OPTIONS OFF           
+         OI    RPLOPTNS,SKP            SET SKP ACCESS ON                
+         BR    R8                      RETURN - REGISTER EIGHT          
+         SPACE 2                                                        
+PRMD300  DS    0H                                                       
+         CLI   DBPRCMDE,CHARR          PROCESSING MODE SKIP DIR         
+         BNE   PRMD400                 NO - GO CHECK FOR GENERIC        
+         TM    RPLOPTNS,DIR            RPL SET FOR DIRECT               
+         BOR   R8                      YES - RETURN REGISTER EIGHT      
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(DIR,FKS)         FOR DIRECT PROCESSING            
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         NI    RPLOPTNS,ALLOFF         SET ACCESS OPTIONS OFF           
+         OI    RPLOPTNS,DIR            SET DIR ACCESS ON                
+         BR    R8                      RETURN REGISTER EIGHT            
+         TITLE 'PRMD400 - VALIDATE GENERIC PROCESSING'                  
+*********************************************************************** 
+*                        VALIDATE GENERIC PROCESSING BEGIN AND READ   * 
+*********************************************************************** 
+         SPACE 2                                                        
+PRMD400  DS    0H                                                       
+         MVI   ERRINDX,ERROR02         SET ERROR CONDITION INDEX        
+         CLI   DBPRCMDE,CHARG          PROCESSING MODE GENERIC          
+         BNE   CBE100                  NO - GO PROCESS ERROR            
+         CLI   DBCMDCDE,CHARB          BEGIN GENERIC PROCESSING         
+         BNE   PRMD410                 NO - GO TO MODIFY RPL=SEQ,GEN    
+         MVI   DBCMDCDE,CHARR          SET PROCESSING MODE READ         
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(DIR,GEN)         FOR GENERIC KEY                  
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         NI    RPLOPTNS,ALLOFF         SET ACCESS OPTIONS OFF           
+         OI    RPLOPTNS,GEN            SET DIR ACCESS GENERIC KEY ON    
+         BR    R8                      RETURN REGISTER EIGHT            
+         SPACE 2                                                        
+PRMD410  DS    0H                                                       
+         MVI   ERRINDX,ERROR01         SET ERROR CONDITION INDEX        
+         CLI   DBCMDCDE,CHARR          COMMAND CODE READ                
+         BNE   CBE100                  NO - GO TO PROCESS ERROR         
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(SEQ,GEN)         FOR GENERIC KEY                  
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         NI    RPLOPTNS,ALLOFF         SET ACCESS OPTIONS OFF           
+         OI    RPLOPTNS,GEN            SET DIR ACCESS GENERIC KEY ON    
+         BR    R8                      RETURN REGISTER EIGHT            
+         TITLE 'CMCD100 - VALIDATE COMMAND CODE AND SEGMENT NAME'       
+*********************************************************************** 
+*                        VALIDATE COMMAND CODE                        * 
+*********************************************************************** 
+         SPACE 2                                                        
+CMCD100  DS    0H                                                       
+         LA    R3,CMNDTAB              LOAD COMMAND TABLE ADDRESS       
+         LA    R4,CMNDL/CMNDI          LOAD NUMBER OF ENTRIES IN TABLE  
+         BALR  R5,R0                   LOAD LOOP BEGIN ADDRESS          
+         CLC   DBCMDCDE,ZERO(R3)       COMMAND CODE IN TABLE            
+         MVC   PRCMDCDE,ONE(R3)        MOVE COMMAND TO PRINT LINE       
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         LA    R3,CMNDI(R3)            POINT TO NEXT ENTRY IN TABLE     
+         BCTR  R4,R5                   GO COMPARE AGAIN                 
+         MVI   ERRINDX,ERROR01         SET ERROR CONDITION INDEX        
+         B     CBE100                  GO PROCESS ERROR                 
+         SPACE 3                                                        
+*********************************************************************** 
+*      VALIDATE SEGMENT NAME AND STORE SEGMENT DEFINITION DATA        * 
+*********************************************************************** 
+         SPACE 2                                                        
+SGNM100  DS    0H                                                       
+         CLI   DBCMDCDE,CHARC          CLOSE FUNCTION REQUESTED         
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLC   DBSGNAME,ALLSEG         SEGMENT NAME ALL SEGMENTS        
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLC   DBSGNAME,HDRSEG         PROCESS HEADER CONTROL RECORD    
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         LA    R3,SEGTAB               LOAD SEGMENT TABLE ADDRESS       
+         LA    R4,SEGTABL/SEGTABI      LOAD NUMBER OF ENTRIES IN TABLE  
+         BALR  R5,R0                   LOAD LOOP BEGIN ADDRESS          
+         CLC   DBSGNAME,ZERO(R3)       COMPARE SEGMENT NAME             
+         BER   R8                      EQUAL - RETURN REGISTER EIGHT    
+         LA    R3,SEGTABI(R3)          POINT TO NEXT ENTRY IN TABLE     
+         BCTR  R4,R5                   GO COMPARE UNTIL END OF TABLE    
+         MVI   ERRINDX,ERROR03         SET ERROR CONDITION INDEX        
+         B     CBE100                  GO PROCESS ERROR                 
+         TITLE 'HDR100 - PROCESS HEADER CONTROL RECORD'                 
+*********************************************************************** 
+*                      PROCESS HEADER CONTROL RECORD                  * 
+*********************************************************************** 
+HDR100   DS    0H                                                       
+         CLI   DBCMDCDE,CHARC          CLOSE FUNCTION REQUESTED         
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLI   DBCMDCDE,CHARS          RESET FUNCTION REQUESTED         
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         CLC   DBSGNAME,HDRSEG         PROCESS HEADER CONTROL RECORD    
+         BE    HDR200                  YES - GO CHECK PROCESSING MODE   
+         CLC   DBRECKEY,ZEROS          RECORD KEY EQUAL ZERO            
+         BNER  R8                      NO - GO PROCESS REQUEST          
+         CLI   DBPRCMDE,CHARS          PROCESSING MODE SEQUENTIAL       
+         BER   R8                      YES - RETURN REGISTER EIGHT      
+         MVI   DBCPLCDE,CHAR0          SET NO RECORD FOUND INDICATOR    
+         B     TERM100                 RETURN WITH NO RECORD FOUND      
+         SPACE                                                          
+HDR200   DS    0H                                                       
+         MVI   ERRINDX,ERROR09         SET ERROR CONDITION INDEX        
+         CLI   DBPRCMDE,CHARR          PROCESSING MODE RANDOM           
+         BNE   CBE100                  NO - GO PROCESS ERROR            
+         MVI   ERRINDX,ERROR10         SET ERROR CONDITION INDEX        
+         CLI   DBCMDCDE,CHARR          READ FUNCTION REQUESTED          
+         BE    *+TWELVE                YES - GO READ HEADER RECORD      
+         CLI   DBCMDCDE,CHARW          REWRITE FUNCTION REQUESTED       
+         BNE   CBE100                  NO - GO PROCESS ERROR            
+         BAL   R7,CKWRT100             CHECK WRITE/REWRITE FLAG         
+         MVC   RECDKEY,ZEROS           SET HEADER RECORD KEY            
+         OC    RECKEY,HIGHKEY          SET LAST READ KEY TO HIGH KEY    
+         L     R3,RPLADDR              LOAD RPL ADDRESS                 
+         GET   RPL=(R3)                READ HEADER RECORD               
+         SHOWCB RPL=(*,RPLADDR),       ******************************* *
+               AREA=LENGTH,            *           SHOWCB            * *
+               LENGTH=4,               *     FOR RECORD LENGTH       * *
+               FIELDS=RECLEN           *******************************  
+         LH    R3,SEGLEN               LOAD HEADER RECORD LENGTH        
+         SPACE                                                          
+HDR400   DS    0H                                                       
+         CLI   DBCMDCDE,CHARR          READ FUNCTION REQUESTED          
+         BNE   HDR500                  NO - GO REWRITE HEADER RECORD    
+         L     R2,SEGADDR              LOAD CALLING DATA ADDRESS        
+         LA    R4,VSAMWORK             LOAD HEADER RECORD ADDRESS       
+         LR    R5,R3                   LOAD HEADER RECORD LENGTH        
+         MVCL  R2,R4                   MOVE HEADER RECORD               
+         XC    DBCPLCDE,DBCPLCDE       ZERO COMPLETION CODE             
+         B     TERM100                 GO TO PROGRAM EXIT               
+         SPACE                                                          
+HDR500   DS    0H                                                       
+         LA    R2,VSAMWORK             LOAD HEADER RECORD ADDRESS       
+         L     R4,SEGADDR              LOAD HEADER RECORD SEGMENT ADDR  
+         LR    R5,R3                   LOAD HEADER RECORD LENGTH        
+         MVCL  R2,R4                   MOVE UPDATED HEADER RECORD       
+         OI    WRTFLAG,WRITE           SET WRITE/REWRITE FLAG ON        
+         B     TERM100                 GO TO PROCGRAM EXIT              
+         TITLE 'SET100 - SET SEGMENT OCCURRENCE'                        
+*********************************************************************** 
+*                          SET SEGMENT OCCURRENCE                     * 
+*********************************************************************** 
+         SPACE                                                          
+SET100   DS    0H                                                       
+         CLI   DBCMDCDE,CHARC              CLOSE FUNCTION REQUESTED     
+         BER   R8                          YES - RETURN REGISTER EIGHT  
+         CLI   DBCMDCDE,CHARS              RESET FUNCTION REQUESTED     
+         BNE   SET200                      NO - GO CHECK FOR READ       
+         XC    DBSTATUS,DBSTATUS           ZERO STATUS CODE             
+         XC    DBCPLCDE,DBCPLCDE           ZERO COMPLETION CODE         
+         CLC   DBSGNAME,ALLSEG             RESET ALL OCCURRENCES        
+         BNE   *+TEN                       NO - RESET ALL OCCURRENCES   
+         BAL   R7,SET900                   LINK TO RESET OCCURRENCES    
+         BR    R8                          RETURN REGISTER EIGHT        
+         XC    TWELVE(TWO,R3),TWELVE(R3)   ZERO CURRENT OCCURRENCE      
+         OI    FOURTEEN(R3),NODELETE       SET NO DELETE FLAG ON        
+         BR    R8                          RETURN REGISTER EIGHT        
+         SPACE                                                          
+SET200   DS    0H                                                       
+         CLC   DBSGNAME,ALLSEG             PROCESS ENTIRE RECORD        
+         BER   R8                          YES - RETURN REGISTER EIGHT  
+         CLI   DBCMDCDE,CHARR              READ FUNCTION REQUESTED      
+         BNE   SET300                      NO - GO CHECK FOR ADD        
+         CLC   DBSGNAME,SEGONE             READ SEGMENT ONE             
+         BNE   SET210                      NO - GO CHECK OCCURRENCE     
+         CLI   DBPRCMDE,CHARS              PROCESSING MODE SEQUENTIAL   
+         BE    SET210                      YES - GO ADD TO SEGMENT CTR  
+         XC    TWELVE(TWO,R3),TWELVE(R3)   ZERO SEGMENT ONE OCCURRENCE  
+         OI    FOURTEEN(R3),NODELETE       SET NO DELETE FLAG ON        
+         SPACE                                                          
+SET210   DS    0H                                                       
+         LH    R2,TWELVE(R3)               LOAD SEGMENT OCCURRENCE      
+         LA    R2,ONE(R2)                  ADD ONE TO OCCURRENCE        
+         STH   R2,TWELVE(R3)               STORE OCCURRENCE IN TABLE    
+         OC    DBOCCUR,DBOCCUR             REQUESTED OCCURRENCE ZERO    
+         BZ    SET600                      YES - GO MOVE SEGMENT INFO   
+         MVC   TWELVE(TWO,R3),DBOCCUR      MOVE OCCURRENCE TO TABLE     
+         B     SET600                      GO MOVE SEGMENT INFORMATION  
+         SPACE                                                          
+SET300   DS    0H                                                       
+         CLI   DBCMDCDE,CHARF              ADD FIRST REQUESTED          
+         BNE   SET310                      NO GO CHECK FOR ADD          
+         MVC   DBOCCUR,HWORD1              SET OCCURRENCE TO ONE        
+         B     SET320                      GO CHECK FOR SEGMENT ONE     
+         SPACE                                                          
+SET310   DS    0H                                                       
+         CLI   DBCMDCDE,CHARA              ADD FUNCTION REQUESTED       
+         BNE   SET400                      GO - GO CHECK FOR DELETE     
+         OC    DBOCCUR,DBOCCUR             REQUESTED OCCURRENCE ZERO    
+         BNZ   SET320                      NO - CHECK FOR SEGMENT ONE   
+         L     R4,FOUR(R3)                 ADDRESS ACTUAL COUNTER       
+         LH    R4,ZERO(R4)                 LOAD ACTUAL SEGMENT COUNTER  
+         LA    R4,ONE(R4)                  ADD ONE TO COUNTER           
+         STCM  R4,HWORD,DBOCCUR            STORE SEGMENT OCCURRENCE     
+         SPACE                                                          
+SET320   DS    0H                                                       
+         MVC   TWELVE(TWO,R3),DBOCCUR      MOVE OCCURRENCE TO TABLE     
+         CLC   DBSGNAME,SEGONE             ADD SEGMENT ONE              
+         BNE   SET600                      NO - GO MOVE SEGMENT INFO    
+         BAL   R7,SET900                   LINK TO ZERO OCCURRENCES     
+         MVC   TWELVE(TWO,R3),HWORD1       MOVE ONE TO SEGMENT COUNTER  
+         B     SET600                      GO MOVE SEGMENT INFORMATION  
+         SPACE                                                          
+SET400   DS    0H                                                       
+         CLI   DBCMDCDE,CHARD              DELETE FUNCTION REQUESTED    
+         BNE   SET500                      NO - GO CHECK FOR REWRITE    
+         CLC   DBSGNAME,SEGONE             DELETE SEGMENT ONE           
+         BE    SET600                      NO - GO  MOVE SEGMENT INFO   
+         OC    DBOCCUR,DBOCCUR             REQUESTED OCCURRENCE ZERO    
+         BZ    SET420                      YES - GO DECREMENT TABLE     
+         MVC   HLDSEG,DBOCCUR              MOVE DBOCCUR TO HOLD SEGMENT 
+         NI    FOURTEEN(R3),DELETE         SET NO DELETE FLAG OFF       
+         XR    R2,R2                       ZERO REGISTER TWO            
+         ICM   R2,HWORD,DBOCCUR            LOAD REQUESTED OCCURRENCE    
+         BCTR  R2,R0                       SUBTRACT ONE FROM OCCURRENCE 
+         STH   R2,TWELVE(R3)               STORE OCCURRENCE IN TABLE    
+         B     SET600                      GO MOVE SEGMENT INFORMATION  
+         SPACE                                                          
+SET420   DS    0H                                                       
+         OC    TWELVE(TWO,R3),TWELVE(R3)   CURRENT OCCURRENCE ZERO      
+         BZ    SET600                      YES - GO MOVE SEGMENT INFO   
+         MVC   HLDSEG,TWELVE(R3)           MOVE SEGOCCUR TO HLDSEG      
+         LH    R2,TWELVE(R3)               LOAD SEGMENT OCCURRENCE      
+         BCTR  R2,R0                       SUBTRACT ONE FROM OCCURRENCE 
+         STH   R2,TWELVE(R3)               STORE OCCURRENCE IN TABLE    
+         B     SET600                      GO MOVE SEGMENT INFORMATION  
+         SPACE                                                          
+SET500   DS    0H                                                       
+         CLI   DBCMDCDE,CHARW              REWRITE FUNCTION REQUESTED   
+         BNE   SET600                      NO - GO MOVE SEGMENT INFO    
+         OC    DBOCCUR,DBOCCUR             REQUESTED OCCURRENCE ZERO    
+         BZ    SET600                      YES - GO SET OCCURRENCE      
+         MVC   TWELVE(TWO,R3),DBOCCUR      MOVE OCCURRENCE TO TABLE     
+         SPACE                                                          
+SET600   DS    0H                                                       
+         LM    R4,R5,FOUR(R3)              ADDRESS RECORD AND HEADER    
+         MVC   SEGCTR,TWELVE(R3)           SET REQUESTED OCCURRENCE     
+         MVC   SEGLEN,HDSGLEN              SET SEGMENT LENGTH           
+         BR    R8                          RETURN REGISTER EIGHT        
+         SPACE                                                          
+SET900   DS    0H                                                       
+         ST    R3,FWORD                    **************************** 
+         LA    R3,SEGTAB                   *                          * 
+         LA    R4,SEGTABL/SEGTABI          *                          * 
+         BALR  R5,R0                       *                          * 
+         XC    TWELVE(TWO,R3),TWELVE(R3)   *           ZERO           * 
+         OI    FOURTEEN(R3),NODELETE       *       SEGMENT TABLE      * 
+         LA    R3,SEGTABI(R3)              *                          * 
+         BCTR  R4,R5                       *                          * 
+         L     R3,FWORD                    *                          * 
+         BR    R7                          **************************** 
+         TITLE 'READ100 - READ SEGMENT DATA'                            
+*********************************************************************** 
+*                          READ SEGMENT DATA                          * 
+*********************************************************************** 
+         SPACE                                                          
+READ100  DS    0H                                                       
+         XC    DBSTATUS,DBSTATUS           ZERO STATUS CODE             
+         XC    DBCPLCDE,DBCPLCDE           ZERO COMPLETION CODE         
+         CLC   RECKEY,DBRECKEY             REQUESTED KEY EQUAL LAST KEY 
+         BE    READ200                     YES - GO FIND SEGMENT        
+         BAL   R7,READ900                  NO - GO READ NEXT RECORD     
+         SPACE 2                                                        
+READ200  DS    0H                                                       
+         CLC   DBSGNAME,ALLSEG             READ ENTIRE RECORD           
+         BNE   READ300                     NO - GO FIND SEGMENT         
+         LA    R2,VSAMWORK                 LOAD RECORD BEGIN ADDRESS    
+         SHOWCB RPL=(*,RPLADDR),           *************************** *
+               AREA=LENGTH,                *           SHOWCB        * *
+               LENGTH=4,                   *    FOR RECORD LENGTH    * *
+               FIELDS=RECLEN               ***************************  
+         MVC   DBRECLEN,SEGLEN             SAVE RECORD LENGTH           
+         B     READ600                     GO MOVE RECORD               
+         SPACE 2                                                        
+READ300  DS    0H                                                       
+         CLI   DBPRCMDE,CHARS              PROCESSING MODE SEQUENTIAL   
+         BNE   READ400                     NO - GO CHECK SEGMENT CTR    
+         XR    R7,R7                       ZERO REGISTER SEVEN          
+         LH    R7,SEGCTR                   LOAD SEGMENT COUNTER         
+         CH    R7,ZERO(R4)                 GREATER THAN ACTUAL COUNTER  
+         BNH   READ500                     NO - GO CALCULATE ADDRESS    
+         BAL   R7,READ900                  READ NEXT RECORD             
+         MVC   SEGCTR,HWORD1               SET OCCURRENCE TO ONE        
+         MVC   TWELVE(TWO,R3),HWORD1       SET TABLE OCCURRENCE TO ONE  
+         B     READ300+EIGHT               GO COMPARE SEGMENT COUNTER   
+         SPACE 2                                                        
+READ400  DS    0H                                                       
+         XR    R7,R7                       ZERO REGISTER SEVEN          
+         LH    R7,SEGCTR                   LOAD SEGMENT OCCURRENCE      
+         CH    R7,ZERO(R4)                 GREATER THAN ACTUAL COUNTER  
+         BNH   READ500                     NO - GO CALCUALTE ADDRESS    
+         MVI   DBCPLCDE,CHAR0              SET NO RECORD FOUND          
+         SH    R7,ZERO(R4)                 CHECK FOR MORE THAN TEN      
+         CH    R7,HWORD10                  NO RECORD FOUND CONDITIONS   
+         MVI   ERRINDX,ERROR11             SET ERROR MESSAGE            
+         BH    CBE100                      GO PROCESS ERROR             
+         BR    R8                          RETURN REGISTER EIGHT        
+         EJECT                                                          
+READ500  DS    0H                                                       
+         LA    R2,VSAMWORK                 LOAD RECORD BEGIN ADDRESS    
+         A     R2,TWO(R4)                  ADD SEGMENT BEGIN ADDRESS    
+         BCTR  R2,R0                       SUBTRACT ONE FROM ACTUAL     
+         BCTR  R7,R0                       SUBTRACT ONE FROM OCCURRENCE 
+         MH    R7,SEGLEN                   MULTIPLY BY SEGMENT LENGTH   
+         AR    R2,R7                       ADD TO SEGMENT BEGIN ADDRESS 
+         NI    FOURTEEN(R3),DELETE         SET NO DELETE FLAG OFF       
+         CLC   ZERO(TWO,R4),SEGCTR         LAST SEGMENT OF THIS TYPE    
+         BNE   READ600                     NO - GO MOVE SEGMENT         
+         MVI   DBSTATUS,CHARL              SET LAST SEGMENT INDICATOR   
+         SPACE 2                                                        
+READ600  DS    0H                          LOAD SEGMENT BEGIN ADDRESS   
+         LR    R4,R2                       LOAD SEGMENT BEGIN ADDRESS   
+         L     R2,SEGADDR                  LOAD CALLING SEGMENT ADDRESS 
+         LH    R3,SEGLEN                   LOAD SEGMENT LENGTH          
+         LR    R5,R3                       LOAD SEGMENT LENGTH          
+         MVCL  R2,R4                       MOVE REQUESTED SEGMENT       
+         BR    R8                          RETURN REGISTER EIGHT        
+         SPACE 2                                                        
+READ900  DS    0H                                                       
+         ST    R7,FWORD                    SAVE RETURN ADDRESS          
+         BAL   R7,CKWRT100                 CHECK WRITE/REWRITE FLAG     
+         L     R2,RPLADDR                  LOAD RPL ADDRESS             
+         GET   RPL=(R2)                    READ NEXT RECORD             
+         LA    R5,SEGTAB-SEGTABI           LOAD SEGMENT TABLE ADDRESS   
+         LA    R6,SEGTABL/SEGTABI          LOAD NUMBER OF ENTRIES       
+         BALR  R7,R0                       SET LOOP BEGIN ADDRESS       
+         LA    R5,SEGTABI(R5)              POINT TO NEXT ENTRY          
+         CLC   DBSGNAME,ZERO(R5)           SEGMENT NAME EQUAL CURRENT   
+         BE    *+TEN                       YES - BRANCH AROUND XC       
+         XC    TWELVE(TWO,R5),TWELVE(R5)   ZERO SEGMENT OCCURRENCES     
+         OI    FOURTEEN(R5),NODELETE       SET NO DELETE FLAG ON        
+         BCTR  R6,R7                       GO ZERO NEXT ENTRY           
+         MVC   RECKEY,VSAMWORK             SAVE RECORD KEY              
+         MVC   DBRECKEY,VSAMWORK           SAVE RECORD KEY              
+         L     R7,FWORD                    LOAD RETURN ADDRESS          
+         BR    R7                          RETURN REGISTER SEVEN        
+         TITLE 'ADD100 - ADD SEGMENT DATA'                              
+*********************************************************************** 
+*                           ADD SEGMENT DATA                          * 
+*********************************************************************** 
+         SPACE                                                          
+ADD100   DS    0H                                                       
+         CLC   RECKEY,DBRECKEY         CURRENT KEY EQUAL LAST KEY       
+         BE    ADD250                  YES - GO ADD SEGMENT             
+         CLC   DBSGNAME,ALLSEG         ADD ENTIRE RECORD                
+         BNE   ADD150                  NO - GO CHECK FOR SEGMENT ONE    
+         MVC   SEGLEN,DBRECLEN         MOVE ADD RECORD LENGTH           
+         B     ADD200                  GO REWRITE LAST RECORD           
+         SPACE                                                          
+ADD150   DS    0H                                                       
+         CLC   DBSGNAME,SEGONE         ADD SEGMENT ONE                  
+         BE    ADD200                  YES - GO REWRITE LAST RECORD     
+         MVI   ERRINDX,ERROR07         SET ERROR CONDITION INDEX        
+         B     CBE100                  GO PROCESS ERROR                 
+         SPACE                                                          
+ADD200   DS    0H                                                       
+         BAL   R7,CKWRT100             CHECK WRITE/REWRITE FLAG         
+         OI    WRTFLAG,NOUPD           SET NO UPDATE FLAG ON            
+         MVC   RECKEY,DBRECKEY         MOVE NEW KEY TO LAST KEY         
+         SPACE                                                          
+ADD250   DS    0H                                                       
+         LR    R7,R3                   SAVE CURRENT SEGTAB ADDRESS      
+         LA    R6,SEGTAB+SEGTABL       LOAD SEGMENT TABLE END ADDRESS   
+         LA    R2,VSAMWORK             LOAD ADDRESS OF VSAM WORK AREA   
+         XC    LRECL,LRECL             ZERO LOGICAL RECORD LENGTH       
+         XR    R0,R0                   ZERO REGISTER ZERO               
+         CLC   DBSGNAME,ALLSEG         ADD ALL SEGMENTS                 
+         BE    ADD550                  YES - GO ADD RECORD              
+         NI    FOURTEEN(R3),DELETE     SET NO DELETE FLAG OFF           
+         CLC   DBSGNAME,SEGONE         ADD SEGMENT ONE                  
+         BE    ADD550                  EQUAL - GO ADD SEGMENT           
+         LH    R0,ZERO(R4)             LOAD SEGMENT CTR                 
+         AH    R0,HWORD1               ADD ONE TO SEGMENT CTR           
+         STH   R0,ZERO(R4)             STORE UPDATED SEGMENT CTR        
+         SPACE                                                          
+ADD300   DS    0H                                                       
+         L     R4,FOUR(R3)             ADDRESSIBILITY TO CTR AND STR    
+         OC    TWO(FOUR,R4),TWO(R4)    SEGMENT STR EQUAL ZERO           
+         BNZ   ADD350                  NO - GO CALCULATE NEW ADDRESS    
+         LA    R0,SEGTABI              LOAD SEGMENT TABLE ENTRY LENGTH  
+         SR    R3,R0                   SUBTRACT TABLE ENTRY LENGTH      
+         CLC   SEGONE,ZERO(R3)         BEGINNING OF SEGMENT TABLE       
+         BNE   ADD300                  NO - GO CHECK NEW STR FOR ZERO   
+         L     R5,EIGHT(R3)            ADDRESSIBILITY TO SEGMENT LEN    
+         XR    R0,R0                   ZERO REGISTER ZERO               
+         ICM   R0,HWORD,HDSGLEN        LOAD SEGMENT LEN                 
+         AR    R2,R0                   ADD TO RECORD BEGIN ADDRESS      
+         AH    R0,HWORD1               ADD ONE TO SEGMENT LEN           
+         L     R3,FOUR(R7)             LOAD ADD SEGMENT STR ADDRESS     
+         ST    R0,TWO(R3)              STORE NEW START ADDRESS          
+         LR    R3,R7                   RESTORE CURRENT SEGTAB ADDRESS   
+         B     ADD450                  GO UPDATE SEGMENT ONE POINTERS   
+         EJECT                                                          
+ADD350   DS    0H                                                       
+         CLC   DBSGNAME,ZERO(R3)       ADD SEGMENT EQUAL TABLE SEGMENT  
+         BNE   ADD400                  NO - GO CALCULATE START ADDRESS  
+         XR    R0,R0                   ZERO REGISTER ZERO               
+         ICM   R0,HWORD,TWELVE(R7)     LOAD SEGMENT OCCURRENCE          
+         CH    R0,ZERO(R4)             OCCURRENCE OUT OF RANGE          
+         MVI   ERRINDX,ERROR06         SET ERROR CONDITION INDEX        
+         BH    CBE100                  YES - GO PROCESS ERROR           
+         BCTR  R0,R0                   SUBTRACT ONE FROM OCCURRENCE     
+         L     R5,EIGHT(R3)            ADDRESSIBILITY TO SEGMENT LENGTH 
+         MVC   HFWORD,HDSGLEN          MOVE SEGMENT LEN TO HALFWORD     
+         MH    R0,HFWORD               MULTIPLY LENGTH BY OCCURRENCE    
+         A     R2,TWO(R4)              ADD SEGMENT START TO BEGIN ADDR  
+         AR    R2,R0                   ADD SEGMENT DISPLACEMENT         
+         BCTR  R2,R0                   SUBTRACT ONE FOR ACTUAL ADDRESS  
+         B     ADD450                  GO UPDATE SEGMENT ONE POINTERS   
+         SPACE                                                          
+ADD400   DS    0H                                                       
+         L     R5,EIGHT(R3)            ADDRESSIBILITY TO SEGMENT LEN    
+         MVC   HFWORD,HDSGLEN          MOVE SEGMENT LEN TO HALFWORD     
+         LH    R0,ZERO(R4)             LOAD SEGMENT CTR                 
+         MH    R0,HFWORD               MULTIPLY SEGMENT LEN BY STR      
+         L     R1,TWO(R4)              LOAD SEGMENT STR                 
+         AR    R0,R1                   CALCULATE NEW SEGMENT STR        
+         L     R3,FOUR(R7)             LOAD ADD SEGMENT STR ADDRESS     
+         ST    R0,TWO(R3)              STORE NEW START ADDRESS          
+         LR    R3,R7                   RESTORE CURRENT SEGTAB ADDRESS   
+         BCTR  R0,R0                   SUBTRACT ONE FOR ACTUAL STR      
+         AR    R2,R0                   ADD TO RECORD BEGIN ADDRESS      
+         SPACE 2                                                        
+ADD450   DS    0H                                                       
+         LA    R3,SEGTABI(R3)          POINT TO NEXT ENTRY IN TABLE     
+         CR    R3,R6                   END OF SEGMENT TABLE             
+         BNL   ADD500                  YES - GO ADD SEGMENT             
+         L     R4,FOUR(R3)             ADDRESSIBILITY TO CTR            
+         XR    R0,R0                   ZERO REGISTER ZERO               
+         ICM   R0,HWORD,ZERO(R4)       LOAD NEXT SEGMENT CTR            
+         BZ    ADD450                  ZERO - GO CHECK NEXT SEGMENT     
+         L     R0,TWO(R4)              LOAD SEGMENT NEW STR             
+         AH    R0,SEGLEN               ADD NEW SEGMENT LENGTH           
+         ST    R0,TWO(R4)              STORE NEW SEGMENT STR            
+         B     ADD450                  GO FIND NEXT NON-ZERO SEGMENT    
+         EJECT                                                          
+ADD500   DS    0H                                                       
+         SHOWCB RPL=(*,RPLADDR),       SHOW RPL FIELDS                 *
+               AREA=LRECL,             VSAM SHOW AREA ADDRESS          *
+               LENGTH=4,               VSAM SHOW AREA LENGTH N         *
+               FIELDS=(RECLEN)         SHOW LOGICAL RECORD LENGTH       
+         LTR   R15,R15                 SUCCESSFUL EXECUTION OF SHOWCB   
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         LA    R0,VSAMWORK             LOAD VSAM WORK AREA ADDRESS      
+         A     R0,LRECL                ADD LOGICAL RECORD LENGTH        
+         SR    R0,R2                   SUBTRACT FOR REMAINING LENGTH    
+         BZ    ADD550                  ZERO - GO MOVE NEW SEGMENT       
+         LR    R3,R0                   LOAD REMAINING DATA LENGTH       
+         LR    R5,R0                   LOAD REMAINING DATA LENGTH       
+         LR    R4,R2                   LOAD REMAINING DATA START ADDR   
+         LR    R6,R2                   SAVE SEGMENT BEGIN ADDRESS       
+         GETMAIN R,LV=(0)              GET STORAGE WORK AREA            
+         LR    R2,R1                   LOAD WORK AREA ADDRESS           
+         MVCL  R2,R4                   MOVE REMAINING DATA TO SAVE AREA 
+         LR    R2,R6                   RESTORE SEGMENT BEGIN ADDRESS    
+         SPACE 2                                                        
+ADD550   DS    0H                                                       
+         L     R4,SEGADDR              LOAD CALLING SEGMENT ADDRESS     
+         LH    R3,SEGLEN               LOAD NEW SEGMENT LENGTH          
+         LR    R5,R3                   LOAD NEW SEGMENT LENGTH          
+         MVCL  R2,R4                   MOVE NEW SEGMENT DATA TO RECORD  
+         LTR   R0,R0                   REMAINING SEGMENT DATA           
+         BZ    ADD600                  NO - GO WRITE RECORD             
+         LR    R3,R0                   LOAD REMAINING DATA LENGTH       
+         LR    R5,R0                   LOAD REMAINING DATA LENGTH       
+         LR    R4,R1                   LOAD REMAINING DATA ADDRESS      
+         MVCL  R2,R4                   MOVE REMAINING DATA TO RECORD    
+         FREEMAIN R,LV=(0),A=(1)       FREE STORAGE WORK AREA           
+         SPACE 2                                                        
+ADD600   DS    0H                                                       
+         L     R3,LRECL                LOAD CURRENT LOGICAL RECORD LEN  
+         AH    R3,SEGLEN               ADD NEW SEGMENT LENGTH           
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               RECLEN=(R3)             FOR NEW RECORD LENGTH            
+         LTR   R15,R15                 SUCCESSFUL EXECUTION OF MODCB    
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         OI    WRTFLAG,WRITE           SET WRITE/REWRITE FLAG ON        
+         CLC   DBSGNAME,SEGONE         SEGMENT ONE ADDED                
+         BNER  R8                      NO - RETURN REGISTER EIGHT       
+         XC    VSCTR01(CTRL),VSCTR01   ZERO SEGMENT COUNTERS            
+         MVC   VSCTR01,HWORD1          MOVE ONE TO SEGMENT CTR          
+         MVC   VSSTR01,FWORD1          MOVE ONE TO SEGMENT STR          
+         BR    R8                      RETURN REGISTER EIGHT            
+         TITLE 'DEL100 - DELETE SEGMENT DATA'                           
+*********************************************************************** 
+*                          DELETE SEGMENT DATA                        * 
+*********************************************************************** 
+         SPACE 2                                                        
+DEL100   DS    0H                                                       
+         CLC   DBRECKEY,RECKEY         LAST KEY EQUAL DELETE KEY        
+         MVI   ERRINDX,ERROR04         SET ERROR CONDITION INDEX        
+         BNE   CBE100                  UNEQUAL - GO PROCESS ERROR       
+         CLC   DBSGNAME,ALLSEG         DELETE ENTIRE RECORD             
+         BE    DEL200                  YES - GO ERASE RECORD            
+         MVI   ERRINDX,ERROR06         SET ERROR CONDITION INDEX        
+         CLC   ZERO(TWO,R4),HLDSEG     OCCURRENCE WITHIN RANGE          
+         BL    CBE100                  NO - GO PROCESS ERROR            
+         OC    ZERO(TWO,R4),ZERO(R4)   SEGMENT COUNTER ZERO             
+         BZ    CBE100                  YES - GO PROCESS ERROR           
+         TM    FOURTEEN(R3),NODELETE   NO DELETE FLAG ON                
+         BO    CBE100                  YES - GO PROCESS ERROR           
+         OI    FOURTEEN(R3),NODELETE   SET NO DELETE FLAG ON            
+         CLC   DBSGNAME,SEGONE         DELETE SEGMENT ONE               
+         BNE   DEL400                  NO - GO CALCULATE ADDRESS        
+         SPACE 2                                                        
+DEL200   DS    0H                                                       
+         TM    WRTFLAG,NOUPD           NO UPDATE FLAG ON                
+         BO    DEL300                  YES - GO CLEAR WRITE FLAG        
+         L     R2,RPLADDR              LOAD RPL ADDRESS                 
+         ERASE RPL=(R2)                DELETE THE SEGMENT               
+         SPACE 2                                                        
+DEL300   DS    0H                                                       
+         XC    WRTFLAG,WRTFLAG         RESET WRITE/REWRITE FLAG         
+         OC    RECKEY,HIGHKEY          SET LAST KEY TO HIGH KEY         
+         BAL   R7,SET900               LINK TO ZERO OCCURRENCES         
+         BR    R8                      RETURN REGISTER EIGHT            
+         SPACE 2                                                        
+DEL400   DS    0H                                                       
+         LA    R2,VSAMWORK             LOAD RECORD BEGIN ADDRESS        
+         LH    R1,SEGCTR               LOAD SEGMENT COUNTER             
+         MH    R1,SEGLEN               MULTIPLY COUNTER BY LENGTH       
+         A     R1,TWO(R4)              ADD SEGMENT BEGIN ADDRESS        
+         BCTR  R1,R0                   SUBTRACT ONE FOR ACTUAL ADDRESS  
+         AR    R2,R1                   ADD TO RECORD BEGIN ADDRESS      
+         LA    R6,SEGTAB+SEGTABL       LOAD SEGMENT TABLE END ADDRESS   
+         L     R4,FOUR(R3)             ADDRESSIBILITY TO CTR AND STR    
+         LH    R0,ZERO(R4)             LOAD CURRENT SEGMENT CTR         
+         BCTR  R0,R0                   SUBTRACT ONE FROM SEGMENT CTR    
+         STH   R0,ZERO(R4)             STORE SEGMENT CTR                
+         LTR   R0,R0                   SEGMENT CTR ZERO                 
+         BNZ   DEL500                  NO - GO UPDATE STR ADDRESSES     
+         XC    TWO(FOUR,R4),TWO(R4)    ZERO SEGMENT STR                 
+         EJECT                                                          
+DEL500   DS    0H                                                       
+         LA    R3,SEGTABI(R3)          POINT TO NEXT ENTRY IN TABLE     
+         CR    R3,R6                   END OF SEGMENT TABLE             
+         BNL   DEL600                  YES - GO DELETE SEGMENT          
+         L     R4,FOUR(R3)             ADDRESSIBILITY TO CTR AND STR    
+         OC    ZERO(TWO,R4),ZERO(R4)   SEGMENT CTR ZERO                 
+         BZ    DEL500                  YES - GO CHECK NEXT ENTRY        
+         L     R0,TWO(R4)              LOAD SEGMENT STR                 
+         SH    R0,SEGLEN               SUBTRACT SEGMENT LENGTH          
+         ST    R0,TWO(R4)              STORE NEW SEGMENT STR            
+         B     DEL500                  GO UPDATE NEXT SEGMENT STR       
+         SPACE 2                                                        
+DEL600   DS    0H                                                       
+         SHOWCB RPL=(*,RPLADDR),       SHOW RPL FIELDS                 *
+               AREA=LRECL,             VSAM SHOW AREA ADDRESS          *
+               LENGTH=4,               VSAM SHOW AREA LENGTH           *
+               FIELDS=(RECLEN)         SHOW LOGICAL RECORD LENGTH       
+         LTR   R15,R15                 SHOWCB EXECUTION SUCCESSFUL      
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         LR    R4,R2                   LOAD LAST READ SEGMENT ADDRESS   
+         AH    R4,SEGLEN               ADD DELETE SEGMENT LENGTH        
+         LA    R3,VSAMWORK             LOAD RECORD BEGIN ADDRESS        
+         A     R3,LRECL                ADD LOGICAL RECORD LENGTH        
+         SR    R3,R4                   CALCULATE REMAINING LENGTH       
+         BZ    DEL700                  ZERO - GO MODIFY RPL             
+         LR    R5,R3                   LOAD REMAINING LENGTH            
+         MVCL  R2,R4                   SHIFT REMAINING SEGMENTS         
+         SPACE 2                                                        
+DEL700   DS    0H                                                       
+         L     R3,LRECL                LOAD LOGICAL RECORD LEN          
+         SH    R3,SEGLEN               SUBTRACT DELETE SEGMENT LENGTH   
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               RECLEN=(R3)             FOR NEW RECORD LENGTH            
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         OI    WRTFLAG,WRITE           SET WRITE/REWRITE FLAG ON        
+         BR    R8                      RETURN REGISTER EIGHT            
+         TITLE 'EWG961D - VSAM DATABASE ACCESS MODULE'                  
+*********************************************************************** 
+*                      UPDATE SEGMENT DATA                            * 
+*********************************************************************** 
+         SPACE                                                          
+UPD100   DS    0H                                                       
+         CLC   DBRECKEY,RECKEY         COMPARE NEW KEY TO LAST KEY      
+         MVI   ERRINDX,ERROR05         SET ERROR CONDITION INDEX        
+         BNE   CBE100                  UNEQUAL - GO PROCESS ERROR       
+         CLC   ZERO(TWO,R4),SEGCTR     OCCURRENCE WITHIN RANGE          
+         MVI   ERRINDX,ERROR06         SET ERROR CONDITION INDEX        
+         BL    CBE100                  NO - GO PROCESS ERROR            
+         OC    ZERO(TWO,R4),ZERO(R4)   SEGMENT COUNTER ZERO             
+         BZ    CBE100                  YES - GO PROCESS ERROR           
+         OC    SEGCTR,SEGCTR           SEGMENT OCCURRENCE COUNTER ZERO  
+         BZ    CBE100                  YES - GO PROCESS ERROR           
+         SPACE                                                          
+UPD200   DS    0H                                                       
+         CLC   DBSGNAME,SEGONE         REWRITE SEGMENT ONE              
+         BNE   UPD300                  NO - GO CALC SEGMENT ADDRESS     
+         LH    R3,SEGLEN               LOAD SEGMENT ONE LENGTH          
+         LA    R5,PFXLEN               LOAD SEGMENT PREFIX LENGTH       
+         SR    R3,R5                   SUBTRACT FROM TOTAL SEGMENT LEN  
+         LA    R2,VSAMWORK             LOAD SEGMENT ONE BEGIN ADDRESS   
+         AR    R2,R5                   ADD SEGMENT ONE PREFIX LENGTH    
+         L     R4,SEGADDR              LOAD CALLING SEGMENT ADDRESS     
+         AR    R4,R5                   ADD SEGMENT ONE PREFIX LENGTH    
+         LR    R5,R3                   LOAD REMAINING SEGMENT LENGTH    
+         B     UPD400                  GO MOVE SEGMENT                  
+         SPACE                                                          
+UPD300   DS    0H                                                       
+         LH    R3,SEGCTR               LOAD SEGMENT COUNTER             
+         BCTR  R3,R0                   SUBTRACT ONE FROM OCCURRENCE     
+         MH    R3,SEGLEN               MULTIPLY BY SEGMENT LENGTH       
+         LA    R2,VSAMWORK             LOAD RECORD BEGIN ADDRESS        
+         A     R2,TWO(R4)              ADD SEGMENT BEGIN DISPLACEMENT   
+         BCTR  R2,R0                   SUBTRACT ONE FOR ACTUAL ADDRESS  
+         AR    R2,R3                   ADD SEGMENT DISPLACEMENTS        
+         LH    R3,SEGLEN               LOAD SEGMENT LENGTH              
+         LR    R5,R3                   LOAD SEGMENT LENGTH              
+         L     R4,SEGADDR              LOAD CALLING SEGMENT ADDRESS     
+         SPACE                                                          
+UPD400   DS    0H                                                       
+         MVCL  R2,R4                   MOVE NEW SEGMENT TO VSAMWORK     
+         OI    WRTFLAG,WRITE           SET WRITE/REWRITE FLAG ON        
+         BR    R8                      RETURN REGISTER EIGHT            
+         EJECT                                                          
+*********************************************************************** 
+*                          CLOSE VSAM DATASET                         * 
+*********************************************************************** 
+         SPACE                                                          
+CLOS100  DS    0H                                                       
+         BAL   R7,CKWRT100             CHECK WRITE/REWRITE FLAG         
+         MVC   OCTYPE,CLS              MOVE CLOSE TO OPEN/CLOSE TYPE    
+         L     R4,ACBADDR              LOAD ACB ADDRESS                 
+         CLOSE ((R4))                  CLOSE VSAM DATASET               
+         LTR   R15,R15                 CLOSE SUCCESSFUL                 
+         BNZ   OCER100                 NO - GO PROCESS ERROR            
+         NI    INIT100+ONE,NOZONE      RESET FIRST TIME NOP             
+         BAL   R7,SET900               ZERO SEGMENT OCCURRENCES         
+         BR    R8                      RETURN REGISTER EIGHT            
+         SPACE 3                                                        
+*********************************************************************** 
+*                            END OF DATA                              * 
+*********************************************************************** 
+         SPACE                                                          
+EOD100   DS    0H                                                       
+         MVI   DBCPLCDE,CHAR1          SET EOD INDICATOR                
+         BR    R8                      RETURN REGISTER EIGHT            
+         EJECT                                                          
+*********************************************************************** 
+*                          PRINT CONTROL BLOCK                        * 
+*********************************************************************** 
+         SPACE                                                          
+PRCB100  DS    0H                                                       
+         CLI   DBCTLBTR,CHART          TRACE FUNCTION REQUESTED         
+         BNER  R8                      NO - RETURN REGISTER EIGHT       
+         MVC   PRPGMNME,DBPGMNME       MOVE CALLING PROGRAM NAME        
+         MVC   PRPRCMDE,SEQPRCM        MOVE SEQ TO PRINT PROCESS MODE   
+         CLI   DBPRCMDE,CHARS          SEQUENTIAL PROCESSING MODE       
+         BE    PRCB200                 YES - GO MOVE SEGMENT NAME       
+         MVC   PRPRCMDE,RNDPRCM        MOVE RND TO PRINT PROCESS MODE   
+         CLI   DBPRCMDE,CHARR          RANDOM PROCESSING MODE           
+         BE    PRCB200                 YES - GO MOVE SEGMENT NAME       
+         MVC   PRPRCMDE,SKPPRCM        MOVE SKP TO PRINT PROCESS MODE   
+         SPACE                                                          
+PRCB200  DS    0H                                                       
+         MVC   PRSGNAME,DBSGNAME       MOVE SEGMENT NAME TO PRINT LINE  
+         MVC   PRRECKEY,DBRECKEY       MOVE RECORD KEY TO PRINT LINE    
+         MVC   PRCPLCDE,NRMCPL         MOVE NRM TO PRINT COMPLETION     
+         CLI   DBCPLCDE,NRM            NORMAL COMPLETION                
+         BE    PRCB300                 YES - GO MOVE STATUS CODE        
+         MVC   PRCPLCDE,NRFCPL         MOVE NRF TO PRINT COMPLETION     
+         CLI   DBCPLCDE,CHAR0          NO RECORD FOUND COMPLETION       
+         BE    PRCB300                 YES - GO MOVE STATUS CODE        
+         MVC   PRCPLCDE,EODCPL         MOVE EOD TO PRINT COMPLETION     
+         SPACE                                                          
+PRCB300  DS    0H                                                       
+         MVC   PRSTATUS,LSTSEG         MOVE LAST SEGMENT TO PRINT LINE  
+         CLI   DBSTATUS,CHARL          LAST SEGMENT INDICATOR ON        
+         BE    PRCB400                 YES - GO PRINT CONTROL BLOCK     
+         MVC   PRSTATUS,SPACES         MOVE SPACES TO PRINT LAST SEGMNT 
+         SPACE                                                          
+PRCB400  DS    0H                                                       
+         MVC   PRNTDATA(PRCBMSGL),PRCBMSG  MOVE PRINT LINE TO I/O AREA  
+         BAL   R7,PRNT100                  LINK TO WRITE PRINT LINE     
+         BR    R8                          RETURN REGISTER EIGHT        
+         SPACE 2                                                        
+PRCBMSG  EQU   *                                                        
+PRPGMNME DS    CL8                                                      
+         DC    3C' '                                                    
+PRPRCMDE DS    CL15                                                     
+         DC    3C' '                                                    
+PRCMDCDE DS    CL9                                                      
+         DC    3C' '                                                    
+PRSGNAME DS    CL4                                                      
+         DC    3C' '                                                    
+PRRECKEY DS    CL9                                                      
+         DC    3C' '                                                    
+PRCPLCDE DS    CL17                                                     
+         DC    3C' '                                                    
+PRSTATUS DS    CL12                                                     
+PRCBMSGL EQU   *-PRCBMSG                                                
+         EJECT                                                          
+*********************************************************************** 
+*          CHECK WRITE FLAG AND WRITE/REWRITE SEGMENT DATA            * 
+*********************************************************************** 
+         SPACE 2                                                        
+CKWRT100 DS    0H                                                       
+         TM    WRTFLAG,WRITE           WRITE FLAG ON                    
+         BNOR  R7                      NO - RETURN REGISTER SEVEN       
+         TM    WRTFLAG,NOUPD           WAS SEGMENT ONE ADDED            
+         BNO   CKWRT200                NO - GO REWRITE RECORD           
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(NUP)             FOR NO UPDATE                    
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         SPACE 2                                                        
+CKWRT200 DS    0H                                                       
+         L     R2,RPLADDR              LOAD RPL ADDRESS                 
+         PUT   RPL=(R2)                WRITE/REWRITE UPDATED RECORD     
+         MODCB RPL=(*,RPLADDR),        MODIFY REQUEST PARAMETER LIST   *
+               OPTCD=(UPD)             FOR READ FOR UPDATE              
+         LTR   R15,R15                 MODCB EXECUTION SUCCESSFUL       
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         XC    WRTFLAG,WRTFLAG         RESET WRITE/REWRITE FLAG         
+         BR    R7                      RETURN REGISTER SEVEN            
+         SPACE 2                                                        
+*********************************************************************** 
+*                          WRITE ERROR MESSAGE                        * 
+*********************************************************************** 
+         SPACE 2                                                        
+PRNT100  DS    0H                                                       
+         PUT   PRINTER,PRNTLINE        WRITE ERROR MESSAGE              
+         MVI   PRNTCHAR,SPACE          MOVE SPACE TO PRINT CTLCHR       
+         MVC   PRNTDATA(132),PRNTCHAR  CLEAR PRINT LINE                 
+         MVI   PRNTCHAR,CHAR0          RESET PRINT CTLCHR               
+         BR    R7                      RETURN REGISTER SEVEN            
+         SPACE 2                                                        
+PRNTLINE EQU   *                                                        
+PRNTCHAR DC    C'1'                                                     
+PRNTDATA DC    CL132' '                                                 
+         SPACE 2                                                        
+PRINTER  DCB   DDNAME=SYSPRINT,DSORG=PS,RECFM=FBA,                     *
+               LRECL=133,BLKSIZE=665,MACRF=(PM)                         
+         EJECT                                                          
+*********************************************************************** 
+*                  CONTROL BLOCK MACRO ERROR ROUTINE                  * 
+*********************************************************************** 
+         SPACE                                                          
+CBM100   DS    0H                                                       
+         STC   R0,CBMWRK               STORE ERROR REASON CODE          
+         UNPK  CBMRETCD,CBMWRK         UNPACK ERROR REASON CODE         
+         NC    CBMRETCD(TWO),NOZONES   REMOVE ZONES                     
+         TR    CBMRETCD(TWO),TRTAB     TRANSLATE ERROR CODE             
+         MVC   PRNTDATA(CBMLEN),CBMMSG MOVE ERROR MESSAGE TO PRINT LINE 
+         BAL   R7,PRNT100              WRITE ERROR MESSAGE              
+         ABEND 100,DUMP                ABEND WITH DUMP                  
+         SPACE                                                          
+CBMMSG   EQU   *                                                        
+         DC    C'VSMDBA100 - CONTROL BLOCK MACRO ERROR - RETURN CODE '  
+CBMRETCD DS    CL3                                                      
+CBMLEN   EQU   *-CBMMSG                                                 
+CBMWRK   DC    XL2'0004'                                                
+         SPACE 2                                                        
+*********************************************************************** 
+*                      OPEN/CLOSE ERROR ROUTINE                       * 
+*********************************************************************** 
+         SPACE                                                          
+OCER100  DS    0H                                                       
+         SHOWCB ACB=(*,ACBADDR),       ACB ADDRESS                     *
+               AREA=OCSHOW,            SHOW AREA ADDRESS               *
+               LENGTH=12,              SHOW AREA LENGTH                *
+               FIELDS=(DDNAME,ERROR)   SHOW DDNAME AND ERROR CODE       
+         LTR   R15,R15                 SHOWCB EXECUTION SUCCESSFUL      
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         SPACE                                                          
+         UNPK  OCRETCD,OCSRETCD+THREE(TWO)  UNPACK ERROR RETURN CODE    
+         NC    OCRETCD(TWO),NOZONES         REMOVE ZONES FOR TRANSLATE  
+         TR    OCRETCD(TWO),TRTAB           TRANSLATE ERROR RETURN CODE 
+         SPACE                                                          
+         MVC   OCDDNME,OCSDDNME        MOVE DDNAME TO ERROR MESSAGE     
+         MVC   PRNTDATA(OCMLEN),OCMSG  MOVE ERROR MESSAGE TO PRINT LINE 
+         BAL   R7,PRNT100              WRITE ERROR MESSAGE              
+         ABEND 200,DUMP                ABEND WITH DUMP                  
+         SPACE                                                          
+OCMSG    EQU   *                                                        
+         DC    C'VSMDBA200 - '                                          
+OCDDNME  DS    CL8                                                      
+         DC    C' '                                                     
+OCTYPE   DS    CL5                                                      
+         DC    C' ERROR - RETURN CODE '                                 
+OCRETCD  DS    CL3                                                      
+OCMLEN   EQU   *-OCMSG                                                  
+OCSHOW   DS    0F                                                       
+OCSDDNME DS    2F                                                       
+OCSRETCD DS    F                                                        
+         DC    X'04'                                                    
+         EJECT                                                          
+*********************************************************************** 
+*                  VSAM REQUEST MACRO ERROR ROUTINE                   * 
+*********************************************************************** 
+         SPACE 2                                                        
+VRM100   DS    0H                                                       
+         CLI   DBPRCMDE,CHARS          PROCESSING MODE SEQUENTIAL       
+         BE    VRM200                  YES - GO PROCESS ERROR           
+         CLI   DBCMDCDE,CHARR          READ FUNCTION REQUESTED          
+         BNE   VRM200                  NO - GO PROCESS ERROR            
+         TESTCB RPL=(*,RPLADDR),       RPL ADDRESS                     *
+               FDBK=16                 TEST FOR NO RECORD FOUND         
+         BNE   VRM200                  UNEQUAL - GO FORMAT ERROR MSG    
+         MVI   DBCPLCDE,CHAR0          SET NO RECORD/SEGMENT FOUND      
+         OC    RECKEY,HIGHKEY          SET LAST KEY TO HIGH KEY         
+         BAL   R7,SET900               LINK TO ZERO OCCURRENCES         
+         BR    R8                      RETURN REGISTER EIGHT            
+         SPACE 2                                                        
+VRM200   DS    0H                                                       
+         SHOWCB RPL=(*,RPLADDR),       SHOWCB FOR FDBK FIELD           *
+               AREA=VRMSHOW,           SHOW AREA ADDRESS               *
+               LENGTH=4,               SHOW AREA LENGTH                *
+               FIELDS=(FDBK)           SHOW FDBK FIELD                  
+         LTR   R15,R15                 SHOWCB EXECUTION SUCCESSFUL      
+         BNZ   CBM100                  NO - GO PROCESS ERROR            
+         SPACE                                                          
+         UNPK  VRMFDBK,VRMSFDBK+THREE(TWO)  UNPACK RPL FEEDBACK FIELD   
+         NC    VRMFDBK(TWO),NOZONES         REMOVE ZONES FOR TRANSLATE  
+         TR    VRMFDBK(TWO),TRTAB           TRANSLATE FDBK CODE         
+         SPACE                                                          
+         MVC   VRMKEY,DBRECKEY         MOVE RECORD KEY TO ERROR MSG     
+         MVC   VRMCMD,DBCMDCDE         MOVE COMMAND CODE TO ERROR MSG   
+         MVC   PRNTDATA(VRMLEN),VRMMSG MOVE ERROR MESSAGE TO PRINT LINE 
+         BAL   R7,PRNT100              WRITE ERROR MESSAGE              
+         ABEND 300,DUMP                ABEND WITH DUMP                  
+         SPACE 2                                                        
+VRMMSG   EQU   *                                                        
+         DC    C'VSMDBA300 - REQUEST MACRO ERROR - FDBK '               
+VRMFDBK  DS    CL3                                                      
+         DC    C'- KEY '                                                
+VRMKEY   DS    CL9                                                      
+         DC    C' - COMMAND '                                           
+VRMCMD   DS    CL1                                                      
+VRMLEN   EQU   *-VRMMSG                                                 
+VRMSHOW  DS    0F                                                       
+VRMSFDBK DS    F                                                        
+         DC    X'04'                                                    
+         EJECT                                                          
+*********************************************************************** 
+*              VSAM DATABASE CONTROL BLOCK ERROR ROUTINE              * 
+*********************************************************************** 
+         SPACE 2                                                        
+CBE100   DS    0H                                                       
+         XR    R3,R3                   CLEAR REGISTER THREE             
+         IC    R3,ERRINDX              LOAD ERROR INDEX                 
+         BCTR  R3,R0                   SUBTRACT ONE FROM INDEX          
+         LTR   R3,R3                   INDEX ZERO                       
+         BZ    CBE200                  YES - GO MOVE ERROR MSG          
+         LA    R4,CLEN                 LOAD TABLE ENTRY LENGTH          
+         MR    R2,R4                   MULTIPLY BY ERROR INDEX          
+         SPACE 2                                                        
+CBE200   DS    0H                                                       
+         LA    R4,CBETAB               LOAD ERROR TABLE BEGIN ADDRESS   
+         AR    R4,R3                   ADD ERROR INDEX DISPLACEMENT     
+         MVC   PRNTDATA(CLEN),ZERO(R4) MOVE ERROR MESSAGE TO PRINTLINE  
+         BAL   R7,PRNT100              WRITE ERROR MESSAGE              
+         ABEND 400,DUMP                ABEND WITH DUMP                  
+         SPACE 2                                                        
+CBETAB   EQU   *                                                        
+         DC    C'VSMDBA401 - INVALID COMMAND CODE SPECIFIED           ' 
+CLEN     EQU   *-CBETAB                                                 
+         DC    C'VSMDBA402 - INVALID PROCESSING MODE SPECIFIED        ' 
+         DC    C'VSMDBA403 - INVALID SEGMENT NAME SPECIFIED           ' 
+         DC    C'VSMDBA404 - DELETE KEY NOT EQUAL CURRENT RECORD KEY  ' 
+         DC    C'VSMDBA405 - UPDATE KEY NOT EQUAL CURRENT RECORD KEY  ' 
+         DC    C'VSMDBA406 - OCCURRENCE NOT WITHIN ALLOWABLE RANGE    ' 
+         DC    C'VSMDBA407 - SEGMENT ONE MUST BE FIRST SEGMENT ADDED  ' 
+         DC    C'VSMDBA408 - NO HEADER CONTROL RECORD ON VSAM DATASET ' 
+         DC    C'VSMDBA409 - HEADER RECORD MUST BE PROCESSED RANDOMLY ' 
+         DC    C'VSMDBA410 - READ AND REWRITE ONLY WITH HEADER RECORD ' 
+         DC    C'VSMDBA411 - READ MORE THAN TEN NO RECORD FOUND       ' 
+         SPACE 2                                                        
+ERRINDX  DC    X'00'                   ERROR CONDITION INDEX            
+ERROR01  EQU   01                      ERROR INDEX ONE                  
+ERROR02  EQU   02                      ERROR INDEX TWO                  
+ERROR03  EQU   03                      ERROR INDEX THREE                
+ERROR04  EQU   04                      ERROR INDEX FOUR                 
+ERROR05  EQU   05                      ERROR INDEX FIVE                 
+ERROR06  EQU   06                      ERROR INDEX SIX                  
+ERROR07  EQU   07                      ERROR INDEX SEVEN                
+ERROR08  EQU   08                      ERROR INDEX EIGHT                
+ERROR09  EQU   09                      ERROR INDEX NINE                 
+ERROR10  EQU   10                      ERROR INDEX TEN                  
+ERROR11  EQU   11                      ERROR INDEX 11                   
+         EJECT                                                          
+*********************************************************************** 
+*                      PHYSICAL I/O ERROR ROUTINE                     * 
+*********************************************************************** 
+         SPACE 2                                                        
+SYN100   DS    0H                                                       
+         MVC   SYNDTA,SYNADTA          MOVE SYNAD ERROR MESSAGE         
+         MVC   PRNTDATA(SYNLEN),SYNMSG MOVE ERROR MESSAGE TO PRINT LINE 
+         BAL   R7,PRNT100              WRITE ERROR MESSAGE              
+         ABEND 500,DUMP                ABEND WITH DUMP                  
+         SPACE 2                                                        
+SYNMSG   EQU   *                                                        
+         DC    C'VSMDBA500 - '                                          
+SYNDTA   DS    CL116                                                    
+SYNLEN   EQU   *-SYNMSG                                                 
+         SPACE                                                          
+SYNMSGA  EQU   *                                                        
+         DS    CL12                                                     
+SYNADTA  DS    CL116                                                    
+         SPACE 3                                                        
+*********************************************************************** 
+*                        HEADER RECORD DESCRIPTION                    * 
+*********************************************************************** 
+         SPACE 2                                                        
+HDRECORD DS    0F                      HEADER RECORD DESCRIPTION        
+HDRECKEY DS    CL9                     HEADER RECORD KEY                
+HDFILLER DS    CL1                     FILLER BYTE FOR ALIGNMENT        
+HDDBNAME DS    CL40                    HEADER RECORD NAME CONSTANT      
+         SPACE                                                          
+HDSEGM01 DS    CL6                     SEGMENT 01 NAME AND LENGTH       
+HDSEGM02 DS    CL6                     SEGMENT 02 NAME AND LENGTH       
+HDSEGM03 DS    CL6                     SEGMENT 03 NAME AND LENGTH       
+HDSEGM04 DS    CL6                     SEGMENT 04 NAME AND LENGTH       
+HDSEGM05 DS    CL6                     SEGMENT 05 NAME AND LENGTH       
+HDSEGM06 DS    CL6                     SEGMENT 06 NAME AND LENGTH       
+HDSEGM07 DS    CL6                     SEGMENT 07 NAME AND LENGTH       
+HDSEGM08 DS    CL6                     SEGMENT 08 NAME AND LENGTH       
+         DS    CL158                   FILLER (OTHER STUFF)             
+         SPACE                                                          
+HDRECLEN EQU   *-HDRECORD              HEADER RECORD LENGTH             
+         EJECT                                                          
+*********************************************************************** 
+*                          SEGMENT NAME TABLE                         * 
+*********************************************************************** 
+         SPACE 2                                                        
+SEGTAB   DS    0F                                                       
+         DC    C'SG01',A(VSCTR01),A(HDSEGM01),H'0',X'FF',X'00'          
+SEGTABI  EQU   *-SEGTAB                                                 
+         DC    C'SG02',A(VSCTR02),A(HDSEGM02),H'0',X'FF',X'00'          
+         DC    C'SG03',A(VSCTR03),A(HDSEGM03),H'0',X'FF',X'00'          
+         DC    C'SG04',A(VSCTR04),A(HDSEGM04),H'0',X'FF',X'00'          
+         DC    C'SG05',A(VSCTR05),A(HDSEGM05),H'0',X'FF',X'00'          
+         DC    C'SG06',A(VSCTR06),A(HDSEGM06),H'0',X'FF',X'00'          
+         DC    C'SG07',A(VSCTR07),A(HDSEGM07),H'0',X'FF',X'00'          
+         DC    C'SG08',A(VSCTR08),A(HDSEGM08),H'0',X'FF',X'00'          
+SEGTABL  EQU   *-SEGTAB                                                 
+         SPACE 3                                                        
+*********************************************************************** 
+*                          COMMAND CODE TABLE                         * 
+*********************************************************************** 
+         SPACE 2                                                        
+CMNDTAB  EQU   *                                                        
+         DC    C'R',CL9'READ'                                           
+CMNDI    EQU   *-CMNDTAB                                                
+         DC    C'A',CL9'ADD'                                            
+         DC    C'F',CL9'ADD FIRST'                                      
+         DC    C'D',CL9'DELETE'                                         
+         DC    C'W',CL9'REWRITE'                                        
+         DC    C'S',CL9'RESET'                                          
+         DC    C'C',CL9'CLOSE'                                          
+CMNDL    EQU   *-CMNDTAB                                                
+         EJECT                                                          
+*********************************************************************** 
+*                       WORK AREAS AND CONSTANTS                      * 
+*********************************************************************** 
+         SPACE 2                                                        
+SAVE     DS    9D                      REGISTER SAVE AREA               
+         SPACE                                                          
+ACBADDR  DS    F                       ACB ADDRESS                      
+RPLADDR  DS    F                       RPL ADDRESS                      
+EXLADDR  DS    F                       EXIT LIST ADDRESS                
+LRECL    DS    F                       LOGICAL RECORD LENGTH            
+ADDNXSTR DS    F                       NEXT SEGMENT START ADDRESS       
+FWORD    DS    F                       FULLWORD SAVE AREA               
+SEGADDR  DS    F                       CALLING PROGRAM SEGMENT ADDRESS  
+FWORD1   DC    F'1'                    FULLWORD ONE                     
+         SPACE                                                          
+LENGTH   DS    0F                      AREA FOR VSAM RECORD LENGTH      
+         DC    H'0'                    FILLER                           
+SEGLEN   DS    H                       SEGMENT LENGTH                   
+SEGCTR   DS    H                                                        
+HLDSEG   DC    H'0'                                                     
+HFWORD   DS    H                       HALFWORD WORK AREA               
+HWORD1   DC    H'1'                    HALFWORD ONE                     
+HWORD10  DC    H'10'                   HALFWORD TEN                     
+HWORD12  DC    H'12'                   HALFWORD TWELVE                  
+         SPACE                                                          
+SPACES   DC    20X'40'                 TWENTY SPACES                    
+NOZONES  DC    2X'0F'                  PATTERN TO REMOVE ZONES          
+ZEROS    DC    13X'F0'                 TEN ZEROS                        
+HIGHKEY  DC    13X'FF'                 HIGHEST RECORD KEY               
+WRTFLAG  DC    X'00'                   WRITE/REWRITE FLAG BYTE          
+WRITE    EQU   B'00000001'             WRITE FLAG EQUATE                
+NOUPD    EQU   B'00000100'             NO UPDATE FLAG EQUATE            
+         SPACE                                                          
+RECDKEY  DS    CL9                     VSAM SEARCH ARGUMENT             
+PARTKEY  DS    CL9                     VSAM SEARCH ARGUMENT             
+RECKEY   DS    CL9                     CURRENT RECORD KEY               
+ALLSEG   DC    CL4'ALL'                REQUEST FOR ALL SEGMENTS         
+HDRSEG   DC    CL4'HDR'                REQUEST FOR HEADER RECORD        
+SEGONE   DC    CL4'SG01'               SEGMENT ONE NAME                 
+OPN      DC    CL5'OPEN'               OPEN CONSTANT                    
+CLS      DC    CL5'CLOSE'              CLOSE CONSTANT                   
+TRTAB    DC    C'0123456789ABCDEF'     TRANSLATE TABLE FOR EBCDIC       
+         SPACE                                                          
+SEQPRCM  DC    CL15'SEQUENTIAL     '   CONSTANT FOR PROCESSING MODE     
+RNDPRCM  DC    CL15'RANDOM         '   CONSTANT FOR PROCESSING MODE     
+SKPPRCM  DC    CL15'SKIP-SEQUENTIAL'   CONSTANT FOR PROCESSING MODE     
+NRMCPL   DC    CL17'NORMAL COMPLETION' CONSTANT FOR COMPLETION CODE     
+NRFCPL   DC    CL17'NO RECORD FOUND  ' CONSTANT FOR COMPLETION CODE     
+EODCPL   DC    CL17'END OF DATASET   ' CONSTANT FOR COMPLETION CODE     
+LSTSEG   DC    CL12'LAST SEGMENT'      CONSTANT FOR STATUS CODE         
+         EJECT                                                          
+*********************************************************************** 
+*                  REQUEST PARAMETER LIST OPTIONS                     * 
+*********************************************************************** 
+         SPACE 2                                                        
+RPLOPTNS DC    X'00'                   REQUEST PARAMETER LIST OPTIONS   
+DIR      EQU   B'00000001'             DIRECT PROCESSING                
+SKP      EQU   B'00000010'             SKIP SEQUENTIAL PROCESSING       
+SEQ      EQU   B'00000100'             SEQUENTIAL PROCESSING            
+GEN      EQU   B'00001000'             GENERIC KEY PROCESSING           
+ALLOFF   EQU   B'11110000'             RESET ALL OPTIONS                
+NODIRSKP EQU   B'11110100'             RESET DIR AND SKP                
+NODIRSEQ EQU   B'11110010'             RESET DIR AND SEQ                
+NOSEQSKP EQU   B'11110001'             RESET SEQ AND SKP                
+         SPACE 3                                                        
+*********************************************************************** 
+*                            VSAM WORK AREA                           * 
+*********************************************************************** 
+         SPACE 2                                                        
+VSAMWORK DS    0F                      VSAM RECORD WORK AREA            
+VSRECKEY DS    CL9                     VSAM RECORD KEY                  
+VSFILLER DS    CL1                     FILLER BYTE FOR ALIGNMENT        
+VSCTR01  DS    CL2                     SEGMENT 01 CTR                   
+VSSTR01  DS    CL4                     SEGMENT 01 STR                   
+VSCTR02  DS    CL6                     SEGMENT 02 CTR AND STR           
+VSCTR03  DS    CL6                     SEGMENT 03 CTR AND STR           
+VSCTR04  DS    CL6                     SEGMENT 04 CTR AND STR           
+VSCTR05  DS    CL6                     SEGMENT 05 CTR AND STR           
+VSCTR06  DS    CL6                     SEGMENT 06 CTR AND STR           
+VSCTR07  DS    CL6                     SEGMENT 07 CTR AND STR           
+VSCTR08  DS    CL6                     SEGMENT 08 CTR AND STR           
+CTRL     EQU   *-VSCTR01               SEGMENT COUNTER LENGTH           
+PFXLEN   EQU   *-VSAMWORK              SEGMENT ONE FREFIX LENGTH        
+         DS    32710C                  SEGMENT DATA                     
+           EJECT                                                        
+*********************************************************************** 
+*                  VSAM DATABASE CONTROL AREA DSECT                   * 
+*********************************************************************** 
+         SPACE 2                                                        
+VSMDBCA  DSECT                         CONTROL AREA DSECT               
+DBPGMNME DS    CL8                     CALLING PROGRAM NAME             
+DBSGNAME DS    CL4                     SEGMENT NAME                     
+DBPRCMDE DS    CL1                     PROCESSING MODE                  
+DBCTLBTR DS    CL1                     CONTROL BLOCK TRACE INDICATOR    
+DBCMDCDE DS    CL1                     COMMAND CODE                     
+DBCPLCDE DS    CL1                     COMPLETION CODE                  
+DBSTATUS DS    CL1                     STATUS CODE                      
+DBRECKEY DS    CL9                     RECORD KEY                       
+DBNAMECK DS    CL4                     NAME CHECK (NOT USED HERE)       
+DBRECLEN DS    CL2                     ENTIRE RECORD LENGTH             
+DBOCCUR  DS    CL2                     SEGMENT OCCURRENCE               
+         SPACE 3                                                        
+*********************************************************************** 
+*                     SEGMENT HEADER DATA DSECT                       * 
+*********************************************************************** 
+         SPACE 2                                                        
+HDRDSECT DSECT                         HEADER DATA DSECT                
+HDSGNAME DS    CL4                     SEGMENT NAME                     
+HDSGLEN  DS    CL2                     SEGMENT LENGTH                   
+         EJECT                                                          
+*********************************************************************** 
+*                            E Q U A T E S                            * 
+*********************************************************************** 
+         SPACE 2                                                        
+       COPY QBIEQU                                                 
+         SPACE                                                          
+NOZONE   EQU   X'0F'                                                    
+NRM      EQU   X'00'                                                    
+HWORD    EQU   X'03'                                                    
+SPACE    EQU   X'40'                                                    
+DELETE   EQU   X'00'                                                    
+NODELETE EQU   X'FF'                                                    
+         SPACE 2                                                        
+         END   EWG961D                                                  

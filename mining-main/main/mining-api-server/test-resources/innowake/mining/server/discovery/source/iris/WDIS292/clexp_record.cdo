@@ -1,0 +1,32 @@
+!----------------------------------------------------------------
+SET VERIFY
+set def cdd_loc_fld
+
+Define Field RVSMOD3    Datatype Text Size Is  2 Characters.
+Define Field RVSMOD4    Datatype Text Size Is  2 Characters.
+Define Field Filler_29  Datatype Text Size Is 29 Characters.
+
+  Define Record Cdd_Rec.CLEXP_RECORD.
+
+    CLIDNT_EXP_DATA Structure.
+        cdd_rec.CLIDNT_REC.
+    End CLIDNT_EXP_DATA Structure.
+
+    CLSVC_EXP_ARRAY Structure Occurs 89 Times.
+
+        cdd_rec.CLSVC_REC.
+
+        CLEXP_ADDL_Modifiers Structure.
+            RVSMOD3.
+            RVSMOD4.
+        End CLEXP_ADDL_Modifiers Structure.
+
+        Filler_29.
+
+    End CLSVC_EXP_ARRAY Structure.
+
+End Record.
+
+Commit
+Exit
+

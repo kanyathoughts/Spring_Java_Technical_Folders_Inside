@@ -1,0 +1,49 @@
+      **********************************************************************
+       IDENTIFICATION DIVISION.
+      **********************************************************************
+      **********************************************************************
+       PROGRAM-ID.                      UNKNOWN.
+      * FIND with cursor, WHERE with constants.
+      **********************************************************************
+       ENVIRONMENT DIVISION.
+      **********************************************************************
+       CONFIGURATION SECTION.
+      **********************************************************************
+       DATA DIVISION.
+      **********************************************************************
+       WORKING-STORAGE SECTION.
+        01 MY-DATAAREA PIC 9(8).
+        01 RESPONSE1 PIC 99.
+        01 RESPONSE2 PIC 99.
+
+          EXEC ADABAS
+               UNKNOWN
+          END-EXEC
+          EXEC ADABAS
+               FIND
+               DECLARE EMPL_CUR1 CURSOR FOR
+               SELECT PERSONNEL-ID, NAME, FIRST-NAME, SEX
+               FROM EMPLOYEES EMPL_V1
+               WHERE NAME BETWEEN 'BART' AND 'BAUMEL'
+               ORDER BY PERSONNEL-ID ASC
+           END-EXEC
+
+           EXEC SQL
+             UNKNOWN C1 CURSOR FOR
+             SELECT COL1,
+                    COL2,
+                    COL3
+             FROM MY-TABLE
+             WHERE COL1 != NULL
+           END-EXEC.
+
+       PROCEDURE DIVISION.
+         BEGIN.
+           EXEC CICS UNKNOWN
+                 FILE('FILE-NAME')
+                 TOKEN(MY-DATAAREA)
+                 SYSID('SYSID')
+                 RESP(RESPONSE1)
+                 RESP2(RESPONSE2)
+           END-EXEC.
+       END PROGRAM EXECP.

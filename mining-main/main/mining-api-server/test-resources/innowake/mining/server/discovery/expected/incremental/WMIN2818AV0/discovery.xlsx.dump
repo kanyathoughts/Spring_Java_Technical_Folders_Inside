@@ -1,0 +1,52 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+10,"","CONCAT.WRK.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+11,"","CONCAT.WRK.TWO","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+7,"","MMRS00C.A.LOADLIB","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+9,"","MMRS7102","src/cobol/programs/MMRS7102.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",3,0,205,27,261,7,0,-1,-1
+5,"","MMRS710A","src/jcl/jobs/MMRS710A.job","JCL","JCL_JOB","PHYSICAL",1,0,5,5,11,1,0,-1,-1
+2,5,"MMRS710A.STEP01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+6,"","TESTJOBA","src/jcl/jobs/TESTJOBA.job","JCL","JCL_JOB","PHYSICAL",1,0,13,1,15,1,0,-1,-1
+3,6,"TESTJOBA.STEP01.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+4,"","TESTPRC","src/jcl/procs/TESTPRC.proc","JCL","JCL_PROC","PHYSICAL",0,0,15,0,15,1,0,-1,-1
+1,4,"TESTPRC.NATSTEP.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+8,"","WRK.B.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+9,"MMRS7102","CALL","CALL MMRS71Z2 USING: [ASSTIMEDATE]"
+9,"MMRS7102","CALL","CALL MMRS7ZA1 USING: [ASSPAR1]"
+9,"MMRS7102","CALL","CALL MMRS7ZA1 USING: [ASSPAR2]"
+9,"MMRS7102","CALL","CALL MY-HEX-TRANS USING: [MY-HEX-ORIGIN-LEN, ASSPAR1, MY-HEX-CONV-RESULT]"
+9,"MMRS7102","CALL","CALL MY-HEX-TRANS USING: [MY-HEX-ORIGIN-LEN, ASSPAR2, MY-HEX-CONV-RESULT]"
+9,"MMRS7102","CONDITIONAL","EVALUATE TRUE [MY-CPU-KILLER-TEST-1, MY-CPU-KILLER-TEST-2, MY-CPU-KILLER-TEST-3, MY-CPU-KILLER-TEST-4, MY-CPU-KILLER-TEST-5, OTHER]"
+9,"MMRS7102","CONDITIONAL","IF RETURN-CODE NE ZERO"
+5,"MMRS710A","EXEC","Properties: [PGM=MMRS7102], Data Definitions: [STEPLIB{DSN=MMRS00C.A.LOADLIB,DISP=SHR},SYSPRINT{SYSOUT=*}], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=MMRS710A]"
+6,"TESTJOBA","EXEC_PROC","Properties: [PROC=TESTPRC], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOBA]"
+4,"TESTPRC","EXEC","Properties: [PGM=NATPRG,PARM=IM=D,AUTO=ON,MT=0,REGION=3M], Data Definitions: [STEPLIB{DSN=MMRS00C.A.LOADLIB,DISP=SHR},SYSOUT{SYSOUT=*},CMPRINT{SYSOUT=*},CMPRT01{SYSOUT=*},CMPRT02{SYSOUT=*},CMPRT03{SYSOUT=*},CMPRT04{SYSOUT=*},CMPRT05{SYSOUT=*},CMPRT06{SYSOUT=*},CMSYNIN{DDNAME=SYSIN},SYSPRINT{SYSOUT=*},CMWKF01{DSN=WRK.B.ONE,DISP=OLD,DELETE},CMWRK02{DSN=CONCAT.WRK.ONE,DISP=OLD,DELETE},CMWRK02{DSN=CONCAT.WRK.TWO,DISP=OLD,DELETE},SYSIN{*= LOGON LIB MAIN6 Y FIN}], Additional Properties: [Fully Qualified Step name=STEP01.NATSTEP,Step name=NATSTEP,Job name=TESTJOBA]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+1,"TESTPRC.NATSTEP.EXEC_PGM",-1,"MAIN6","NATURAL","NATURAL_PROGRAM","Calls","[6]","LATE","{}",-1,-1,-1,-1
+2,"MMRS710A.STEP01.EXEC_PGM",9,"MMRS7102","COBOL","COBOL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+5,"MMRS710A",2,"MMRS710A.STEP01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+6,"TESTJOBA",3,"TESTJOBA.STEP01.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+3,"TESTJOBA.STEP01.EXEC",4,"TESTPRC","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+4,"TESTPRC",1,"TESTPRC.NATSTEP.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+9,"MMRS7102",-1,"MMRS710A","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+9,"MMRS7102",-1,"MMRS71Z1","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",9531,105,-1,-1
+9,"MMRS7102",-1,"MMRS71Z1","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",10456,105,-1,-1
+9,"MMRS7102",-1,"MMRS71Z2","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",4999,31,-1,-1
+9,"MMRS7102",-1,"MMRS7ZA1","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",8995,27,-1,-1
+9,"MMRS7102",-1,"MMRS7ZA1","UNKNOWN","UNKNOWN","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",9920,27,-1,-1
+1,"TESTPRC.NATSTEP.EXEC_PGM",10,"CONCAT.WRK.ONE","RESOURCE","RESOURCE_FILE","Accesses","[6]","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWRK02""}]}",-1,-1,-1,-1
+1,"TESTPRC.NATSTEP.EXEC_PGM",11,"CONCAT.WRK.TWO","RESOURCE","RESOURCE_FILE","Accesses","[6]","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWRK02""}]}",-1,-1,-1,-1
+2,"MMRS710A.STEP01.EXEC_PGM",7,"MMRS00C.A.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}]}",-1,-1,-1,-1
+1,"TESTPRC.NATSTEP.EXEC_PGM",7,"MMRS00C.A.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","[6]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}]}",-1,-1,-1,-1
+1,"TESTPRC.NATSTEP.EXEC_PGM",8,"WRK.B.ONE","RESOURCE","RESOURCE_FILE","Accesses","[6]","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWKF01""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

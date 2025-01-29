@@ -1,0 +1,64 @@
+       IDENTIFICATION DIVISION.                                                 
+201012 PROGRAM-ID.    ESAO476W IS INITIAL PROGRAM.                              
+      *USERID.        UJCF.                                                     
+      *DATE-WRITTEN.  AUGUST, 2020.                                             
+      *****************************************************************         
+                                                                                
+       ENVIRONMENT DIVISION.                                                    
+       CONFIGURATION SECTION.                                                   
+      *SOURCE-COMPUTER. IBM-4381 WITH DEBUGGING MODE.                           
+       SOURCE-COMPUTER. IBM-4381.                                               
+       DATA DIVISION.                                                           
+      *-----------------------------------------------------------------        
+       WORKING-STORAGE SECTION.                                                 
+      *-----------------------------------------------------------------        
+      *-----------------------------------------------------------------        
+      *  DECLARE PERSONAL SAVINGS CURSOR     -  RESULT SET #9                   
+      *-----------------------------------------------------------------        
+           EXEC SQL                                                             
+                DECLARE PSAV_DTL_CURSOR CURSOR WITH RETURN FOR                  
+                   SELECT PSAV.GOAL_ID                                          
+                         ,PSAV.ADVC_PROFL_ID                                    
+                         ,PSAV.SCNRIO_NO                                        
+                         ,PSAV.SAG_ID                                           
+                         ,PSAV.ASSET_ID                                         
+                         ,PSAV.ASSET_SEQ_NO                                     
+                         ,STRT_PSAV_TYPE_CD                                     
+                         ,END_PSAV_TYPE_CD                                      
+                         ,PSAV_AMT                                              
+                         ,MAXIMIZE_CNTRBN_FL                                    
+                         ,VALUE(CAST (PSAV_STRT_DT AS CHAR(10)),' ')            
+                                      AS START_DT                               
+                         ,VALUE(CAST (PSAV_END_DT AS CHAR(10)),' ')             
+                                      AS END_DT                                 
+                     FROM VSAG                   SAG                            
+               INNER JOIN VSAG_BUS_RLSHP         SAGB                           
+                       ON SAGB.PO_ID           = :WS-PO-ID                      
+                      AND SAGB.PO_ROLE_CD     IN ('OW','OWNS')                  
+                      AND SAGB.SAG_ID          = SAG.SAG_ID                     
+                      AND SAG.EFFTV_END_DT     > CURRENT_DATE                   
+                      AND SAGB.EFFTV_END_DT    > CURRENT_DATE                   
+                      AND SAG.SERV_ID          = +413                           
+               INNER JOIN VADVC_PROFL            PROFL                          
+                       ON PROFL.SAG_ID         = SAGB.SAG_ID                    
+201012         INNER JOIN VADVC_ASSET_PROFL      ASSET                          
+201012                 ON PROFL.SAG_ID         = ASSET.SAG_ID                   
+201012                AND ASSET.EFFTV_END_DT   > CURRENT DATE                   
+               INNER JOIN VADVC_GOAL_AST_RL      ASTRL                          
+                       ON PROFL.ADVC_PROFL_ID  = ASTRL.ADVC_PROFL_ID            
+                      AND ASSET.SAG_ID         = ASTRL.SAG_ID                   
+201012                AND ASSET.ASSET_ID       = ASTRL.ASSET_ID                 
+201012                AND ASTRL.EFFTV_END_DT   > CURRENT DATE                   
+               INNER JOIN VMBR_PSAV_DTL          PSAV                           
+                       ON ASTRL.ADVC_PROFL_ID  = PSAV.ADVC_PROFL_ID             
+                      AND ASTRL.GOAL_ID        = PSAV.GOAL_ID                   
+                      AND ASTRL.SAG_ID         = PSAV.SAG_ID                    
+                      AND ASTRL.SCNRIO_NO      = PSAV.SCNRIO_NO                 
+                      AND ASTRL.ASSET_ID       = PSAV.ASSET_ID                  
+                      AND PSAV.EFFTV_END_DT    > CURRENT DATE                   
+           END-EXEC                                                             
+       LINKAGE SECTION.                                                         
+      *-----------------------------------------------------------------        
+       PROCEDURE DIVISION
+      *****************************************************************         
+            GOBACK.                                                             

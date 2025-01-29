@@ -1,0 +1,29 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+4173,"","CUSTOMER","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+4174,"","TABLE_A","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+4172,"","WNDT3026","src/cobol/WNDT3026/programs/WNDT3026.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,23,0,25,0,4,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+4172,"WNDT3026","SELECT",97,1,1,5,6.00,2.00,"DECLARE C_MASTER CURSOR WITH HOLD FOR SELECT CUSTOMER_NUM
+FROM CUSTOMER WHERE CITY = 'PITTSBURGH'"
+4172,"WNDT3026","SELECT",100,1,1,5,6.00,2.00,"DECLARE C_MASTER CURSOR WITHOUT HOLD FOR SELECT
+CUSTOMER_NUM FROM CUSTOMER WHERE CITY = 'PITTSBURGH'"
+4172,"WNDT3026","SELECT",69,1,1,5,3.88,1.50,"DECLARE C_NAME CURSOR WITH RETURN FOR SELECT ID1, VALUE1
+FROM TABLE_A"
+4172,"WNDT3026","SELECT",72,1,1,5,3.88,1.50,"DECLARE C_NAME CURSOR WITHOUT RETURN FOR
+SELECT ID1, VALUE1 FROM TABLE_A"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+4172,"WNDT3026",4173,"CUSTOMER","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",453,152,-1,-1
+4172,"WNDT3026",4173,"CUSTOMER","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",618,155,-1,-1
+4172,"WNDT3026",4174,"TABLE_A","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",174,125,-1,-1
+4172,"WNDT3026",4174,"TABLE_A","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",312,128,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

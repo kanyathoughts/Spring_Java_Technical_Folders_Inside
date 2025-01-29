@@ -1,0 +1,36 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2315,2310,"abc","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2312,2307,"abc","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2309,2307,"foo","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2313,2310,"foo","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2311,2308,"main","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2307,"","WMIN5076A","src/c/WMIN5076A/WMIN5076A.h","C","C_HEADER","PHYSICAL",1,0,6,1,6,0,0,-1,-1
+2308,"","WMIN5076A_main","src/c/WMIN5076A/WMIN5076A_main.c","C","C_PROGRAM","PHYSICAL",1,0,8,0,8,0,0,-1,-1
+2310,"","WMIN5076A_program","src/c/WMIN5076A/WMIN5076A_program.c","C","C_PROGRAM","PHYSICAL",3,0,14,0,15,0,0,-1,-1
+2314,2307,"xyz","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2316,2310,"xyz","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2308,"WMIN5076A_main",2307,"WMIN5076A","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2308,"WMIN5076A_main",2310,"WMIN5076A_program","C","C_PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2310,"WMIN5076A_program",2307,"WMIN5076A","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2315,"abc",2312,"abc","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",129,218,-1,-1
+2313,"foo",2309,"foo","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",43,127,-1,-1
+2311,"main",2312,"abc","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2311,"main",2315,"abc","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2311,"main",2309,"foo","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2311,"main",2313,"foo","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2311,"main",2314,"xyz","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2311,"main",2316,"xyz","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2316,"xyz",2314,"xyz","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",220,304,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

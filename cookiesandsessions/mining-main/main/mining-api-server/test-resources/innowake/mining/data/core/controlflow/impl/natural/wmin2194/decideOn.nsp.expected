@@ -1,0 +1,27 @@
+ #2 DefineDataStmt
+ #24 DecideOnStmt, Label: DECIDE ON FIRST VALUE OF #VAR1, FROM={TestEntryPoint}, TO={#31('1'), #38('2'), #45('3'), #51(NONE)}
+   #31 WRITE NOTITLE '1', FROM={#24('1')}, TO={#52}
+   #38 WRITE NOTITLE '2', FROM={#24('2')}, TO={#52}
+   #45 WRITE NOTITLE '3', FROM={#24('3')}, TO={#52}
+   #51 IgnoreStmt, FROM={#24(NONE)}, TO={#52}
+ #52 DecideOnStmt, Label: DECIDE ON FIRST VALUE OF #VAR2, FROM={#31, #38, #45, #51}, TO={#59('1'), #66('2'), #73('3'), #79(NONE)}
+   #59 WRITE NOTITLE '1', FROM={#52('1')}, TO={#80}
+   #66 WRITE NOTITLE '2', FROM={#52('2')}, TO={#80}
+   #73 WRITE NOTITLE '3', FROM={#52('3')}, TO={#80}
+   #79 IgnoreStmt, FROM={#52(NONE)}, TO={#80}
+ #80 DecideOnStmt, Label: DECIDE ON EVERY VALUE OF G-FC, FROM={#59, #66, #73, #79}, TO={#87('SKIPFC'), #96(NONE)}
+   #87 ReinputStmt, FROM={#80('SKIPFC')}
+   #96 IgnoreStmt, FROM={#80(NONE)}, TO={#97}
+ #97 DecideOnStmt, Label: DECIDE ON EVERY VALUE OF G-FC2, FROM={#96}, TO={#104('SKIPFC'), #110(NONE), #113(), #119()}
+   #104 WRITE NOTITLE '4', FROM={#97('SKIPFC')}, TO={#113(), #119(), #123}
+   #110 IgnoreStmt, FROM={#97(NONE)}, TO={#123}
+   #113 WRITE NOTITLE '5', FROM={#104(), #97()}, TO={#119(), #123}
+   #119 WRITE NOTITLE '6', FROM={#104(), #113(), #119(), #97()}, TO={#119(), #123}
+ #123 DecideOnStmt, Label: DECIDE ON FIRST VALUE OF #VAR2, FROM={#104, #110, #113, #119}, TO={#130('1'), #150('2'), #156(NONE)}
+   #130 DecideOnStmt, Label: DECIDE ON EVERY VALUE OF G-FC, FROM={#123('1')}, TO={#137('SKIPFC'), #143()}
+     #137 WRITE NOTITLE '7', FROM={#130('SKIPFC')}, TO={#143(), #166}
+     #143 WRITE NOTITLE '8', FROM={#130(), #137()}, TO={#166}
+   #150 WRITE NOTITLE '9', FROM={#123('2')}, TO={#166}
+   #156 DecideOnStmt, Label: DECIDE ON FIRST VALUE OF G-FC2, FROM={#123(NONE)}, TO={#162(), #166}
+     #162 WRITE NOTITLE '10', FROM={#156()}, TO={#166}
+ #166 EndStmt, FROM={#137, #143, #150, #156, #162}, TO={TestReturnPoint}

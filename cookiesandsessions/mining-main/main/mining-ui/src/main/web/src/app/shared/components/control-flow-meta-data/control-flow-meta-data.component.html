@@ -1,0 +1,104 @@
+<nz-card
+    class="mining__card-drawer shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open shared-module"
+    [ngClass] ="widePanel ? 'cfg-side-panel' : ''"
+    [nzTitle]="panelTitle" [nzExtra]="extraTemplate">
+    <div *ngIf="! cfgMetaData?.length" #projection class="annotation-editor-container">
+        <ng-container *ngTemplateOutlet="codeSection"></ng-container>
+    </div>
+    <nz-tabset *ngIf="cfgMetaData?.length" nzSize="small">
+        <nz-tab [nzTitle]="'controlFlow.metadataTabTitle' | translate"> <ng-container *ngFor="let item of cfgMetaData">
+                <nz-collapse nzGhost nzExpandIconPosition="right">
+                    <nz-collapse-panel [nzHeader]="item.inputFiles.title" [nzExtra]="countInputFiles"
+                        class="control-flow-meta-data__panel-title remove_padding" [nzActive]="maintainState.inputFiles"
+                        (nzActiveChange)="maintainSectionState('inputFiles')">
+                        <p class="control-flow-meta-data__add-margin" *ngIf="item.inputFiles.modules.length === 0">
+                            <span class="control-flow-meta-data__item-size">
+                                {{'notAvailable'| translate}}</span>
+                        </p>
+                        <nz-list
+                            [ngClass]="{'control-flow-meta-data__virtual-scroll-container': item.inputFiles.modules.length > 15}"
+                            nzSize="small" *ngIf="item.inputFiles.modules">
+                            <nz-list-item *ngFor="let module of item.inputFiles.modules">
+                                <a [routerLink]="buildRouteForModule(module.id)" target="_blank">{{module.name}}</a>
+                            </nz-list-item>
+                        </nz-list>
+                    </nz-collapse-panel>
+                    <hr class="side-panel__horizontal-line" />
+                    <nz-collapse-panel [nzHeader]="item.outputFiles.title" [nzExtra]="countOutputFiles"
+                        class="control-flow-meta-data__panel-title remove_padding"
+                        [nzActive]="maintainState.outputFiles" (nzActiveChange)="maintainSectionState('outputFiles')">
+                        <p class="control-flow-meta-data__add-margin" *ngIf="item.outputFiles.modules.length === 0">
+                            <span class="control-flow-meta-data__item-size">
+                                {{'notAvailable'| translate}}</span>
+                        </p>
+                        <nz-list
+                            [ngClass]="{'control-flow-meta-data__virtual-scroll-container': item.inputFiles.modules.length > 15}"
+                            nzSize="small" *ngIf="item.inputFiles.modules">
+                            <nz-list-item *ngFor="let module of item.outputFiles.modules">
+                                <a [routerLink]="buildRouteForModule(module.id)" target="_blank">{{module.name}}</a>
+                            </nz-list-item>
+                        </nz-list>
+                    </nz-collapse-panel>
+                    <hr class="side-panel__horizontal-line" />
+                </nz-collapse>
+            </ng-container>
+        </nz-tab>
+        <nz-tab [nzTitle]="'controlFlow.editorTabTitle' | translate">
+            <div class="annotation-editor-container">
+                <ng-container *ngTemplateOutlet="codeSection"></ng-container>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</nz-card>
+<ng-template #codeSection>
+  <ng-container>
+			<div class="control-flow-meta-data__monaco-editor">
+				<mining-monaco-editor
+						[options]="EDITOR_OPTIONS"
+						[code]="code"
+						[projectId]="projectId"
+						[moduleId]="moduleId"
+						(init)="onMonacoInit($event)">
+				</mining-monaco-editor>
+      <nz-card [class]="sharedAnnotationEditorStatusClass" [ngStyle]="editorVisibility" [nzTitle]="shellTitle"
+        [nzExtra]="showCrossBtn ? extraTemplate: null" class="shared-side-viewer__drawer-editor--open cfg-shared-annotation-editor">
+        <ng-template #viewContainerRef></ng-template>
+      </nz-card>
+      <ng-template #extraTemplate>
+        <button nz-button [disabled]="isSave || isDelete" nzType="text" [nzLoading]="isClose" (click)="onCancel()">
+          <i nz-icon nzType="close" nzTheme="outline"></i>
+        </button>
+      </ng-template>
+      <ng-template #shellTitle>
+        <app-shared-editor-header [moduleTitle]="headerTitle" [modulePath]="modulePath">
+        </app-shared-editor-header>
+      </ng-template>
+			</div>
+  </ng-container>  
+</ng-template>
+<ng-template #panelTitle>
+    <nz-space nzDirection="horizontal" nzSize="small">
+        <ng-container *ngIf=" ! isErrorMarker">
+            <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="onToggleClick()">
+                <em nz-icon [nzType]="widePanel ? 'double-right' : 'double-left'" nzTheme="outline"></em>
+            </button>
+        </ng-container>
+        <app-shared-editor-header *nzSpaceItem [moduleTitle]="sidePanelTitle">
+        </app-shared-editor-header>
+    </nz-space>
+</ng-template>
+<ng-template #extraTemplate>
+    <button nz-button nzType="text" (click)="closeCfgEditor()">
+        <em nz-icon nzType="close" nzTheme="outline"></em>
+    </button>
+</ng-template>
+<ng-template #countInputFiles>
+    <nz-badge nzStandalone [nzCount]="cfgMetaData[0].inputFiles.modules.length" class="side-panel_badge"
+        [nzShowZero]="true">
+    </nz-badge>
+</ng-template>
+<ng-template #countOutputFiles>
+    <nz-badge nzStandalone [nzCount]="cfgMetaData[0].outputFiles.modules.length" class="side-panel_badge"
+        [nzShowZero]="true">
+    </nz-badge>
+</ng-template>

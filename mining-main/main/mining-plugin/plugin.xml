@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension
+	   id="miningnature"
+	   name="Mining nature"
+	   point="org.eclipse.core.resources.natures">
+	   <runtime>
+	      <run
+	         class="innowake.mining.plugin.MiningProjectNature">
+	      </run>
+	   </runtime>
+	</extension>
+	<extension-point 
+		id="innowake.mining.plugin.remoteJobController" 
+		name="RemoteJobController" 
+		schema="schema/innowake.mining.plugin.remoteJobController.exsd"/>
+		
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			class="innowake.mining.plugin.preferences.ui.MiningWorkbenchPreferencePage"
+			id="mining-plugin.workbench-preferences"
+			name="mining">
+		</page>
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="innowake.mining.plugin.preferences.ui.MiningWorkbenchPreferenceInitializer"/>
+	</extension>
+
+	<extension point="org.eclipse.ui.propertyPages">
+		<page
+			class="innowake.mining.plugin.preferences.ui.MiningProjectPropertyPage"
+			id="innowake.mining.properties.ProjectPropertyPage"
+			name="mining"
+			selectionFilter="single">
+			<enabledWhen>
+				<adapt type="org.eclipse.core.resources.IProject">
+					<or>
+						<test property="org.eclipse.core.resources.projectNature" value="innowake.mining.plugin.miningnature"/>
+					</or>
+				</adapt>		 
+			</enabledWhen>
+		</page>
+	</extension>
+	
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			allPopups="false"
+			locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+			<menu
+				label="mining"
+				id="innowake.mining.main.menu">
+				<command
+					commandId="innowake.mining.commands.searchAnnotation"
+					label="Open Annotation Search View"
+					style="push">
+				</command>
+				<command
+					commandId="innowake.mining.commands.addSelectionToDataDictionary"
+					label="Add to Data Dictionary"
+					style="push">
+					<visibleWhen>
+						<test property="innowake.mining.enableWebViews"/>
+					</visibleWhen>
+				</command>
+			</menu>
+		</menuContribution>
+		
+		<menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+ 			<toolbar id="innowake.mining.toolbar">
+				<command
+					commandId="innowake.mining.commands.addSelectionToAnnotation"
+					icon="icons/16x16_new-annotation.png"
+					tooltip="Create Annotation"
+					style="push"
+					id="innowake.mining.toolbar.createAnnotation">
+				</command>
+				<command
+					commandId="innowake.mining.commands.traceField"
+					icon="icons/16x16_trace-field.png"
+					tooltip="Trace Field"
+					style="push"
+					id="innowake.mining.toolbar.traceField">
+				</command>
+				<command
+					commandId="innowake.mining.commands.addSelectionToDataDictionary"
+					icon="icons/16x16_add-data-dir.png"
+					tooltip="Add to Data Dictionary"
+					style="push"
+					id="innowake.mining.toolbar.AddDataDictionary">
+				</command>
+				<command
+					commandId="innowake.mining.commands.taxonomyMaintenance"
+					icon="icons/16x16_maintain-taxonomy.png"
+					tooltip="Maintain Taxonomy"
+					style="push"
+					id="innowake.mining.toolbar.maintainTaxonomy">
+				</command>
+				<command
+					commandId="innowake.mining.commands.moduleDescription"
+					icon="icons/16x16_module-description.png"
+					tooltip="Module Description"
+					style="push"
+					id="innowake.mining.toolbar.moduleDescription">
+				</command>
+			</toolbar>
+		</menuContribution>
+		
+		<menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+			<menu
+				label="mining"
+				id="innowake.mining.popup.menu">
+				<command
+					commandId="innowake.mining.commands.addMiningNature"
+					label="Add mining nature"
+					style="push">					
+					<visibleWhen>
+					    <test property="innowake.mining.showMiningNatureMenu"/>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.importDiscoveryExcelPopup"
+					label="Import Discovery Excel/CSV"
+					style="push">			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.addSelectionToAnnotation"
+					label="Create New Annotation"
+					style="push">			
+					<visibleWhen>
+						<and>
+							<test property="innowake.mining.enableWebViews"/>
+							<test property="innowake.mining.showMiningMenu"/>
+						</and>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.traceField"
+					label="Trace selected field"
+					style="push">			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.addSelectionToDataDictionary"
+					label="Add to Data Dictionary"
+					style="push">			
+					<visibleWhen>
+						<and>
+							<test property="innowake.mining.enableWebViews"/>
+							<test property="innowake.mining.showMiningMenu"/>
+						</and>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.command.removeDataDictionary"
+					label="Remove from Data Dictionary"
+					style="push">			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.moduleDescription"
+					label="Module Description"
+					style="push">			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</command>
+				<command
+					commandId="innowake.mining.commands.taxonomyMaintenance"
+					label="Maintain Taxonomy"
+					style="push">			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</command>
+		
+				<menu label="Analysis">
+					<command
+						commandId="innowake.mining.command.identifyCandidates"
+						label="Identify Candidates"
+						style="push">
+			 		</command>
+			 		<command
+						commandId="innowake.mining.command.identifyTechnicalTaxonomies"
+						label="Identify Technical Taxonomies"
+						style="push">
+					</command>
+					<command
+						commandId="innowake.mining.command.storeModuleDescription"
+						label="Identify Module Description"
+						style="push">
+					</command>
+					<command
+						commandId="innowake.mining.command.calculateControlFlow"
+						label="Calculate Control Flow"
+						style="push">
+					</command>			
+					<visibleWhen>
+						<test property="innowake.mining.showMiningMenu"/>
+					</visibleWhen>
+				</menu>
+				
+				<command
+					commandId="innowake.mining.command.assignTaxonomy"
+					label="Assign Taxonomy"
+					style="push">
+					<visibleWhen>
+						<and>
+							<test property="innowake.mining.enableWebViews"/>
+							<test property="innowake.mining.showMiningMenu"/>
+						</and>
+					</visibleWhen>
+				</command>
+			</menu>
+		</menuContribution>
+		
+		<menuContribution locationURI="popup:org.eclipse.ui.popup.any">
+			<command
+				commandId="innowake.mining.commands.traceBMSField"
+				label="Trace selected BMS field"
+				style="push">
+			</command>
+			<visibleWhen>
+				<test property="innowake.mining.isBMSMapViewer"/>
+			</visibleWhen>
+		</menuContribution>
+
+		<menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">		
+			<menu label="discovery" id="innowake.mining.discovery.popup.menu">
+				<command
+					commandId="innowake.mining.discovery.commands.discoverCodePopup"
+					label="Discover Code on Selection"
+					tooltip="Ctrl + Click or Alt + Click to skip Source Code files upload"
+					style="push">					
+				</command>
+			 	<command
+					commandId="innowake.mining.discovery.commands.discoverMetricsPopup"
+					label="Discover Metrics on Project"
+					tooltip="Ctrl + Click or Alt + Click to skip Source Code files upload"
+					style="push">
+				</command>
+				<command
+					commandId="innowake.mining.discovery.commands.discoverDnaPopup"
+					label="Discover DNA on Project"
+					tooltip="Ctrl + Click or Alt + Click to skip Source Code files upload"
+					style="push">
+				</command>
+				<menu label="Advanced">
+					<command
+						commandId="innowake.mining.discovery.commands.uploadSourceObjectsPopup"
+						label="Upload Source Code Files"
+						style="push">
+					</command>
+					<command
+						commandId="innowake.mining.discovery.commands.downloadSourceObjectsPopup"
+						label="Download Source Code Files"
+						style="push">
+					</command>
+					<command
+						commandId="innowake.mining.discovery.commands.uploadConfiguration"
+						label="Upload Configuration"
+						style="push">
+				 	</command>
+					<command
+						commandId="innowake.mining.discovery.commands.downloadConfiguration"
+						label="Download Configuration"
+						style="push">
+				 	</command>
+				 	<command
+						commandId="innowake.mining.discovery.commands.discoverMetricsForceFullScan"
+						label="Force Full Discover Metrics Scan"
+						style="push">
+				 	</command>
+				</menu>
+				<visibleWhen>
+					<and>
+						<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+						<test property="innowake.mining.showMiningMenu"/>
+					</and>
+				</visibleWhen>
+			</menu>
+		</menuContribution>
+	</extension>
+
+	<extension point="org.eclipse.ui.commands">
+		<command
+			id="innowake.mining.commands.addMiningNature"
+			name="Add Mining Nature"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.importDiscoveryExcelPopup"
+			name="Import Discovery Excel/CSV"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.addSelectionToAnnotation"
+			name="Create New Annotation"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.editAnnotation"
+			name="Edit Annotation"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.deleteAnnotation"
+			name="Delete Annotation"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.traceField"
+			name="Trace Field"
+			categoryId="innowake.mining.category">
+		</command>
+		 <command
+			id="innowake.mining.commands.traceBMSField"
+			name="Trace Field"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.addSelectionToDataDictionary"
+			name="Add to Data Dictionary"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.taxonomyMaintenance"
+			name="Maintain Taxonomy"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.commands.moduleDescription"
+			name="Module Description"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.command.removeDataDictionary"
+			name="Remove Data Dictionary Entry"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.command.identifyCandidates"
+			name="Identify Candidates"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.command.identifyTechnicalTaxonomies"
+			name="Identify Technical Taxonomies"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			categoryId="innowake.mining.category"
+			id="innowake.mining.command.storeModuleDescription"
+			name="Identify Module Description">
+		</command>
+		<command
+			categoryId="innowake.mining.category"
+			id="innowake.mining.command.calculateControlFlow"
+			name="CalculateControlFlow">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.uploadSourceObjectsPopup"
+			name="Upload Source Objects"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.downloadSourceObjectsPopup"
+			name="Download Source Objects"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.discoverMetricsPopup"
+			name="Discover Metrics on Project"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.downloadConfiguration"
+			name="Download Configuration"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.uploadConfiguration"
+			name="Upload Configuration"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.discoverCodePopup"
+			name="Discover Code on Selection"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.discoverDnaPopup"
+			name="Discover DNA on Project"
+			categoryId="innowake.mining.category">
+		</command>
+        <command
+			id="innowake.mining.command.assignTaxonomy"
+			name="Assign Taxonomy"
+			categoryId="innowake.mining.category">
+		</command>
+		<command
+			id="innowake.mining.discovery.commands.discoverMetricsForceFullScan"
+			name="Force Full Discover Metrics Scan"
+			categoryId="innowake.mining.category">
+		</command>
+
+		<category
+			id="innowake.mining.category"
+			name="mining">
+		</category>
+	</extension>
+		
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.AddMiningNatureHandler"
+			commandId="innowake.mining.commands.addMiningNature">
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.ImportDiscoveryHandler"
+			commandId="innowake.mining.commands.importDiscoveryExcelPopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.isExcelOrCsv"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.annotation.ui.handler.NewAnnotationWizardHandler"
+			commandId="innowake.mining.commands.addSelectionToAnnotation">
+			<activeWhen>
+				<test property="innowake.mining.isTextSelection"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.annotation.ui.handler.EditAnnotationWizardHandler"
+			commandId="innowake.mining.commands.editAnnotation">
+		</handler>
+		<handler
+			class="innowake.mining.plugin.annotation.ui.handler.DeleteAnnotationHandler"
+			commandId="innowake.mining.commands.deleteAnnotation">
+		</handler>
+		<handler
+			class="innowake.mining.plugin.annotation.ui.handler.AnnotationSearchViewHandler"
+			commandId="innowake.mining.commands.searchAnnotation">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.fieldtracer.FieldTracer"
+			commandId="innowake.mining.commands.traceField">
+			<activeWhen>
+				<test property="innowake.mining.isFieldTraceable"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.fieldtracer.FieldTracer"
+			commandId="innowake.mining.commands.traceBMSField">
+			<activeWhen>
+				<test property="innowake.mining.isBMSMapViewer"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.datadictionary.handler.DataDictionaryWizardHandler"
+			commandId="innowake.mining.commands.addSelectionToDataDictionary">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.taxonomy.ui.handler.TaxonomyMaintenanceWizardHandler"
+			commandId="innowake.mining.commands.taxonomyMaintenance">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.ModuleDescriptionWizardHandler"
+			commandId="innowake.mining.commands.moduleDescription">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.datadictionary.handler.DataDictionaryRemoveHandler"
+			commandId="innowake.mining.command.removeDataDictionary">
+		 	<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.IdentifyCandidatesHandler"
+			commandId="innowake.mining.command.identifyCandidates">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.taxonomy.ui.handler.IdentifyTechnicalTaxonomiesHandler"
+			commandId="innowake.mining.command.identifyTechnicalTaxonomies">
+			<activeWhen>
+				<test property="innowake.mining.enableMiningMenu"/>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.StoreModuleDescriptionHandler"
+			commandId="innowake.mining.command.storeModuleDescription">
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.CalculateControlFlowHandler"
+			commandId="innowake.mining.command.calculateControlFlow">
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.UploadSourceObjectsHandler"
+			commandId="innowake.mining.discovery.commands.uploadSourceObjectsPopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+					<test property="innowake.mining.discovery.isValidUploadSourceCodeSelection"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DownloadSourceObjectsHandler"
+			commandId="innowake.mining.discovery.commands.downloadSourceObjectsPopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DownloadConfigurationHandler"
+			commandId="innowake.mining.discovery.commands.downloadConfiguration">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.UploadConfigurationHandler"
+			commandId="innowake.mining.discovery.commands.uploadConfiguration">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DiscoverCodeHandler"
+			commandId="innowake.mining.discovery.commands.discoverCodePopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.isValidDiscoverCodeSelection"/>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>		
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DiscoverMetricsHandler"
+			commandId="innowake.mining.discovery.commands.discoverMetricsPopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.isValidDiscoverMetricsSelection"/>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DiscoverDnaHandler"
+			commandId="innowake.mining.discovery.commands.discoverDnaPopup">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.isValidDiscoverDnaSelection"/>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.module.ui.handler.DiscoverMetricsHandler"
+			commandId="innowake.mining.discovery.commands.discoverMetricsForceFullScan">
+			<activeWhen>
+				<and>
+					<test property="innowake.mining.discovery.isValidDiscoverMetricsSelection"/>
+					<test property="innowake.mining.discovery.showDiscoveryMenu"/>
+					<test property="innowake.mining.enableMiningMenu"/>
+				</and>
+			</activeWhen>
+		</handler>
+		<handler
+			class="innowake.mining.plugin.taxonomy.ui.handler.TaxonomyAssignmentHandler"
+			commandId="innowake.mining.command.assignTaxonomy">
+		</handler>
+	</extension>
+		
+	<extension point="org.eclipse.ui.newWizards">
+		<category
+			id="innowake.mining"
+			name="mining">
+		</category>
+		<wizard
+			canFinishEarly="true"
+			category="innowake.mining"
+			class="innowake.mining.plugin.taxonomy.ui.wizard.TaxonomyMaintenanceWizard"
+			hasPages="true"
+			id="innowake.mining.taxonomy.wizard.taxonomyMaintenance"
+			name="Taxonomy">
+			<selection
+				class="org.eclipse.core.resources.IFile">
+			</selection>
+		</wizard>
+	</extension>
+	
+	<extension point="org.eclipse.ui.startup">
+		<startup class="innowake.mining.plugin.Startup"/>
+	</extension>
+	
+	<extension point="org.eclipse.ui.views">
+		<category
+			id="innowake.mining"
+			name="mining">
+		</category>
+		<view
+			class="innowake.mining.plugin.datadictionary.view.DataDictionarySearchView"
+			id="innowake.mining.datadictionary.view.datadictionarySearch"
+			name="Data Dictionary Search"
+			allowMultiple="false"
+			restorable="true">
+		</view>
+		<view
+			name="Field Tracer"
+			category="innowake.mining"
+			class="innowake.mining.plugin.fieldtracer.view.FieldtracerView"
+			id="innowake.mining.fieldtracer">
+		</view>
+		<view
+			allowMultiple="false"
+			category="innowake.mining"
+			class="innowake.mining.plugin.dependency.ui.DependencyGraphView"
+			icon="icons/dependency.png"
+			id="innowake.mining.dependency.graph"
+			inject="false"
+			name="Dependency Graph"
+			restorable="true">
+		</view>
+		<view
+			allowMultiple="false"
+			category="innowake.mining"
+			class="innowake.mining.plugin.controlflow.graph.ControlFlowView"
+			icon="icons/dependency.png"
+			id="innowake.mining.controlflow.graph"
+			inject="false"
+			name="Control Flow Graph"
+			restorable="true">
+		</view>
+		<view
+			allowMultiple="false"
+			category="innowake.mining"
+			class="innowake.mining.plugin.annotation.ui.view.AnnotationEditorView"
+			id="innowake.mining.annotation.view.annotationEditor"
+			name="Annotation Editor"
+			icon="icons/annotation.png"
+			restorable="true">
+		</view>
+		<view
+			allowMultiple="false"
+			category="innowake.mining"
+			class="innowake.mining.plugin.taxonomy.ui.TaxonomyAssignmentView"
+			id="innowake.mining.taxonomy.view.taxonomyAssignment"
+			name="Taxonomy Assignment"
+			icon="icons/annotation.png"
+			restorable="false">
+		</view>
+		<view
+			allowMultiple="false"
+			category="innowake.mining"
+			class="innowake.mining.plugin.datadictionary.view.DataDictionaryEditorView"
+			id="innowake.mining.dataDictionaryEntry.view.dataDictionaryEditor"
+			name="Data Dictionary Editor"
+			icon="icons/annotation.png"
+			restorable="false">
+		</view>
+	</extension>
+	
+	<extension point="org.eclipse.ui.bindings">
+		<key sequence="Alt+Shift+M T"
+			commandId="innowake.mining.commands.addSelectionToAnnotation"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			contextId="org.eclipse.ui.textEditorScope"/>
+		<key sequence="Alt+Shift+M F"
+			commandId="innowake.mining.commands.traceField"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			contextId="org.eclipse.ui.textEditorScope"/>
+		<key sequence="Alt+Shift+M E"
+			commandId="innowake.mining.commands.addSelectionToDataDictionary"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			contextId="org.eclipse.ui.textEditorScope"/>
+		<key sequence="Alt+Shift+M D"
+			commandId="innowake.mining.commands.moduleDescription"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			contextId="org.eclipse.ui.textEditorScope"/>
+	</extension>
+
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification
+			annotationType="innowake.mining.datadictionary.annotation"
+			colorPreferenceKey="innowake.mining.datadictionary.annotation.color"
+			colorPreferenceValue="255,179,233"
+			contributesToHeader="false"
+			highlightPreferenceKey="innowake.mining.datadictionary.annotation.highlight"
+			highlightPreferenceValue="true"
+			includeOnPreferencePage="true"
+			isGoToNextNavigationTarget="true"
+			isGoToNextNavigationTargetKey="innowake.mining.datadictionary.annotation.isGoToNextNavigationTarget"
+			isGoToPreviousNavigationTarget="true"
+			isGoToPreviousNavigationTargetKey="innowake.mining.datadictionary.annotation.isGoToPreviousNavigationTarget"
+			label="Mining Data Dictionary"
+			overviewRulerPreferenceKey="innowake.mining.datadictionary.annotation.overviewRuler"
+			overviewRulerPreferenceValue="true"
+			presentationLayer="0"
+			showInNextPrevDropdownToolbarAction="true"
+			showInNextPrevDropdownToolbarActionKey="innowake.mining.datadictionary.annotation.showInNextPrevDropdownToolbarAction"
+			symbolicIcon="bookmark"
+			textPreferenceKey="innowake.mining.datadictionary.annotation.text"
+			textPreferenceValue="true"
+			textStylePreferenceKey="innowake.mining.datadictionary.annotation.textStyle"
+			textStylePreferenceValue="DASHED_BOX"
+			verticalRulerPreferenceKey="innowake.mining.datadictionary.annotation.verticalRuler"
+			verticalRulerPreferenceValue="true">
+		</specification>
+	</extension>
+	 
+	<extension point="org.eclipse.ui.editors.annotationTypes">
+		<type name="innowake.mining.datadictionary.annotation"/>
+	 </extension>
+		
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsMiningProjectPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="showMiningMenu"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsMiningProjectPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="enableMiningMenu"
+			type="java.lang.Object">
+		</propertyTester>
+			<propertyTester
+			class="innowake.mining.plugin.preferences.IsMiningProjectPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="showMiningNatureMenu"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsFieldTraceablePropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="isFieldTraceable"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsTextSelectionPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="isTextSelection"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsBMSMapViewerPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="isBMSMapViewer"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsExcelPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="isExcelOrCsv"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.IsDiscoveryPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining.discovery"
+			properties="showDiscoveryMenu, isValidDiscoverCodeSelection, isValidDiscoverMetricsSelection, isValidDiscoverDnaSelection, isValidUploadSourceCodeSelection"
+			type="java.lang.Object">
+		</propertyTester>
+		<propertyTester
+			class="innowake.mining.plugin.preferences.EnableWebViewsPropertyTester"
+			id="innowake.mining.propertyTester"
+			namespace="innowake.mining"
+			properties="enableWebViews"
+			type="java.lang.Object">
+		</propertyTester>
+	</extension>
+	
+	<extension
+			point="org.eclipse.core.contenttype.contentTypes">
+			<content-type
+				file-extensions="bas"
+				id="mining-plugin.contentType.basic"
+				name="Basic"
+				priority="high">
+			</content-type>
+			<content-type
+				file-extensions="inc,pli,pl1,pl1m,pcpy"
+				id="mining-plugin.contentType.pl1"
+				name="PL/I"
+				priority="normal">
+			</content-type>
+	 </extension>
+	 
+	 <extension
+			point="org.eclipse.ui.editors">
+			<editorContentTypeBinding
+				contentTypeId="mining-plugin.contentType.basic"
+				editorId="org.eclipse.ui.genericeditor.GenericEditor">
+			</editorContentTypeBinding>
+			<editorContentTypeBinding
+				contentTypeId="mining-plugin.contentType.pl1"
+				editorId="org.eclipse.ui.genericeditor.GenericEditor">
+			</editorContentTypeBinding>
+	</extension>
+	
+	<extension point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+		<hyperlinkDetector        
+				class="innowake.mining.plugin.editor.hyperlink.HyperlinkDetector"
+				id="mining.generic.editor.hyperlinkDetector"
+				name="Mining Generic Linking Supports"
+				activate="true"
+				targetId="org.eclipse.ui.genericeditor.GenericEditor">
+		</hyperlinkDetector>
+	</extension>
+
+	<extension
+		id="GenericDocumentSetupParticipant"
+		name="%genericDocumentSetupParticipant"
+		point="org.eclipse.core.filebuffers.documentSetup">
+		<participant
+			contentTypeId="mining-plugin.contentType.basic"
+			class="innowake.mining.plugin.editor.generic.DocumentSetupParticipant">
+		</participant>
+	</extension>
+	
+	<extension
+		point="org.eclipse.core.runtime.adapters">
+		<factory
+			adaptableType="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
+			class="innowake.mining.plugin.editor.generic.OutlineFactory">
+			<adapter
+			type="org.eclipse.ui.views.contentoutline.IContentOutlinePage">
+			</adapter>
+		</factory>
+ 	</extension>
+ 	
+	<extension
+		point="org.eclipse.ui.genericeditor.presentationReconcilers">
+		<presentationReconciler
+			class="org.eclipse.tm4e.ui.text.TMPresentationReconciler"
+			contentType="mining-plugin.contentType.basic">
+		</presentationReconciler>
+		<presentationReconciler
+			class="org.eclipse.tm4e.ui.text.TMPresentationReconciler"
+			contentType="mining-plugin.contentType.pl1">
+		</presentationReconciler>
+	</extension>
+	
+	<extension
+		point="org.eclipse.ui.editors.documentProviders">
+		<provider
+			class="innowake.mining.plugin.editor.generic.GenericMiningDocumentProvider"
+			extensions="bas"
+			id="innowake.mining.plugin.editor.generic.documentprovider">
+		</provider>
+ 	</extension>
+ 	
+	<extension
+		point="org.eclipse.tm4e.registry.grammars">
+		<grammar
+			scopeName="source.pli"
+			path="./syntaxes/PLI.tmLanguage.json" >
+		</grammar>     
+		<scopeNameContentTypeBinding
+			contentTypeId="mining-plugin.contentType.pl1"
+			scopeName="source.pli">
+		</scopeNameContentTypeBinding>
+		<grammar
+			scopeName="source.basic"
+			path="./syntaxes/Basic.tmLanguage.json" >
+		</grammar>     
+		<scopeNameContentTypeBinding
+			contentTypeId="mining-plugin.contentType.basic"
+			scopeName="source.basic">
+		</scopeNameContentTypeBinding>
+	</extension>
+</plugin>

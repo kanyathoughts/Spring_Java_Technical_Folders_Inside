@@ -1,0 +1,420 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPD241.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*                                                                *00005000
+000060*    RPD241 - RELATIONSHIP PRICING ID CROSS-REF INFO BUILD       *00006000
+000070*                                                                *00007000
+000080******************************************************************00008000
+000090 ENVIRONMENT DIVISION.                                            00009000
+000100 CONFIGURATION SECTION.                                           00010000
+000110 SPECIAL-NAMES.                                                   00011000
+000120 INPUT-OUTPUT SECTION.                                            00012000
+000130 FILE-CONTROL.                                                    00013000
+000000 COPY RPSORTS.                                                    00014000
+000000 COPY MIOPRCS       REPLACING                                     00015000
+000160                                 MI-OPRCFIL BY MI-APIBFIL         00016000
+000170                DA-3380-S-MIOPRC BY DA-3390-S-MIAPIB.             00017000
+000180 I-O-CONTROL.                                                     00018000
+000190 DATA DIVISION.                                                   00019000
+000200 FILE SECTION.                                                    00020000
+000000 COPY RPSRT067.                                                   00021000
+000220 01  RP-SORTREC.                                                  00022000
+000230     03  RP-SIDX-GRP-KEY.                                         00023000
+000240         05  RP-SIDX-INST        PIC 9(04).                       00024000
+000250         05  RP-SIDX-PRODCODE    PIC X(06).                       00025000
+000260         05  RP-SIDX-IDNUMBER    PIC X(18).                       00026000
+000270     03  RP-SIDX-GRP-DATA.                                        00027000
+000280         05  RP-SIDX-ACCT2-KEY.                                   00028000
+000290             07  RP-SIDX-INST2   PIC 9(04).                       00029000
+000300             07  RP-SIDX-PRODCODE2                                00030000
+000310                                 PIC X(06).                       00031000
+000320             07  RP-SIDX-ACCT2   PIC X(18).                       00032000
+000330             07  RP-SIDX-MODEL2  PIC X(10).                       00033000
+000340         05  RP-SIDX-STATUS      PIC X(01).                       00034000
+000000 COPY MIOPRCF       REPLACING                                     00035000
+000360                                 MI-OPRCFIL BY MI-APIBFIL         00036000
+000370                                 MIOPRC-RECORD BY MIAPIB-RECORD.  00037000
+000380 01  MIAPIB-RECORD.                                               00038000
+000390     03  MIAPIB-ORGX             PIC X(06).                       00039000
+000400     03  MIAPIB-REC-CODE         PIC X(03).                       00040000
+000410     03  MIAPIB-BIN-ID           PIC S9(04)      COMP-4.          00041000
+000420     03  MIAPIB-PHY-KEY-LEN      PIC S9(04)      COMP-4.          00042000
+000430     03  MIAPIB-PHY-REC-LEN      PIC S9(04)      COMP-4.          00043000
+000440     03  MIAPIB-REC-AREA.                                         00044000
+000450         05  MIAPIB-REC-AREA-R   PIC X(01)       OCCURS 1 TO 2000 00045000
+000460                         DEPENDING ON MIAPIB-PHY-REC-LEN.         00046000
+000470 WORKING-STORAGE SECTION.                                         00047000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00048000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00048001
+000490 01  RP-RLSELIT.                                                  00049000
+000000 COPY RPWRLSE.                                                    00050000
+000510 01  MI-RLSELIT.                                                  00051000
+000000 COPY MIWRLSE.                                                    00052000
+000530*---------------------------------------------------------------  00053000
+000540* RUN TIME AREAS                                                  00054000
+000550*---------------------------------------------------------------  00055000
+000560*01  BICPBPRM.                                                    00056000
+000000 COPY BICPBPRM.                                                   00057000
+000580*01  BICRSRB.                                                     00058000
+000000 COPY BICRSRB.                                                    00059000
+000600*01  BICRPSB.                                                     00060000
+000000 COPY BICRPSB.                                                    00061000
+000620*01  BICRVERB.                                                    00062000
+000000 COPY BICRVERB.                                                   00063000
+000640*01  BICRSTAT.                                                    00064000
+000000 COPY BICRSTAT.                                                   00065000
+000660*01  BICRDBS.                                                     00066000
+000000 COPY BICRDBS.                                                    00067000
+000680*01  BICRLOG.                                                     00068000
+000000 COPY BICRLOG.                                                    00069000
+000700*---------------------------------------------------------------  00070000
+000710* RP RECORD AREAS                                                 00071000
+000720*---------------------------------------------------------------  00072000
+000730 01  FILLER                      PIC X(08)       VALUE '*RPWMST'. 00073000
+000740 01  RPWMSTA-AREAS.                                               00074000
+000000 COPY RPWMSTA.                                                    00075000
+000760 01  FILLER                      PIC X(08)       VALUE '*RPSMST'. 00076000
+000770 01  RPMST-RECORD.                                                00077000
+000000 COPY RPSMST.                                                     00078000
+000790 01  FILLER                      PIC X(08)       VALUE '*RPWIDX'. 00079000
+000800 01  RPWIDXA-AREAS.                                               00080000
+000000 COPY RPWIDXA.                                                    00081000
+000820 01  FILLER                      PIC X(08)       VALUE '*RPSIDX'. 00082000
+000830 01  RPIDX-RECORD.                                                00083000
+000000 COPY RPSIDX.                                                     00084000
+000850 01  FILLER                      PIC X(08)       VALUE '*RPWQUA'. 00085000
+000860 01  RPWQUAA-AREAS.                                               00086000
+000000 COPY RPWQUAA.                                                    00087000
+000880 01  FILLER                      PIC X(08)       VALUE '*RPSQUA'. 00088000
+000890 01  RPQUA-RECORD.                                                00089000
+000000 COPY RPSQUA.                                                     00090000
+000910*---------------------------------------------------------------  00091000
+000920* MICM AREAS                                                      00092000
+000930*---------------------------------------------------------------  00093000
+000940 01  FILLER                      PIC X(08)       VALUE '*RP MICM'.00094000
+000950 01  MIMSTA-AREA.                                                 00095000
+000000 COPY MIWMSTA.                                                    00096000
+000970 01  MIMST-RECORD.                                                00097000
+000000 COPY MISMST.                                                     00098000
+000990 01  MIWPRI-AREAS.                                                00099000
+000000 COPY MIWPRI.                                                     00100000
+001010 01  MI2023-RECORD.                                               00101000
+000000 COPY MIS2023A.                                                   00102000
+001030 01  RPWPRI-AREAS.                                                00103000
+000000 COPY RPWPRI.                                                     00104000
+001050*---------------------------------------------------------------  00105000
+001060* STANDARD AREAS                                                  00106000
+001070*---------------------------------------------------------------  00107000
+001080 01  FILLER                      PIC X(08)       VALUE '*SRW000*'.00108000
+001090 01  SRW000-AREAS.                                                00109000
+000000 COPY SRW000.                                                     00110000
+001110 01  FILLER                      PIC X(08)       VALUE '*SRW009*'.00111000
+001120 01  SRW009-AREAS.                                                00112000
+000000 COPY SRW009.                                                     00113000
+001140 01  FILLER                      PIC X(08)       VALUE '*SRW015*'.00114000
+001150 01  SRW015-AREAS.                                                00115000
+000000 COPY SRW015.                                                     00116000
+001170 01  WS-ABEND.                                                    00117000
+000000 COPY SRW028.                                                     00118000
+001190     03  WS-FUNCTION             PIC X(01).                       00119000
+001200 01  FILLER                      PIC X(08)       VALUE '*SRW105*'.00120000
+001210 01  SRW105-AREAS.                                                00121000
+000000 COPY SRW105.                                                     00122000
+001230 01  FILLER                      PIC X(08)       VALUE '*SRW196*'.00123000
+001240 01  SRW196-AREAS.                                                00124000
+000000 COPY SRW196.                                                     00125000
+001260 01  WS-RPMIM2023AREAS.                                           00126000
+000000 COPY RPW2023.                                                    00127000
+001280*---------------------------------------------------------------  00128000
+001290* PROGRAM WORK AREAS                                              00129000
+001300*---------------------------------------------------------------  00130000
+001310 01  FILLER                      PIC X(08)       VALUE '*RPD241W'.00131000
+001320 01  WS-RPS-AREAS.                                                00132000
+001330     03  WS-SUB1                 PIC S9(04)      COMP.            00133000
+001340     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00134000
+001350     03  WS-EMPTY-FILE           PIC X(01)       VALUE 'N'.       00135000
+001360     03  WS-1ST-READ             PIC X(01)       VALUE 'Y'.       00136000
+001370     03  WS-ERROR-FOUND          PIC X(01)       VALUE 'N'.       00137000
+001380     03  WS-MST-EOF              PIC X(01)       VALUE 'N'.       00138000
+001390     03  WS-QUA-EOF              PIC X(01)       VALUE 'N'.       00139000
+001400     03  WS-REC-PROCESS          PIC X(01)       VALUE SPACES.    00140000
+001410     03  WS-CNT-MST              PIC S9(09)      COMP-3.          00141000
+001420     03  WS-CNT-QUA              PIC S9(09)      COMP-3.          00142000
+001430     03  WS-CNT-IN               PIC S9(09)      COMP-3.          00143000
+001440     03  WS-CNT-WRITE            PIC S9(09)      COMP-3.          00144000
+001450     03  WS-INST                 PIC 9(04)       VALUE ZEROS.     00145000
+001460     03  WS-APPLCD               PIC 9(02)       VALUE 50.        00146000
+001470     03  WS-COBOLDATE.                                            00147000
+001480         05  WS-COBOLYY          PIC X(02).                       00148000
+001490         05  WS-COBOLMM          PIC X(02).                       00149000
+001500         05  WS-COBOLDD          PIC X(02).                       00150000
+001510*---------------------------------------------------------------- 00151000
+001520 PROCEDURE DIVISION.                                              00152000
+001530*---------------------------------------------------------------- 00153000
+001540 CONTROL-SECTION SECTION.                                         00154000
+001550 CS-START.                                                        00155000
+001560     PERFORM INITIALIZATION.                                      00156000
+001570     PERFORM MAIN-MST.                                            00157000
+001580     PERFORM END-OF-JOB.                                          00158000
+001590 CS-END.                                                          00159000
+001600     STOP RUN.                                                    00160000
+001610 CS-EXIT.                                                         00161000
+001620     EXIT.                                                        00162000
+001630*---------------------------------------------------------------- 00163000
+001640 INITIALIZATION SECTION.                                          00164000
+001650 IN-START.                                                        00165000
+001660     MOVE 'RPD241' TO WS-UPD-USER.                                00166000
+001670     MOVE WS-UPD-USER TO WS-ABPROGID.                             00167000
+001680     MOVE WS-UPD-USER TO SR-APIPROGLIT.                           00168000
+001690     MOVE MIC-RLSE-LIT TO SRB-RELEASE.                            00169000
+001700     MOVE 'N' TO WS-EMPTY-FILE.                                   00170000
+001710     MOVE 'N' TO WS-ERROR-FOUND.                                  00171000
+001720     MOVE 'Y' TO WS-1ST-READ.                                     00172000
+001730 IN-TESTING-TO.                                                   00173000
+001740     MOVE 'N' TO RPS-MST-LOG.                                     00174000
+001750     MOVE 'N' TO RPS-QUA-LOG.                                     00175000
+001760     PERFORM GET-FILE-ORGANIZATION.                               00176000
+001770     MOVE ZEROS TO WS-CNT-MST.                                    00177000
+001780     MOVE ZEROS TO WS-CNT-QUA.                                    00178000
+001790     MOVE ZEROS TO WS-CNT-IN.                                     00179000
+001800     MOVE ZEROS TO WS-CNT-WRITE.                                  00180000
+001810     ACCEPT WS-COBOLDATE FROM DATE.                               00181000
+001820     MOVE WS-COBOLMM TO SR-C6MON.                                 00182000
+001830     MOVE WS-COBOLDD TO SR-C6DAY.                                 00183000
+001840     MOVE WS-COBOLYY TO SR-C6YR.                                  00184000
+001850     PERFORM CONVERT-6-TO-8.                                      00185000
+001860 IN-EXIT.                                                         00186000
+001870     EXIT.                                                        00187000
+001880*---------------------------------------------------------------- 00188000
+001890 MAIN-MST SECTION.                                                00189000
+001900 MR-START.                                                        00190000
+001910     MOVE 200704 TO SORT-CORE-SIZE.                               00191000
+001920     SORT RP-SORTFIL                                              00192000
+001930         ASCENDING KEY                                            00193000
+001940         RP-SIDX-GRP-KEY                                          00194000
+001950         INPUT PROCEDURE IS MST-INPUT                             00195000
+001960         OUTPUT PROCEDURE MST-OUTPUT.                             00196000
+001970     IF SORT-RETURN IS NOT EQUAL TO ZERO                          00197000
+001980         GO TO AR-0001.                                           00198000
+001990 MR-EXIT.                                                         00199000
+002000     EXIT.                                                        00200000
+002010*---------------------------------------------------------------- 00201000
+002020 MST-INPUT SECTION.                                               00202000
+002030 MI-START.                                                        00203000
+002040     MOVE SPACES TO RPMST-GRP-KEY.                                00204000
+002050     PERFORM RPS-MST-GET-GE-REQUEST.                              00205000
+002060     IF WS-FUNCTION IS EQUAL TO 'N'                               00206000
+002070         OR WS-FUNCTION IS EQUAL TO 'E'                           00207000
+002080         MOVE 'Y' TO WS-MST-EOF                                   00208000
+002090         GO TO MI-READ-QUA.                                       00209000
+002100     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00210000
+002110         GO TO AR-0002.                                           00211000
+002120 MI-READ-QUA.                                                     00212000
+002130     MOVE SPACES TO RPQUA-GRP-KEY.                                00213000
+002140     PERFORM RPS-QUA-GET-GE-REQUEST.                              00214000
+002150     IF WS-FUNCTION IS EQUAL TO 'N'                               00215000
+002160         OR WS-FUNCTION IS EQUAL TO 'E'                           00216000
+002170         MOVE 'Y' TO WS-QUA-EOF                                   00217000
+002180         GO TO MI-COMPARE-RECORDS.                                00218000
+002190     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00219000
+002200         GO TO AR-0003.                                           00220000
+002210     GO TO MI-COMPARE-RECORDS.                                    00221000
+002220 MI-NEXT-RECORD.                                                  00222000
+002230     IF WS-REC-PROCESS IS EQUAL TO 'Q'                            00223000
+002240         GO TO MI-NEXT-QUA.                                       00224000
+002250 MI-NEXT-MST.                                                     00225000
+002260     PERFORM RPS-MST-GET-NEXT-REQUEST.                            00226000
+002270     IF WS-FUNCTION IS EQUAL TO 'E'                               00227000
+002280         MOVE 'Y' TO WS-MST-EOF                                   00228000
+002290         GO TO MI-COMPARE-RECORDS.                                00229000
+002300     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00230000
+002310         GO TO AR-0007.                                           00231000
+002320     GO TO MI-COMPARE-RECORDS.                                    00232000
+002330 MI-NEXT-QUA.                                                     00233000
+002340     PERFORM RPS-QUA-GET-NEXT-REQUEST.                            00234000
+002350     IF WS-FUNCTION IS EQUAL TO 'E'                               00235000
+002360         MOVE 'Y' TO WS-QUA-EOF                                   00236000
+002370         GO TO MI-COMPARE-RECORDS.                                00237000
+002380     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00238000
+002390         GO TO AR-0008.                                           00239000
+002400 MI-COMPARE-RECORDS.                                              00240000
+002410     IF WS-MST-EOF IS EQUAL TO 'Y'                                00241000
+002420         AND WS-QUA-EOF IS EQUAL TO 'Y'                           00242000
+002430         GO TO MI-EXIT.                                           00243000
+002440     IF WS-QUA-EOF IS EQUAL TO 'Y'                                00244000
+002450         MOVE 'M' TO WS-REC-PROCESS                               00245000
+002460         MOVE RPMST-INST TO WS-INST                               00246000
+002470         GO TO MI-WRITE-IDX.                                      00247000
+002480     IF WS-MST-EOF IS EQUAL TO 'Y'                                00248000
+002490         MOVE 'Q' TO WS-REC-PROCESS                               00249000
+002500         MOVE RPQUA-INST TO WS-INST                               00250000
+002510         GO TO MI-WRITE-IDX.                                      00251000
+002520     IF RPQUA-GRP-KEY IS EQUAL TO RPMST-GRP-KEY                   00252000
+002530         GO TO AR-0009.                                           00253000
+002540     IF RPQUA-GRP-KEY IS LESS THAN RPMST-GRP-KEY                  00254000
+002550         MOVE RPQUA-INST TO WS-INST                               00255000
+002560         MOVE 'Q' TO WS-REC-PROCESS                               00256000
+002570     ELSE                                                         00257000
+002580         MOVE RPMST-INST TO WS-INST                               00258000
+002590         MOVE 'M' TO WS-REC-PROCESS.                              00259000
+002600 MI-WRITE-IDX.                                                    00260000
+002610     IF WS-REC-PROCESS IS EQUAL TO 'M'                            00261000
+002620         ADD 1 TO WS-CNT-MST                                      00262000
+002630     ELSE                                                         00263000
+002640         ADD 1 TO WS-CNT-QUA.                                     00264000
+002650     ADD 1 TO WS-CNT-IN.                                          00265000
+002660     MOVE SPACES TO RP-SORTREC.                                   00266000
+002670     MOVE WS-INST TO RP-SIDX-INST.                                00267000
+002680     IF WS-INST IS NOT EQUAL TO MIM-2023KINST                     00268000
+002690         PERFORM GET-PRODCODE.                                    00269000
+002700     MOVE MIM-2023KPRODCODE TO RP-SIDX-PRODCODE.                  00270000
+002710     IF WS-REC-PROCESS IS EQUAL TO 'M'                            00271000
+002720         MOVE RPMST-IDNUMBER TO RP-SIDX-IDNUMBER                  00272000
+002730         MOVE RPMST-GRP-KEY TO RP-SIDX-ACCT2-KEY                  00273000
+002740         MOVE SPACES TO RP-SIDX-STATUS                            00274000
+002750     ELSE                                                         00275000
+002760         MOVE RPQUA-IDNUMBER TO RP-SIDX-IDNUMBER                  00276000
+002770         MOVE RPQUA-GRP-KEY TO RP-SIDX-ACCT2-KEY                  00277000
+002780         MOVE 'Q' TO RP-SIDX-STATUS.                              00278000
+002790 MI-RELEASE.                                                      00279000
+002800     RELEASE RP-SORTREC.                                          00280000
+002810     GO TO MI-NEXT-RECORD.                                        00281000
+002820 MI-EXIT.                                                         00282000
+002830     EXIT.                                                        00283000
+002840*---------------------------------------------------------------- 00284000
+002850 MST-OUTPUT SECTION.                                              00285000
+002860 MO-START.                                                        00286000
+002870     OPEN OUTPUT MI-APIBFIL.                                      00287000
+002880 MO-LOOP.                                                         00288000
+002890     RETURN RP-SORTFIL                                            00289000
+002900         AT END                                                   00290000
+002910         GO TO MO-END.                                            00291000
+002920 MO-WRITE.                                                        00292000
+002930     INITIALIZE RPIDX-RECORD.                                     00293000
+002940     MOVE RP-SIDX-GRP-KEY TO RPIDX-GRP-KEY.                       00294000
+002950     MOVE SR-CYEAR-FIRST TO RPIDX-UPD-DATE.                       00295000
+002960     MOVE WS-UPD-USER TO RPIDX-UPD-USER.                          00296000
+002970     MOVE MIC-MST-APPL-ORG TO RPIDX-UPD-ORG.                      00297000
+002980     MOVE RP-SIDX-GRP-DATA TO RPIDX-ACCT2-KEY.                    00298000
+002990     MOVE RP-SIDX-STATUS TO RPIDX-RCIF-STATUS.                    00299000
+003000     MOVE MIC-MST-APPL-ORG TO MIAPIB-ORGX.                        00300000
+003010     MOVE RPS-IDX-REC-PRI TO MIAPIB-REC-CODE.                     00301000
+003020     MOVE ZEROS TO MIAPIB-BIN-ID.                                 00302000
+003030     MOVE LENGTH OF RPIDX-GRP-KEY TO MIAPIB-PHY-KEY-LEN.          00303000
+003040     MOVE LENGTH OF RPIDX-RECORD TO MIAPIB-PHY-REC-LEN.           00304000
+003050     MOVE RPIDX-RECORD                                            00305000
+003060         TO MIAPIB-REC-AREA (1:LENGTH OF RPIDX-RECORD).           00306000
+003070     WRITE MIAPIB-RECORD                                          00307000
+003080         INVALID KEY                                              00308000
+003090         GO TO AR-0004.                                           00309000
+003100     ADD 1 TO WS-CNT-WRITE.                                       00310000
+003110     GO TO MO-LOOP.                                               00311000
+003120 MO-END.                                                          00312000
+003130     CLOSE MI-APIBFIL.                                            00313000
+003140 MO-EXIT.                                                         00314000
+003150     EXIT.                                                        00315000
+003160*---------------------------------------------------------------- 00316000
+003170 END-OF-JOB SECTION.                                              00317000
+003180 EOJ-START.                                                       00318000
+003190     PERFORM RPS-MST-GLOBAL-CLOSE-REQUEST.                        00319000
+003200     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00320000
+003210         MOVE '0005 - GLOBAL CLOSE FAILURE                '       00321000
+003220         TO WS-ABORTMSG                                           00322000
+003230         GO TO AR-0005.                                           00323000
+003240     DISPLAY 'RPD241 - ID XREF RECORD BUILD'.                     00324000
+003250     DISPLAY 'MST RECORD COUNT.... = ' WS-CNT-MST.                00325000
+003260     DISPLAY 'QUA RECORD COUNT.... = ' WS-CNT-QUA.                00326000
+003270     DISPLAY 'INPUT RECORD COUNT.. = ' WS-CNT-IN.                 00327000
+003280     DISPLAY 'RECORDS TO BE LOADED = ' WS-CNT-WRITE.              00328000
+003290     MOVE ZEROS TO RETURN-CODE.                                   00329000
+003300     IF WS-CNT-WRITE IS EQUAL TO ZEROS                            00330000
+003310         DISPLAY '***** NO FILE LOAD NEEDED ****** '.             00331000
+003320 EOJ-EXIT.                                                        00332000
+003330     EXIT.                                                        00333000
+003340*---------------------------------------------------------------- 00334000
+003350 GET-PRODCODE SECTION.                                            00335000
+003360 GP-START.                                                        00336000
+003370     MOVE WS-INST TO MIM-2023KINST.                               00337000
+003380     MOVE LOW-VALUES TO MIM-2023KPRODCODE.                        00338000
+003390     MOVE WS-APPLCD TO MIM-2023INTAPPL211.                        00339000
+003400     MOVE 'Y' TO SRW196-FIND-APPL.                                00340000
+003410     MOVE WS-RPMIM2023BANKSW TO SRW196-BANKS.                     00341000
+003420     PERFORM SRP196-GET-2023-RECORD.                              00342000
+003430     IF SRW196-FUNCTION IS NOT EQUAL TO SPACES                    00343000
+003440         GO TO AR-0006.                                           00344000
+003450 GP-EXIT.                                                         00345000
+003460     EXIT.                                                        00346000
+003470******************************************************************00347000
+003480 MIC-MST-API SECTION.                                             00348000
+000000 COPY MIPMSTA.                                                    00349000
+003500******************************************************************00350000
+003510 RPS-PROCA-MST SECTION.                                           00351000
+000000 COPY RPPMSTA.                                                    00352000
+003530******************************************************************00353000
+003540 RPS-PROCA-QUA SECTION.                                           00354000
+000000 COPY RPPQUAA.                                                    00355000
+003560******************************************************************00356000
+003570 GET-FILE-ORGANIZATION SECTION.                                   00357000
+000000 COPY SRP093.                                                     00358000
+003590******************************************************************00359000
+003600 CONVERT-6-TO-8 SECTION.                                          00360000
+000000 COPY SRP011.                                                     00361000
+003620***************************************************************** 00362000
+003630 SRP196-GET-2023-RECORD SECTION.                                  00363000
+000000 COPY SRP196.                                                     00364000
+003650******************************************************************00365000
+003660 ABORT-ROUTINE SECTION.                                           00366000
+003670 AR-0001.                                                         00367000
+003680     MOVE 1 TO WS-ABCODE.                                         00368000
+003690     GO TO AR-MSG.                                                00369000
+003700 AR-0002.                                                         00370000
+003710     MOVE 2 TO WS-ABCODE.                                         00371000
+003720     GO TO AR-MSG.                                                00372000
+003730 AR-0003.                                                         00373000
+003740     MOVE 3 TO WS-ABCODE.                                         00374000
+003750     GO TO AR-MSG.                                                00375000
+003760 AR-0004.                                                         00376000
+003770     MOVE 4 TO WS-ABCODE.                                         00377000
+003780     GO TO AR-MSG.                                                00378000
+003790 AR-0005.                                                         00379000
+003800     MOVE 5 TO WS-ABCODE.                                         00380000
+003810     GO TO AR-MSG.                                                00381000
+003820 AR-0006.                                                         00382000
+003830     MOVE 6 TO WS-ABCODE.                                         00383000
+003840     GO TO AR-MSG.                                                00384000
+003850 AR-0007.                                                         00385000
+003860     MOVE 7 TO WS-ABCODE.                                         00386000
+003870     GO TO AR-MSG.                                                00387000
+003880 AR-0008.                                                         00388000
+003890     MOVE 8 TO WS-ABCODE.                                         00389000
+003900     GO TO AR-MSG.                                                00390000
+003910 AR-0009.                                                         00391000
+003920     MOVE 9 TO WS-ABCODE.                                         00392000
+003930     GO TO AR-MSG.                                                00393000
+003940 AR-MSG.                                                          00394000
+003950     MOVE WS-FUNCTION TO WS-ABFC.                                 00395000
+003960 AR-PRINT.                                                        00396000
+000000 COPY SRP029.                                                     00397000

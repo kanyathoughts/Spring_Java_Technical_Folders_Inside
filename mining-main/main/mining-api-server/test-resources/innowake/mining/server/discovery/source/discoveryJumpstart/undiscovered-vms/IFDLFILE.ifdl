@@ -1,0 +1,1358 @@
+Form CLM_PMGA_FRM_04
+    Form Data 
+        CURRENTITEM Character(32) Varying Builtin
+        {----------------------------------------------------------------------}
+        {   DECform Builtin variables					       }
+        {----------------------------------------------------------------------}
+        CURRENTITEMHELPED Character(32) Varying Builtin
+        CURRENTPANELHELPED Character(32) Varying Builtin
+        FORMNAME Character(32) Varying Builtin
+        FUNCTIONNAME Character(20) Varying Builtin
+        SESSION Character(32) Varying Builtin
+        TERMINAL Character(20) Varying Builtin
+        PARENTREQUESTID Character(24) Builtin
+        FIELDIMAGE Character(80) Varying Builtin
+        FIELDVALUE Builtin
+        CURRENT_ITEM Character(32)
+        CURRENT_PANEL Character(32)
+        FUNCTION_NAME Character(32)
+        FIELD_IMAGE Character(80)
+        FIELD_VALUE Character(80)
+    End Data
+
+    Form Data 
+        HEADER_NODE_ID Character(3)
+        {----------------------------------------------------------------------}
+        {   Header panel fields						       }
+        {----------------------------------------------------------------------}
+        HEADER_ENV_ID Character(3)
+        HEADER_SYSTEM_DATE Date
+        HEADER_SYSTEM_NAME Character(80)
+                    Value "                  PROVIDER CONSTANT MAST"-        
+			  "ER INFORMATION SELECT                   "
+		        {  1234567890123456789012345678901234567890}
+        SYS$NODE Character(8)
+            Value "SYS$NODE"
+    End Data
+
+    Form Data 
+        STATUS Longword Integer
+	TEMP	LONGWORD INTEGER
+        {----------------------------------------------------------------------}
+        {   Global Common fields for all panels				       }
+        {----------------------------------------------------------------------}
+        CURRENT_MODE Character(32)
+        NULL_DATE Date
+        DUMMY_FIELD Character(1)
+	LOAD_DATA_FLAG	   CHARACTER(1)
+		VALUE	"L"
+        TWO_SECONDS FFloating
+            Value 2
+	REFRESH_FLAG Character(1)
+        SAVE_CURR_PRV_ARRAY	Longword Integer
+    END DATA
+
+    Form Data 
+        PRINTER_ID Character(20)
+            Value "SYS$PRINT           "
+        {----------------------------------------------------------------------}
+        {   Print screen panel fields					       }
+        {----------------------------------------------------------------------}
+        FORM_TYPE Character(20)
+            Value "DEFAULT             "
+        PRINT_NOTIFY Character(1)
+            Value "N"
+        PRINT_STATUS Longword Integer
+    End Data
+
+    Form Data 
+        FIND_MAX_PRINTER Longword Integer
+            Value -1
+        {----------------------------------------------------------------------}
+        {   Print screen pop up panel fields				       }
+        {----------------------------------------------------------------------}
+        FIND_CURR_PRINTER Longword Integer
+        FIND_LAST_PAGE_PRINTER Longword Integer
+        Group FIND_PRINTER_ARRAY 
+            Occurs 200
+            Current FIND_CURR_PRINTER
+            CODE Character(11)
+            DESC Character(30)
+        End Group
+    End Data
+
+    Form Data 
+        USER_PMGC_TYPE CHARACTER(1)
+        USER_PMGC_ID   CHARACTER(4)
+        USER_PMGC_EXP_DATE CHARACTER(8)
+        MAX_PRV_ARRAY	LONGWORD Integer
+        CURR_PRV_ARRAY	Longword Integer
+	LAST_PAGE_PRV_ARRAY  Longword Integer
+        Group PRV_ARRAY
+            Occurs 200
+            Current CURR_PRV_ARRAY
+            PASSED_PMGC_TYPE CHARACTER(1)
+            PASSED_PMGC_ID   CHARACTER(4)
+            PASSED_PMGC_DATE CHARACTER(8)
+            PRV_LINE Character(25)
+        End Group
+    End Data
+
+
+    Form Record CLM_PMGA_ORX_04_REC
+        MAX_PRV_ARRAY	    LONGWORD Integer
+	LAST_PAGE_PRV_ARRAY LONGWORD INTEGER
+        Group PRV_ARRAY
+            Occurs 200
+            PASSED_PMGC_TYPE CHARACTER(1)
+            PASSED_PMGC_ID   CHARACTER(4)
+            PASSED_PMGC_DATE CHARACTER(8)
+            PRV_LINE Character(25)
+        End Group
+    End RECORD
+
+    Form Record PRINTER_ARRAY_REC
+        Group FIND_PRINTER_ARRAY
+            Occurs 200
+            CODE Character(11)
+            DESC Character(30)
+        End Group
+    End Record
+
+
+    Form Record CONTROL_WKSP
+        CURRENT_ITEM Character(32)
+        CURRENT_PANEL Character(32)
+        FUNCTION_NAME Character(32)
+        FIELD_IMAGE Character(80)
+        FIELD_VALUE Character(80)
+        CURRENT_MODE Character(32)
+    End Record
+
+    Form Record REFRESH_REC
+	REFRESH_FLAG Character(1)
+    End Record
+
+    Form Record MESSAGE_RECORD
+        MESSAGEPANEL Character(512) Varying
+    End Record
+
+    Record List DUMMY_RECORD_LIST
+        {***********************Record List start******************************}
+    End List
+
+    Record List TASK_MAIN_PANEL
+        CONTROL_WKSP
+        CLM_PMGA_ORX_04_REC
+    End List
+
+    Record List TASK_CONFIRM_PANEL
+        CONTROL_WKSP
+        CLM_PMGA_ORX_04_REC
+    End List
+
+
+    Layout CLM_PMGA_FRM_04
+        Device
+            Terminal
+                Type %VT100
+        End Device
+        Size 24 Lines by 80 Columns
+        Attribute REVERSE_BOLD
+            Is
+                Bold
+                Reverse
+        End Attribute
+
+        Viewport PRINTER_VIEWPORT
+            Lines 10 Through 14
+            Columns 25 Through 58
+        End Viewport
+
+        Viewport HEADER_VIEWPORT
+            Lines 1 Through 2
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport MAIN_VIEWPORT
+            Lines 3 Through 22
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport COMMAND_VIEWPORT
+            Lines 23 Through 23
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport FIND_HELP_VIEWPORT
+            Lines 5 Through 15
+            Columns 1 Through 45
+        End Viewport
+
+        Viewport MESSAGE_VIEWPORT
+            Lines 24 Through 24
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport FIND_PRINTER_VIEWPORT
+            Lines 5 Through 16
+            Columns 36 Through 80
+        End Viewport
+        Viewport GENERAL_HELP_VIEWPORT
+            Lines 5 Through 16
+            Columns 1 Through 45
+        End Viewport
+
+        Function F10
+            Is %F10
+        End Function
+
+        Function PREVIOUS ITEM
+            Is %F12
+               %CONTROL_H
+        End Function
+
+        Function ERASE_FIELD
+            Is %F13
+               %CONTROL_J
+        End Function
+
+        Function INSERT OVERSTRIKE
+            Is %F14
+               %CONTROL_A
+        End Function
+
+        Function NEXT HELP
+            Is %HELP
+        End Function
+
+        Function DO
+            Is %DO
+        End Function
+
+        Function PRINT_SCREEN
+            Is %F17
+        End Function
+
+        Function F19
+            Is %F19
+        End Function
+
+        Function F20
+            Is %F20
+        End Function
+
+        Function FIND
+            Is %FIND
+        End Function
+
+        Function INSERT_HERE
+            Is %INSERT_HERE
+        End Function
+
+        Function REMOVE_LINE
+            Is %REMOVE
+        End Function
+
+        Function SELECT
+            Is %SELECT
+        End Function
+
+        Function PREV_SCREEN
+            Is %PREV_SCREEN
+        End Function
+
+        Function NEXT_SCREEN
+            Is %NEXT_SCREEN
+        End Function
+
+        Function PF1
+            Is %PF1
+        End Function
+
+        Function PF2
+            Is %PF2
+        End Function
+
+        Function PF3
+            Is %PF3
+        End Function
+
+        Function PF4
+            Is %PF4
+        End Function
+
+        Function CURSOR LEFT
+            Is %LEFT
+        End Function
+
+        Function CURSOR RIGHT
+            Is %RIGHT
+        End Function
+
+        Function DELETE CHARACTER
+            Is %DELETE
+        End Function
+
+        Function UP ITEM
+            Is %UP
+        End Function
+
+        Function DOWN ITEM
+            Is %DOWN
+        End Function
+
+        Function NEXT ITEM
+            Is %HORIZONTAL_TAB
+               %CARRIAGE_RETURN
+               %KP_ENTER
+        End Function
+
+        Function REFRESH DISPLAY
+            Is %CONTROL_R
+               %CONTROL_W
+        End Function
+
+        Function EXIT GROUP NEXT
+            Is (%PF1 %DOWN)
+        End Function
+
+        Function EXIT GROUP PREVIOUS
+            Is (%PF1 %UP)
+        End Function
+
+        Function DISABLE_KEYS
+            Is %CONTROL_Z
+               %F6
+               %F7
+               %F8
+               %F9
+               %F11
+               %F14
+               %F18
+               (%PF1 %PF2)
+               (%PF1 %PF3)
+               (%PF1 %PF4)
+               (%PF1 %HELP)
+               (%PF1 %LEFT)
+               (%PF1 %RIGHT)
+               (%PF4 %UP)
+               (%PF4 %DOWN)
+               (%PF4 %LEFT)
+               (%PF4 %RIGHT)
+               (%PF4 %HORIZONTAL_TAB)
+               (%PF4 %CARRIAGE_RETURN)
+               (%PF4 %KP_ENTER)
+               (%PF4 %CONTROL_H)
+        End Function
+
+		
+
+        Disable Response
+            Remove All
+        End Response
+
+        Send Response REFRESH_REC
+	    REFRESH ALL
+	End Response
+
+        Transceive Response TASK_MAIN_PANEL TASK_MAIN_PANEL
+            Display
+                HEADER_PANEL
+            Display
+                MAIN_PANEL
+	    RESET
+		SAVE_CURR_PRV_ARRAY
+            Activate
+                Panel MAIN_PANEL
+	    IF	CURRENT_MODE = "P"
+	    THEN
+		MESSAGE 
+			MAX_PRV_ARRAY " records found."
+/* Mod #1 Beg */
+/*              Call "LIB$WAIT" Using */
+/*              By Reference TWO_SECONDS */
+/* Mod #1 End */
+	    end if
+        End Response
+
+        Function Response PRINT_SCREEN
+            Print Immediate
+            Activate
+                Panel PRINTER_PANEL
+            Position Immediate To Field PRINTER_ID On PRINTER_PANEL
+        End Response
+
+        Function Response UP ITEM
+            Message
+                "Up-Arrow not allowed at this field"
+        End Response
+
+        Function Response DOWN ITEM
+            Message
+                "Down-Arrow not allowed at this field"
+        End Response
+
+        Function Response PREVIOUS ITEM
+            If FIRST ITEM Then
+                Message
+                    %NO_PREV_ITEM
+            Else
+                If EMPTY FIELD Then
+                    {** Handle empty field properly **}
+                    Position Immediate To Previous Item
+                Else
+                    Position To Previous Item
+                End If
+            End If
+        End Response
+
+        Function Response DO
+            Activate
+                Panel COMMAND_PANEL
+            Position Immediate To Next Item
+        End Response
+
+        Function Response SELECT
+            Activate
+                Panel COMMAND_PANEL
+            Position Immediate To Next Item
+        End Response
+
+        Function Response PF2
+            Let FUNCTION_NAME = "PF2"
+	    RETURN IMMEDIATE
+        End Response
+
+        Function Response F10
+            Let FUNCTION_NAME = "F10"
+	    RETURN IMMEDIATE
+        End Response
+
+        Function Response DISABLE_KEYS
+            Message
+                "Undefined function key. Press HELP twice to display key "-
+                    "definitions."
+        End Response
+
+        Function Response FIND
+            Message
+                "FIND not avaliable on this field."
+        End Response
+
+        Function Response PREV_SCREEN
+            Message
+                "Undefined function key. Press HELP twice to display key "-
+                    "definitions."
+        End Response
+
+        Function Response NEXT_SCREEN
+            Message
+                "Undefined function key. Press HELP twice to display key "-
+                    "definitions."
+        End Response
+
+        Function Response USER FUNCTION
+            Message
+                "Undefined function key. Press HELP twice to display key "-
+                    "definitions."
+        End Response
+
+        Function Response UNDEFINED FUNCTION
+            Message
+                "Undefined function key. Press HELP twice to display key "-
+                    "definitions."
+        End Response
+
+        Use Help Panel
+            GENERAL_HELP_PANEL
+
+        Field Default ENTRY_FIELD
+            Exit Response
+                Message
+                    ""
+            End Response
+
+            Active Highlight
+                REVERSE_BOLD
+        End Default
+
+        Apply Field Default ENTRY_FIELD
+
+
+        Message Panel MESSAGEPANEL
+            Viewport MESSAGE_VIEWPORT
+        End Panel
+
+
+        Help Panel GENERAL_HELP_PANEL
+            Viewport GENERAL_HELP_VIEWPORT
+            Remove
+            Exit Response
+                Exit Help
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response PF4
+                Exit Help
+            End Response
+
+            Function Response NEXT ITEM
+                Exit Help
+            End Response
+
+            Literal Rectangle
+                Line 1	Column 1
+                Line 12	Column 45
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 10
+                Value "Function/keyboard keys:"
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Next Line
+                Column 2
+                Value "F10   - Return to Previous Menu"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F12   - Back Space"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F13   - Clear the field"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F14   - Toggle Overstrike/Insert mode"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F17   - Output the screen to Printer"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "PF2   - Return to the Main Menu"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "PF4   - Go to Next screen prompt or"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "        Backup 1 logical unit"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "DO    - Confirmation Key"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "FIND  - Search for a list of Valid Values"
+            End Literal
+
+            Literal Text
+                Next Line
+                Column 10
+                Value "Press PF4 or F10 to continue"
+                Display
+                    Bold
+            End Literal
+
+        End Panel
+
+
+        Help Panel FIND_HELP_PANEL
+            Viewport FIND_HELP_VIEWPORT
+            Remove
+            Exit Response
+                Exit Help
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response PF4
+                Exit Help
+            End Response
+
+            Function Response NEXT ITEM
+                Exit Help
+            End Response
+
+            Literal Rectangle
+                Line 1	Column 1
+                Line 11	Column 45
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 10
+                Value "Function key definitions:"
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Next Line
+                Column 2
+                Value "SELECT      - Choose the current item"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "PF4         - Return to previous screen"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F10         - Return to previous screen"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F19         - Position to the first item"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "F20         - Position to the last item"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "UP   ARROW  - Move cursor up one line"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "DOWN ARROW  - Move cursor down one line"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "NEXT SCREEN - Next Page"
+            End Literal
+
+            Literal Text
+                Next Line
+                Same Column
+                Value "PREV SCREEN - Previous Page"
+            End Literal
+
+            Literal Text
+                Next Line
+                Column 10
+                Value "Press PF4 or F10 to continue"
+                Display
+                    Bold
+            End Literal
+
+        End Panel
+
+
+        Panel FIND_PRINTER_PANEL
+            Viewport FIND_PRINTER_VIEWPORT
+            Retain
+            Entry Response
+                Message
+                    ""
+                If (FIND_MAX_PRINTER <= 0) Then
+                   CALL "BASIC_FUNCTION" Using
+				    By Descriptor AUTH_SSN
+				    By Descriptor AUTH_MBR_TYPE
+				    By Descriptor AUTH_MBR_TYPE_DESC
+				    By Reference  AUTH_EST_ADM_DATE
+				    Giving RET_VALUE
+                End If
+                If (FIND_MAX_PRINTER <= 0) Then
+                    Deactivate
+                        Panel FIND_PRINTER_PANEL
+                    Remove 
+                        FIND_PRINTER_VIEWPORT
+                    Position Immediate To Previous Item
+                End If
+            End Response
+
+            Function Response SELECT
+                Let PRINTER_ID = FIND_PRINTER_ARRAY(FIND_CURR_PRINTER).CODE
+                Remove 
+                    FIND_PRINTER_VIEWPORT
+                Deactivate
+                    Panel FIND_PRINTER_PANEL
+                Position Immediate To Next Item
+            End Response
+
+            Function Response NEXT ITEM
+                If (FIND_CURR_PRINTER = FIND_MAX_PRINTER) Then
+                    Message
+                        "Bottom of list"
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response PF4
+                Remove 
+                    FIND_PRINTER_VIEWPORT
+                Deactivate
+                    Panel FIND_PRINTER_PANEL
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response F10
+                Remove 
+                    FIND_PRINTER_VIEWPORT
+                Deactivate
+                    Panel FIND_PRINTER_PANEL
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response UP ITEM
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                End If
+            End Response
+
+            Function Response DOWN ITEM
+                If (FIND_CURR_PRINTER = FIND_MAX_PRINTER) Then
+                    Message
+                        "Bottom of list"
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response NEXT_SCREEN
+                If (FIND_CURR_PRINTER = FIND_MAX_PRINTER) Then
+                    Message
+                        "Bottom of list"
+                Else
+                    If (FIND_CURR_PRINTER > FIND_LAST_PAGE_PRINTER) Then
+                        Position Immediate To Field 
+                            FIND_PRINTER_ARRAY(FIND_MAX_PRINTER).CODE On 
+                            FIND_PRINTER_PANEL
+                    Else
+                        Position To Down Occurrence
+                            Unseen
+                    End If
+                End If
+            End Response
+
+            Function Response PREV_SCREEN
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                        Unseen
+                End If
+            End Response
+
+            Function Response F19
+                If (FIND_CURR_PRINTER = 1) Then
+                    Message
+                        "Top of list"
+                Else
+                    Position Immediate To Field FIND_PRINTER_ARRAY(1).CODE On 
+                        FIND_PRINTER_PANEL
+                End If
+            End Response
+
+            Function Response F20
+                If (FIND_CURR_PRINTER = FIND_MAX_PRINTER) Then
+                    Message
+                        "Bottom of list"
+                Else
+                    Position Immediate To Field 
+                        FIND_PRINTER_ARRAY(FIND_MAX_PRINTER).CODE On 
+                        FIND_PRINTER_PANEL
+                End If
+            End Response
+
+            Builtin Function Response REFRESH DISPLAY
+
+            Builtin Function Response NEXT HELP
+
+            Function Response BUILTIN FUNCTION
+                Message
+                    "Undefined function key. Use SELECT key to select or PF4 "-
+                        "to quit"
+            End Response
+
+            Function Response USER FUNCTION
+                Message
+                    "Undefined function key. Use SELECT key to select or PF4 "-
+                        "to quit"
+            End Response
+
+            Function Response UNDEFINED FUNCTION
+                Message
+                    "Undefined function key. Use SELECT key to select or PF4 "-
+                        "to quit"
+            End Response
+
+            Use Help Panel
+                FIND_HELP_PANEL
+
+            Apply No Field Default
+            Literal Rectangle
+                Line 1	Column 1
+                Line 12	Column 44
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 16
+                Value "Printer ID list"
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Line 12
+                Column 10
+                Value "Press SELECT key to select"
+                Display
+                    Bold
+            End Literal
+
+            Group FIND_PRINTER_ARRAY
+                Vertical
+                    Displays 10
+                    Scroll By Page
+                Field CODE
+                    Line 2
+                    Column 2
+                    Exit Response
+                        Message
+                            ""
+                    End Response
+
+                    Active Highlight
+                        REVERSE_BOLD
+                    No Data Input
+                End Field
+
+                Field DESC
+                    Same Line
+                    Same Column +12
+                    Highlight
+                            REVERSE_BOLD
+                        When ((FIND_PRINTER_ARRAY(FIND_CURR_PRINTER).CODE = 
+                            FIND_PRINTER_ARRAY(**).CODE) AND 
+                            (FIND_PRINTER_ARRAY(**).CODE <> ""))
+                    Protected
+                End Field
+
+            End Group
+
+        End Panel
+
+
+        Panel PRINTER_PANEL
+            Viewport PRINTER_VIEWPORT
+            Retain
+            Function Response PF4
+                Message
+                    ""
+                Remove 
+                    PRINTER_VIEWPORT
+                Deactivate
+                    Panel PRINTER_PANEL
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response F10
+                Message
+                    ""
+                Remove 
+                    PRINTER_VIEWPORT
+                Deactivate
+                    Panel PRINTER_PANEL
+                Position Immediate To Previous Item
+            End Response
+
+            Function Response DO
+                If (PRINT_STATUS = 1) Then
+                    Message
+                        "Printing "
+                        FORMNAME
+                        ".TXT on printer "
+                        PRINTER_ID
+                Else
+                    Message
+                        "Unable to print "
+                        FORMNAME
+                        ".TXT on printer "
+                        PRINTER_ID
+                End If
+                Remove 
+                    PRINTER_VIEWPORT
+                Deactivate
+                    Panel PRINTER_PANEL
+                Position Immediate To Previous Item
+            End Response
+
+            Builtin Function Response UP ITEM
+
+            Builtin Function Response DOWN ITEM
+
+            Builtin Function Response NEXT ITEM
+
+            Builtin Function Response PREVIOUS ITEM
+
+            Builtin Function Response REFRESH DISPLAY
+
+            Builtin Function Response NEXT HELP
+
+            Function Response BUILTIN FUNCTION
+                Message
+                    "Undefined function key"
+            End Response
+
+            Function Response USER FUNCTION
+                Message
+                    "Undefined function key"
+            End Response
+
+            Apply Field Default Of
+                Active Highlight
+                    REVERSE_BOLD
+                Display
+                    Reverse
+                Uppercase
+            End Default
+
+            Literal Rectangle
+                Line 1	Column 1
+                Line 5	Column 34
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 12
+                Value "Print Screen"
+                Display
+                    Bold
+            End Literal
+
+            Literal Text
+                Next Line
+                Column 2
+                Value "Printer ID:"
+            End Literal
+
+            Field PRINTER_ID
+                Same Line
+                Column 14
+                Function Response FIND
+                    Activate
+                        Panel FIND_PRINTER_PANEL
+                    Position Immediate To Field FIND_PRINTER_ARRAY(1).CODE On 
+                        FIND_PRINTER_PANEL
+                End Response
+
+                Function Response PREVIOUS ITEM
+                    {** wrap around **}
+                    Position Immediate To Field PRINT_NOTIFY On PRINTER_PANEL
+                End Response
+
+                Function Response UP ITEM
+                    {** wrap around **}
+                    Position Immediate To Field PRINT_NOTIFY On PRINTER_PANEL
+                End Response
+
+            End Field
+
+            Literal Text
+                Next Line
+                Column 2
+                Value " Form Type:"
+            End Literal
+
+            Field FORM_TYPE
+                Same Line
+                Column 14
+            End Field
+
+            Literal Text
+                Next Line
+                Column 2
+                Value "    Notify:"
+            End Literal
+
+            Field PRINT_NOTIFY
+                Same Line
+                Column 14
+                Function Response DOWN ITEM
+                    Position Immediate To Field PRINTER_ID On PRINTER_PANEL
+                End Response
+
+                Function Response NEXT ITEM
+                    Position Immediate To Field PRINTER_ID On PRINTER_PANEL
+                End Response
+
+            End Field
+
+            Literal Text
+                Next Line
+                Column 7
+                Value "Press DO key to confirm"
+                Display
+                    Bold
+            End Literal
+
+        End Panel
+
+
+        Panel HEADER_PANEL
+            Viewport HEADER_VIEWPORT
+            Retain
+            Apply No Field Default
+            Literal Text
+                Line 1
+                Column 5
+                Value "-"
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 33
+                Value "Health Net ABS"
+            End Literal
+
+            Field HEADER_NODE_ID
+                Line 1
+                Column 1
+                Protected
+            End Field
+
+            Field HEADER_ENV_ID
+                Line 1
+                Column 7
+                Protected
+            End Field
+
+            Field HEADER_SYSTEM_DATE
+                Line 1
+                Column 71
+                Output Picture For Date NN-DD-YYYY
+                Protected
+            End Field
+
+            Field HEADER_SYSTEM_NAME
+                Line 2
+                Column 1
+                Protected
+            End Field
+
+        End Panel
+
+
+        Panel MAIN_PANEL
+            Viewport MAIN_VIEWPORT
+	    Retain
+	    Function response SELECT
+		Let User_PMGC_TYPE  = 
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_TYPE 
+                Let USER_PMGC_ID  =
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_ID 
+                Let USER_PMGC_EXP_DATE  =
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_DATE 
+		ACTIVATE
+		   PANEL    COMMAND_PANEL
+		POSITION IMMEDIATE TO NEXT ITEM
+	    END RESPONSE
+
+	    Function response DO
+		Let User_PMGC_TYPE  = 
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_TYPE 
+                Let USER_PMGC_ID  =
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_ID 
+                Let USER_PMGC_EXP_DATE  =
+                    PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_DATE 
+		ACTIVATE
+		   PANEL    COMMAND_PANEL
+		POSITION IMMEDIATE TO NEXT ITEM
+	    END RESPONSE
+
+            Function Response PF4
+	        Let FUNCTION_NAME = "PF4"
+	        RETURN IMMEDIATE
+	    End Response
+
+            Function Response NEXT ITEM
+                If (CURR_PRV_ARRAY = MAX_PRV_ARRAY) Then
+                    Message "Bottom of List"
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response UP ITEM
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                End If
+            End Response
+
+            Function Response DOWN ITEM
+                If (CURR_PRV_ARRAY = MAX_PRV_ARRAY ) Then
+                    Message "Bottom of List"
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response NEXT_SCREEN
+                If (CURR_PRV_ARRAY = MAX_PRV_ARRAY ) Then
+                    Message
+                        "Bottom of list"
+                Else
+                    If (CURR_PRV_ARRAY > LAST_PAGE_PRV_ARRAY ) Then
+                        Position Immediate To Field 
+                            PRV_ARRAY(MAX_PRV_ARRAY).PRV_LINE On MAIN_PANEL
+                    Else
+                        Position To Down Occurrence
+                            Unseen
+                    End If
+                End If
+            End Response
+
+            Function Response PREV_SCREEN
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                        Unseen
+                End If
+            End Response
+
+            Function Response F19
+                If (CURR_PRV_ARRAY = 1) Then
+                    Message
+                        "Top of list"
+                Else
+                    Position Immediate To Field PRV_ARRAY (1).PRV_LINE On
+			MAIN_PANEL
+                End If
+            End Response
+
+            Function Response F20
+                If (CURR_PRV_ARRAY = MAX_PRV_ARRAY ) Then
+                    Message
+                        "End of list"
+                Else
+                    Position Immediate To Field 
+                        PRV_ARRAY (MAX_PRV_ARRAY).PRV_LINE On  MAIN_PANEL
+                End If
+            End Response
+
+            Builtin Function Response REFRESH DISPLAY
+
+            Builtin Function Response NEXT HELP
+
+            Function Response BUILTIN FUNCTION
+                Message
+                    "Undefined function key. Use SELECT key to select or PF4 "-
+                        "to quit"
+            End Response
+
+            Function Response UNDEFINED FUNCTION
+                Message
+                    "Undefined function key. Use SELECT key to select or PF4 "-
+                        "to quit"
+            End Response
+
+            Use Help Panel
+                FIND_HELP_PANEL
+
+            Apply No Field Default
+
+            Literal Text
+                Line 2
+                Column 1
+                Value "Exp. Date   Eff. Date   PM"
+                Display Bold
+            End Literal
+
+            Group PRV_ARRAY
+                Vertical
+                    Displays 17
+		    SCROLL BY PAGE 
+
+		ENTRY RESPONSE
+		    LET	SAVE_CURR_PRV_ARRAY = CURR_PRV_ARRAY
+		END RESPONSE
+
+                Field PRV_LINE
+                    Line 3
+                    Column 1
+
+		    ENTRY RESPONSE
+			MESSAGE
+			    ""
+		    END RESPONSE   
+
+                    Output Picture X(25)
+		    Output " " When (PRV_ARRAY(**).PASSED_PMGC_TYPE  = "") AND
+                                    (PRV_ARRAY(**).PASSED_PMGC_ID    = "") AND
+                                    (PRV_ARRAY(**).PASSED_PMGC_DATE  = "")
+                    No Exit Response
+		    HIGHLIGHT
+			REVERSE_BOLD
+			  WHEN  (PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_TYPE  =
+                                    PRV_ARRAY(**).PASSED_PMGC_TYPE  ) AND
+                                (PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_ID =
+                                    PRV_ARRAY(**).PASSED_PMGC_ID ) AND
+                                (PRV_ARRAY(CURR_PRV_ARRAY).PASSED_PMGC_DATE =
+                                    PRV_ARRAY(**).PASSED_PMGC_DATE) AND
+				(PRV_ARRAY(CURR_PRV_ARRAY).PRV_LINE =     
+				    PRV_ARRAY(**).PRV_LINE ) AND
+				(PRV_ARRAY(CURR_PRV_ARRAY).PRV_LINE <> "")
+                    No Data Input
+                End Field
+
+            End Group
+
+        End Panel
+
+
+        Panel COMMAND_PANEL
+            Viewport COMMAND_VIEWPORT
+            Retain
+            Entry Response
+                Message
+                    ""
+            End Response
+
+            Exit Response
+                Let CURRENT_ITEM = CURRENTITEM
+                Let CURRENT_PANEL = "MENU_PANEL"
+                Let FIELD_IMAGE = FIELDIMAGE
+                Let FIELD_VALUE = FIELDVALUE
+		IF  ( FUNCTION_NAME <> "F10" )	
+		AND ( FUNCTION_NAME <> "PF2" )	
+                THEN
+			Let FUNCTION_NAME = FUNCTIONNAME
+		END IF
+            End Response
+
+            Function Response SELECT
+  		    IF  (FUNCTION_NAME = "PF2" )
+		    	OR  (FUNCTION_NAME = "F10" )
+		    THEN
+			RETURN IMMEDIATE
+		    END IF 
+               END IF
+	    END RESPONSE
+
+	    FUNCTION RESPONSE PF4
+		LET USER_PMGC_TYPE = ""
+                LET USER_PMGC_ID = ""
+                LET USER_PMGC_EXP_DATE = ""
+		Deactivate
+		    Panel COMMAND_PANEL
+		Position Immediate To Previous Item
+	    END RESPONSE
+
+            Function Response DO
+		    IF  (FUNCTION_NAME = "PF2" )
+		    OR  (FUNCTION_NAME = "F10" )
+		    THEN
+		        RETURN IMMEDIATE
+		    END IF
+                END IF
+	    END RESPONSE
+
+            Icon INQ_SCREEN
+		Function Response BOUNDARY CURSOR LEFT
+                    Position Immediate To Icon PRINT_ICON on COMMAND_PANEL
+		End Response
+
+		Function Response BOUNDARY CURSOR RIGHT
+                    Position Immediate To Next Item
+		End Response
+
+		Function Response PREVIOUS ITEM
+                    Position Immediate To Icon PRINT_ICON on COMMAND_PANEL
+		End Response
+
+                Literal Text
+                    Line 1
+                    Column 2
+                    Value "Next Screen"
+                    Display
+                        Reverse
+                End Literal
+            End Icon
+
+            Icon PRINT_ICON
+		Function Response BOUNDARY CURSOR LEFT
+                    Position Immediate To Previous Item
+		End Response
+
+		Function Response BOUNDARY CURSOR RIGHT
+                    Position Immediate To Icon INQ_SCREEN on COMMAND_PANEL
+		End Response
+
+		Function Response PREVIOUS ITEM
+                    Position Immediate To Previous Item
+		End Response
+
+
+                Literal Text
+                    Line 1
+                    Column 15
+                    Value "PRINT"
+                    Display
+                        Reverse
+                End Literal
+            End Icon
+
+        End Panel
+    End Layout
+End Form

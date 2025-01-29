@@ -1,0 +1,14 @@
+FROM openjdk:17-jdk-slim
+
+RUN apt-get update && apt-get install iputils-ping iptables wget -y
+
+RUN mkdir /mining-api-server
+WORKDIR /mining-api-server
+
+COPY server/mining-api-server-dist*.jar mining-api-server-dist.jar
+COPY dockerized-mining/docker/start-api-server.sh start-api-server.sh
+COPY dockerized-mining/docker/innowake.lic innowake.lic
+
+EXPOSE 8080
+
+CMD ["sh","start-api-server.sh"]

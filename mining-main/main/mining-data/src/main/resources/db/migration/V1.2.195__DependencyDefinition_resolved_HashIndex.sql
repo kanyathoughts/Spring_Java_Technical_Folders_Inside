@@ -1,0 +1,2 @@
+DROP INDEX DependencyDefinition_moduleLink_resolved_idx IF EXISTS;
+CREATE INDEX DependencyDefinition_moduleLink_resolved_idx IF NOT EXISTS ON DependencyDefinition (moduleLink, resolved) NOTUNIQUE_HASH_INDEX;

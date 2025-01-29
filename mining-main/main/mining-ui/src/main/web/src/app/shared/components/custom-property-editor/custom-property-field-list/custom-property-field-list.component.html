@@ -1,0 +1,10 @@
+<div *ngIf="customAnnotationFields.customProperties">
+  <custom-property-field *ngFor="let customProp of customAnnotationFields.customProperties" [form]="parentForm" [customProperty]="customProp" [optionList]="getAutoCompletionList(customProp)"></custom-property-field>
+</div>
+<nz-collapse class="shared-annotation-editor__collapse-margin" *ngIf="customAnnotationFields[currentShowWhenValue]" nzGhost>
+<ng-template ngFor let-attr [ngForOf]="customAnnotationFields[currentShowWhenValue] | keyvalue">
+    <nz-collapse-panel *ngIf="$any(attr).value.length > 0" [nzHeader]="$any(attr).key">
+        <custom-property-field *ngFor="let customProperty of $any(attr).value" [form]="parentForm" [customProperty]="customProperty" [optionList]="getAutoCompletionList(customProperty)"></custom-property-field>
+    </nz-collapse-panel>
+</ng-template>
+</nz-collapse>

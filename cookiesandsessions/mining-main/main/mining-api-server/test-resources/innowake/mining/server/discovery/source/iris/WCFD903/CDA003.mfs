@@ -1,0 +1,33 @@
+CDA003   FMT                                                            00010000
+         DEV   TYPE=(3270,2),FEAT=IGNORE,DSCA=X'00F0'                   00020000
+         DIV   TYPE=INOUT                                               00030000
+         DPAGE FILL=NULL,CURSOR=((1,12))                                00040000
+         DFLD  '#DBGROUP ',POS=(1,2),ATTR=(HI)                          00050000
+GROUPNAM DFLD  POS=(1,12),LTH=8,ATTR=(MOD,HI)                           00060000
+         DFLD  'DATA BASE GROUP DIRECTORY',POS=(1,27),ATTR=(HI)         00070000
+DBDMSG   DFLD  POS=(2,2),LTH=79,ATTR=(PROT,HI)                          00080000
+         DO    63,1,11,SUF=1                                            00090000
+NAME1    DFLD  POS=(4,5),LTH=9,ATTR=(PROT)                              00100000
+         ENDDO                                                          00110000
+         DO    70,1,11,SUF=1                                            00120000
+NAME64   DFLD  POS=(13,5),LTH=9,ATTR=(PROT)                             00130000
+         ENDDO                                                          00140000
+TIME1    DFLD  POS=(24,70),LTH=8,ATTR=(PROT,HI)                         00150000
+         FMTEND                                                         00160000
+CODA003  MSG   TYPE=OUTPUT,SOR=(CDA003,IGNORE),NXT=CIDA003,FILL=C' '    00170000
+         SEG                                                            00180000
+         MFLD  DBDMSG,LTH=79                                            00190000
+         DO    63,SUF=1                                                 00200000
+         MFLD  NAME1,LTH=9                                              00210000
+         ENDDO                                                          00220000
+         DO    70,SUF=1                                                 00230000
+         MFLD  NAME64,LTH=9                                             00240000
+         ENDDO                                                          00250000
+         MFLD  (TIME1,TIME)                                             00260000
+         MSGEND                                                         00270000
+CIDA003  MSG   TYPE=INPUT,SOR=(CDA003,IGNORE),NXT=CODA003               00280000
+         SEG                                                            00290000
+         MFLD  '#DBGROUP '                                              00300000
+         MFLD  GROUPNAM,LTH=8                                           00310000
+         MSGEND                                                         00320000
+         END                                                            00330000

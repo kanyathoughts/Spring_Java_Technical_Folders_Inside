@@ -1,0 +1,53 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2441,2439,"main","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2437,"","testAssembler","src/asm/WMIN11795/testAssembler.asm","ASSEMBLER","ASSEMBLER_PROGRAM","PHYSICAL",0,0,4,0,4,0,0,-1,-1
+2433,"","testBasic","src/basic/WMIN11795/testBasic.bas","BASIC","BASIC_OBJECT","PHYSICAL",-1,0,4,0,-1,0,0,-1,-1
+2439,"","TestC","src/c/WMIN11795/TestC.c","C","C_PROGRAM","PHYSICAL",10,1,45,1,46,0,0,-1,-1
+2435,"","TESTCOBOL","src/cobol/WMIN11795/programs/TestCobol.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",2,2,11,0,16,1,0,-1,-1
+2432,"","testDbd","src/ims/WMIN11795/dbd/testDbd.dbd","IMS","IMS_DBD","PHYSICAL",0,1,15,0,16,0,0,-1,-1
+2438,"","testDcl","src/vms/WMIN11795/dcl/testDcl.com","VMS","DCL","PHYSICAL",-1,0,12,0,-1,0,0,-1,-1
+2442,"","TestEasytrieve","src/easytrieve/WMIN11795/TestEasytrieve.ezt","EASYTRIEVE","EASYTRIEVE_PROGRAM","PHYSICAL",1,1,10,0,10,0,0,-1,-1
+2436,"","testEcl","src/ecl/WMIN11795/testEcl.ecl","ECL","ECL_JOB","PHYSICAL",-1,0,5,0,5,0,0,-1,-1
+2443,"","TestJava","src/java/WMIN11795/TestJava.java","JAVA","JAVA_COMPILATION_UNIT","PHYSICAL",1,0,3,0,4,0,0,-1,-1
+2429,"","TestJcl","src/jcl/WMIN11795/jobs/TestJcl.job","JCL","JCL_JOB","PHYSICAL",1,0,3,5,9,1,0,-1,-1
+2430,2429,"TestJcl.RUNBLTD1.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2444,"","TestNatural","src/natural/WMIN11795/functions/TestNatural.ns7","NATURAL","NATURAL_FUNCTION","PHYSICAL",-1,2,9,3,12,0,0,-1,-1
+2434,"","testOracle","src/oracle/WMIN11795/cdo/testOracle.cdo","ORACLE","CDO_FILE","PHYSICAL",-1,0,17,4,-1,0,0,-1,-1
+2431,"","testPl1","src/pl1/WMIN11795/programs/testPl1.pl1","PL1","PL1_PROGRAM","PHYSICAL",1,0,6,0,6,0,0,-1,-1
+2440,"","testPlSql","src/sql/WMIN11795/testPlSql.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,9,0,9,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2435,"TESTCOBOL","CONDITIONAL","IF MD-MAP-NAME EQ 'P'"
+2429,"TestJcl","EXEC_PROC","Properties: [SYSTEM=GRP1,UID=MGO,PROC=DSNUPROC,UTPROC=], Data Definitions: [], Additional Properties: [Fully Qualified Step name=RUNBLTD1,Step name=RUNBLTD1,Job name=MGOJOB1]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2442,"TestEasytrieve",-1,"ABC","UNKNOWN","PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"DEF","UNKNOWN","PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"GHI","UNKNOWN","PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"JKL","UNKNOWN","PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"MNO","UNKNOWN","PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"PQR","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+2442,"TestEasytrieve",-1,"STU","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+2429,"TestJcl",2430,"TestJcl.RUNBLTD1.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+2430,"TestJcl.RUNBLTD1.EXEC",0,"DSNUPROC","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+2441,"main",-1,"printf","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2441,"main",-1,"scanf","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2437,"testAssembler",-1,"Ba","UNKNOWN","UNKNOWN","References","","LATE","{}",18,2,-1,-1
+2437,"testAssembler",-1,"STA&&&&","UNKNOWN","UNKNOWN","References","","LATE","{}",1,7,-1,-1
+2433,"testBasic",-1,"b","UNKNOWN","UNKNOWN","Calls","","EARLY","{""CALL_TYPE"":""CALL b""}",39,7,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2435,"TESTCOBOL","ERROR","PARSE_ERROR","Unknown cobol token [DISPLY] offset: 264 length:6 line:13 column:14 firstTokenInLine:true lastTokenInLine:false",264,6
+2435,"TESTCOBOL","ERROR","PARSE_ERROR","Unknown cobol token ['P'] offset: 271 length:3 line:13 column:21 firstTokenInLine:false lastTokenInLine:true",271,3
+2439,"TestC","ERROR","PARSE_ERROR","line 46:5 (<EOF>): missing '}' at '<EOF>'",946,-1
+2442,"TestEasytrieve","WARNING","PARSE_ERROR","Unable to resolve field ABC referenced in a statement.",-1,-1
+2444,"TestNatural","ERROR","METRICS_CALCULATION_ERROR","Error occured while calculating complexity",-1,-1
+2444,"TestNatural","ERROR","PARSE_ERROR","Unrecoverable parse error.",-1,-1
+2432,"testDbd","ERROR","MODULE_ABORT","The DataBaseDefinition for this DBDGENModel has not yet been initialized.",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,34 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+1236,"","TESTJOB","src/jcl/WMIN4782D/jobs/TESTJOB.job","JCL","JCL_JOB","PHYSICAL",1,0,3,0,4,1,0,-1,-1
+1238,1236,"TESTJOB.STEP01.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1235,"","TESTPROC","src/jcl/WMIN4782D/procs/TESTPROC.proc","JCL","JCL_PROC","PHYSICAL",0,0,15,0,16,2,0,-1,-1
+1237,1235,"TESTPROC.PROCSTEP01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1239,1235,"TESTPROC.PROCSTEP02.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1241,"","VAR1.PROD.DUMMY","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1240,"","VAR1.PROD.LOADLIB","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+1236,"TESTJOB","EXEC_PROC","Properties: [PROC=TESTPROC,ENV=PROD], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOB]"
+1235,"TESTPROC","EXEC","Properties: [PGM=IDMSBCF,REGION=2047M], Data Definitions: [STEPLIB{DSN=VAR1.PROD.LOADLIB,DISP=SHR},DUMMY{DISP=SHR,DSN=VAR1.PROD.DUMMY}], Additional Properties: [Fully Qualified Step name=STEP01.PROCSTEP02,Step name=PROCSTEP02,Job name=TESTJOB]"
+1235,"TESTPROC","EXEC","Properties: [PGM=PROGRAM1,REGION=2047M], Data Definitions: [STEPLIB{DSN=VAR1.PROD.LOADLIB,DISP=SHR},DUMMY{DISP=SHR,DSN=VAR1.PROD.DUMMY}], Additional Properties: [Fully Qualified Step name=STEP01.PROCSTEP01,Step name=PROCSTEP01,Job name=TESTJOB]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+1239,"TESTPROC.PROCSTEP02.EXEC_PGM",-1,"IDMSBCF","UNKNOWN","UNKNOWN","Calls","[1155, 1220, 1226, 1232, 1238]","LATE","{}",-1,-1,-1,-1
+1237,"TESTPROC.PROCSTEP01.EXEC_PGM",-1,"PROGRAM1","UNKNOWN","UNKNOWN","Calls","[1155, 1220, 1226, 1232, 1238]","LATE","{}",-1,-1,-1,-1
+1236,"TESTJOB",1238,"TESTJOB.STEP01.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+1238,"TESTJOB.STEP01.EXEC",1235,"TESTPROC","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+1235,"TESTPROC",1237,"TESTPROC.PROCSTEP01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1235,"TESTPROC",1239,"TESTPROC.PROCSTEP02.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1237,"TESTPROC.PROCSTEP01.EXEC_PGM",1241,"VAR1.PROD.DUMMY","RESOURCE","RESOURCE_FILE","Accesses","[1155, 1220, 1226, 1232, 1238]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""ID_NAME"":""DUMMY"",""DISP"":""SHR""}]}",-1,-1,-1,-1
+1239,"TESTPROC.PROCSTEP02.EXEC_PGM",1241,"VAR1.PROD.DUMMY","RESOURCE","RESOURCE_FILE","Accesses","[1155, 1220, 1226, 1232, 1238]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""ID_NAME"":""DUMMY"",""DISP"":""SHR""}]}",-1,-1,-1,-1
+1237,"TESTPROC.PROCSTEP01.EXEC_PGM",1240,"VAR1.PROD.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","[1155, 1220, 1226, 1232, 1238]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""ID_NAME"":""STEPLIB"",""DISP"":""SHR""}]}",-1,-1,-1,-1
+1239,"TESTPROC.PROCSTEP02.EXEC_PGM",1240,"VAR1.PROD.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","[1155, 1220, 1226, 1232, 1238]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""ID_NAME"":""STEPLIB"",""DISP"":""SHR""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

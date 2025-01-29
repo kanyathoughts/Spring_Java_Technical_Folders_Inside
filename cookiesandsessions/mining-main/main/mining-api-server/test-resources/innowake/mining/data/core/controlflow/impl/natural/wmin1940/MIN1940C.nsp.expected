@@ -1,0 +1,21 @@
+ #2 DefineDataStmt
+ #16 IncludeStmt, FROM={TestEntryPoint}, TO={#20}
+ #17 FormatStmt
+ #20 DefineWorkFileStmt, FROM={#16}, TO={#22}
+ #22 WriteWorkFileStmt, FROM={#20}, TO={#24}
+ #24 WriteWorkFileStmt, FROM={#22}, TO={#26}
+ #26 WriteWorkFileStmt, FROM={#24}, TO={#28}
+ #28 CloseWorkFileStmt, FROM={#26}, TO={#29}
+ #29 ReadWorkFileStmt, Label: READ WORK FILE 1 SOMEFIELDNAME, FROM={#28, #35(FALSE), #44, #50, #72}, TO={#35(BEFORE BREAK PROCESSING), #50(AT BREAK OF SOMEFIELDNAME), #52(LOOP BODY), #78(LOOP END)}
+  #33 EveryRecord
+   #34 BeforeBreakStmt, Label: BEFORE BREAK PROCESSING
+    #35 IfStmt, Label: IF SOMEFIELDNAME EQ 'PATRICK', FROM={#29(BEFORE BREAK PROCESSING)}, TO={#29(FALSE), #41(TRUE)}
+      #41 AssignStmt, FROM={#35(TRUE)}, TO={#44}
+      #44 EscapeStmt, FROM={#41}, TO={#29}
+   #47 BreakStmt, Label: AT BREAK OF SOMEFIELDNAME
+    #50 SkipStmt, FROM={#29(AT BREAK OF SOMEFIELDNAME)}, TO={#29}
+   #52 IfStmt, Label: IF TO-PROCESS EQ FALSE, FROM={#29(LOOP BODY)}, TO={#58(TRUE), #72(FALSE)}
+     #58 AssignStmt, FROM={#52(TRUE)}, TO={#61}
+     #61 WRITE (1) 'RECORD WITH ' SOMEFIELDNAME ' SHOULD NOT BEEN WRITTEN', FROM={#58}, TO={#72}
+   #72 WRITE (1) NOTITLE 5X SOMEFIELDNAME, FROM={#52(FALSE), #61}, TO={#29}
+ #78 EndStmt, FROM={#29(LOOP END)}, TO={TestReturnPoint}

@@ -1,0 +1,11 @@
+ %PAGE;                                                                 
+                                                                        
+ ON ERROR BEGIN;                                                        
+    CALL PRINT_SUMMARY_REPORT;                                    /*49*/
+    IF RPT_ONLY='VER' | RPT_ONLY='UPD' THEN                       /*54*/
+       CALL PLIDUMP('S');                                         /*54*/
+    ELSE                                                          /*54*/
+       CALL PLIDUMP('BS');                                              
+ END;                                                                   
+                                                                        
+ %INCLUDE ADACNTL;                                                      

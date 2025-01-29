@@ -1,0 +1,11 @@
+ #2 DefineDataStmt
+ #19 IfSelectionStmt, Label: IF SELECTION NOT UNIQUE #A #B, FROM={TestEntryPoint}, TO={#23(TRUE), #28(FALSE)}
+   #23 WRITE '0', FROM={#19(TRUE)}, TO={#28}
+ #28 IfSelectionStmt, Label: IF SELECTION NOT UNIQUE #A #B, FROM={#19(FALSE), #23}, TO={#32(TRUE), #37(FALSE)}
+   #32 WRITE '1', FROM={#28(TRUE)}, TO={#41}
+   #37 WRITE '2', FROM={#28(FALSE)}, TO={#41}
+ #41 IfSelectionStmt, Label: IF SELECTION NOT UNIQUE IN #AUSWAHL(1:8), FROM={#32, #37}, TO={#47(TRUE), #52(FALSE)}
+   #47 WRITE '3', FROM={#41(TRUE)}, TO={#52}
+ #52 IfSelectionStmt, Label: IF SELECTION NOT UNIQUE & (1:8), FROM={#41(FALSE), #47}, TO={#58(TRUE), #63(FALSE)}
+   #58 WRITE '4', FROM={#52(TRUE)}, TO={#63}
+ #63 EndStmt, FROM={#52(FALSE), #58}, TO={TestReturnPoint}

@@ -1,0 +1,107 @@
+//VSFI100X JOB (VS06000,NSNS),'PRODUCTION',                             00010000
+//             REGION=4096K,USER=VSPRCTL,                               00020000
+//             MSGCLASS=T,CLASS=V                                       00030000
+//DEFOUT OUTPUT DEFAULT=YES,JESDS=ALL,DEST=D1111L01                     00040000
+//STEPA00 EXEC VSNATBAP,PARM=('MAXCL=0,MT=0,MADIO=0,AUTO=ON'),          00250000
+//             COND=(4,LE)                                              00260000
+//CMWKF01  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT,UNIT=SYSDA,                 00270000
+//             DISP=(,CATLG,DELETE),                                    00280000
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=27920),                   00300000
+//             SPACE=(CYL,(1,1))                                        00310000
+//CMPRINT  DD  SYSOUT=*                                                 00320000
+//SYSIN    DD  *                                                        00330000
+LOGON FIBATCH                                                           00340000
+FI1002P7                                                                00350000
+FIN                                                                     00360000
+/*                                                                      00370000
+//STEPB00 EXEC PGM=SORT,COND=(4,LE)                                     00410000
+//SYSOUT   DD  SYSOUT=*                                                 00420000
+//SORTMSG  DD  SYSOUT=*                                                 00430000
+//SORTIN   DD  DSN=VSTA.PRD1.VSFI100X.GLEXT,DISP=SHR                    00440000
+//SORTOUT  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT,DISP=OLD                    00450000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,15)                                00460000
+//SYSIN    DD  *                                                        00500000
+ SORT FIELDS=(1,43,CH,A)                                                00510000
+ SUM FIELDS=(48,11,ZD)                                                  00520000
+//STEPC00 EXEC VSNATBAP,COND=(4,LE)                                     00570000
+//CMWKF01  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT,DISP=(OLD,DELETE,KEEP)      00580000
+//CMWKF02  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT.BAL,UNIT=BATCH,             00600000
+//             DISP=(,CATLG,DELETE),                                    00610000
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=27920),                   00630000
+//             SPACE=(CYL,(1,1))                                        00640000
+//CMPRINT  DD  SYSOUT=*                                                 00650000
+//SYSIN    DD  *                                                        00660000
+LOGON FIBATCH                                                           00670000
+FI1002P8                                                                00680000
+FIN                                                                     00690000
+//STEPD00 EXEC PGM=SORT,COND=(4,LE)                                     00740000
+//SYSOUT   DD  SYSOUT=*                                                 00750000
+//SORTMSG  DD  SYSOUT=*                                                 00760000
+//SORTIN   DD  DSN=VSTA.PRD1.VSFI100X.GLEXT.BAL,DISP=SHR                00770000
+//SORTOUT  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT.BAL,DISP=OLD                00780000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,15)                                00790000
+//SYSIN    DD  *                                                        00830000
+ SORT FIELDS=(1,43,CH,A)                                                00840000
+/*                                                                      00850000
+//STEPE00 EXEC VSNATBAP,COND=(4,LE)                                     00890000
+//CMWKF01  DD  DSN=VSTA.PRD1.VSFI100X.GLEXT.BAL,DISP=(OLD,DELETE,KEEP)  00900000
+//CMWKF02  DD  DSN=VSTA.PRD1.VSFI100X.ME614.DAT(+1),UNIT=BATCH,         00920000
+//             DISP=(,CATLG,DELETE),                                    00930000
+//             DCB=(RECFM=FB,LRECL=8260,BLKSIZE=24780),                 00950000
+//             SPACE=(CYL,(5,1),RLSE)                                   00960000
+//CMPRINT  DD  SYSOUT=*                                                 00970000
+//SYSIN    DD  *                                                        00980000
+LOGON FIBATCH                                                           00990000
+FI1002P9 3                                                              01000000
+FIN                                                                     01010000
+/*                                                                      01020000
+//MQFTOT  EXEC PGM=MQFTOT,PARM='FROM.CHVIS1                     ',      01060000
+//             COND=(4,LE)                                              01070000
+//STEPLIB  DD  DSN=VSTA.PRD1.COBOL.BATCH.USERLOAD,DISP=SHR              01080000
+//MQTANK   DD  DSN=VSTA.PRD1.FRE.MQTANK,DISP=SHR                        01090000
+//MQTCB    DD  DSN=VSTA.PRD1.FRE.MQTCB.CLUSTER,DISP=SHR                 01100000
+//MQTCB1   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH1,DISP=SHR                   01110000
+//MQTCB2   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH2,DISP=SHR                   01120000
+//MQLIST   DD  DSN=VSTA.PRD1.VSFI100O.MQLIST,DISP=SHR                   01130000
+//MQTSEQ   DD  DSN=VSTA.PRD1.FRE.MQSEQ,DISP=SHR                         01140000
+//AP11DIS  DD  DUMMY                                                    01150000
+//AP11HEA  DD  DUMMY                                                    01160000
+//AP11LIN  DD  DUMMY                                                    01170000
+//AP11LL   DD  DUMMY                                                    01180000
+//AP11REL  DD  DUMMY                                                    01190000
+//AR9BCR   DD  DUMMY                                                    01200000
+//AR9BSRF  DD  DUMMY                                                    01210000
+//GL614    DD  DSN=VSTA.PRD1.VSFI100X.ME614.DAT(+1),DISP=SHR            01220000
+//PR016001 DD  DUMMY                                                    01230000
+//PR016002 DD  DUMMY                                                    01240000
+//SYSOUT   DD  SYSOUT=*                                                 01250000
+//MQTTOQ  EXEC PGM=MQTTOQ,COND=(4,LE)                                   01300000
+//STEPLIB  DD  DSN=VSTA.PRD1.COBOL.BATCH.USERLOAD,DISP=SHR              01310000
+//         DD  DSN=SYSP.MQSERIES.WMQ531.SCSQAUTH,DISP=SHR               01320001
+//MQTANK   DD  DSN=VSTA.PRD1.FRE.MQTANK,DISP=SHR                        01340000
+//MQTCB    DD  DSN=VSTA.PRD1.FRE.MQTCB.CLUSTER,DISP=SHR                 01350000
+//MQTCB1   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH1,DISP=SHR                   01360000
+//MQTCB2   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH2,DISP=SHR                   01370000
+//MQTLEN   DD  DSN=VSTA.PRD1.FRE.MQLEN,DISP=SHR                         01380000
+//*                                                                     01390000
+//SYSIN    DD *                                                         01400000
+FROM.CHVIS1                                                             01410000
+MQS1                                                                    01420000
+/*                                                                      01430000
+//SYSOUT   DD  DSN=VSTA.PRD1.VSFI100X.MQSERIES.RPT,UNIT=SYSDA,          01460000
+//             DISP=(,CATLG,DELETE),                                    01470000
+//             DCB=(RECFM=FBA,LRECL=133,BLKSIZE=27930),                 01490000
+//             SPACE=(CYL,(1,1),RLSE)                                   01500000
+//STEPF00 EXEC PGM=IEBGENER,COND=(0,LT)                                 01550000
+//SYSPRINT DD  SYSOUT=*                                                 01560000
+//SYSUT1   DD  DSN=VSTA.PRD1.VSFI100X.MQSERIES.RPT,DISP=SHR             01570000
+//SYSUT2   DD  SYSOUT=*                                                 01580000
+//SYSIN    DD  *                                                        01590000
+//STEPF10 EXEC PGM=IEBGENER,COND=(0,LT)                                 01650000
+//SYSPRINT DD  SYSOUT=*                                                 01660000
+//SYSUT1   DD  DSN=VSTA.PRD1.VSFI100X.MQSERIES.RPT,                     01670000
+//             DISP=(OLD,DELETE,KEEP)                                   01680000
+//SYSUT2   DD  SYSOUT=(C,VSFI100X)                                      01690000
+//SYSIN    DD  *                                                        01700000
+/*                                                                      01710000
+//                                                                      01720000

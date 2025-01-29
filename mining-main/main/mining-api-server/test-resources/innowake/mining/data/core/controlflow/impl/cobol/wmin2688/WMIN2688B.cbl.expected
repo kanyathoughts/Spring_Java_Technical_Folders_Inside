@@ -1,0 +1,24 @@
+#14 ProcedureDivision
+ #15 CobolSection, FROM={TestEntryPoint}, TO={#16}
+  #16 CobolLabelStmt B100-BOJ-ROUTINE , FROM={#15}, TO={#17}
+   #17 CobolAcceptStmt, FROM={#16}, TO={#22}
+   #22 CobolPerformStmt 9400-SYS-YYMMDD THRU 9400-SYS-YYMMDD-EXIT , FROM={#17}, TO={#38}
+    #23 CobolFieldReference
+    #24 CobolFieldReference
+   #25 CobolDisplayStmt "SYS DATE ", FROM={#103}, TO={#30}
+   #30 CobolMoveStmt, FROM={#25}, TO={#35}
+  #35 CobolLabelStmt B100-BOJ-ROUTINE-EXIT , FROM={#30}, TO={#36}
+   #36 CobolExitStmt, FROM={#35}, TO={#38}
+   #37 CobolComment
+  #38 CobolLabelStmt 9400-SYS-YYMMDD , FROM={#22, #36}, TO={#39}
+   #39 CobolAcceptStmt, FROM={#38}, TO={#44}
+   #44 CobolMoveStmt, FROM={#39}, TO={#55}
+   #55 CobolMoveStmt, FROM={#44}, TO={#66}
+   #66 CobolMoveStmt, FROM={#55}, TO={#77}
+   #77 CobolIfStmt <branch stmt>, Label: IF WS-SYS-CCYYMMDD-YY GT 72, FROM={#66}, TO={#83(TRUE), #93(FALSE)}
+    #78 CobolComparisonExpression
+    #83 CobolThenBlock, FROM={#77(TRUE)}, TO={#84}
+     #84 CobolMoveStmt, FROM={#83}, TO={#103}
+    #93 CobolElseBlock, FROM={#77(FALSE)}, TO={#94}
+     #94 CobolMoveStmt, FROM={#93}, TO={#103}
+  #103 CobolLabelStmt 9400-SYS-YYMMDD-EXIT , FROM={#84, #94}, TO={#25, TestReturnPoint}

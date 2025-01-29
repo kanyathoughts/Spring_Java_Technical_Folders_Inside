@@ -1,0 +1,19 @@
+ RECORD ACCUM_ROUTER_REC
+    VARIANT
+    CASE
+	STRING	Key0		    = 18%   ! MOD #001
+    CASE
+	ICIDATE	Update_Date
+	STRING  Source_Vendor	    =  3%   ! Source Vendor (ABS, ESI, MHN, UC)
+	STRING  Sequence_Num	    =  8%
+
+	VARIANT
+	CASE
+	    STRING      Key1	    =  7%
+	CASE
+	    STRING	Proc_To	    =  3%   !  (ABS, ESI, MHN)
+	    ICIDATE	Proc_Date
+	END VARIANT
+	STRING		FILL	    =  28%
+    END VARIANT
+END RECORD

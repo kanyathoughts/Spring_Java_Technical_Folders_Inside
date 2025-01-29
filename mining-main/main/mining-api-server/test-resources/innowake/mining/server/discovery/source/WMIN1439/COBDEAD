@@ -1,0 +1,130 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             DEADCO.                                  00002000
+000090******************************************************************00009000
+000100 ENVIRONMENT DIVISION.                                            00010000
+000360 PROCEDURE DIVISION.                                              00036000
+000450******************************************************************00045000
+000460 INITIALIZATION SECTION.                                          00046000
+000470 IN-START.                                                        00047000
+000480 IN-ZERO-LS.                                                      00048000
+000490     MOVE ZERO TO WS-8SCCASH.                                     00049000
+000500     MOVE ZERO TO WS-8SCWORK.                                     00050000
+000510     MOVE ZERO TO WS-8SCWKA.                                      00051000
+000520     MOVE ZERO TO WS-8SCAMT.                                      00052000
+000530 IN-EXIT.                                                         00053000
+000540     EXIT.                                                        00054000
+000550******************************************************************00055000
+000560 MAIN-LOGIC SECTION.                                              00056000
+000570 ML-START.                                                        00057000
+000580     IF DPDDM-SCPARM IS EQUAL TO +001                             00058000
+000590*        PERFORM REGULAR-CHECKING                                 00059000
+000600         GO TO ML-EXIT.                                           00060000
+000610     IF DPDDM-SCPARM IS EQUAL TO +003                             00061000
+000620         GO TO ML-EXIT.                                           00062000
+000630     IF DPDDM-SCPARM IS EQUAL TO +004                             00063000
+000640*        PERFORM BUSINESS-CHECKING                                00064000
+000650         GO TO ML-EXIT.                                           00065000
+000660 ML-EXIT.                                                         00066000
+000670     GO TO RETURN-ROUTINE.                                        00067000
+000780 REGULAR-CHECKING SECTION.                                        00078000
+000790 RC-START.                                                        00079000
+000800     IF WS-8SCAVGBAL IS NOT LESS THAN +750                        00080000
+000810         OR DPDDM-SCDRNBR IS EQUAL TO +0                          00081000
+000820         GO TO RC-END.                                            00082000
+000830     IF DPDDM-SCLOWBAL IS NOT LESS THAN +300                      00083000
+000840         GO TO RC-END.                                            00084000
+000850     IF DPDDM-SCLOWBAL IS LESS THAN +100                          00085000
+000860         MOVE MIM-3007FRGNCHRGAMT (1 1) TO WS-8SCAMT              00086000
+000870         GO TO RC-END.                                            00087000
+000880     IF DPDDM-SCLOWBAL IS LESS THAN +200                          00088000
+000890         MOVE LS-MIM3008REC (7) TO MIM-3008DATA                   00089000
+000900         MOVE MIM-3008ACCAMT (1) TO WS-8SCAMT                     00090000
+000910         GO TO RC-END.                                            00091000
+000920     MOVE LS-MIM3008REC (8) TO MIM-3008DATA.                      00092000
+000930     MOVE MIM-3008ACCAMT (1) TO WS-8SCAMT.                        00093000
+000940 RC-END.                                                          00094000
+000950     MOVE WS-8SCAMT TO WS-8SCINCRCHG.                             00095000
+000960     ADD DPDDM-SCMISC TO WS-8SCAMT.                               00096000
+000970     MOVE DPDDM-SCMISC TO WS-8SCMISCCHG.                          00097000
+000980     MOVE WS-8SCAMT TO WS-8SCAMTASD.                              00098000
+000990     IF DPDDM-BALCUR IS EQUAL TO +0                               00099000
+001000         OR DPDDM-STMCODLS IS LESS THAN DPDDM-MOPNDT              00100000
+001010         MOVE ZERO TO WS-8SCAMTASD                                00101000
+001020         MOVE 'X' TO WS-8SCNOCHG.                                 00102000
+001030 RC-EXIT.                                                         00103000
+001040     EXIT.                                                        00104000
+001170 BUSINESS-CHECKING SECTION.                                       00117000
+001180 BC-START.                                                        00118000
+001190     MOVE +0 TO WS-8SCAMT.                                        00119000
+001200     MOVE MIM-3007FLATFEE TO WS-8SCFEE.                           00120000
+001210     MOVE MIM-3007FLATFEE TO WS-8SCAMT.                           00121000
+001220 BC-DEBITS.                                                       00122000
+001230* S/C DEBITS ARE IN ACCUMULATOR 06                                00123000
+001240     MOVE LS-MIM3008REC (6) TO MIM-3008DATA.                      00124000
+001250     SUBTRACT MIM-3008ACCFREE FROM DPDDM-SCDRNBR.                 00125000
+001260     IF DPDDM-SCDRNBR IS LESS THAN +0                             00126000
+001270         MOVE +0 TO DPDDM-SCDRNBR.                                00127000
+001280     MULTIPLY MIM-3008ACCAMT (1) BY DPDDM-SCDRNBR                 00128000
+001290         GIVING WS-8SCWORK.                                       00129000
+001300     ADD WS-8SCWORK TO WS-8SCAMT.                                 00130000
+001310     ADD MIM-3008ACCFREE TO DPDDM-SCDRNBR.                        00131000
+001320     MOVE WS-8SCWORK TO WS-8SCACCUMCHG (6).                       00132000
+001330     MOVE DPDDM-SCDRNBR TO WS-8SCACCUMNBR (6).                    00133000
+001340 BC-FITEMS.                                                       00134000
+001350     MULTIPLY MIM-3007FRGNCHRGAMT (1 1) BY DPDDM-SCFITEM1         00135000
+001360         GIVING WS-8SCWORK.                                       00136000
+001370     ADD WS-8SCWORK TO WS-8SCAMT.                                 00137000
+001380     MOVE WS-8SCWORK TO WS-8SCFRGNCHRG (1).                       00138000
+001390     MULTIPLY MIM-3007FRGNCHRGAMT (2 1) BY DPDDM-SCFITEM2         00139000
+001400         GIVING WS-8SCWORK.                                       00140000
+001410     ADD WS-8SCWORK TO WS-8SCAMT.                                 00141000
+001420     MOVE WS-8SCWORK TO WS-8SCFRGNCHRG (2).                       00142000
+001430     MULTIPLY MIM-3007FRGNCHRGAMT (3 1) BY DPDDM-SCFITEM3         00143000
+001440         GIVING WS-8SCWORK.                                       00144000
+001450     ADD WS-8SCWORK TO WS-8SCAMT.                                 00145000
+001460     MOVE WS-8SCWORK TO WS-8SCFRGNCHRG (3).                       00146000
+001470     MULTIPLY MIM-3007FRGNCHRGAMT (4 1) BY DPDDM-SCFITEM4         00147000
+001480         GIVING WS-8SCWORK.                                       00148000
+001490     ADD WS-8SCWORK TO WS-8SCAMT.                                 00149000
+001500     MOVE WS-8SCWORK TO WS-8SCFRGNCHRG (4).                       00150000
+001510     MULTIPLY MIM-3007FRGNCHRGAMT (5 1) BY DPDDM-SCFITEM5         00151000
+001520         GIVING WS-8SCWORK.                                       00152000
+001530     ADD WS-8SCWORK TO WS-8SCAMT.                                 00153000
+001540     MOVE WS-8SCWORK TO WS-8SCFRGNCHRG (5).                       00154000
+001550 BC-LITEMS.                                                       00155000
+001560     MULTIPLY MIM-3007LOCALCHRGAMT (1) BY DPDDM-SCLITEMS          00156000
+001570         GIVING WS-8SCWORK.                                       00157000
+001580     ADD WS-8SCWORK TO WS-8SCAMT.                                 00158000
+001590     MOVE WS-8SCWORK TO WS-8SCLITEMCHG.                           00159000
+001600 BC-CASH.                                                         00160000
+001610     MOVE DPDDM-SCCASH TO WS-8SCCASH.                             00161000
+001620     MULTIPLY .01 BY WS-8SCCASH.                                  00162000
+001630     MULTIPLY MIM-3007CASHCHRG BY WS-8SCCASH GIVING WS-8SCWORK.   00163000
+001640     ADD WS-8SCWORK TO WS-8SCAMT.                                 00164000
+001650     MOVE WS-8SCWORK TO WS-8SCCASHCHG.                            00165000
+001660 BC-AVERAGE.                                                      00166000
+001670     IF WS-8SCAVGBAL IS NOT LESS THAN +10000                      00167000
+001680         GO TO BC-RESERVE-FLOAT.                                  00168000
+001690     IF DPDDM-SCLOWBAL IS LESS THAN +0                            00169000
+001700         MOVE +0 TO WS-8SCWORK                                    00170000
+001710         GO TO BC-GIVE-CREDIT.                                    00171000
+001720     COMPUTE WS-8SCWORK =                                         00172000
+001730         (MIM-3007BALCRRATE * DPDDM-SCLOWBAL) / 12.               00173000
+001740     GO TO BC-GIVE-CREDIT.                                        00174000
+001750 BC-RESERVE-FLOAT.                                                00175000
+001760     COMPUTE WS-8SCWORK =                                         00176000
+001770         ((WS-8SCAVGBAL * .75) * MIM-3007BALCRRATE) / 12.         00177000
+001780 BC-GIVE-CREDIT.                                                  00178000
+001790     SUBTRACT WS-8SCWORK FROM WS-8SCAMT.                          00179000
+001800     MOVE WS-8SCWORK TO WS-8SCBALCR.                              00180000
+001810     ADD DPDDM-SCMISC TO WS-8SCAMT.                               00181000
+001820     MOVE WS-8SCAMT TO WS-8SCAMTASD.                              00182000
+001830 BC-EXIT.                                                         00183000
+001840     EXIT.                                                        00184000
+001850******************************************************************00185000
+001860 RETURN-ROUTINE SECTION.                                          00186000
+001870 RET-START.                                                       00187000
+001880     EXIT.                                                        00188000
+001890 RET-RETURN.                                                      00189000
+001900     GOBACK.                                                      00190000
+001910******************************************************************00191000

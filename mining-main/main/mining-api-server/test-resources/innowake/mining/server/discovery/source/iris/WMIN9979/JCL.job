@@ -1,0 +1,18 @@
+//JCL  JOB 000,CLASS=P,MSGCLASS=C,PRTY=13                               00001000
+//JOBLIB   DD DSN=DSNB10.SDSNLOAD                                       00003000
+//STEP0010 EXEC PGM=EZTPA00                                             00004000
+//SYSIN    DD  *                                                        00004000
+** DISPLAY ROW COUNT FOR VWRKGR **
+*------------------------------------------------------------------*
+PARM SSID(DP0G)
+*
+DEFINE W-COUNT W 4 B 0
+*
+FILE REPORT1 PRINTER
+*
+JOB INPUT SQL START(START-RTN) FINISH(TOTAL-RTN)
+*------------------------------------------------------------------*
+SELECT COUNT +
+FROM AVGI00.VWRKGR +
+INTO :W-COUNT
+*------------------------------------------------------------------" 

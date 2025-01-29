@@ -1,0 +1,21 @@
+MGOMFS2   FMT                                                           00010000
+         DEV   TYPE=(3270,2),FEAT=IGNORE,DSCA=X'00F0',                 C00020000
+               PFK=(PGBK,1='=-1 ')                                      00021000
+         DIV   TYPE=INOUT                                               00022000
+         DPAGE FILL=NULL,CURSOR=((24,1))                                00023000
+HEADER   DFLD  POS=(1,3),LTH=70,ATTR=(PROT,HI)                          00024000
+         DO    21,1,MAX,SUF=1                                           00025000
+DATA     DFLD  POS=(2,2),LTH=70,ATTR=(PROT)                             00026000
+         ENDDO                                                          00027000
+         FMTEND                                                         00028000
+MGOMFS2  MSG   TYPE=OUTPUT,SOR=(MGOMFS2,IGNORE),FILL=C' ',PAGE=YES      00029000
+         SEG                                                            00030000
+         MFLD  HEADER,LTH=70                                            00040000
+         DO    21,SUF=1                                                 00050000
+         MFLD  DATA,LTH=70                                              00060000
+         ENDDO                                                          00070000
+         MSGEND                                                         00080000
+MGOMFS6  MSG   TYPE=INPUT,SOR=(MGOMFS8,IGNORE)                          00090000
+         MFLD  PGBK,LTH=4,FILL=NULL                                     00100000
+         MSGEND                                                         00110000
+         END                                                            00120000

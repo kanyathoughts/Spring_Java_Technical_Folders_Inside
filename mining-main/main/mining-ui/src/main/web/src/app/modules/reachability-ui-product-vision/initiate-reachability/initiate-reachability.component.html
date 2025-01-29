@@ -1,0 +1,47 @@
+<h3 class="initiate-reachability__title">{{'reachability.illustrateReachability' | translate}}</h3>
+<div class="initiate-reachability__container">
+  <div class="initiate-reachability__item">
+    <nz-radio-group [(ngModel)]="switchUpperLowerBoundary">
+      <label nz-radio nzValue="upper" class="initiate-reachability__modal-text">{{'reachability.initiateUpper' | translate}}</label>
+      <img src="assets/Illustration Upper Bound.svg" alt="Upper Bound Illustration" />
+    </nz-radio-group>
+    <span class="initiate-reachability__img-text">{{'reachability.imageText' | translate}}</span>
+    <nz-space [nzDirection]="'vertical'">
+      <label *nzSpaceItem class="initiate-reachability__criteria">{{'reachability.criteria1' | translate}} <button nz-button nzType="link" (click)="redirectToConfig()"><i nz-icon nzType="setting"></i></button></label> 
+      <div [ngClass]="listOfUpperBound.length > 10 ? 'initiate-reachability__display-tag' : ''" *nzSpaceItem><nz-tag class="initiate-reachability__criteria-content" *ngFor="let type of listOfUpperBound">{{type}}</nz-tag></div>
+    </nz-space>
+    <nz-space [nzDirection]="'vertical'"  class="initiate-reachability__criteria-content">
+      <label *nzSpaceItem>{{'reachability.criteria2' | translate}}<span class="block-view__info-icon" nz-icon
+        nzType="info-circle" nz-tooltip
+        nzTooltipTitle="{{'reachability.criteriaTooltip' | translate}}"></span></label>
+      <app-taxonomy-filter *nzSpaceItem [disableFilter]="switchUpperLowerBoundary === 'lower'"
+        [useMetricsFilterService]="false" (taxonomyId)="getTaxonomySelection($event)"
+        [reachabilityFilter]="true"></app-taxonomy-filter>
+    </nz-space>
+  </div>
+  <div class="initiate-reachability__item">
+    <nz-radio-group [(ngModel)]="switchUpperLowerBoundary">
+      <label nz-radio nzValue="lower" class="initiate-reachability__modal-text">{{'reachability.initiateLower' | translate}}</label>
+      <img src="assets/Illustration Lower Bound.svg" alt="Lower Bound Illustration" />
+    </nz-radio-group>
+    <span class="initiate-reachability__img-text">{{'reachability.imageText' | translate}}</span>
+    <nz-space [nzDirection]="'vertical'">
+      <label *nzSpaceItem class="initiate-reachability__criteria">{{'reachability.criteria1' | translate}} <button nz-button nzType="link" (click)="redirectToConfig()"><i nz-icon nzType="setting"></i></button></label>
+      <div [ngClass]="listOfLowerBound.length > 10 ? 'initiate-reachability__display-tag' : ''" *nzSpaceItem><nz-tag class="initiate-reachability__criteria-content" *ngFor="let type of listOfLowerBound">{{type}}</nz-tag></div>
+    </nz-space>
+    <nz-space [nzDirection]="'vertical'" [ngClass]="listOfLowerBound.length > 10 ? 'initiate-reachability__taxonomy' : 'initiate-reachability__criteria-content'">
+      <label *nzSpaceItem>{{'reachability.criteria2' | translate}}<span class="block-view__info-icon" nz-icon
+          nzType="info-circle" nz-tooltip
+          nzTooltipTitle="{{'reachability.criteriaTooltip' | translate}}"></span></label>
+      <app-taxonomy-filter *nzSpaceItem [disableFilter]="switchUpperLowerBoundary === 'upper'"
+        [useMetricsFilterService]="false" (taxonomyId)="getTaxonomySelection($event)"
+        [reachabilityFilter]="true"></app-taxonomy-filter>
+    </nz-space>
+  </div>
+  <p class="initiate-reachability__modal-text">{{'reachability.criteriaText' | translate}}</p>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">{{ 'btnLabel.cancel' | translate }}</button>
+    <button nz-button nzType="primary"
+      (click)="sendToParent()">{{'reachability.createReachability' | translate}}</button>
+  </div>
+</div>

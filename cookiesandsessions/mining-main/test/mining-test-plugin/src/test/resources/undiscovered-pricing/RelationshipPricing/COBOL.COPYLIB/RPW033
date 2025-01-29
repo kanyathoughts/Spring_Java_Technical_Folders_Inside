@@ -1,0 +1,27 @@
+000010*01  RPW033-AREAS.                                                00001000
+000020******************************************************************00002000
+000030*    RPW033 - WORK AREAS FOR LEFT JUSTIFIED ACCOUNT NUMBER       *00003000
+000040*    FORMAT ROUTINE.                                             *00004000
+000050******************************************************************00005000
+000060     03  RPW033-SUB1             PIC S9(04)      COMP.            00006000
+000070     03  RPW033-SUB2             PIC S9(04)      COMP.            00007000
+000080     03  RPW033-SUB3             PIC S9(04)      COMP.            00008000
+000090     03  RPW033-WIDTH            PIC 99          VALUE 18.        00009000
+000100     03  RPW033-LEADING          PIC X(01)       VALUE 'Y'.       00010000
+000110     03  RPW033-ACCOUNT          PIC X(18).                       00011000
+000120     03  RPW033-ACCOUNT-NUM                                       00012000
+000130                         REDEFINES RPW033-ACCOUNT                 00013000
+000140                                 PIC 9(18).                       00014000
+000150     03  FILLER          REDEFINES RPW033-ACCOUNT.                00015000
+000160         05  RPW033-ACCTX        PIC X(01)       OCCURS 18 TIMES. 00016000
+000170     03  RPW033-ACCT-FORMAT-OPTS.                                 00017000
+000180         05  RPW033-ACCTLN       PIC 9(02).                       00018000
+000190         05  RPW033-ACCTED       PIC 9(08).                       00019000
+000200         05  FILLER      REDEFINES RPW033-ACCTED.                 00020000
+000210             07  RPW033-AEED     PIC 9(02)       OCCURS 04 TIMES. 00021000
+000220     03  RPW033-FORMATTEDACCT    PIC X(18).                       00022000
+000230     03  FILLER          REDEFINES RPW033-FORMATTEDACCT.          00023000
+000240         05  RPW033-FACCTX       PIC X(01)       OCCURS 18 TIMES. 00024000
+000250******************************************************************00025000
+000260*        END FORMAT LEFT JUSTIFIED ACCOUNT NUMBER WORK AREA      *00026000
+000270******************************************************************00027000

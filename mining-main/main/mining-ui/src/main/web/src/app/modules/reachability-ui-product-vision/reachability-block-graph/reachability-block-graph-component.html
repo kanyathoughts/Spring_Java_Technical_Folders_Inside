@@ -1,0 +1,6 @@
+<reachability-explorer *ngIf="(!! reachabilityGraph || noGraphDataText) && isGraphUpdated" [showExports]="true"
+    [layout]="'HIERARCHIC_LAYOUT_LEFT_TO_RIGHT'" [reachabilityGraph]="reachabilityGraph"
+    [breadcrumbItems]="breadcrumbItems"  [depth]="selectedDepth" [networkUid]="networkUid" (filterRBGraph)="graphFilterChange($event)">
+</reachability-explorer>
+<mn-loader *ngIf=" ! showGraph || ! isGraphUpdated"></mn-loader>
+<nz-empty *ngIf="noGraphDataText" class="block-view__no-content" [nzNotFoundContent]="noGraphDataText"></nz-empty>

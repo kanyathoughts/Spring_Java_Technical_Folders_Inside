@@ -1,0 +1,52 @@
+ /* Manual file. */
+ CMP036A: PROCEDURE OPTIONS(MAIN);
+   %INCLUDE BAS001B;
+
+    /* Demonstrating Group Comparisons */
+    DCL 1 ARR_FD_A,
+            2 ARR_9_FD_A(9) FIXED DECIMAL(3) INIT((9)111),
+            2 ARR_9_FD_B(9) FIXED DECIMAL(3) INIT((9)121);
+            
+    DCL 1 ARR_FD_B,
+            2 ARR_9_FD_A(9) FIXED DECIMAL(3) INIT((9)121),
+            2 ARR_9_FD_B(9) FIXED DECIMAL(3) INIT((9)111);
+            
+    DCL 1 COMPARE,
+            2 COMP(9) bit(1),
+            2 COMP_1(9) bit(1);
+    COMPARE = ARR_FD_A < ARR_FD_B;
+   
+    CALL HEXDUMP32(ADDR(ARR_FD_A),
+              SIZE(ARR_FD_A));
+    CALL HEXDUMP32(ADDR(ARR_FD_B),
+              SIZE(ARR_FD_B));
+    CALL HEXDUMP32(ADDR(COMPARE),
+              SIZE(COMPARE));
+              
+    
+    /* Demonstrating BIT AND CHAR Comparisons */
+    DCL 1 CHAR_BIT,
+            2 CHAR_A CHAR(1) INIT('0'),
+            2 BIT_B BIT(8) INIT(11110000B),
+            2 COMPARE_LT BIT(1),
+            2 COMPARE_GT BIT(1),
+            2 COMPARE_NEQ BIT(1),
+            2 COMPARE_EQ BIT(1),
+            2 COMPARE_LTEQ BIT(1),
+            2 COMPARE_GTEQ BIT(1),
+            2 COMPARE_NGT BIT(1),
+            2 COMPARE_NLT BIT(1);
+            
+    CHAR_BIT.COMPARE_LT = CHAR_BIT.CHAR_A < CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_GT = CHAR_BIT.CHAR_A > CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_NEQ = CHAR_BIT.CHAR_A ¬= CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_EQ = CHAR_BIT.CHAR_A = CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_LTEQ = CHAR_BIT.CHAR_A <= CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_GTEQ = CHAR_BIT.CHAR_A >= CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_NGT = CHAR_BIT.CHAR_A ¬> CHAR_BIT.BIT_B;
+    CHAR_BIT.COMPARE_NLT = CHAR_BIT.CHAR_A ¬< CHAR_BIT.BIT_B;
+    
+    CALL HEXDUMP32(ADDR(CHAR_BIT),
+          SIZE(CHAR_BIT));
+    
+ END CMP036A;

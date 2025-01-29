@@ -1,0 +1,25 @@
+
+FILE PERSNL FB(150 1800)                                                
+  EMP#             9    5  N                                            
+  EMPNAME         17   20  A                                            
+    NAME-LAST  EMPNAME     8  A                                         
+    NAME-FIRST EMPNAME +8 12  A                                         
+  PAY-NET         90    4  P 2                                          
+  PAY-GROSS       94    4  P 2                                                                                                               
+JOB INPUT PERSNL NAME MYPROG FINISH FINISH-PROC  
+ IF PAY-GROSS NOT NUMERIC 
+       IF PAY-GROSS > 500.00 
+
+        XMAS-BONUS = PAY-GROSS * 1.03 
+        END-IF
+     DISPLAY EMP# '  PERSONNEL RECORD IS DAMAGED'                       
+     GOTO JOB    
+ ELSE   
+  IF PAY-GROSS > 500.00 
+
+        XMAS-BONUS = PAY-GROSS * 1.03 
+  ELSE 
+        XMAS-BONUS = PAY-GROSS * 1.05                    
+  END-IF   
+ END-IF 
+

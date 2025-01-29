@@ -1,0 +1,14 @@
+#6 ProcedureDivision
+ #7 CobolPerformStmt TESTPARA, FROM={TestEntryPoint}, TO={#10}
+  #8 CobolFieldReference
+ #9 CobolGoBackStmt, FROM={#19, #23}, TO={TestReturnPoint}
+ #10 CobolLabelStmt TESTPARA , FROM={#7}, TO={#11}
+  #11 CobolSizeGuardedStmt, FROM={#10}, TO={#12}
+   #12 CobolAddStmt <branch stmt>, Label: ADD 1 TO TESTFIELD, FROM={#11}, TO={#18(ON SIZE ERROR), #22(NOT ON SIZE ERROR)}
+    #15 CobolExpressionWithRoundedFlag
+   #18 CobolSizeErrorStatement, FROM={#12(ON SIZE ERROR)}, TO={#19}
+    #19 CobolDisplayStmt 'A', FROM={#18}, TO={#9}
+   #22 CobolSizeErrorStatement, FROM={#12(NOT ON SIZE ERROR)}, TO={#23}
+    #23 CobolDisplayStmt 'B', FROM={#22}, TO={#9}
+ #26 CobolLabelStmt UNREACHABLE 
+  #27 CobolDisplayStmt 'UNREACHABLE'

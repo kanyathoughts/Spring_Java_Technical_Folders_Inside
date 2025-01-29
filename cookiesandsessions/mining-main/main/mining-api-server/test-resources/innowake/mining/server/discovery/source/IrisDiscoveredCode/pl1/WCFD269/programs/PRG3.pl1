@@ -1,0 +1,17 @@
+package_prg3: package exports (sub3);
+ 
+	sub3: proc (U,V);
+		dcl result character (20),
+	    	func3 entry,
+	
+    	result = func3 ('a', 'b'); /* internal or external? */    
+	end sub3;
+	
+	/* is func3 internal because not exported or external because level 1? */
+	func3: proc (U,V) returns returns (character (20));
+	    dcl (U,V) character (20);
+		
+		return 1;
+	end func3;
+
+end package_prg3;

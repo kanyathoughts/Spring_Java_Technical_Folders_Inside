@@ -1,0 +1,44 @@
+//RPC020D JOB
+//*                                                                     00001000
+//*    **************************************************************** 00002000
+//*    * STEP005   RPC020 - INSTITUTION CONTROL FILE CONVERSION         00003000
+//*    **************************************************************** 00004000
+//*                                                                     00005000
+//STEP005  EXEC PGM=IEFBR14                                             00006000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00007000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00008000
+//*                                                                     00009000
+//*    **************************************************************** 00010000
+//*    * STEP010   RPC020 - INITIALIZE INSTITUTION CONTROL FILE         00011000
+//*    *                    CONVERSION                                  00012000
+//*    **************************************************************** 00013000
+//*                                                                     00014000
+//STEP010  EXEC PGM=RPC020,REGION=1024K                                 00015000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00017000
+//SYSUDUMP DD  SYSOUT=*                                                 00018000
+//SYSOUT   DD  SYSOUT=*                                                 00019000
+//PRINTR   DD  SYSOUT=*                                                 00020000
+//PRFICH   DD  SYSOUT=*                                                 00021000
+//PRINTA   DD  SYSOUT=*                                                 00022000
+//PRINTB   DD  SYSOUT=*                                                 00023000
+//PRINTC   DD  SYSOUT=*                                                 00024000
+//PRINTD   DD  SYSOUT=*                                                 00025000
+//PRINTE   DD  SYSOUT=*                                                 00026000
+//PRINTF   DD  SYSOUT=*                                                 00027000
+//PRINTG   DD  SYSOUT=*                                                 00028000
+//PRINTH   DD  SYSOUT=*                                                 00029000
+//PRINTI   DD  SYSOUT=*                                                 00030000
+//PRINTJ   DD  SYSOUT=*                                                 00031000
+//PRNTR01  DD  SYSOUT=*                                                 00032000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00033000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),      00034000
+//             SPACE=(CYL,(1,1),RLSE)                                   00035000
+//*                                                                     00036000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPC020),DISP=SHR              00037000
+//*                                                                     00038000
+//

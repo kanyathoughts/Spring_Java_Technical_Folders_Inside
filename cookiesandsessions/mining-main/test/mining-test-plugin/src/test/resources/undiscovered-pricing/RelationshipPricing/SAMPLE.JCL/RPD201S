@@ -1,0 +1,67 @@
+//RPD201S JOB
+//*    ************************************                             00001000
+//*    * RPD201 - CREATE FILE TO LOAD ACT *                             00002000
+//*    ************************************                             00003000
+//RPD201S  EXEC PGM=IEFBR14                                             00004000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDACT,                               00005000
+//             DISP=(MOD,DELETE,DELETE),                                00006000
+//             UNIT=SYSDA,                                              00007000
+//             SPACE=(TRK,(1,1),RLSE)                                   00008000
+//RPACTE   DD  DSN=BNKCA.IN0.RP50.RPACTE,                               00009000
+//             DISP=(MOD,DELETE,DELETE),                                00010000
+//             UNIT=SYSDA,                                              00011000
+//             SPACE=(TRK,(1,1),RLSE)                                   00012000
+/*                                                                      00013000
+//RPD201   EXEC PGM=RPD201,PARM='ORG=(1)',REGION=1024K                  00014000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//* ====== OUTPUT FILE ==========================================       00016000
+//SYSPRINT DD  SYSOUT=*                                                 00017000
+//SYSUDUMP DD  SYSOUT=*                                                 00018000
+//SYSOUT   DD  SYSOUT=*                                                 00019000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDACT,                               00020000
+//             DISP=(NEW,CATLG,DELETE),                                 00021000
+//             UNIT=SYSDA,                                              00022000
+//             SPACE=(CYL,(50,25),RLSE),                                00023000
+//             DCB=(RECFM=VB,LRECL=2019,BLKSIZE=26303)                  00024000
+//RPACTE   DD  DSN=BNKCA.IN0.RP50.RPACTE,                               00025000
+//             DISP=(NEW,CATLG,DELETE),                                 00026000
+//             UNIT=SYSDA,                                              00027000
+//             DCB=(RECFM=FB,LRECL=0080,BLKSIZE=27920),                 00028000
+//             SPACE=(CYL,(2,1),RLSE)                                   00029000
+//* ====== INPUT FILE ===========================================       00030000
+//*    **********************************************************       00001000
+//*    * RPVSAMD1 - REL PRICING VSAM API SCALABLE DD STATEMENTS *       00002000
+//*    **********************************************************       00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00007000
+//RPFINTA  DD  DSN=BNKCAV.IN0.RP50.RPFINTA,DISP=SHR                     00008000
+//RPFINTC  DD  DSN=BNKCAV.IN0.RP50.RPFINTC,DISP=SHR                     00009000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00010000
+//RPFMSTA  DD  DSN=BNKCAV.IN0.RP50.RPFMSTA,DISP=SHR                     00011000
+//RPFMSTC  DD  DSN=BNKCAV.IN0.RP50.RPFMSTC,DISP=SHR                     00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFRELA  DD  DSN=BNKCAV.IN0.RP50.RPFRELA,DISP=SHR                     00014000
+//RPFRELC  DD  DSN=BNKCAV.IN0.RP50.RPFRELC,DISP=SHR                     00015000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00016000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00017000
+//RPFTRMA  DD  DSN=BNKCAV.IN0.RP50.RPFTRMA,DISP=SHR                     00018000
+//RPFTRMC  DD  DSN=BNKCAV.IN0.RP50.RPFTRMC,DISP=SHR                     00019000
+//RPACTW   DD  DSN=BNKCA.IN0.RP50.RPACTWA,DISP=SHR                      00032000
+//         DD  DSN=BNKCA.IN0.RP50.RPACTWC,DISP=SHR                      00033000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00034000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00035000
+//RPRPTS   DD  DSN=BNKCAV.IN0.RP50.RPRPTSA,DISP=SHR                     00036000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00038000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD201),DISP=SHR              00039000
+//*                                                                     00040000
+//

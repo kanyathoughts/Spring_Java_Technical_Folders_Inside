@@ -1,0 +1,25 @@
+ FILE TEST EXIT (MNO)                                                                
+ JOB INPUT NULL                                                         
+ 
+ FILE BTCHAPPL SQL                                         +
+ 		(SELECT APP_NO                                     +
+ 		 FROM TABLE4                                       +
+ 		 WHERE APP_NO = :WS-APP-CD                         +
+ 		 	OR APP_NO = :WS-APP-AB                         +
+ 		 	FOR FETCH ONLY WITH UR                         +
+ 		 	 INTO :WS-APP-NO                               +
+ 		 	 	 ,:WS-APP-AA                               +
+ 		 )
+ 		 
+ 
+  FILE BBPROCSG SQL                                        +
+ 		(SELECT APP_NO                                     +
+ 		 FROM TABLE5                                       +
+ 		 WHERE APP_NO = :WS-APP-CD                         +
+ 		 	OR APP_NO = :WS-APP-AB                         +
+ 		 	ORDER BY                                       +
+ 		 	        APP_NO                                 +
+ 		 	FOR FETCH ONLY WITH UR                         +
+ 		 	 INTO :WS-APP-NO                               +
+ 		 	 	 ,:WS-APP-AA                               +
+ 		 ) DEFER

@@ -1,0 +1,19 @@
+//IFELSE01 JOB (123),'INDUS',CLASS=A,MSGCLASS=A,MSGLEVEL=(1,1),
+//             NOTIFY=&SYSUID,REGION=6M                          
+//***************************************************            
+//STEP1    EXEC PGM=COBOLWRITE,PARM=('STEP1')
+//SYSOUT   DD DSN=LOG,
+//         DISP=(NEW,CATLG,DELETE)        
+//*
+//STEP8	   IF (STEP3A.RC NE 0) THEN
+//STEP8A      EXEC PGM=COBOLWRITE,PARM=('STEP8A THEN')
+//SYSOUT        DD DSN=LOG.MGO,
+//              DISP=(MOD,CATLG,DELETE)  
+//         ELSE
+//              IF (STEP3A.RC EQ 0) THEN
+//STEP8B          EXEC PGM=COBOLWRITE,PARM=('STEP8B ELSE IF')
+//SYSOUT          DD DSN=LOG,
+//                DISP=(MOD,CATLG,DELETE) 
+//              ENDIF 
+//         ENDIF
+//*

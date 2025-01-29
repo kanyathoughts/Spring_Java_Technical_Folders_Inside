@@ -1,0 +1,521 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "HP Basic",
+	"scopeName": "source.basic",
+	"fileTypes": [
+   		"bas",
+    	"basic"
+  	],
+	"patterns": [
+		{ "include": "#goto" },
+		{ "include": "#rem" },
+		{ "include": "#statements"} ,
+		{ "include": "#datatypes" },
+		{ "include": "#keywords" },
+		{ "include": "#numbers" },
+		{ "include": "#stringsDouble" },
+		{ "include": "#stringsSingle" },
+		{ "include": "#comments" },
+		{ "include": "#labels" },
+		{ "include": "#variables" }
+	],
+	"repository": {
+		"rem": {
+			"begin": "(?i)(REM)(?-i)",
+			"end": "^\\s*(\\d+)(?=[\\s])",
+			"contentName": "comment.block.documentation.basic",
+			"beginCaptures": {
+				"1": { "name": "keyword.other.basic"}
+			},
+			"endCaptures": {
+				"1": { "name": "constant.numeric.basic" }
+			}
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "entity.name.function.basic",
+					"match":"\\b(?i)(ABS%|ABS|ASCII|ATN|BUFSIZ|CCPOS|CHR\\$|COMP%|COS|CTRLC|CVT\\$\\$|CVT\\$%|DATE\\$|DATE4\\$|DECIMAL(?=\\s*\\()|DET|DIF\\$|ECHO|EDIT\\$|ERL|ERN\\$|ERR|ERT\\$|EXP|FIX|FORMAT\\$|FSP\\$|GETRFA|INKEY\\$|INSTR|INTEGER(?=\\s*\\()|INT(?=\\s*\\()|LBOUND|LEFT\\$|LEN|LOC|LOG10|LOG|MAG|MAGTAPE|MAR|MAX|MID\\$|MIN|MOD|NOECHO|NUM|NUM2|NUM\\$|NUM1\\$|PLACE\\$|POS|PROD\\$|QUO\\$|RAD\\$|RCTRLC|TCTRLO|REAL(?=\\s*\\()|RECOUNT|RIGHT\\$|RMSSTATUS|RND|SEG\\$|SGN|SIN|SPACE\\$|SQR|STATUS|STR\\$|STRING\\$|SUM\\$|SWAP%|TAB|TAN|TIME\\$|TIME|TRM\\$|UBOUND|VAL%|VAL|VMSSTATUS|XLATE\\$)(?-i)(?![a-zA-Z0-9._$%])"
+				},
+				{
+					"match": "\\b(REAL|INTEGER|BYTE|WORD|LONG|QUAD|SINGLE|DOUBLE|GFLOAT|SFLOAT|TFLOAT|XFLOAT|DECIMAL|STRING|RFA)(?![a-zA-Z])",
+					"name": "entity.name.type.basic"
+				},
+				{
+					"name": "keyword.control.basic",
+					"match": "\\b(?i)(IF|THEN|ELSE|END IF|FOR|STEP|NEXT|WHILE|UNTIL|CASE|WHEN|CONTINUE|END WHEN|GOTO|GO|TO|IN|SELECT|END SELECT)(?-i)\\b"
+				},
+				{
+					"name": "keyword.other.basic",
+					"match": "\\b(?i)(NOT|AND|OR|XOR|EQV|IMP)(?-i)\\b"
+				},
+				{
+					"name": "constant.language.basic",
+					"match": "\\b(NUL|BEL|BS|HT|LF|VT|FF|CR|SO|SI|ESC|SP|DEL|PI)\\b"
+				},
+				{
+					"name": "keyword.other.basic",
+					"match": "(?<![a-zA-Z0-9%$_])(?i)(%ABORT|%CROSS|%DEFINE|%ELSE|%END|%FROM|%IDENT|%IF|%INCLUDE|%LET|%LIBRARY|%LIST|%NOCROSS|%NOLIST|%PAGE|%PRINT|%SBTTL|%THEN|%TITLE|%UNDEFINE|%VARIANT|ABORT|ABS%|ABS|ACCESS%|ACCESS|ACTIVATE|ACTIVE|ALIGNED|ALLOW|ALTERNATE|AND|ANY|APPEND|ASCENDING|ASCII|ASC|AS|ASK|ATN2|ATN|BACK|BASE|BASIC|BEL|BINARY|BIT|BLOCKSIZE|BLOCK|BS|BUCKETSIZE|BUFFER|BUFSIZ|BYTE|BY|CALL|CASE|CAUSE|CCPOS|CHAIN|CHANGES|CHANGE|CHECKING|CHR\\$|CLEAR|CLK\\$|CLOSE|CLUSTERSIZE|COMMON|COMP%|COM|CONNECT|CONSTANT|CONTIGUOUS|CONTINUE|CON|COS|COT|COUNT|CR|CTRLC|CVTF\\$|CVT\\$F|CVT\\$\\$|CVT\\$%|CVT%\\$|DAT\\$|DATA|DAT|DATE\\$|DEACTIVATE|DECIMAL|DECLARE|DEFAULTNAME|DEF*|DEF|DELETE|DEL|DESCENDING|DESC|DET|DEVICE|DIF\\$|DIMENSION|DIM|DOUBLEBUF|DOUBLE|DRAW|DUPLICATES|DYNAMIC|ECHO|EDIT\\$|ELSE|END|EQV|EQ|ERL|ERN\\$|ERROR|ERR|ERT\\$|ESC|EXIT|EXPLICIT|EXP|EXTENDSIZE|EXTEND|EXTERNAL|FF|FIELD|FILESIZE|FILE|FILL\\$|FILL%|FILL|FIND|FIXED|FIX|FLUSH|FNAME\\$|FNEND|FNEXIT|FORMAT\\$|FORTRAN|FOR|FREE|FROM|FSP\\$|FSS\\$|FUNCTIONEND|FUNCTIONEXIT|FUNCTION|GET|GETRFA|GE|GFLOAT|GOBACK|GOSUB|GOTO|GO|GRAPH|GROUP|GT|HANDLER|HANDLE|HFLOAT|HT|IDN|IFEND|IFMORE|IF|IMAGE|IMP|INACTIVE|INDEXED|INFORMATIONAL|INITIAL|INKEY\\$|INPUT|INSTR|INTEGER|INT|INVALID|INV|ITERATE|JSB|KEY|KILL|LBOUND|LEFT\\$|LEFT|LEN|LET|LF|LINE|LINO|LINPUT|LIST|LOCKED|LOC|LOG10|LOG|LONG|LSET|MAGTAPE|MAG|MAP|MAR%|MARGIN|MAR|MAT|MAX|MID\\$|MID|MIN|MOD%|MOD|MODE|MODIFY|MOVE|NAME|NEXT|NOCHANGES|NODATA|NODUPLICATES|NOECHO|NOEXTEND|NOMARGIN|NONE|NOPAGE|NOREWIND|NOSPAN|NOT|NUL\\$|NUM\\$|NUM1\\$|NUM2|NUM|NXEQ|NX|OF|ONECHR|ONERROR|ON|OPEN|OPTION|OPTIONAL|ORGANIZATION|OR|OTHERWISE|OUTPUT|OVERFLOW|PAGE|PEEK|PICTURE|PI|PLACE\\$|PLOT|POS%|POS|PPS%|PRIMARY|PRINT|PROD\\$|PROGRAM|PUT|QUAD|QUO\\$|RAD\\$|RANDOMIZE|RANDOM|RCTRLC|RCTRLO|READ|REAL|RECORDSIZE|RECORDTYPE|RECORD|RECOUNT|REF|REGARDLESS|RELATIVE|REMAP|REM|RESET|RESTORE|RESUME|RETRY|RETURN|RFA|RIGHT\\$|RIGHT|RMSSTATUS|RND|ROTATE|ROUNDING|RSET|SCALE|SCRATCH|SEG\\$|SELECT|SEQUENTIAL|SETUP|SET|SEVERE|SFLOAT|SGN|SHEAR|SHIFT|SINGLE|SIN|SIZE|SI|SLEEP|SO|SPACE\\$|SP|SPAN|SPEC%|SQRT|SQR|STATUS|STEP|STOP|STR\\$|STREAM|STRING\\$|STRING|SUBEND|SUBEXIT|SUBSCRIPT|SUB|SUM\\$|SWAP%|SYS|TAB|TAN|TEMPORARY|TERMINAL|TFLOAT|THEN|TIME\\$|TIME|TIM|TO|TRANSFORM|TRM\\$|TRN|TYPE|TYPE\\$|TYP|UBOUND|UNALIGNED|UNDEFINED|UNLESS|UNLOCK|UNTIL|UPDATE|USAGE\\$|USEROPEN|USING|USR\\$|VAL%|VALUE|VAL|VARIABLE|VARIANT|VFC|VIRTUAL|VPS%|VT|WAIT|WARNING|WHEN|WHILE|WINDOWSIZE|WORD|WRITE|XFLOAT|XLATE|XLATE\\$|XOR|ZER)(?-i)(?![a-zA-Z0-9%$_])"
+				}
+			]
+		},
+		"stringsDouble": {
+			"name": "string.quoted.double.basic",
+			"match": "\"[^\"]*\""
+		},
+		"stringsSingle": {
+			"name": "string.quoted.single.basic",
+			"match": "'[^']*'"
+		},
+		"comments": {
+			"name": "comment.line.basic",
+			"match": "!.*$"
+		},
+		"labels": {
+			"name": "meta.label.basic",
+			"match": "\\b([a-zA-Z][a-zA-Z0-9$_.]*):",
+			"captures": {
+				"1": { "name": "entity.other.basic"}
+			}
+		},
+		"goto": {
+			"name": "meta.goto.basic",
+			"match": "(GO ?TO)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\b",
+			"captures": {
+				"1": { "name": "keyword.control.basic" },
+				"2": { "name": "entity.other.basic" }
+			}
+		},
+		"variables": {
+			"patterns": [
+				{
+					"match": "%[a-zA-Z0-9$_.]+(?![%$])\\b",
+					"name": "variable.name.lex.basic"
+				},
+				{
+					"match": "#\\d+%?",
+					"name": "variable.name.channel.basic"
+				},
+				{
+					"match": "\\b[a-zA-Z][a-zA-Z0-9$_.]*%?",
+					"name": "variable.name.basic"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"match": "(?=\\d+%)\\d+%",
+					"name": "constant.numeric.integral.basic"
+				},
+				{
+					"match": "\\d*\\.?\\d+((e|E)-?)?\\d*(?![\\d\\w.])",
+					"name": "constant.numeric.basic"
+				},
+				{
+					"match": "((?i)D|B|O|X|A(?-i))?\"[^\"]*\"((?i)B|W|L|Q|F|D|G|S|T|X|P|C(?-i))",
+					"name": "constant.numeric.basic"
+				},
+				{
+					"match": "((?i)D|B|O|X|A(?-i))\"[^\"]*\"((?i)B|W|L|Q|F|D|G|S|T|X|P|C(?-i))?",
+					"name": "constant.numeric.basic"
+				}
+			]
+		},
+		"statements": {
+			"name": "meta.statement.basic",
+			"patterns": [
+				{
+					"name": "meta.call.basic",
+					"match": "((?i)CALL(?-i))\\s+([a-zA-Z][a-zA-Z0-9$_.]*)",
+					"captures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.function.basic" }
+					}
+				},
+				{
+					"name": "meta.statement.common.basic",
+					"begin": "(?i)(COMMON|COM)(?-i)\\s+(\\(\\s*([a-zA-Z][a-zA-Z0-9$_.]*)\\s*\\))?",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"3": { "name": "variable.name.common.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.common.inner.basic",
+							"patterns": [
+								{
+									"name": "meta.common.inner.fill.basic",
+									"match": "(FILL[%$]?)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*([^,]*)",
+									"captures": {
+										"1": { "name": "keyword.other.basic" },
+										"2": { "name": "variable.name.basic" },
+										"3": { "patterns": [ { "include": "$self" } ] }
+									}
+								},
+								{
+									"name": "meta.common.inner.varfill.basic",
+									"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+(FILL[%$]?)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*([^,]*)",
+									"captures": {
+										"1": { "name": "entity.name.type.basic" },
+										"2": { "name": "keyword.other.basic" },
+										"3": { "name": "variable.name.basic" },
+										"4": { "patterns": [ { "include": "$self" } ] }
+									}
+								},
+								{
+									"name": "meta.common.inner.vartype.basic",
+									"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*([^,]*)",
+									"captures": {
+										"1": { "name": "entity.name.type.basic" },
+										"2": { "name": "variable.name.basic" },
+										"3": { "patterns": [ { "include": "$self" } ] }
+									}
+								},
+								{
+									"include": "$self"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "meta.statement.declarefn.basic",
+					"begin": "(?i)(DECLARE)(?-i)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\s+(?i)(FUNCTION)(?-i)\\s+",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" },
+						"3": { "name": "keyword.other.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.declfn.basic",
+							 "patterns": [
+								 {
+									"name": "meta.declfn.function.basic",
+									 "begin": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s*\\(",
+									 "end": "\\)",
+									 "beginCaptures": {
+										 "1": { "name": "entity.name.function.basic"}
+									 },
+									 "patterns": [
+										{
+											"match": "([a-zA-Z][a-zA-Z0-9$_.]*)",
+											"name": "entity.name.type.basic"
+										 }
+									 ]
+								 }
+							 ]
+						}
+					]
+				},
+				{
+					"name": "meta.statement.declareconst.basic",
+					"begin": "(?i)(DECLARE)(?-i)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\s+(?i)(CONSTANT)(?-i)",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" },
+						"3": { "name": "keyword.other.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.declconst.basic",
+							 "patterns": [ { "include": "$self"	} ]
+						}
+					]
+				},
+				{
+					"name": "meta.statement.declvar.basic",
+					"begin": "(?i)(DECLARE)(?-i)",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" },
+						"3": { "name": "variable.name.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.declvar.basic",
+							"patterns": [
+								{
+									"match": "\\b(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)?([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+									"captures": {
+										"1": { "name": "entity.name.type.basic" },
+										"3": { "name": "variable.name.basic" }
+									}
+								},
+								{ "include": "$self" }
+							]
+						}
+					]
+				},
+				{
+					"name": "meta.def.singleline.basic",
+					"match": "(?=.*=)(?i)(DEF\\*?)(?-i)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*\\(\\s*([^)]*)\\s*\\)",
+					"captures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" },
+						"3": { "name": "entity.name.function.basic" },
+						"4": { "patterns": [
+							{
+								"match": "(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)?([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+								"captures": {
+									"2": { "name": "entity.name.type.basic" },
+									"3": { "name": "variable.name.basic" }
+								}
+							}
+						]}
+					}
+				},
+				{
+					"name": "meta.def.multiline.basic",
+					"begin": "(?<!EXIT )(?i)(DEF\\*?)(?-i) ",
+					"end": "(?i)(END DEF|FNEND)(?-i)",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" }
+					},
+					"endCaptures": {
+						"1": { "name": "keyword.other.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.def.multiline.signature.basic",
+							"begin": "(?<=DEF )\\s*([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*\\(\\s*",
+							"end": "\\)",
+							"beginCaptures": {
+								"1": { "name": "entity.name.type.basic" },
+								"2": { "name": "entity.name.function.basic" }
+							},
+							"patterns": [
+								{
+									"match": "(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)?([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+									"captures": {
+										"2": { "name": "entity.name.type.basic" },
+										"3": { "name": "variable.name.basic" }
+									}
+								}
+							]
+						},
+						{ "include": "$self" }
+					]
+				},
+				{
+					"name": "meta.dimension.basic",
+					"begin": "(?i)(DIM(ENSION)?)(?-i) ",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" }
+					},
+					"patterns": [
+						{
+							"begin": "((#\\d+%?)\\s*,\\s*)?(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)([a-zA-Z][a-zA-Z0-9$_.]*)\\s*\\(",
+							"end": "\\)",
+							"beginCaptures": {
+								"2": { "name": "variable.name.channel.basic" },
+								"4": { "name": "entity.name.type.basic" },
+								"5": { "name": "variable.name.array.basic" }
+							},
+							"patterns": [ { "include": "$self" } ]
+						}
+					]
+				},
+				{
+					"name": "meta.basicfunction.basic",
+					"begin": "(?i)(?<!EXIT)(FUNCTION)(?-i)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*)\\s+(?i)(BY (REF|VALUE|DESC))?(?-i)\\s*\\(\\s*",
+					"end": "\\)",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" },
+						"3": { "name": "entity.name.function.basic" },
+						"4": { "name": "keyword.other.basic" }
+						
+					},
+					"patterns": [
+						{
+							"match": "(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)?([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*(?!\\()((?i)BY (VALUE|REF|DESC)(?-i))?",
+							"captures": {
+								"1": { "name": "entity.name.type.basic" },
+								"3": { "name": "variable.name.basic" },
+								"4": { "name": "keyword.other.basic" }
+							}
+						},
+						{
+							"begin": "([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*\\(",
+							"end": "\\)",
+							"captures": {
+								"1": { "name": "variable.name.basic" }
+							},
+							"patterns": [ { "include": "$self" } ]
+						}
+					]
+				},
+				{
+					"name": "meta.record",
+					"begin": "((?i)RECORD(?-i))\\s+([a-zA-Z][a-zA-Z0-9$_.]*)",
+					"end": "((?i)END RECORD(?-i))\\s*([a-zA-Z][a-zA-Z0-9$_.]*)",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" }
+					},
+					"endCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "entity.name.type.basic" }
+					},
+					"patterns": [
+						{
+							"match": "((?i)GROUP(?-i))\\s+([a-zA-Z][a-zA-Z0-9$_.]*)",
+							"captures": {
+								"1": { "name": "keyword.other.basic" },
+								"2": { "name": "variable.name.basic" }
+							}
+						},
+						{
+							"match": "((?i)END GROUP(?-i))\\s+([a-zA-Z][a-zA-Z0-9$_.]*)",
+							"captures": {
+								"1": { "name": "keyword.other.basic" },
+								"2": { "name": "variable.name.basic" }
+							}
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)VARIANT(?-i))"
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)END VARIANT(?-i))"
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)FILL(?-i))"
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)CASE(?-i))"
+						},
+						{
+							"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+							"captures": {
+								"1": { "name": "entity.name.type.basic" },
+								"2": { "name": "variable.name.basic" }
+							}
+						},
+						{ "include": "$self"}
+					]
+				},
+				{
+					"name": "meta.mapdynamic.basic",
+					"begin": "((?i)MAP DYNAMIC(?-i))\\s+\\(\\s*((('[^']*'))|(\"[^\"]*\")|([a-zA-Z][a-zA-Z0-9$_.]*))\\s*\\)",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"4": { "name": "string.quoted.single.basic" },
+						"5": { "name": "string.quoted.double.basic" },
+						"6": { "name": "variable.name.map.basic" }
+					},
+					"patterns": [
+						{
+							"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+							"captures": {
+								"1": { "name": "entity.name.type.basic" },
+								"2": { "name": "variable.name.basic" }
+							}
+						},
+						{ "include": "$self"}
+					]
+				},
+				{
+					"name": "meta.map.basic",
+					"begin": "((?i)MAP(?-i))\\s+\\(\\s*([a-zA-Z][a-zA-Z0-9$_.]*)\\s*\\)",
+					"end": "(?<!&)\n$",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" },
+						"2": { "name": "variable.name.map.basic" }
+					},
+					"patterns": [
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)FILL%(?-i))"
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)FILL$(?-i))"
+						},
+						{
+							"name": "keyword.other.basic",
+							"match": "((?i)FILL(?-i))"
+						},
+						{
+							"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+(FILL(%|\\$)?)",
+							"captures": {
+								"1": { "name": "entity.name.type.basic"},
+								"2": { "name": "keyword.other.basic" }
+							}
+						},
+						{
+							"match": "([a-zA-Z][a-zA-Z0-9$_.]*)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)",
+							"captures": {
+								"1": { "name": "entity.name.type.basic" },
+								"2": { "name": "variable.name.basic" }
+							}
+						},
+						{ "include": "$self"}
+					]
+				},
+				{
+					"name": "meta.sub.basic",
+					"begin": "(?i)(SUB)(?-i)",
+					"end": "(?i)(END SUB|SUBEND)(?-i)",
+					"beginCaptures": {
+						"1": { "name": "keyword.other.basic" }
+					},
+					"endCaptures": {
+						"1": { "name": "keyword.other.basic" }
+					},
+					"patterns": [
+						{
+							"name": "meta.sub.signature.basic",
+							"begin": "(?<=SUB)\\s+([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s+((?i)BY (VALUE|DESC|REF)(?-i))?\\s*\\(",
+							"end": "\\)",
+							"beginCaptures": {
+								"1": { "name": "entity.name.function.basic" },
+								"2": { "name": "keyword.other.basic" }
+							},
+							"patterns": [
+								{
+									"match": "(([a-zA-Z][a-zA-Z0-9$_.]*)\\s+)?([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*(?!\\()((?i)BY (VALUE|REF|DESC)(?-i))?",
+									"captures": {
+										"1": { "name": "entity.name.type.basic" },
+										"3": { "name": "variable.name.basic" },
+										"4": { "name": "keyword.other.basic" }
+									}
+								},
+								{
+									"begin": "([a-zA-Z][a-zA-Z0-9$_.]*%?)\\s*\\(",
+									"end": "\\)",
+									"captures": {
+										"1": { "name": "variable.name.basic" }
+									},
+									"patterns": [ { "include": "$self" } ]
+								}
+							]
+						},
+						{
+							"name": "meta.sub.body.basic",
+							"patterns": [ { "include": "$self" } ]
+						}
+					]
+				},
+				{
+					"name": "meta.move.basic",
+					"match": "(?i)(MOVE (TO|FROM))(?-i)",
+					"captures": {
+						"1": { "name": "keyword.other.basic" }
+					}
+				}
+			]
+		}
+	}
+}

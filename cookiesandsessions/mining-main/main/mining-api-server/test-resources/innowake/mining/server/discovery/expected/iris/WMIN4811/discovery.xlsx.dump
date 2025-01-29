@@ -1,0 +1,25 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3849,"","RCRBM011","src/cobol/WMIN4811/programs/RCRBM011.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,12,0,13,0,0,-1,-1
+3848,"","RCRBM011","src/jcl/WMIN4811/controlcards/RCRBM011.crd","JCL","JCL_CONTROLCARD","PHYSICAL",0,0,0,0,5,0,0,-1,-1
+3850,"","TESTJOBA","src/jcl/WMIN4811/jobs/TESTJOBA.job","JCL","JCL_JOB","PHYSICAL",1,0,4,0,5,1,0,-1,-1
+3851,3850,"TESTJOBA.STEP01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3852,"","XY..PARMLIB","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3850,"TESTJOBA","EXEC","Properties: [PGM=IKJEFT1B,REGION=100000K], Data Definitions: [SYSTSIN{DISP=SHR,DSN=XY..PARMLIB(RCRBM011)}], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOBA]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3850,"TESTJOBA",3851,"TESTJOBA.STEP01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+3851,"TESTJOBA.STEP01.EXEC_PGM",0,"IKJEFT1B","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":1,""OUTBOUND_TARGETS"":[""RCRBM011""]}",-1,-1,-1,-1
+3851,"TESTJOBA.STEP01.EXEC_PGM",3849,"RCRBM011","COBOL","COBOL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+3851,"TESTJOBA.STEP01.EXEC_PGM",3848,"RCRBM011","JCL","JCL_CONTROLCARD","Calls","","LATE","{""PROPERTIES"":[{""DSN"":""XY..PARMLIB(RCRBM011)"",""DISP"":""SHR"",""ID_NAME"":""SYSTSIN""}]}",-1,-1,-1,-1
+3851,"TESTJOBA.STEP01.EXEC_PGM",3852,"XY..PARMLIB","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSTSIN""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

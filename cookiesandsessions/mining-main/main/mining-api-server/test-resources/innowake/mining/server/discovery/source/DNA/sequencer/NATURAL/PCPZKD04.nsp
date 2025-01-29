@@ -1,0 +1,273 @@
+************************************************************************        
+* Nat-Name : PCPZKD04           
+* Funktion : ZV-Datentr�ger wiederholen     
+* Erstellt : 12.09.2002 Dimitriu
+* Copyright: GiP mbH - Frankfurt / Main     
+*       
+* �nderungen:       
+* ----------        
+* 09 10.12.2010 han EAU-0530 Source Uplift ZVK          
+* 08 02.11.2007 zi  V811     Sonderzeichen-Thematik     
+* 07 24.08.2004 ph  Vers-411 Projekt 'ZV-Vers-Nr' (+ Neustrukturierung)         
+* 06 23.06.2004 VS  AVS28788 negative Betr�ge korrekt darstellen    
+* 05 13.02.2004 VS  AVS00000 bei Satzart 70/90 beim einlesen von WORK 6         
+*                            auch ZK-DTR-ID ber�cksichtigen         
+* 04 22.10.2003 VS  AVS00000 Version 313  ZVK-neue-DATUEV           
+* 03 22.10.2003 vs  AVS00000 Version ALT  nach 1.03 ge�ndert        
+* 02 02.10.2003 vs  AVS00000 Version 1.00 nach ALT ge�ndert         
+* 01 24.07.2003 Di  AVS25958 USING Felder bei SORT erg�nzt          
+************************************************************************        
+*       
+DEFINE DATA         
+GLOBAL USING UAMGDA01 WITH UAMGHB           
+*       
+LOCAL  USING ZQVRZ-01 /* RZ-Objekt          
+LOCAL  USING ZQVZV-01 /* ZVK-Allg           
+LOCAL  USING ZQEBD-H1 /* Start-/Endwert zum Lesen BD allg.          
+*       
+LOCAL  USING ZQVDKD00 /* Dtr-View           
+LOCAL  USING ZQEDKDH1 /* Start-/Ende-Key DTR-ZKE-KEY    
+LOCAL  USING ZQEDKDH2 /* Start-/Ende-Key SP-ZK-KASSE-DTR-DATEI-NR   
+*       
+LOCAL  USING ZXAJANF  /* Job-Standard's     
+LOCAL  USING ZXAJTERM /* Job-Standard's     
+LOCAL  USING ZXAJPARM /* Job-Standard's     
+LOCAL  USING ZXKJTERM /* Job-Standard's     
+LOCAL  USING ZXAJPROT /* Job-Standard's     
+LOCAL  USING ZQLJPROT /* Job-Standard's     
+*       
+LOCAL  USING ZQLSTD   /* Standard-LDA       
+LOCAL  USING PLAEBCDI /* PDA fuer KINEBCDI  
+LOCAL  USING PCLZPARM /* int. Variablen Redefinition UAMPARM(2)     
+LOCAL  USING PCLZDT03 /* Redefinition der SA 60, 80, 81 
+LOCAL  USING PCLZKD03 /* int.Variablen      
+LOCAL  USING ZXLDTIUM /* LDA f�r ZXCDTIUM   
+*       
+LOCAL  USING PCKZVKKA /* Konstanten fuer ZV-KASSE       
+LOCAL  USING PCKZVKMT /* Konstanten Meldetatbestand     
+LOCAL  USING PCKZVKSA /* Konstanten der Satzarten       
+LOCAL  USING PCKZVKDT /* Konstanten der DTR-Erstellung  
+* &TRACE-DB-BEGIN   
+LOCAL  USING ZQATRCDA /* TRACE Standard PDA 
+LOCAL  USING PCAZV-BI /* TRACE ZV- Befor Image          
+LOCAL  USING PCAZV-AI /* TRACE ZV- After Image          
+INDEPENDENT         
+1 +ZRCTRCC-TRACE-FILTER (A20/1:2) /* Filter, ob Modul Dataareas traced          
+1 +ZRCTRCC-TRACE-EXIT   (A8)  /* Exit, der ueber den Traceumfang entscheid      
+* &TRACE-DB-END     
+END-DEFINE          
+***********************************************************************         
+* Work-File, die im Programm verwendet werden           
+* Work 1 - Volumn-Info's        
+* Work 4 - ZwDatei mit  Sortierung          
+* Work 6 - ZwDatei ohne Sortierung          
+* Ausgabe           
+* Work 5 - Meldes�tze   (je ZVKasse)        
+* Work 7 - Zahlungss�tze(je ZVKasse)        
+* Aufkleber u. Lieferschein     
+***********************************************************************         
+*       
+INCLUDE PCCZDTSO /* Sonderzeichen holen     
+*       
+INPUT #AUSGABE #ZQEDKDH2.#ZVKASSE-ANF #ZQEDKDH2.#DATEI-NR-ANF       
+*       
+#W-DATEI-NR             :=      
+#ZQEDKDH2.#DATEI-NR-END := #ZQEDKDH2.#DATEI-NR-ANF      
+*       
+IF *DEVICE = 'BATCH'                               /* Batch-Lauf    
+  PERFORM JOB-ANFANG                               /* Standard's    
+  PERFORM JOB-PARAMETER         
+END-IF  
+*       
+RESET #VBL  /* MKM zur Steuerung VBL-Besonderheiten --> hier nicht aktiv        
+RESET #WF-4         
+RESET #WF-6         
+RESET #ET-ZAEHLER   
+*       
+IF #AUSGABE = 'B'                                  /* Bs pr�fen     
+  INCLUDE PCCZDTBS  
+END-IF  
+*       
+DECIDE ON FIRST VALUE OF #ZQEDKDH2.#ZVKASSE-ANF         
+  VALUE #PCKZVKKA.#K-ZVKASSE-VBL-TAB(*)  /* '01' , '31' , '41'      
+    #ZQEDKDH2.#ZVKASSE-ANF := #PCKZVKKA.#K-ZVK-01-VBL-ALT-LAND      
+    #ZQEDKDH2.#ZVKASSE-END := #PCKZVKKA.#K-ZVK-41-VBL-WECHSEL-BGR   
+  VALUE #PCKZVKKA.#K-ZVK-02-DARMSTADT-ABV-1,
+        #PCKZVKKA.#K-ZVK-32-DARMSTADT-ABV-2 
+    #ZQEDKDH2.#ZVKASSE-ANF := #PCKZVKKA.#K-ZVK-02-DARMSTADT-ABV-1   
+    #ZQEDKDH2.#ZVKASSE-END := #PCKZVKKA.#K-ZVK-32-DARMSTADT-ABV-2   
+  VALUE #PCKZVKKA.#K-ZVK-04-DORTMUND-ABV-1, 
+        #PCKZVKKA.#K-ZVK-34-DORTMUND-ABV-2  
+    #ZQEDKDH2.#ZVKASSE-ANF := #PCKZVKKA.#K-ZVK-04-DORTMUND-ABV-1    
+    #ZQEDKDH2.#ZVKASSE-END := #PCKZVKKA.#K-ZVK-34-DORTMUND-ABV-2    
+  VALUE #PCKZVKKA.#K-ZVK-18-VDD-KOELN-ABV-1,
+        #PCKZVKKA.#K-ZVK-48-VDD-KOELN-ABV-2 
+    #ZQEDKDH2.#ZVKASSE-ANF := #PCKZVKKA.#K-ZVK-18-VDD-KOELN-ABV-1   
+    #ZQEDKDH2.#ZVKASSE-END := #PCKZVKKA.#K-ZVK-48-VDD-KOELN-ABV-2   
+  NONE VALUE        
+    #ZQEDKDH2.#ZVKASSE-END := #ZQEDKDH2.#ZVKASSE-ANF    
+END-DECIDE          
+*       
+* BD.RZ und BD.ZVK k�nnen schon vor dem FIND gelesen werden         
+PERFORM BD-DATEN-LESEN          
+* bei der DTR-Wiederholung die vorgegebene Datei-Nr �bernehmen      
+* (nicht die h�chste bisher vergebene Datei-Nr aus ZVKV)
+#LFD-DATEINR-NUM := #W-DATEI-NR 
+*       
+  FS.                                              /* Dtr-Schnittstelle         
+FIND DKD00 WITH SP-ZK-KASSE-DTR-DATEI-NR = #ZQEDKDH2.#SP-ZK-KASSE-DTR-DATEI-NR-ANF          
+    THRU                                   #ZQEDKDH2.#SP-ZK-KASSE-DTR-DATEI-NR-END          
+    WHERE ZK-DTR-DATEI-NR = #W-DATEI-NR     
+*       
+  IF NO RECORD FOUND
+    IF *DEVICE = 'BATCH'        
+      WRITE // 'Keine S�tze gefunden, Datentr�ger wird nicht erstellt'          
+      #P-ZXAJTERM.#P-TERM-K2000 := #K-GIP-KEINE-DATEN   
+      PERFORM JOB-TERMINATE     
+    ELSE
+      G-UAMREINPUT := 'Keine S�tze gefunden, Datentr�ger wird nicht erstellt'   
+      G-UAMRETPROG := 'PCPDTR00'
+      FETCH G-UAMRETPROG        
+    END-IF          
+  END-NOREC         
+*       
+  IF  NOT(#ZQEDKDH2.#ZVKASSE-ANF = #PCKZVKKA.#K-ZVK-01-VBL-ALT-LAND 
+      AND DKD00.ZVKASSE          = #PCKZVKKA.#K-ZVKASSE-VBL-TAB(*)  
+      OR  DKD00.ZVKASSE          = #ZQEDKDH2.#ZVKASSE-ANF           
+      OR=                          #ZQEDKDH2.#ZVKASSE-END)          
+    ESCAPE TOP /* FS.                              /* falsche ZV-Kasse          
+  END-IF
+*       
+  INCLUDE PCCZKD01  
+*       
+  PERFORM VORLAUFSATZ           
+*       
+  PERFORM MELDESATZ 
+*       
+  ADD 1 TO #G-SATZ-SELEKT                          /* Z�hler        
+  ADD 1 TO #G-SATZ-VERARB       
+*       
+  IF      #DTR-TRENN-MKM = TRUE 
+      AND DKD00.SATZART  = #PCKZVKSA.#K-SA-70-DIFFERENZ 
+      OR=                  #PCKZVKSA.#K-SA-90-JM-KONTO-SUM          
+    ADD 1 TO #G-ANZAHL-ZAHLUNGSSAETZE              /* Zahlungss�tze 
+  ELSE  
+    ADD 1 TO #G-ANZAHL-MELDESAETZE                 /* monatl. Zv    
+  END-IF
+*       
+END-FIND /* FS.     
+*       
+IF NOT #WF-4        
+  #MELDESATZ-ID := H'FF'        
+  WRITE WORK FILE 4 #ZK-DTR-SATZ-S          
+END-IF  
+*       
+  R2.   
+READ WORK FILE 4 #ZK-DTR-SATZ-S 
+END-ALL 
+*       
+SORT ZK-DTR-ZVK-NR ZK-DTR-VOR-69
+    ZK-DTR-AG-NR ZK-DTR-VS      
+    ZK-DTR-TASA     
+    ZK-DTR-VON-JJ ZK-DTR-VON-MM 
+    ZK-DTR-VON-TT ZK-DTR-VA     
+    USING ZK-DTR-ID ZK-DTR-SATZ 
+*       
+  IF #MELDESATZ-ID <> H'FF'     
+    PERFORM WF-NR-SCHREIBEN     
+  END-IF
+END-SORT
+*       
+IF #WF-6
+    R3. 
+  READ WORK FILE 6 ZK-DTR-ID ZK-DTR-SATZ    
+    PERFORM WF-NR-SCHREIBEN     
+  END-WORK /* R3.   
+END-IF  
+*       
+PERFORM NACHLAUFSATZ
+*       
+PERFORM LIEFERSCHEIN
+*       
+#P-ZXAJTERM.#P-TERM-K2000 := #K-GIP-NORMAL  
+PERFORM JOB-TERMINATE           
+PERFORM JOB-FORTSCHRITT         
+*       
+* ----- interne Subroutinen -----------------------------------------           
+*       
+* interne Subroutinen (auch f�r Bestandsabgleich)       
+INCLUDE PCCZKDIS '(1)'          
+*       
+****************************    
+DEFINE SUBROUTINE JOB-ANFANG    
+****************************    
+*       
+RESET #P-ZXAJANF    
+#P-ZXAJANF.#P-PRG  := 'PCPZKD03'
+#P-ZXAJANF.#P-NAME := 'PCPDTR00'    /* Programm aus dem KIGST-Satz  
+CALLNAT 'ZXNJANF' #P-ZXAJANF        /* Schreiben der Start-Infos    
+*       
+END-SUBROUTINE /* JOB-ANFANG    
+*       
+******************************* 
+DEFINE SUBROUTINE JOB-PARAMETER 
+******************************* 
+*       
+RESET #P-ZXAJPARM   
+#P-ZXAJPARM.#P-PARM-ID(01)   := '0010'      
+MOVE ALL '9' TO #P-ZXAJPARM.#P-PARM-WERT(01) /* AM      
+#P-ZXAJPARM.#P-PARM-ID(02)   := '0014'      
+MOVE ALL '9' TO #P-ZXAJPARM.#P-PARM-WERT(02) /* AT      
+#P-ZXAJPARM.#P-PARM-ID(03)   := '0015'      
+MOVE ALL '9' TO #P-ZXAJPARM.#P-PARM-WERT(03) /* UT      
+CALLNAT 'ZXNJPARM' #P-ZXAJPARM                /* Schreiben der Parameter        
+*       
+END-SUBROUTINE /* JOB-PARAMETER 
+*       
+*********************************           
+DEFINE SUBROUTINE JOB-FORTSCHRITT           
+*********************************           
+*       
+IF #P-ZXAJPROT.#P-FORTSCHRITT = 0           
+  /* Diese Routine wird beim ersten Fall aufgerufen     
+  CALLNAT 'ZXNJPROT' #P-ZXAJPROT
+END-IF  
+*       
+DIVIDE #P-ZXAJPROT.#P-FORTSCHRITT INTO #G-SATZ-VERARB   
+  GIVING #L-ERGEBNISS           
+  REMAINDER #L-REST 
+IF #L-REST = 0                     /* jeden N-sten protokollieren   
+  RESET #P-ZXAJPROT.#P-SATZ-KEY 
+  #P-ZXAJPROT.#P-SATZ-AM      := #P-ZXAJPARM.#P-PARM-WERT(01) /* AM 
+  #P-ZXAJPROT.#P-SATZ-LT      := #P-ZXAJPARM.#P-PARM-WERT(02) /* AT 
+  #P-ZXAJPROT.#P-SATZ-UT      := #P-ZXAJPARM.#P-PARM-WERT(03) /* UT 
+  #P-ZXAJPROT.#P-SATZ-GELESEN := #G-SATZ-GELESEN        
+  #P-ZXAJPROT.#P-SATZ-SELEKT  := #G-SATZ-SELEKT         
+  #P-ZXAJPROT.#P-SATZ-VERARB  := #G-SATZ-VERARB         
+  CALLNAT 'ZXNJPROT' #P-ZXAJPROT
+END-IF  
+*       
+END-SUBROUTINE /* JOB-FORTSCHRITT           
+*       
+******************************* 
+DEFINE SUBROUTINE JOB-TERMINATE 
+******************************* 
+*       
+#P-ZXAJTERM.#P-TEXT-GELESEN := 'S�tze gelesen'          
+#P-ZXAJTERM.#P-TEXT-SELEKT  := 'S�tze selektiert'       
+#P-ZXAJTERM.#P-TEXT-VERARB  := 'S�tze verarbeitet'      
+*       
+RESET #P-ZXAJTERM.#P-SATZ-KEY   
+#P-ZXAJTERM.#P-SATZ-AM      := #P-ZXAJPARM.#P-PARM-WERT(01) /* AM   
+#P-ZXAJTERM.#P-SATZ-LT      := #P-ZXAJPARM.#P-PARM-WERT(02) /* AT   
+#P-ZXAJTERM.#P-SATZ-UT      := #P-ZXAJPARM.#P-PARM-WERT(03) /* UT   
+#P-ZXAJTERM.#P-SATZ-GELESEN := #G-SATZ-GELESEN          
+#P-ZXAJTERM.#P-SATZ-SELEKT  := #G-SATZ-SELEKT           
+#P-ZXAJTERM.#P-SATZ-VERARB  := #G-SATZ-VERARB           
+#P-ZXAJTERM.#P-NAT-FEHLER   := #G-FEHLER-CNT
+NEWPAGE (1)         
+CALLNAT 'ZXNJTERM' #P-ZXAJTERM  
+*       
+END-SUBROUTINE /* JOB-TERMINATE 
+*       
+END /* PCPZKD04     

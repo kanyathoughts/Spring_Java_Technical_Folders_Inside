@@ -1,0 +1,127 @@
+<nz-card
+  class="mining__card-drawer custom-property-editor shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open custom-property-editor"
+  [nzTitle]="creationMode ? shellTitle : editTemplate" [nzExtra]="extraTemplate" [ngClass]="showHide">
+  <form nz-form nzLayout="vertical" class="shared-annotation-editor" [formGroup]="CustomPropertyEditorForm">
+    <div class="shared-annotation-editor__scroll">
+      <nz-form-item>
+        <nz-form-label nzFor="title" nzRequired>{{ 'customPropertyTable.title' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input class="custom-property-editor__input-type" nz-input
+            [placeholder]="'module.annotationTextPlaceHolder' | translate" formControlName="title" />
+          <span class="custom-property-editor__error-msg"
+            *ngIf="(validatetitle.invalid && validatetitle.touched) && ! validatetitle.errors.duplicate">
+            {{ 'annotationFields.invalidMsg' | translate }}</span>
+          <span class="custom-property-editor__error-msg" *ngIf="validatetitle.errors?.duplicate">
+            {{ 'annotationFields.duplicateMsg' | translate }}</span>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="status" nzRequired>{{ 'customPropertyTable.type' | translate }}</nz-form-label>
+        <nz-form-control>
+          <div [class]="(validateType.invalid && validateType.touched)? 'custom-property-editor__selectOption' : ''">
+            <nz-select nzPlaceHolder="{{'module.annotationTypePlaceHolder' | translate}}" formControlName="type"
+              [nzDisabled]="!creationMode">
+              <nz-option *ngFor="let typeOpt of typeList" [nzValue]="typeOpt" [nzLabel]="typeOpt">
+              </nz-option>
+            </nz-select>
+          </div>
+          <span class="custom-property-editor__error-msg" *ngIf="validateType.invalid && validateType.touched">
+            {{ 'annotationFields.typeInvalidMsg' | translate }}</span>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="validateType.value === 'Select Tag'" [ngStyle]="{ 'margin-left': '1em' }">
+        <nz-form-label nzFor="defaultValues">{{ 'customPropertyTable.defaultValues' | translate }}
+          &nbsp;<i class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+            [nzTooltipTitle]="'customPropertyTable.defaultValuesToolTip' | translate"></i>
+        </nz-form-label>
+        <nz-form-control>
+          <div formArrayName="defaultValues" *ngFor="let item of validateDefaultValues.controls; let i=index"
+            class="custom-property-field__field-list">
+            <input nz-input type="text" [formControlName]="i" />
+            <i nz-icon nzType="minus-circle-o" class="custom-property-field__remove-icon"
+              (click)="removeDefaultValues(i)"></i>
+          </div>
+          <div class="custom-property-field__add-button">
+            <button nz-button type="button" nzType="dashed" nzSize="default" (click)="addDefaultValues()">
+              <i nz-icon nzType="plus"></i>
+              {{ 'btnLabel.add' | translate}}
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="category">{{ 'customPropertyTable.category' | translate }}
+          &nbsp;<i class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+            [nzTooltipTitle]="'customPropertyTable.customCatgoryToolTip' | translate"></i>
+        </nz-form-label>
+        <nz-form-control>
+          <nz-select nzPlaceHolder="{{'customPropertyTable.customCategoryPlaceholder' | translate}}"
+            formControlName="customCategory" (ngModelChange)="onChangeCustomCategory($event)">
+            <nz-option *ngFor="let custCategory of customCategoryList" 
+              [nzValue]="custCategory" [nzLabel]="custCategory"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="getSelectedCustomCategory.value == 'Add new'">
+        <nz-form-label ngFor="newCustCategory" nzRequired>{{'customPropertyTable.newCustomCategory' | translate
+          }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="text" formControlName="newCustomCategory" />
+          <span class="custom-property-editor__error-msg" *ngIf="(validateCustomCategory.touched && validateCustomCategory.invalid || validateCustomCategory.errors?.pattern 
+              && ! validateCustomCategory.errors.duplicate)"> {{ 'customPropertyTable.invalidCategoryMsg' | translate
+            }}</span>
+          <span class="custom-property-editor__error-msg" *ngIf="validateCustomCategory.errors?.duplicate">
+            {{ 'annotationFields.duplicateMsg' | translate }}</span>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="type">{{ 'customPropertyTable.position' | translate }}
+          &nbsp;<i class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+            [nzTooltipTitle]="tooltipText"></i>
+        </nz-form-label>
+        <nz-input-number class="custom-property-field__setposition" [nzMin]="1" nzSize="default"
+          formControlName="position" (focusout)="setPositionValue()"></nz-input-number>
+      </nz-form-item>
+      <nz-form-item>
+        <label nz-checkbox formControlName="mandatory">{{ 'customPropertyTable.mandatory' | translate }}
+          &nbsp;<i class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+            [nzTooltipTitle]="'customPropertyTable.mandatoryToolTip' | translate"></i>
+        </label>
+      </nz-form-item>
+    </div>
+    <div *ngIf="!deleteOption" nz-row [nzJustify]="deleteOption ? 'end' : 'space-between'"
+      class="shared-annotation-editor__button-bar">
+      <nz-divider></nz-divider>
+      <div nz-coll>
+        <button nz-button type="button" nzType="default" nz-popconfirm [disabled]="creationMode || isSave"
+          [nzLoading]="isDelete" nzPopconfirmTitle="{{ deleteConfirmText }}" nzPopconfirmPlacement="bottom"
+          (nzOnConfirm)="onDelete()" nzOkText="{{ 'btnLabel.delete' | translate}}" nzCancelText="Cancel" nzDanger
+          [nzOkDanger]="true">
+          {{ 'btnLabel.delete' | translate }}
+        </button>
+      </div>
+      <div nz-coll>
+        <nz-space>
+          <button *nzSpaceItem nz-button type="button" (click)="closeEditDetails()" [disabled]="isSave || isDelete"
+            class="cancel_editor" nzType="default">{{ 'btnLabel.cancel' | translate }}</button>
+          <button *nzSpaceItem nz-button type="button" nzType="primary"
+            [disabled]="CustomPropertyEditorForm.invalid || isDelete"  
+            [nzCondition]="! isAnyRemovedValueInResponse()" nz-popconfirm  nzPopconfirmTitle="{{ saveConfirmText }}" nzPopconfirmPlacement="bottom"
+             (nzOnConfirm)="submitForm(CustomPropertyEditorForm)" nzOkText="{{ 'btnLabel.remove' | translate}}" nzCancelText="Cancel" >
+              {{ 'btnLabel.save' | translate }}
+          </button>
+        </nz-space>
+      </div>
+    </div>
+  </form>
+</nz-card>
+<ng-template #shellTitle>
+  <div>{{ 'annotationFields.annotationHeading' | translate }}</div>
+</ng-template>
+<ng-template #editTemplate>{{ editPageTitle }}</ng-template>
+<ng-template #extraTemplate>
+  <button nz-button nzType="text" (click)="closeEditDetails()">
+    <i nz-icon nzType="close" nzTheme="outline"></i>
+  </button>
+</ng-template>
+<ng-template #tooltipText>{{ positionTooltip }}</ng-template>

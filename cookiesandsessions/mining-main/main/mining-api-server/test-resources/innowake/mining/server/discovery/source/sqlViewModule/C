@@ -1,0 +1,14 @@
+#include <stdio.h>
+/*
+ * this will show as 3 comments in old LOC calculation
+ */
+main(int argc, char *argv[]) //comment line
+{
+EXEC SQL BEGIN DECLARE SECTION;
+char *prep_stmt = "select * from table1";
+int i;
+EXEC    SQL   END DECLARE SECTION;
+EXEC SQL PREPARE mystmt FROM :prep_stmt;
+EXEC SQL DECLARE mytable TABLE FOR mystmt;
+printf("Arg1: %s Arg2:%s\n", argv[1], argv[2]); // in new LOC calculation it should be equal to 5
+}

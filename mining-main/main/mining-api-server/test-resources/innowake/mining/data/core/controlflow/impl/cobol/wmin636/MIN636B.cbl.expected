@@ -1,0 +1,17 @@
+#6 ProcedureDivision
+ #7 CobolPerformStmt FIRSTS, FROM={TestEntryPoint}, TO={#9}
+  #8 CobolFieldReference
+ #9 CobolSection, FROM={#25, #7}, TO={#10}
+  #10 CobolDisplayStmt 'NO LABEL', FROM={#9}, TO={#13}
+  #13 CobolLabelStmt LABEL2 , FROM={#10}, TO={#14}
+   #14 CobolPerformStmt LABEL1 THRU LABEL5 , FROM={#13}, TO={#20}
+    #15 CobolFieldReference
+    #16 CobolFieldReference
+   #17 CobolDisplayStmt '2', FROM={#25}, TO={#20}
+  #20 CobolLabelStmt LABEL1 , FROM={#14, #17}, TO={#21}
+   #21 CobolDisplayStmt '1', FROM={#20}, TO={#24}
+  #24 CobolLabelStmt LABEL5 , FROM={#21}, TO={#25}
+   #25 CobolDisplayStmt '5', FROM={#24}, TO={#17, #28, #9}
+ #28 CobolSection, FROM={#25}, TO={#29}
+  #29 CobolDisplayStmt 'END', FROM={#28}, TO={#32}
+  #32 CobolGoBackStmt, FROM={#29}, TO={TestReturnPoint}

@@ -1,0 +1,34 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7110                                             *
+*   Description  . . Transaction Accumulator Condition                 *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(21,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+             Transaction Accumulator Condition - Help
+
+    This option forms a relationship between the accumulators.
+    Required conditions must be defined before any other
+    condition.  Required accumulators must meet their
+    requirements.  If the previous accumulators before an 'Or'
+    condition have met the requirement, the transaction
+    validation passes.  Valid entries are:
+
+      N       Accumulator not used.  Once an 'N' condition is
+              reached, no more validation will be performed.
+      R (Req) Required condition. The accumulator must meet the
+              requirement. Accumulators with this condition must
+              be defined before any other condition.
+      O (Or)  'Or' conjuction is being used.
+      A (And) 'And' conjunction is being used.
+                                                                _
+    F12=Cancel                                            M10052S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

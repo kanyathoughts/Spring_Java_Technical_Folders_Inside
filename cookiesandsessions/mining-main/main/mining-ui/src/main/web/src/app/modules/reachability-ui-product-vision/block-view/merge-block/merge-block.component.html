@@ -1,0 +1,22 @@
+<form nzForm [formGroup]="mergeBlockForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" [nzNoColon]="true" nzRequired>{{'name' | translate}}</nz-form-label>
+      <nz-form-control>
+        <input class="custom-property-editor__input-type" formControlName="name" nz-input
+          placeholder="Reachability block name" />
+        <span class="custom-property-editor__error-msg" *ngIf="(validateName.invalid && validateName.touched)">
+          {{'reachability.mergeBlockValidation' | translate}}</span>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" [nzNoColon]="true">{{'description' | translate}}</nz-form-label>
+      <nz-form-control>
+        <textarea rows="5" nz-input formControlName="description" placeholder="Reachability block description"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <div *nzModalFooter>
+      <button nz-button nzType="default" (click)="handleCancel()">{{ 'btnLabel.cancel' | translate }}</button>
+      <button nz-button nzType="primary" [disabled]="mergeBlockForm.invalid" (click)="sendToParent()">
+        {{'reachability.merge' | translate}}</button>
+    </div>
+  </form>

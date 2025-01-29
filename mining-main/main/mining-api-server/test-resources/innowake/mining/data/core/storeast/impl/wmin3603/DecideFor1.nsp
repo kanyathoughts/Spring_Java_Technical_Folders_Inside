@@ -1,0 +1,19 @@
+DEFINE DATA LOCAL
+  1 #A (A1)
+  1 #B (A2)
+END-DEFINE
+
+DECIDE FOR EVERY CONDITION                                              
+  WHEN #A >= 0                                                     
+    WRITE 'A >= 0'                                
+  WHEN #B <= 0                                                     
+    WRITE 'B <= 0'                       
+  WHEN ANY
+    WRITE 'Any of the above conditions is true.'
+  WHEN ALL
+    WRITE '#FIELD1 is zero.'
+  WHEN NONE
+    IGNORE 
+END-DECIDE
+
+END

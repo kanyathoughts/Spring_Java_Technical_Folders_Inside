@@ -1,0 +1,308 @@
+//EVPADH04 JOB (A,D,2AIC00),'CIP JUVENILE',                                     
+//             NOTIFY=D026076,MSGCLASS=W,                                       
+//             USER=ZIIGCIS                                                     
+/*JOBPARM ROOM=R31D,S=D7X0                                                      
+//*+JBS BIND DPDDBA6.ONLINE                                                     
+/*JOBPARM R=PCS                                                                 
+//*AUTOBEEP PAGE=PMCIS                                                          
+//*-----------------------------------------------------*//                     
+//*    UNCATLOG OUTPUT DATASETS                         *//                     
+//*-----------------------------------------------------*//                     
+//STEP01  EXEC PGM=IEXUNCAT                                                     
+//SYSIN DD *                                                                    
+  AD2AIC.DCIS.HISTORY.DATA                                                      
+  AD2AIC.DCIS.DEMAND.OUT.D1048C                                                 
+  AD2AIC.DCIS.DEMAND.OUT.D1101A                                                 
+  AD2AIC.DCIS.DEMAND.OUT.D1105B                                                 
+  AD2AIC.DCIS.DEMAND.OUT.D1109B                                                 
+  AD2AIC.DCIS.DEMAND.OUT.D1113E                                                 
+  AD2AIC.DCIS.DEMAND.OUT.D1118A                                                 
+  AD2AIC.DCIS.SRTED.HISTORY.DATA                                                
+  AD2AIC.DCIS.SRTED.SUPPLD.D1048C                                               
+  AD2AIC.DCIS.SRTED.SUPPLD.D1101A                                               
+  AD2AIC.DCIS.SRTED.SUPPLD.D1105B                                               
+  AD2AIC.DCIS.SRTED.SUPPLD.D1109B                                               
+  AD2AIC.DCIS.SRTED.SUPPLD.D1113E                                               
+  AD2AIC.DCIS.SRTED.SUPPLD.D1118A                                               
+/*                                                                              
+//********************************************************************          
+//*DOWNLD1                                                           *          
+//*UNLOAD OF THE EVTCONTRMAIL_HIST TABLE                             *          
+//*       INCLUDE AOS  LINE-OF-BUS-CD = 01                           *          
+//*       EXCLUDE VANTAGE SUBSTR(COHNTR_ID,2,1) = 'V'                *          
+//********************************************************************          
+//STEP02   EXEC PGM=IKJEFT01,DYNAMNBR=20,TIME=50                                
+//STEPLIB   DD  DSN=ADXXA6.DB2.RUNLIB.LOAD,DISP=SHR                             
+//          DD  DSN=ADXXA6.DB2.SDSNLOAD,DISP=SHR                                
+//SYSTSPRT  DD  SYSOUT=*                                                        
+//SYSPRINT  DD  SYSOUT=*                                                        
+//SYSUDUMP  DD  SYSOUT=*                                                        
+//**************************************                                        
+//* THIS IS THE OUTPUT SEQUENTIAL FILE *                                        
+//**************************************                                        
+//SYSREC00  DD DSN=AD2AIC.DCIS.HISTORY.DATA,                                    
+//             DISP=(NEW,CATLG,KEEP),LABEL=RETPD=90,                            
+//             UNIT=SYSDA,SPACE=(CYL,(2000,500),RLSE)                           
+//*================================================================             
+//SYSPUNCH DD  SYSOUT=*                                                         
+//SYSTSIN  DD  *                                                                
+  DSN SYSTEM(DBA6)                                                              
+  RUN PROGRAM(DSNTIAUL) PLAN(DSNTIAUL) PARM('SQL')                              
+  END                                                                           
+/*                                                                              
+//SYSIN    DD *                                                                 
+ SET CURRENT SQLID = 'AD2AICPA';                                                
+ SELECT * FROM EVTCONTRMAIL_HIST WHERE LINE_OF_BUS_CD = 1                       
+ AND SUBSTR(CONTR_ID,2,1) <> 'V';                                               
+/*                                                                              
+//********************************************************************          
+//* SORT1                                                            *          
+//* SORT   UNLOADED EVTCONTRMAIL_HIST TABLE INTO POLICY DATE-CREATED *          
+//********************************************************************          
+//STEP03  EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.HISTORY.DATA,DISP=SHR                             
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,                               
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=1131,BLKSIZE=0,AVGREC=K,                           
+//            SPACE=(CYL,(2000,500),RLSE)                                       
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(23,19,CH,A,1,10,CH,A)',                                       
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04A EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.ADHC161.YRDATA.D1048C,DISP=SHR                    
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.DD1048C,                             
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05A  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1048C,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1048C,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04B EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.ADHC161.YRDATA.D1101A,DISP=SHR                    
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1101A,                              
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05B  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1101A,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1101A,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04C EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.ADHC161.YRDATA.D1105B,DISP=SHR                    
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.DD1105B,                             
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05C  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1105B,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1105B,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04D EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.ADHC161.YRDATA.D1109B,DISP=SHR                    
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1109B,                              
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05D  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1109B,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1109B,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04E EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=AD2AIC.DCIS.ADHC161.YRDATA.D1113E,DISP=SHR                    
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1113E,                              
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05E  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1113E,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1113E,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                
+//********************************************************************          
+//* SORT2                                                            *          
+//*SORT    SUPPLIED FILE INTO POLICY SEQUENCE                        *          
+//********************************************************************          
+//STEP04F EXEC PGM=SORT                                                         
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=ADAOSY.WBQ.ADHC161.YRDATA.D1118A,DISP=SHR                     
+//$ORTPARM DD SUBSYS=(CCSS,                                                     
+// 'BMSG,DYNALLOC=(SYSOUT3,7) ')                                                
+//SORTOUT  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1118A,                              
+//            UNIT=DASD,DISP=(,CATLG),RETPD=10,                                 
+//*           RECFM=FB,LRECL=149,BLKSIZE=0,AVGREC=K,                            
+//            SPACE=(CYL,(550,500),RLSE)                                        
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,9,CH,A)',                                                   
+// ' END                                                           ')           
+//*                                                                      0127000
+//********************************************************************          
+//* EVPADH04                                                         *          
+//*        FIND THE LATEST DATE-CREATED WITHIN THE 2 YEAR RANGE      *          
+//********************************************************************          
+//STEP05F  EXEC PGM=EVPADH04                                                    
+//STEPLIB  DD DISP=SHR,DSN=AD2AIC.DCIS.LOADLIB                                  
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIGEMERG.LOADLIB                          
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB                              
+//         DD DISP=SHR,DSN=ADIIGE.LBP.IIG1.LOADLIB.PRECMN                       
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSPUNCH DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSABOUT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=X                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//ABNLDUMP DD SYSOUT=*                                                          
+//PRINTDSN DD SYSOUT=*                                                          
+//DEMANDI  DD DSN=AD2AIC.DCIS.SRTED.SUPPLD.D1118A,DISP=SHR                      
+//HISTIN   DD DSN=AD2AIC.DCIS.SRTED.HISTORY.DATA,DISP=SHR                       
+//DEMANDO DD DSN=AD2AIC.DCIS.DEMAND.OUT.D1118A,                                 
+//           DISP=(NEW,CATLG,DELETE),UNIT=DASD,                                 
+//           SPACE=(CYL,(550,500),RLSE),RETPD=75                                

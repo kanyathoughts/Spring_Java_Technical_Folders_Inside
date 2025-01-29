@@ -1,0 +1,24 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.               DLVP001.
+       DATE-COMPILED.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       DATA DIVISION.
+       FILE SECTION.
+       WORKING-STORAGE  SECTION.
+       01  SP2010-RECORD.
+           03 FILLER PIC X(35).
+           COPY SP2010.
+      *
+       PROCEDURE DIVISION.
+           DISPLAY SP2010-RECORD
+           STOP RUN.
+
+
+
+
+
+
+
+           

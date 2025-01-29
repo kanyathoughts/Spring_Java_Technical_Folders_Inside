@@ -1,0 +1,441 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPO0DP81.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*     RPO0DP81 - DEPOSITS 8.1 DATA INQUIRY                        00005000
+000060*                FUNCTION MODULE                                  00006000
+000070******************************************************************00007000
+000080 ENVIRONMENT DIVISION.                                            00008000
+000090 DATA DIVISION.                                                   00009000
+000100******************************************************************00010000
+000110 WORKING-STORAGE SECTION.                                         00011000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00012000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00012001
+000130 01  RP-RLSELIT.                                                  00013000
+000000 COPY RPWRLSE.                                                    00014000
+000150 01  DEP-RLSELIT.                                                 00015000
+000000 COPY DPWRLSE.                                                    00016000
+000170*---------------------------------------------------------------* 00017000
+000180 01  SRW000-AREAS.                                                00018000
+000000 COPY SRW000.                                                     00019000
+000200 01  SRW009-AREAS.                                                00020000
+000000 COPY SRW009.                                                     00021000
+000220 01  WS-CIFAPPLCODES.                                             00022000
+000000 COPY SLW001.                                                     00023000
+000240 01  SRW710-AREAS.                                                00024000
+000000 COPY SRW710.                                                     00025000
+000260*---------------------------------------------------------------* 00026000
+000270 01  WS-WORKAREAS.                                                00027000
+000280     03  WS-APPLCD               PIC X(03)       VALUE SPACES.    00028000
+000290     03  WS-APPLNBR              PIC 9(02)       VALUE ZEROS.     00029000
+000300     03  WS-SUBA                 PIC S9(04)      COMP             00030000
+000310                                                 VALUE ZERO.      00031000
+000320     03  COM-ABORT               PIC S9(04)      COMP             00032000
+000330                                                 VALUE ZERO.      00033000
+000340     03  WS-LNKPROG1             PIC X(08)       VALUE 'DPLDDM01'.00034000
+000350     03  WS-LNKPROG2             PIC X(08)       VALUE 'DPLCLM01'.00035000
+000360     03  WS-PROGID               PIC X(08)       VALUE 'RPO0DP81'.00036000
+000370     03  WS-LKLGTH               PIC S9(04)      COMP             00037000
+000380                                                 VALUE +4088.     00038000
+000390     03  WS-DAYS-FROM-SC         PIC S9(07)      COMP-3           00039000
+000400                                                 VALUE ZEROS.     00040000
+000410     03  WS-BAL                  PIC S9(11)V99   COMP-3           00041000
+000420                                                 VALUE ZEROS.     00042000
+000430     03  WS-NPROCDTA             PIC S9(07)      COMP-3           00043000
+000440                                                 VALUE ZEROS.     00044000
+000450     03  WS-LASTDATE             PIC S9(07)      COMP-3           00045000
+000460                                                 VALUE ZEROS.     00046000
+000470     03  WS-BAL-MAX              PIC S9(04)      COMP             00047000
+000480                                                 VALUE +20.       00048000
+000490     03  WS-SUB1                 PIC S9(04)      COMP             00049000
+000500                                                 VALUE ZERO.      00050000
+000510     03  WS-CURDTYYYYMMDD        PIC 9(08)       VALUE ZEROS.     00051000
+000520     03  FILLER          REDEFINES WS-CURDTYYYYMMDD.              00052000
+000530         05  WS-CURDTYYYY        PIC 9(04).                       00053000
+000540         05  WS-CURDTMMDD        PIC 9(04).                       00054000
+000550         05  FILLER      REDEFINES WS-CURDTMMDD.                  00055000
+000560             07  WS-CURDTMM      PIC 9(02).                       00056000
+000570             07  WS-CURDTDD      PIC 9(02).                       00057000
+000580     03  WS-DATEDDMMYYYY         PIC 9(08)       VALUE ZEROS.     00058000
+000590     03  FILLER          REDEFINES WS-DATEDDMMYYYY.               00059000
+000600         05  WS-DATEMM           PIC 9(02).                       00060000
+000610         05  WS-DATEDD           PIC 9(02).                       00061000
+000620         05  WS-DATEYYYY         PIC 9(04).                       00062000
+000630 01  MIWMSTA-AREAS.                                               00063000
+000000 COPY MIWMSTA.                                                    00064000
+000650 01  SRW105-AREAS.                                                00065000
+000000 COPY SRW105.                                                     00066000
+000670*01  BICPBPRM.                                                    00067000
+000000 COPY BICPBPRM.                                                   00068000
+000690*01  BICRSRB.                                                     00069000
+000000 COPY BICRSRB.                                                    00070000
+000710*01  BICRPSB.                                                     00071000
+000000 COPY BICRPSB.                                                    00072000
+000730*01  BICRVERB.                                                    00073000
+000000 COPY BICRVERB.                                                   00074000
+000750*01  BICRSTAT.                                                    00075000
+000000 COPY BICRSTAT.                                                   00076000
+000770*01  BICRDBS.                                                     00077000
+000000 COPY BICRDBS.                                                    00078000
+000790*01  BICRLOG.                                                     00079000
+000000 COPY BICRLOG.                                                    00080000
+000810 01  RPBNK-AREA.                                                  00081000
+000000 COPY RPWBNKA.                                                    00082000
+000830 01  RPBNK-RECORD.                                                00083000
+000000 COPY RPSBNK.                                                     00084000
+000850 01  WS-LKAREA                   PIC X(4088).                     00085000
+000860 01  WS-LINKMSG                  PIC X(4088).                     00086000
+000870 01  WS-LINKMSG1.                                                 00087000
+000000 COPY DPSDDM01.                                                   00088000
+000890 01  WS-LINKMSG2.                                                 00089000
+000000 COPY DPSCLM01.                                                   00090000
+000910*---------------------------------------------------------------* 00091000
+000920 01  WS-TRACECODES.                                               00092000
+000930     03  WS-TR0001               PIC S9(04)      COMP             00093000
+000940                                                 VALUE +0001.     00094000
+000950     03  WS-TR0002               PIC S9(04)      COMP             00095000
+000960                                                 VALUE +0002.     00096000
+000970     03  WS-TR0003               PIC S9(04)      COMP             00097000
+000980                                                 VALUE +0003.     00098000
+000990*---------------------------------------------------------------* 00099000
+001000 01  WS-ABORTCODES.                                               00100000
+001010     03  WS-AB2000               PIC S9(04)      COMP             00101000
+001020                                                 VALUE +2000.     00102000
+001030     03  WS-AB2035               PIC S9(04)      COMP             00103000
+001040                                                 VALUE +2035.     00104000
+001050     03  WS-AB6305               PIC S9(04)      COMP             00105000
+001060                                                 VALUE +6305.     00106000
+001070******************************************************************00107000
+001080 LINKAGE SECTION.                                                 00108000
+001090 01  DFHCOMMAREA.                                                 00109000
+000000 COPY MISCNT00      REPLACING                                     00110000
+001110     ==:MICNT:== BY ==RPINF00==.                                  00111000
+000000 COPY RPSINF00.                                                   00112000
+001130******************************************************************00113000
+001140 PROCEDURE DIVISION.                                              00114000
+001150******************************************************************00115000
+001160 ENTRY-ROUTINE SECTION.                                           00116000
+001170 ER-START.                                                        00117000
+001180     PERFORM CICS-HANDLE-CONDITION.                               00118000
+001190     IF EIBCALEN IS EQUAL TO +0                                   00119000
+001200         MOVE WS-TR0001 TO RPINF00-ABTRACE                        00120000
+001210         MOVE WS-AB2000 TO RPINF00-ABORT                          00121000
+001220         GO TO CICS-RETURN.                                       00122000
+001230     MOVE SPACE TO WS-FUNCTION.                                   00123000
+001240     MOVE RPINF00-FILEOPTS TO WS-FILEOPTS.                        00124000
+000000 COPY SLP094.                                                     00125000
+001260     GO TO VERIFY-KEY.                                            00126000
+001270 ER-EXIT.                                                         00127000
+001280     EXIT.                                                        00128000
+001290******************************************************************00129000
+001300 CICS-HANDLE-CONDITION SECTION.                                   00130000
+000000 COPY SLP702.                                                     00131000
+001320     IF WS-RETURNX IS EQUAL TO 'SLP707'                           00132000
+001330         GO TO CLKP-EXIT.                                         00133000
+001340     MOVE WS-TR0002 TO RPINF00-ABTRACE.                           00134000
+001350     MOVE WS-AB2035 TO RPINF00-ABORT.                             00135000
+001360     GO TO CICS-RETURN.                                           00136000
+001370 CHC-EXIT.                                                        00137000
+001380     EXIT.                                                        00138000
+001390******************************************************************00139000
+001400 VERIFY-KEY SECTION.                                              00140000
+001410 VK-START.                                                        00141000
+001420     MOVE ZERO TO RPINF00-ABORT.                                  00142000
+001430     MOVE SPACE TO RPINF00-RETURN.                                00143000
+001440 VK-DDM.                                                          00144000
+001450     MOVE RPINF00-APPLR TO WS-APPLNBR.                            00145000
+001460     MOVE SPACES TO WS-FUNCTION.                                  00146000
+001470     PERFORM FIND-APPLICATION-AF.                                 00147000
+001480     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00148000
+001490         GO TO VK-RETURN.                                         00149000
+001500     MOVE WS-APPLCD TO RPINF00-CIFAC.                             00150000
+001510 VK-BNK.                                                          00151000
+001520     MOVE RPINF00-INST TO RPBNK-INST.                             00152000
+001530     PERFORM RPS-BNK-GET-REQUEST.                                 00153000
+001540     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00154000
+001550         MOVE WS-TR0003 TO RPINF00-ABTRACE                        00155000
+001560         MOVE WS-AB6305 TO RPINF00-ABORT                          00156000
+001570         GO TO VK-RETURN.                                         00157000
+001580     MOVE RPBNK-NPROCDTA TO WS-CURDTYYYYMMDD.                     00158000
+001590     MOVE WS-CURDTMM TO WS-DATEMM.                                00159000
+001600     MOVE WS-CURDTDD TO WS-DATEDD.                                00160000
+001610     MOVE WS-CURDTYYYY TO WS-DATEYYYY.                            00161000
+001620     MOVE WS-DATEDDMMYYYY TO SR-FROMCAL.                          00162000
+001630     PERFORM JULIAN-365.                                          00163000
+001640     MOVE SR-TOJUL TO WS-NPROCDTA.                                00164000
+001650     IF RPINF00-APPLR IS EQUAL TO '01'                            00165000
+001660         OR RPINF00-APPLR IS EQUAL TO '04'                        00166000
+001670         PERFORM LINK-MESSAGE1                                    00167000
+001680         ELSE                                                     00168000
+001690         PERFORM LINK-MESSAGE2.                                   00169000
+001700 VK-RETURN.                                                       00170000
+001710     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00171000
+001720     GO TO CICS-RETURN.                                           00172000
+001730 VK-EXIT.                                                         00173000
+001740     EXIT.                                                        00174000
+001750******************************************************************00175000
+001760 LINK-MESSAGE1 SECTION.                                           00176000
+001770 LM1-START.                                                       00177000
+001780     MOVE 'VKD' TO DPDDM01-APIFUNC.                               00178000
+001790     MOVE RPINF00-DATE TO DPDDM01-DATE.                           00179000
+001800     MOVE ALL 'N' TO DPDDM01-DCHG.                                00180000
+001810     MOVE SPACES TO DPDDM01-FUNCTION.                             00181000
+001820     MOVE 'M' TO DPDDM01-FUNC.                                    00182000
+001830     MOVE 'N' TO DPDDM01-CALCSW.                                  00183000
+001840     MOVE 'Y' TO DPDDM01-BYPASSOPDSW.                             00184000
+001850     MOVE 'N' TO DPDDM01-UPDATE.                                  00185000
+001860     MOVE SPACES TO DPDDM01-RETURN.                               00186000
+001870     MOVE RPINF00-INST TO DPDDM01-INST.                           00187000
+001880     MOVE RPINF00-ACCOUNT TO DPDDM01-ACCOUNT.                     00188000
+001890     MOVE RPINF00-APPLR TO DPDDM01-APPL.                          00189000
+001900     MOVE RPINF00-CIFAC TO DPDDM01-CIFAC.                         00190000
+001910     MOVE RPINF00-FILEOPTS TO DPDDM01-FILEOPTS.                   00191000
+001920     MOVE RPINF00-MODELID TO DPDDM01-MODELID.                     00192000
+001930     MOVE SPACES TO DPDDM01-SECALT.                               00193000
+001940     MOVE 'RPO0DP81' TO DPDDM01-EXTERNALID.                       00194000
+001950     MOVE RPINF00-OPERID TO DPDDM01-OPERID.                       00195000
+001960     MOVE SPACES TO DPDDM01-TERMID.                               00196000
+001970     MOVE SPACES TO DPDDM01-WORKID.                               00197000
+001980     MOVE ZEROS TO DPDDM01-TRANSTART.                             00198000
+001990     MOVE ZEROS TO DPDDM01-APPLSEQ.                               00199000
+002000     MOVE RPINF00-GLOBAL-CLOSE TO DPDDM01-GLOBAL-CLOSE.           00200000
+002010     MOVE WS-LNKPROG1 TO WS-PROGRAM.                              00201000
+002020     MOVE WS-LINKMSG1 TO WS-LKAREA.                               00202000
+002030     PERFORM CICS-LINK-PROGRAM.                                   00203000
+002040     IF WS-FUNCTION IS EQUAL TO 'L'                               00204000
+002050         GO TO LM1-EXIT.                                          00205000
+002060     MOVE WS-LKAREA TO WS-LINKMSG1.                               00206000
+002070     MOVE DPDDM01-FUNCTION TO WS-FUNCTION.                        00207000
+002080     IF WS-FUNCTION IS EQUAL TO 'C'                               00208000
+002090         GO TO LM1-EXIT.                                          00209000
+002100     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00210000
+002110         OR DPDDM01-ABORT IS NOT EQUAL TO ZEROS                   00211000
+002120         OR DPDDM01-RETURN IS EQUAL TO 'E'                        00212000
+002130         MOVE 'N' TO WS-FUNCTION                                  00213000
+002140         GO TO LM1-EXIT.                                          00214000
+002150     IF DPDDM01-MSTATUS IS EQUAL TO SPACES                        00215000
+002160         GO TO LM1-USER-INFO.                                     00216000
+002170     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00217000
+002180         AND DPDDM01-MSTATUS IS NOT EQUAL TO 'P'                  00218000
+002190         MOVE SPACES TO DPDDM01-MSTATUS                           00219000
+002200         GO TO LM1-USER-INFO.                                     00220000
+002210     IF DPDDM01-MSTATUS IS EQUAL TO 'C'                           00221000
+002220         MOVE 'D' TO WS-FUNCTION                                  00222000
+002230         GO TO LM1-EXIT.                                          00223000
+002240     MOVE 'N' TO WS-FUNCTION.                                     00224000
+002250     GO TO LM1-EXIT.                                              00225000
+002260 LM1-USER-INFO.                                                   00226000
+002270     MOVE SPACES TO RPINF00-GRP-DATA.                             00227000
+002280     MOVE DPDDM01-MSTATUS TO RPINF00-APPL-STATUS.                 00228000
+002290     MOVE DPDDM01-MBRANCH TO RPINF00-BRANCH.                      00229000
+002300     MOVE DPDDM01-MNEWTYPE TO RPINF00-ACCT-TYPE.                  00230000
+002310     MOVE DPDDM01-INTCODE TO RPINF00-INTCODE.                     00231000
+002320     MOVE ZEROS TO RPINF00-TERM.                                  00232000
+002330     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00233000
+002340     MOVE DPDDM01-MDORM TO RPINF00-MDORM.                         00234000
+002350     MOVE DPDDM01-MCOSTC TO RPINF00-COSTC.                        00235000
+002360     MOVE SPACES TO RPINF00-USEROPT1.                             00236000
+002370     MOVE SPACES TO RPINF00-USEROPT2.                             00237000
+002380     MOVE SPACES TO RPINF00-USEROPT3.                             00238000
+002390     MOVE SPACES TO RPINF00-USEROPT4.                             00239000
+002400     IF DPDDM01-SCNXT IS GREATER THAN ZEROS                       00240000
+002410         MOVE DPDDM01-SCNXT TO SR-FROMJUL                         00241000
+002420         PERFORM CALENDAR-365                                     00242000
+002430         MOVE SR-TCMON TO SR-CMM                                  00243000
+002440         MOVE SR-TCDAY TO SR-CDD                                  00244000
+002450         MOVE SR-TCYR TO SR-CYYYY                                 00245000
+002460         MOVE SR-CYEAR-FIRST TO RPINF00-SCNXT                     00246000
+002470     ELSE                                                         00247000
+002480         MOVE ZEROS TO RPINF00-SCNXT.                             00248000
+002490     MOVE DPDDM01-BALCUR TO RPINF00-CURBAL.                       00249000
+002500     MOVE DPDDM01-BALCUR TO WS-BAL.                               00250000
+002510     MOVE +0 TO WS-SUB1.                                          00251000
+002520 LM1-CURCUSTCOL-LOOP.                                             00252000
+002530     ADD +1 TO WS-SUB1.                                           00253000
+002540     SUBTRACT DPDDM01-MFCAMT (WS-SUB1) FROM WS-BAL.               00254000
+002550     IF WS-SUB1 IS LESS THAN +9                                   00255000
+002560         GO TO LM1-CURCUSTCOL-LOOP.                               00256000
+002570     MOVE WS-BAL TO RPINF00-CURCUSTCOL.                           00257000
+002580     MOVE DPDDM01-BALCUR TO WS-BAL.                               00258000
+002590     MOVE +0 TO WS-SUB1.                                          00259000
+002600 LM1-CURBANKCOL-LOOP.                                             00260000
+002610     ADD +1 TO WS-SUB1.                                           00261000
+002620     SUBTRACT DPDDM01-MFBAMT (WS-SUB1) FROM WS-BAL.               00262000
+002630     IF WS-SUB1 IS LESS THAN +9                                   00263000
+002640         GO TO LM1-CURBANKCOL-LOOP.                               00264000
+002650     MOVE WS-BAL TO RPINF00-CURBANKCOL.                           00265000
+002660     MOVE DPDDM01-SCLOWBAL TO RPINF00-LOWBAL.                     00266000
+002670     MOVE DPDDM01-SCDL TO WS-LASTDATE.                            00267000
+002680     PERFORM COMPUTE-DAYS-IN-CYCLE.                               00268000
+002690     IF DPDDM01-SCAGRBAL IS EQUAL TO ZERO                         00269000
+002700         MOVE RPINF00-CURBAL TO RPINF00-AVGBAL                    00270000
+002710     ELSE                                                         00271000
+002720         DIVIDE DPDDM01-SCAGRBAL BY WS-DAYS-FROM-SC               00272000
+002730         GIVING RPINF00-AVGBAL.                                   00273000
+002740     IF DPDDM01-SCCAGR IS EQUAL TO ZERO                           00274000
+002750         MOVE RPINF00-CURBANKCOL TO RPINF00-AVGCOLBAL             00275000
+002760     ELSE                                                         00276000
+002770         DIVIDE DPDDM01-SCCAGR BY WS-DAYS-FROM-SC                 00277000
+002780         GIVING RPINF00-AVGCOLBAL.                                00278000
+002790     MOVE ZEROS TO RPINF00-COMMAMT.                               00279000
+002800     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00280000
+002810     MOVE +8 TO WS-SUB1.                                          00281000
+002820 LM1-LOOP.                                                        00282000
+002830     ADD +1 TO WS-SUB1.                                           00283000
+002840     IF WS-SUB1 IS GREATER THAN WS-BAL-MAX                        00284000
+002850         GO TO LM1-EXIT.                                          00285000
+002860     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00286000
+002870     GO TO LM1-LOOP.                                              00287000
+002880 LM1-EXIT.                                                        00288000
+002890     EXIT.                                                        00289000
+002900******************************************************************00290000
+002910 LINK-MESSAGE2 SECTION.                                           00291000
+002920 LM2-START.                                                       00292000
+002930     MOVE 'VKD' TO DPCLM01-APIFUNC.                               00293000
+002940     MOVE RPINF00-DATE TO DPCLM01-DATE.                           00294000
+002950     MOVE ALL 'N' TO DPCLM01-DCHG.                                00295000
+002960     MOVE SPACES TO DPCLM01-FUNCTION.                             00296000
+002970     MOVE 'M' TO DPCLM01-FUNC.                                    00297000
+002980     MOVE 'N' TO DPCLM01-UPDATE.                                  00298000
+002990     MOVE SPACES TO DPCLM01-RETURN.                               00299000
+003000     MOVE ZEROS TO DPCLM01-MSGNBR.                                00300000
+003010     MOVE ZEROS TO DPCLM01-ABORT.                                 00301000
+003020     MOVE RPINF00-INST TO DPCLM01-INST.                           00302000
+003030     MOVE RPINF00-ACCOUNT TO DPCLM01-ACCOUNT.                     00303000
+003040     MOVE RPINF00-APPLR TO DPCLM01-APPL.                          00304000
+003050     MOVE RPINF00-CIFAC TO DPCLM01-CIFAC.                         00305000
+003060     MOVE RPINF00-FILEOPTS TO DPCLM01-FILEOPTS.                   00306000
+003070     MOVE RPINF00-MODELID TO DPCLM01-MODELID.                     00307000
+003080     MOVE SPACES TO DPCLM01-SECALT.                               00308000
+003090     MOVE RPINF00-EXTERNALID TO DPCLM01-EXTERNALID.               00309000
+003100     MOVE RPINF00-OPERID TO DPCLM01-OPERID.                       00310000
+003110     MOVE SPACES TO DPCLM01-TERMID.                               00311000
+003120     MOVE SPACES TO DPCLM01-WORKID.                               00312000
+003130     MOVE ZEROS TO DPCLM01-TRANSTART.                             00313000
+003140     MOVE ZEROS TO DPCLM01-APPLSEQ.                               00314000
+003150     MOVE RPINF00-GLOBAL-CLOSE TO DPCLM01-GLOBAL-CLOSE.           00315000
+003160     MOVE WS-LNKPROG2 TO WS-PROGRAM.                              00316000
+003170     MOVE WS-LINKMSG2 TO WS-LKAREA.                               00317000
+003180     PERFORM CICS-LINK-PROGRAM.                                   00318000
+003190     IF WS-FUNCTION IS EQUAL TO 'L'                               00319000
+003200         GO TO LM2-EXIT.                                          00320000
+003210     MOVE WS-LKAREA TO WS-LINKMSG2.                               00321000
+003220     MOVE DPCLM01-FUNCTION TO WS-FUNCTION.                        00322000
+003230     IF WS-FUNCTION IS EQUAL TO 'C'                               00323000
+003240         GO TO LM2-EXIT.                                          00324000
+003250     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00325000
+003260         OR DPCLM01-ABORT IS NOT EQUAL TO ZEROS                   00326000
+003270         OR DPCLM01-RETURN IS EQUAL TO 'E'                        00327000
+003280         MOVE 'N' TO WS-FUNCTION                                  00328000
+003290         GO TO LM2-EXIT.                                          00329000
+003300     IF DPCLM01-MSTATUS IS EQUAL TO SPACES                        00330000
+003310         GO TO LM2-USER-INFO.                                     00331000
+003320     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00332000
+003330         AND DPCLM01-MSTATUS IS NOT EQUAL TO 'P'                  00333000
+003340         MOVE SPACES TO DPCLM01-MSTATUS                           00334000
+003350         GO TO LM2-USER-INFO.                                     00335000
+003360     IF DPCLM01-MSTATUS IS EQUAL TO 'C'                           00336000
+003370         MOVE 'D' TO WS-FUNCTION                                  00337000
+003380         GO TO LM2-EXIT.                                          00338000
+003390     MOVE 'N' TO WS-FUNCTION.                                     00339000
+003400     GO TO LM2-EXIT.                                              00340000
+003410 LM2-USER-INFO.                                                   00341000
+003420     MOVE SPACES TO RPINF00-GRP-DATA.                             00342000
+003430     MOVE DPCLM01-MSTATUS TO RPINF00-APPL-STATUS.                 00343000
+003440     MOVE DPCLM01-MBRANCH TO RPINF00-BRANCH.                      00344000
+003450     MOVE DPCLM01-MTYPE TO RPINF00-ACCT-TYPE.                     00345000
+003460     MOVE ZEROS TO RPINF00-TERM.                                  00346000
+003470     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00347000
+003480     MOVE DPCLM01-MBLOCK TO RPINF00-MBLOCK.                       00348000
+003490     MOVE DPCLM01-MCOSTC TO RPINF00-COSTC.                        00349000
+003500     MOVE SPACES TO RPINF00-INTCODE.                              00350000
+003510     MOVE ZEROS TO RPINF00-SCNXT.                                 00351000
+003520     MOVE DPCLM01-BALCUR TO RPINF00-CURBAL.                       00352000
+003530     MOVE ZEROS TO RPINF00-CURCUSTCOL.                            00353000
+003540     MOVE ZEROS TO RPINF00-CURBANKCOL.                            00354000
+003550     MOVE DPCLM01-BALCUR TO RPINF00-LOWBAL.                       00355000
+003560     MOVE DPCLM01-STMCODLS TO WS-LASTDATE.                        00356000
+003570     PERFORM COMPUTE-DAYS-IN-CYCLE.                               00357000
+003580     DIVIDE DPCLM01-INTAGR BY WS-DAYS-FROM-SC                     00358000
+003590         GIVING RPINF00-AVGBAL.                                   00359000
+003600     DIVIDE DPCLM01-INTAGR BY WS-DAYS-FROM-SC                     00360000
+003610         GIVING RPINF00-AVGCOLBAL.                                00361000
+003620     MOVE ZEROS TO RPINF00-COMMAMT.                               00362000
+003630     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00363000
+003640     MOVE +8 TO WS-SUB1.                                          00364000
+003650 LM2-LOOP.                                                        00365000
+003660     ADD +1 TO WS-SUB1.                                           00366000
+003670     IF WS-SUB1 IS GREATER THAN WS-BAL-MAX                        00367000
+003680         GO TO LM2-EXIT.                                          00368000
+003690     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00369000
+003700     GO TO LM2-LOOP.                                              00370000
+003710 LM2-EXIT.                                                        00371000
+003720     EXIT.                                                        00372000
+003730***************************************************************** 00373000
+003740 COMPUTE-DAYS-IN-CYCLE SECTION.                                   00374000
+003750 CDIC-START.                                                      00375000
+003760     MOVE WS-NPROCDTA TO SR-FROMJUL.                              00376000
+003770     MOVE 'D' TO SR-PERIOD.                                       00377000
+003780     MOVE 1 TO SR-FREQ.                                           00378000
+003790     MOVE ZEROS TO SR-DAY.                                        00379000
+003800     PERFORM LAST-DATE-365.                                       00380000
+003810     MOVE WS-LASTDATE TO SR-FROMJUL.                              00381000
+003820     PERFORM ELAPSED-DAYS-365.                                    00382000
+003830     MOVE SR-RESULT TO WS-DAYS-FROM-SC.                           00383000
+003840     IF WS-DAYS-FROM-SC IS NOT GREATER THAN ZERO                  00384000
+003850         MOVE +1 TO WS-DAYS-FROM-SC.                              00385000
+003860 CDIC-EXIT.                                                       00386000
+003870     EXIT.                                                        00387000
+003880******************************************************************00388000
+003890 CICS-ABORT-EXIT SECTION.                                         00389000
+003900 CAE-START.                                                       00390000
+003910     GO TO CICS-RETURN.                                           00391000
+003920 CAE-EXIT.                                                        00392000
+003930     EXIT.                                                        00393000
+003940******************************************************************00394000
+003950 CALL-RPS-BNK SECTION.                                            00395000
+000000 COPY RPPBNKA.                                                    00396000
+003970******************************************************************00397000
+003980 JULIAN-365 SECTION.                                              00398000
+000000 COPY SRP001.                                                     00399000
+004000******************************************************************00400000
+004010 CALENDAR-365 SECTION.                                            00401000
+000000 COPY SRP003.                                                     00402000
+004030******************************************************************00403000
+004040 ELAPSED-DAYS-365 SECTION.                                        00404000
+000000 COPY SRP005.                                                     00405000
+004060******************************************************************00406000
+004070 LAST-DATE-365 SECTION.                                           00407000
+000000 COPY SRP019.                                                     00408000
+004090******************************************************************00409000
+004100 FIND-APPLICATION-AF SECTION.                                     00410000
+000000 COPY SLP741.                                                     00411000
+004120******************************************************************00412000
+004130 CICS-LINK-PROGRAM SECTION.                                       00413000
+000000 COPY SLP707.                                                     00414000
+004150******************************************************************00415000
+004160 CICS-RETURN SECTION.                                             00416000
+000000 COPY SLP709.                                                     00417000
+004180******************************************************************00418000

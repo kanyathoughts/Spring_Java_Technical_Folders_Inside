@@ -1,0 +1,35 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3,"","ABEND","src/jcl/WCFD797/include/ABEND.proc","JCL","JCL_INCLUDE","PHYSICAL",0,0,4,5,10,0,0,-1,-1
+1,"","BOBLOB","src/jcl/WCFD797/include/BOBLOB.proc","JCL","JCL_INCLUDE","PHYSICAL",0,0,4,5,10,0,0,-1,-1
+4,"","JOB","src/jcl/WCFD797/jobs/JOB.job","JCL","JCL_JOB","PHYSICAL",3,0,11,3,15,3,0,-1,-1
+6,4,"JOB.ABEND.0.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+7,4,"JOB.ABEND.1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+5,4,"JOB.STEP0010.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2,"","SYSOUT","src/jcl/WCFD797/include/SYSOUT.proc","JCL","JCL_INCLUDE","PHYSICAL",0,1,0,0,1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+4,"JOB","CONDITIONAL","IF ABEND EQ true"
+4,"JOB","EXEC","Properties: [PGM=IEFBR14], Data Definitions: [SYSIN{DUMMY=null},INPUTFL{DUMMY=null}], Additional Properties: [Fully Qualified Step name=STEP0010,Step name=STEP0010,Job name=TEST]"
+4,"JOB","EXEC","Properties: [PGM=PAUSE,PARM= >>>> ABEND IN JOB <<<< ], Data Definitions: [], Additional Properties: [Fully Qualified Step name=ABEND,Step name=ABEND,Job name=TEST]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+5,"JOB.STEP0010.EXEC_PGM",0,"IEFBR14","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+4,"JOB",6,"JOB.ABEND.0.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+4,"JOB",7,"JOB.ABEND.1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+4,"JOB",5,"JOB.STEP0010.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+6,"JOB.ABEND.0.EXEC_PGM",0,"PAUSE","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+7,"JOB.ABEND.1.EXEC_PGM",0,"PAUSE","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+4,"JOB",3,"ABEND","JCL","JCL_INCLUDE","Includes","","LATE","{}",-1,-1,-1,-1
+4,"JOB",1,"BOBLOB","JCL","JCL_INCLUDE","Includes","","LATE","{}",-1,-1,-1,-1
+4,"JOB",-1,"MISSING","JCL","JCL_INCLUDE","Includes","","LATE","{}",-1,-1,-1,-1
+4,"JOB",2,"SYSOUT","JCL","JCL_INCLUDE","Includes","","LATE","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2,"SYSOUT","WARNING","EMPTY_FILE","Found empty file: SYSOUT",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

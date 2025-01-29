@@ -1,0 +1,20 @@
+<div class="toolbar" #toolbar>
+    <ng-container *ngIf="isDropdownNeeded">
+        <ng-container *ngFor="let button of visibleButtons" [ngTemplateOutlet]="button.templateRef">
+        </ng-container>
+        <button [nzSize]="moreBtnSize" nz-button nz-popover nzPopoverTrigger="click" [nzPopoverContent]="dropdownContent"
+            nzPopoverPlacement="bottomRight" nzType="default" [nzPopoverArrowPointAtCenter]="true">
+            <i nz-icon nzType="more" nzTheme="outline" aria-hidden="true"></i>
+        </button>
+        <ng-template #dropdownContent>
+            <li class="mining-popover" *ngFor="let button of hiddenButtons">
+                <ng-container [ngTemplateOutlet]="button.templateRef"></ng-container>
+            </li>
+        </ng-template>
+    </ng-container>
+
+    <ng-container *ngIf="! isDropdownNeeded">
+        <ng-container *ngFor="let button of toolbarButtons" [ngTemplateOutlet]="button.templateRef">
+        </ng-container>
+    </ng-container>
+</div>

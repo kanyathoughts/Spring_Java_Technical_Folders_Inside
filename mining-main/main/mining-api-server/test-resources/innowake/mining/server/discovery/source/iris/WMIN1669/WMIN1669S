@@ -1,0 +1,21 @@
+DELETE MIPS235.P.M1100IA.DATA.VSAM PURGE                                    
+IF LASTCC EQ 8 THEN -                                                       
+   SET MAXCC = 0                                                            
+DEFINE CLUSTER -                                                            
+          (NAME(MIPS235.P.M1100IA.DATA.VSAM) -                              
+                         NOIMBED SPEED -                                    
+                         SPANNED -                                          
+                         SHAREOPTIONS(2) -                                  
+                         CYLINDERS(300 50) -                                
+                         MGMTCLAS(NOMIG) -                                  
+                         DATACLAS(COMPRESS) -                               
+                         STORCLAS(NORMAL) ) -                               
+     DATA -                                                                 
+          (NAME(MIPS235.P.M1100IA.DATA.VSAM.PRIME) -                        
+                         RECORDSIZE(113 14585) -                            
+                         KEYS(07 00) -                                      
+                         CISZ(4096) -                                       
+                         FREESPACE(0 0) ) -                                 
+    INDEX -                                                                 
+          (NAME(MIPS235.P.M1100IA.DATA.VSAM.INDEX) -                        
+                         CISZ(2048) )     

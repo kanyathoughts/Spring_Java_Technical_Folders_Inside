@@ -1,0 +1,311 @@
+000010******************************************************************00001000
+000020* RPP137   GET SECONDARY ACCOUNT - BATCH                         *00002000
+000030******************************************************************00003000
+000040*GET-MY-SECONDARY-ACCOUNTS SECTION.                               00004000
+000050*   THE PURPOSE OF THIS SECTION IS TO FIND THE ACCOUNTS           00005000
+000060*   BELONGING TO SECONDARY CUSTOMERS OF THE PRIMARY ACCOUNT       00006000
+000070*   AND ADD THESE ADDITIONAL ACCOUNTS TO THE TABLE                00007000
+000080*   OF ACCOUNTS FROM THE PRIMARY CUSTOMER                         00008000
+000090 GM-START.                                                        00009000
+P0100      MOVE SPACES TO WS-LAST-PRODCD.                               00009200
+P0100      MOVE SPACES TO WS-FUNCTION.                                  00009400
+P0100      MOVE SPACES TO WS-RPMIM2023PRODCD.                           00009600
+000100     MOVE 'Y' TO WS-RELCHECK.                                     00010000
+P0100      MOVE ZEROS TO WS-NUMOFSECCUSTS.                              00011000
+P0100 * ** SECONDARY CUSTOMER TABLE, BOTH OR ENROLL ONLY                00011090
+P0100      IF MIM-7101PRIMRELCD-Q IS NOT EQUAL TO 'B'                   00011180
+P0100          AND MIM-7101PRIMRELCD-Q IS NOT EQUAL TO 'E'              00011270
+P0100          MOVE 'N' TO WS-RELCHECK                                  00011360
+P0100          GO TO GM-START2.                                         00011450
+P0100      MOVE MIM-7101PRIMRELCD TO WS-RPMIM7104RPREC.                 00011540
+000120* ** IF NO SECONDARY CUSTOMER TABLE, NO SECONDARY ACCOUNTS        00012000
+000130     IF WS-RPMIM7104RPREC IS EQUAL TO SPACES                      00013000
+000140         MOVE 'N' TO WS-RELCHECK                                  00014000
+000150         GO TO GM-START2.                                         00015000
+000160     PERFORM SEARCH-RPS-7104.                                     00016000
+000170     IF WS-RPMIM7104FOUND IS EQUAL TO 'N'                         00017000
+000180         MOVE 'N' TO WS-RELCHECK                                  00018000
+000190         GO TO GM-START2.                                         00019000
+000270 GM-START1.                                                       00027000
+000280     MOVE 'N' TO WS-INCLUDEREL.                                   00028000
+000290     IF MIM-7104OPT IS EQUAL TO 'I'                               00029000
+000300         MOVE 'Y' TO WS-INCLUDEREL.                               00030000
+000310     INITIALIZE WS-RELCODETABLE.                                  00031000
+000320     MOVE MIM-REC7104-DATA TO WS-RELCODETABLE.                    00032000
+000330 GM-START2.                                                       00033000
+000340     IF WS-RELCHECK IS EQUAL TO 'N'                               00034000
+000350         GO TO GM-END.                                            00035000
+000360     MOVE WS-NUMOFACCOUNTS TO WS-PRIMCUSTACCTS.                   00036000
+000370     MOVE ZERO TO WS-SECTABLE.                                    00037000
+000380     MOVE SPACES TO WS-FUNCTION.                                  00038000
+000390     MOVE RPMST-INST TO RPRF21-BASE-ACCT-INST.                    00039000
+000400     MOVE WS-PRIM-PRODCD TO RPRF21-BASE-ACCT-PRODCODE.            00040000
+000410     MOVE WS-PRIM-ACCT TO RPRF21-BASE-ACCT.                       00041000
+000420     MOVE SPACES TO RPRF21-BASE-CUSTOMER.                         00042000
+000430     INITIALIZE WS-NEXTACC.                                       00043000
+000440     MOVE SPACE TO RPRF21-RETURN.                                 00044000
+000450 GM-SEC-AGAIN.                                                    00045000
+000460     MOVE MIM-7101CLOSEDACCTOPT TO RPRF21-CLOSEDACCTOPT.          00046000
+000470     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00047000
+000480         AND MIM-7100ENTERPRISEINST IS NOT EQUAL TO ZEROES        00048000
+000490         MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST.    00049000
+000500     MOVE 'X' TO RPRF21-FUNC.                                     00050000
+000510     CALL SR-060CALLNAME USING                                    00051000
+000520         WS-LINKRCIF.                                             00052000
+000530     MOVE 'N' TO WS-MORE-SECONDARYCUST.                           00053000
+000540     IF RPRF21-RETURN IS EQUAL TO 'M'                             00054000
+000550         MOVE 'Y' TO WS-MORE-SECONDARYCUST                        00055000
+000560         MOVE SPACE TO RPRF21-RETURN.                             00056000
+000570*                                                                 00057000
+000580     IF RPRF21-FUNCTION IS NOT EQUAL TO SPACE                     00058000
+000590         GO TO GM-END.                                            00059000
+000600*  HERE I HAVE THE FIRST GROUP OF SECONDARY CUSTOMERS             00060000
+000610     MOVE RPRF21-RETURNED-OBJECT TO WS-ACC-TABLE.                 00061000
+000620     MOVE +1 TO WS-SECCUSTSUB.                                    00062000
+000630 GM-LOAD-SECONDARY.                                               00063000
+000640     IF WS-SECCUSTSUB IS GREATER THAN WS-ACC-MAX                  00064000
+000650         AND WS-MORE-SECONDARYCUST IS EQUAL TO 'Y'                00065000
+000660         MOVE WS-ACC-CUST (WS-ACC-MAX) TO RPRF21-BASE-CUST        00066000
+000670         MOVE WS-ACC-CUST-TYPE (WS-ACC-MAX) TO                    00067000
+000680         RPRF21-BASE-CUST-TYPE                                    00068000
+000690         MOVE RPMST-INST TO RPRF21-BASE-ACCT-INST                 00069000
+000700         MOVE WS-PRIM-PRODCD TO RPRF21-BASE-ACCT-PRODCODE         00070000
+000710         MOVE WS-PRIM-ACCT TO RPRF21-BASE-ACCT                    00071000
+000720         MOVE WS-ACC-INST (WS-ACC-MAX) TO WS-NEXTCINST            00072000
+000730         MOVE WS-ACC-CUST-TYPE (WS-ACC-MAX) TO WS-NEXTCTYPE       00073000
+000740         MOVE WS-ACC-CUST (WS-ACC-MAX) TO WS-NEXTCCUST            00074000
+000750         MOVE WS-ACC-PRIM (WS-ACC-MAX) TO WS-NEXTPRIM             00075000
+000760         MOVE WS-ACC-RELNBR (WS-ACC-MAX) TO WS-NEXTRELN           00076000
+000770         MOVE 'M' TO RPRF21-RETURN                                00077000
+000780         MOVE WS-NEXTACC TO RPRF21-RETURNED-OBJECT                00078000
+000790         GO TO GM-SEC-AGAIN.                                      00079000
+000800     IF WS-SECCUSTSUB IS GREATER THAN WS-ACC-MAX                  00080000
+000810         AND WS-MORE-SECONDARYCUST IS EQUAL TO 'N'                00081000
+000820         GO TO GM-MORE-ACCTS.                                     00082000
+000830* ** DONE LOADING CUSTOMERS NOW GET ACCOUNTS                      00083000
+000840     IF WS-ACC-CUST (WS-SECCUSTSUB) IS EQUAL TO SPACES            00084000
+000850         AND                                                      00085000
+000860         WS-ACC-INST (WS-SECCUSTSUB) IS EQUAL TO ZEROS            00086000
+000870         GO TO GM-MORE-ACCTS.                                     00087000
+000880* ** EXCLUDE PRIMARY CUSTOMER                                     00088000
+000890     IF WS-ACC-PRIM (WS-SECCUSTSUB) IS EQUAL TO ZERO              00089000
+000900         ADD +1 TO WS-SECCUSTSUB                                  00090000
+000910         GO TO GM-LOAD-SECONDARY.                                 00091000
+000920* ** DONE LOADING CUSTOMERS NOW GET ACCOUNTS                      00092000
+000930* ** CHECK FOR ADJUSTMENT BY RELATE CODE                          00093000
+000940     IF WS-RELCHECK IS NOT EQUAL TO 'Y'                           00094000
+000950         GO TO GM-LOAD-SEC-CUST.                                  00095000
+000960     MOVE WS-ACC-RELNBR (WS-SECCUSTSUB) TO WS-VALIDREL.           00096000
+000970     PERFORM GM-CHECKFORRELNBR.                                   00097000
+000980     IF WS-BADRELNBR IS EQUAL TO 'Y'                              00098000
+000990         ADD +1 TO WS-SECCUSTSUB                                  00099000
+001000         GO TO GM-LOAD-SECONDARY.                                 00100000
+001010 GM-LOAD-SEC-CUST.                                                00101000
+001020     ADD +1 TO WS-SECTABLE.                                       00102000
+001030     IF WS-SECTABLE IS GREATER THAN WS-SECCUSTMAX                 00103000
+001040         MOVE 'Y' TO WS-SECCUSTOVERFLOW                           00104000
+001050         GO TO GM-MORE-ACCTS.                                     00105000
+001060     MOVE WS-ACC-INST (WS-SECCUSTSUB)                             00106000
+001070         TO WS-SECUST-INST (WS-SECTABLE).                         00107000
+001080     MOVE WS-ACC-CUST-TYPE (WS-SECCUSTSUB)                        00108000
+001090         TO WS-SECUST-CUST-TYPE (WS-SECTABLE).                    00109000
+001100     MOVE WS-ACC-CUST (WS-SECCUSTSUB)                             00110000
+001110         TO WS-SECUST-CUST (WS-SECTABLE).                         00111000
+001120     MOVE WS-ACC-PRIM (WS-SECCUSTSUB)                             00112000
+001130         TO WS-SECUST-PRIM (WS-SECTABLE).                         00113000
+P0100      MOVE WS-ACC-RELNBR (WS-SECCUSTSUB)                           00113300
+P0100          TO WS-SECUST-RELNBR (WS-SECTABLE).                       00113600
+001140     ADD 1 TO WS-SECCUSTSUB.                                      00114000
+001150     ADD 1 TO WS-NUMOFSECCUSTS.                                   00115000
+001160     GO TO GM-LOAD-SECONDARY.                                     00116000
+001170 GM-MORE-ACCTS.                                                   00117000
+001180     MOVE ZERO TO WS-SECCUSTSUB.                                  00118000
+001190 GM-FIND-SEC-ACCTS.                                               00119000
+001200     ADD 1 TO WS-SECCUSTSUB.                                      00120000
+001210     IF WS-SECCUSTSUB IS GREATER THAN WS-SECTABLE                 00121000
+001220         GO TO GM-END.                                            00122000
+001230     IF WS-SECCUSTSUB IS GREATER THAN WS-SECCUSTMAX               00123000
+001240         GO TO GM-END.                                            00124000
+001250* ** MAXIMUM 1000 ACCOUNTS FROM ALL CUSTOMERS                     00125000
+001260     MOVE RPMST-INST TO RPRF21-BASE-ACCT-INST.                    00126000
+001270     MOVE SPACES TO RPRF21-BASE-ACCT-PRODCODE.                    00127000
+001280     MOVE ZEROS TO RPRF21-BASE-ACCT.                              00128000
+001290     MOVE WS-SECUST-INST (WS-SECCUSTSUB)                          00129000
+001300         TO RPRF21-BASE-CUST-INST.                                00130000
+001310     MOVE WS-SECUST-CUST-TYPE (WS-SECCUSTSUB)                     00131000
+001320         TO RPRF21-BASE-CUST-TYPE.                                00132000
+001330     MOVE WS-SECUST-CUST (WS-SECCUSTSUB)                          00133000
+001340         TO RPRF21-BASE-CUST.                                     00134000
+P0100 *    ADD +1 TO WS-SUB4                                            00134100
+P0100 *    MOVE RPQUA-INST TO WS-SEC-INST (WS-SUB4)                     00134200
+P0100 *    MOVE RPQUA-PRODCODE TO WS-SEC-PRODCD (WS-SUB4)               00134300
+P0100 *    MOVE RPQUA-ACCOUNT TO WS-SEC-ACCT (WS-SUB4)                  00134400
+P0100 *    MOVE WS-SECUST-RELNBR (WS-SECCUSTSUB)                        00134500
+P0100 *        TO WS-SEC-RELNBR (WS-SUB4)                               00134600
+P0100 *    MOVE WS-SECUST-RELNBR (WS-SECCUSTSUB)                        00134700
+P0100 *        TO WS-SEC-PRIMCUSTRELNBR (WS-SUB4).                      00134800
+001350 GM-MORE-SECONDARY-ACCTS.                                         00135000
+001360     MOVE 'N' TO RPRF21-FUNC.                                     00136000
+001370     CALL SR-060CALLNAME USING                                    00137000
+001380         WS-LINKRCIF.                                             00138000
+001390     IF RPRF21-FUNCTION IS NOT EQUAL TO SPACE                     00139000
+001400         MOVE RPRF21-FUNCTION TO WS-FUNCTION                      00140000
+001410         GO TO GM-FIND-SEC-ACCTS.                                 00141000
+001420* ** A BAD RETURN CODE FROM GET ACCOUNTS GO TO NEXT CUSTOMER      00142000
+001430     MOVE RPRF21-RETURNED-OBJECT TO WS-CAC-TABLE.                 00143000
+001440     MOVE ZEROS TO WS-SUB3.                                       00144000
+001450 GM-CHECK-PRODCODE.                                               00145000
+001460     ADD +1 TO WS-SUB3.                                           00146000
+001470     IF WS-SUB3 IS GREATER THAN WS-CAC-MAX                        00147000
+001480         GO TO GM-CHECK-MORE-SEC.                                 00148000
+001490     IF WS-CAC-PRODCD (WS-SUB3) IS EQUAL TO SPACES                00149000
+001500         GO TO GM-CHECK-MORE-SEC.                                 00150000
+001510     IF WS-CAC-ACCT (WS-SUB3) IS EQUAL TO SPACES                  00151000
+001520         GO TO GM-CHECK-MORE-SEC.                                 00152000
+001530     MOVE WS-CAC-INST (WS-SUB3) TO WS-SUBINST.                    00153000
+001540     IF WS-2024-EXISTS (WS-SUBINST) IS NOT EQUAL TO 'Y'           00154000
+001550         GO TO GM-CHECK-PRODCODE.                                 00155000
+001560     IF WS-CAC-PRODCD (WS-SUB3) IS EQUAL TO WS-LAST-PRODCD        00156000
+001570         GO TO GM-VALID-SECACCT.                                  00157000
+001580     IF WS-CAC-PRODCD (WS-SUB3) IS EQUAL TO WS-RPMIM2023PRODCD    00158000
+001590         GO TO GM-CHECK-PRODCODE.                                 00159000
+001600     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-RPMIM2023PRODCD.          00160000
+001610     PERFORM SEARCH-RPS-2023.                                     00161000
+001620     IF WS-RPMIM2023VALID IS EQUAL TO 'N'                         00162000
+001630         GO TO GM-CHECK-PRODCODE.                                 00163000
+001640     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-LAST-PRODCD.              00164000
+001650     MOVE WS-LAST-PRODCD TO WS-PRODCODE-SEARCH.                   00165000
+001660     PERFORM SEARCH-PRODUCT-CODES.                                00166000
+001670     IF WS-FOUND-PRODCODE IS EQUAL TO 'N'                         00167000
+001680         ADD +1 TO WS-NUMOFPRODUCTS.                              00168000
+001690 GM-VALID-SECACCT.                                                00169000
+001700     MOVE WS-CAC-INST (WS-SUB3) TO WS-DUPINST.                    00170000
+001710     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-DUPPRODCD.                00171000
+001720     MOVE WS-CAC-ACCT (WS-SUB3) TO WS-DUPACCOUNT.                 00172000
+001730     MOVE 'N' TO WS-DUPSECACCT.                                   00173000
+P0100      IF (MIM-7101CUSTRELCD-Q IS EQUAL TO 'B'                      00173200
+P0100          OR MIM-7101CUSTRELCD-Q IS EQUAL TO 'E')                  00173400
+P0100          AND MIM-7101CUSTRELCD IS NOT EQUAL TO SPACES             00173600
+P0100          GO TO GM-VALID-ADD.                                      00173800
+001740     PERFORM GM-CHECKFORDUP.                                      00174000
+001750     IF WS-DUPSECACCT IS EQUAL TO 'Y'                             00175000
+001760         GO TO GM-CHECK-PRODCODE.                                 00176000
+001770 GM-VALID-ADD.                                                    00177000
+001780     IF WS-CAC-PRODCD (WS-SUB3) IS EQUAL TO RPQUA-PRODCODE        00178000
+001790         AND WS-CAC-ACCT (WS-SUB3) IS EQUAL TO RPQUA-ACCOUNT      00179000
+001800         AND WS-CAC-INST (WS-SUB3) IS EQUAL TO RPQUA-INST         00180000
+001810         ADD +1 TO WS-NUMOFACCOUNTS                               00181000
+001820         GO TO GM-CHECK-PRODCODE.                                 00182000
+001830     ADD +1 TO WS-NUMOFACCOUNTS.                                  00183000
+001840     ADD +1 TO WS-NUMOFSECACCTS.                                  00184000
+001850     ADD +1 TO WS-SUB4.                                           00185000
+001860     IF WS-SUB4 IS GREATER THAN WS-SECONDARY-MAX                  00186000
+001870         GO TO GM-END.                                            00187000
+001880* SAVE BEFORE LOAD                                                00188000
+001890     ADD +1 TO WS-ALLSEC.                                         00189000
+001900     IF WS-ALLSEC IS GREATER THAN WS-SECMAX                       00190000
+001910         MOVE WS-SECMAX TO WS-ALLSEC                              00191000
+001920         GO TO GM-VALID-AD2.                                      00192000
+001930     MOVE WS-CAC-INST (WS-SUB3) TO WS-SECINST (WS-ALLSEC).        00193000
+001940     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-SECPRODCD (WS-ALLSEC).    00194000
+001950     MOVE WS-CAC-ACCT (WS-SUB3) TO WS-SECACCOUNT (WS-ALLSEC).     00195000
+001960 GM-VALID-AD2.                                                    00196000
+001970     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-SEC-PRODCD (WS-SUB4).     00197000
+001980     MOVE WS-2023-INTAPPL (INDX-2023) TO WS-SEC-APPL (WS-SUB4).   00198000
+001990     MOVE WS-2023-RPOPTION (INDX-2023) TO WS-SEC-RPOPT (WS-SUB4). 00199000
+002000     MOVE ZEROS TO WS-SEC-BRANCH (WS-SUB4).                       00200000
+002010     MOVE ZEROS TO WS-SEC-TYPE (WS-SUB4).                         00201000
+002020     MOVE WS-CAC-INST (WS-SUB3) TO WS-SEC-INST (WS-SUB4).         00202000
+002030     MOVE WS-CAC-ACCT (WS-SUB3) TO WS-SEC-ACCT (WS-SUB4).         00203000
+002040     MOVE WS-CAC-RELNBR (WS-SUB3) TO WS-SEC-RELNBR (WS-SUB4).     00204000
+P0100      MOVE ZEROS TO WS-SEC-PRIMCUSTRELNBR (WS-SUB4).               00204500
+002050     MOVE SPACE TO WS-SEC-ACTREC (WS-SUB4).                       00205000
+002060     MOVE SPACE TO WS-SEC-QUAL (WS-SUB4).                         00206000
+002070     MOVE 'N' TO WS-SEC-ADDON (WS-SUB4).                          00207000
+002080     GO TO GM-CHECK-PRODCODE.                                     00208000
+002090* ** GET ANOTHER SECONDARY CUSTOMER AND FIND ACCOUNTS             00209000
+002100 GM-CHECK-MORE-SEC.                                               00210000
+002110     IF RPRF21-RETURN IS NOT EQUAL TO 'M'                         00211000
+002120         GO TO GM-FIND-SEC-ACCTS.                                 00212000
+002130* ** CHECK FOR ANOTHER CUSTOMER                                   00213000
+P0100      IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00214000
+P0100          AND MIM-7100ENTERPRISEINST IS NOT EQUAL TO ZEROES        00214090
+P0100          MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST     00214180
+P0100      ELSE                                                         00214270
+P0100          MOVE WS-CAC-INST (WS-CAC-MAX) TO RPRF21-BASE-ACCT-INST.  00214360
+002150     MOVE WS-CAC-PRODCD (WS-CAC-MAX) TO RPRF21-BASE-ACCT-PRODCODE.00215000
+002160     MOVE WS-CAC-ACCT (WS-CAC-MAX) TO RPRF21-BASE-ACCT.           00216000
+002170     GO TO GM-MORE-SECONDARY-ACCTS.                               00217000
+002180* ** CHECK FOR MORE ACCOUNTS FOR THIS SECONDARY CUSTOMER          00218000
+002190 GM-END.                                                          00219000
+002200 GM-EXIT.                                                         00220000
+002210     EXIT.                                                        00221000
+002220******************************************************************00222000
+002230 GM-CHECKFORDUP SECTION.                                          00223000
+002240* DETERMINE IF THE NEW SECONDARY ACCOUNT IS ALREADY               00224000
+002250* PART OF THE LIST OF SECONDARY ACCOUNTS                          00225000
+002260 GM-DUPSTART.                                                     00226000
+002270     MOVE +1 TO WS-DUPTEST.                                       00227000
+002280     MOVE 'N' TO WS-DUPSECACCT.                                   00228000
+002290 GMCFD-START.                                                     00229000
+002300     IF WS-DUPTEST IS GREATER THAN WS-SECMAX                      00230000
+002310         GO TO GMCFD-EXIT.                                        00231000
+002320     IF WS-SEC-ACCT (WS-DUPTEST) IS EQUAL TO SPACE                00232000
+002330         GO TO GMCFD-EXIT.                                        00233000
+002340     IF WS-DUPINST IS EQUAL TO WS-SEC-INST (WS-DUPTEST)           00234000
+002350         AND WS-DUPPRODCD                                         00235000
+002360             IS EQUAL TO WS-SEC-PRODCD (WS-DUPTEST)               00236000
+002370         AND WS-DUPACCOUNT IS EQUAL TO WS-SEC-ACCT (WS-DUPTEST)   00237000
+002380         MOVE 'Y' TO WS-DUPSECACCT                                00238000
+002390         GO TO GMCFD-EXIT.                                        00239000
+002400     ADD +1 TO WS-DUPTEST.                                        00240000
+002410     GO TO GMCFD-START.                                           00241000
+002420 GMCFD-EXIT.                                                      00242000
+002430     EXIT.                                                        00243000
+P0100 ******************************************************************00244000
+002450 GM-CHECKFORRELNBR SECTION.                                       00245000
+002460* DETERMINE IF THE CUSTOMER SHOULD BE INCLUDED BASED ON           00246000
+002470* THE RELATIONSHIP CODE WITH THE PRIMARY ACCOUNT                  00247000
+002480 GM-CHREL-START.                                                  00248000
+002490     MOVE +1 TO WS-RELSUB.                                        00249000
+002500 GM-CHECKIT.                                                      00250000
+002510     IF WS-RELSUB IS GREATER THAN WS-RELMAX                       00251000
+002520         GO TO GM-NOMATCH.                                        00252000
+002530     IF WS-SECRELCODE (WS-RELSUB) IS EQUAL TO ZEROS               00253000
+002540         GO TO GM-NOMATCH.                                        00254000
+002550     IF WS-VALIDREL IS EQUAL TO WS-SECRELCODE (WS-RELSUB)         00255000
+002560         GO TO GM-MATCH.                                          00256000
+002570     ADD +1 TO WS-RELSUB.                                         00257000
+002580     GO TO GM-CHECKIT.                                            00258000
+002590 GM-MATCH.                                                        00259000
+002600     IF WS-INCLUDEREL IS EQUAL TO 'Y'                             00260000
+002610         MOVE 'N' TO WS-BADRELNBR                                 00261000
+002620         GO TO GMCFR-EXIT.                                        00262000
+002630     MOVE 'Y' TO WS-BADRELNBR.                                    00263000
+002640     GO TO GMCFR-EXIT.                                            00264000
+002650 GM-NOMATCH.                                                      00265000
+002660     IF WS-INCLUDEREL IS EQUAL TO 'Y'                             00266000
+002670         MOVE 'Y' TO WS-BADRELNBR                                 00267000
+002680         GO TO GMCFR-EXIT.                                        00268000
+002690     MOVE 'N' TO WS-BADRELNBR.                                    00269000
+002700     GO TO GMCFR-EXIT.                                            00270000
+002710 GMCFR-EXIT.                                                      00271000
+002720     EXIT.                                                        00272000
+002730******************************************************************00273000
+002740 GM-SEAC-SAVE-SECONDARY SECTION.                                  00274000
+002750* SAVE THE SECONDARY ACCOUNTS FROM THE PRIMARY CUSTOMER           00275000
+002760* TO ALLOW FOR A DUPLICATE CHECK WITH ACCOUNTS FROM               00276000
+002770* SECONDARY CUSTOMERS                                             00277000
+002780 GM-SEAC-SAVE-START.                                              00278000
+002790     ADD +1 TO WS-ALLSEC.                                         00279000
+002800     IF WS-ALLSEC IS GREATER THAN WS-SECMAX                       00280000
+002810         MOVE WS-SECMAX TO WS-ALLSEC                              00281000
+002820         GO TO GM-SEAC-SAVE-EXIT.                                 00282000
+002830     MOVE WS-CAC-INST (WS-SUB3) TO WS-SECINST (WS-ALLSEC).        00283000
+002840     MOVE WS-CAC-PRODCD (WS-SUB3) TO WS-SECPRODCD (WS-ALLSEC).    00284000
+002850     MOVE WS-CAC-ACCT (WS-SUB3) TO WS-SECACCOUNT (WS-ALLSEC).     00285000
+002860 GM-SEAC-SAVE-EXIT.                                               00286000
+002870     EXIT.                                                        00287000
+002880*----------------------------------------------------------------*00288000
+002890*     END OF RP137 GET SECONDARY ACCOUNTS                        *00289000
+002900*----------------------------------------------------------------*00290000

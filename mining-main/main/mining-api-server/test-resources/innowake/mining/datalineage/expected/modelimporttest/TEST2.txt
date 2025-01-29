@@ -1,0 +1,54 @@
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FILLER-1,
+	 LOCATION = ModuleLocation[offset=151,length=47],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [MY-HEX-CONV, MY-HEX-CONV-NUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = MY-HEX-CONV,
+	 LOCATION = ModuleLocation[offset=123,length=16],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [FILLER-1, MY-HEX-CONV-CHAR, MY-HEX-CONV-NUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = MY-HEX-CONV-CHAR,
+	 LOCATION = ModuleLocation[offset=210,length=30],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [MY-HEX-CONV, MY-HEX-CONV-NUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = MY-HEX-CONV-NUM,
+	 LOCATION = ModuleLocation[offset=248,length=56],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [FILLER-1, MY-HEX-CONV, MY-HEX-CONV-CHAR],
+	 READACCESSES = [Compute],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = WS-OUTPUT,
+	 LOCATION = ModuleLocation[offset=312,length=22],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Compute]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Compute,
+	 LOCATION = ModuleLocation[offset=374,length=39],
+	 MODULEID = 2001,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [MY-HEX-CONV-NUM],
+	 WRITEACCESSES = [WS-OUTPUT]]
+

@@ -1,0 +1,13 @@
+#5 ProcedureDivision
+ #6 CobolPerformStmt TESTPARA, FROM={TestEntryPoint}, TO={#9}
+  #7 CobolFieldReference
+ #8 CobolGoBackStmt, FROM={#19, #23}, TO={TestReturnPoint}
+ #9 CobolLabelStmt TESTPARA , FROM={#6}, TO={#10}
+  #10 CobolStartStmt <branch stmt>, Label: START OUTPUT-RECORD KEY EQUAL PK INVALID KEY DISPLAY 'A' NOT INVALID KEY DISPLAY 'B' END-START, FROM={#9}, TO={#19(INVALID KEY), #23(NOT INVALID KEY)}
+   #13 CobolComparisonExpression
+   #18 CobolInvalidKeyBlock
+    #19 CobolDisplayStmt 'A', FROM={#10(INVALID KEY)}, TO={#8}
+   #22 CobolInvalidKeyBlock
+    #23 CobolDisplayStmt 'B', FROM={#10(NOT INVALID KEY)}, TO={#8}
+ #26 CobolLabelStmt UNREACHABLE 
+  #27 CobolDisplayStmt 'UNREACHABLE'

@@ -1,0 +1,28 @@
+package com.example.demo1;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.example.demo1.beanConfig.ControllerKanya;
+import com.example.demo1.beanConfig.VegPizza;
+
+@SpringBootApplication
+public class Demo1Application {
+
+	public static void main(String[] args) {
+		//applicationContext is nothing but Spring IOC container and which creates and manages all of the beans.
+		//Whenever we give @Component to a class then Spring will automatically creates bean for the class and handles all of it's objects from construction till destruction.
+		var applicationContext = SpringApplication.run(Demo1Application.class, args);
+		
+		
+		//getting beans and beans are nothing but objects so we have got object of ControllerKanya class
+		
+		ControllerKanya  controllerKanya = applicationContext.getBean(ControllerKanya.class);
+		controllerKanya.getPizzaFromController();
+		
+		//getting bean by it's name
+		VegPizza vegPizza = (VegPizza) applicationContext.getBean("VegPizzaBean");
+		vegPizza.getPizza();
+	}
+
+}

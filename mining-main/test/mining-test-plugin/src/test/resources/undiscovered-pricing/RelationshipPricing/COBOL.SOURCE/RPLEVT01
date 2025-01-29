@@ -1,0 +1,671 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPLEVT01.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*    RPLEVT01 - RELATIONSHIP EVENT INQUIRY MODULE                *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 DATA DIVISION.                                                   00008000
+000090******************************************************************00009000
+000100 WORKING-STORAGE SECTION.                                         00010000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00011000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00011001
+000120 01  RPS-RLSELIT.                                                 00012000
+000000 COPY RPWRLSE.                                                    00013000
+000140 01  MIC-RLSELIT.                                                 00014000
+000000 COPY MIWRLSE.                                                    00015000
+000160 01  SRW105-AREAS.                                                00016000
+000000 COPY SRW105.                                                     00017000
+000180*01  BICRSRB.                                                     00018000
+000000 COPY BICRSRB.                                                    00019000
+000200*01  BICRPSB.                                                     00020000
+000000 COPY BICRPSB.                                                    00021000
+000220*01  BICRVERB.                                                    00022000
+000000 COPY BICRVERB.                                                   00023000
+000240*01  BICRSTAT.                                                    00024000
+000000 COPY BICRSTAT.                                                   00025000
+000260*01  BICRDBS.                                                     00026000
+000000 COPY BICRDBS.                                                    00027000
+000280*01  BICRLOG.                                                     00028000
+000000 COPY BICRLOG.                                                    00029000
+000300 01  SRW710-AREAS.                                                00030000
+000000 COPY SRW710.                                                     00031000
+000320 01  WS-WORKAREAS.                                                00032000
+000330     03  WS-MAX-PANEL-ENTRIES    PIC S9(04)      COMP             00033000
+000340                                                 VALUE +0006.     00034000
+000350     03  COM-ABORT               PIC S9(04)      COMP.            00035000
+000360     03  WS-SUB1                 PIC S9(04)      COMP             00036000
+000370                                                 VALUE +0000.     00037000
+000380     03  WS-SUB2                 PIC S9(04)      COMP             00038000
+000390                                                 VALUE +0000.     00039000
+000400     03  WS-MAX-CATEGORY         PIC S9(04)      COMP             00040000
+000410                                                 VALUE +0020.     00041000
+000420     03  WS-RP-PRODCODE          PIC X(06)       VALUE 'RP'.      00042000
+000430     03  WS-INST                 PIC 9(04)       VALUE ZERO.      00043000
+000440     03  WS-CAT-INST             PIC 9(04)       VALUE ZERO.      00044000
+000450     03  WS-CAT-NBR              PIC X(06)       VALUE SPACES.    00045000
+000460     03  WS-SAVE-ACCT-TYPE       PIC 9(03)       VALUE ZERO.      00046000
+000470     03  WS-SAVE-PRODCODE        PIC X(06)       VALUE SPACES.    00047000
+000480     03  WS-CLOSE-FLAG           PIC X(01)       VALUE SPACES.    00048000
+000490     03  WS-7102-DEF-FLAG        PIC X(01)       VALUE 'N'.       00049000
+000500     03  WS-7102-DEF-RECORD      PIC X(125)      VALUE SPACES.    00050000
+000510     03  WS-SAVE-MSGNBR          PIC 9(06)       VALUE ZEROS.     00051000
+000520     03  WS-CURDATE              PIC 9(08)       VALUE ZERO.      00052000
+000530     03  FILLER          REDEFINES WS-CURDATE.                    00053000
+000540         05  WS-CURMM            PIC 9(02).                       00054000
+000550         05  WS-CURDD            PIC 9(02).                       00055000
+000560         05  WS-CURYYYY          PIC 9(04).                       00056000
+000570     03  WS-PDATE                PIC 9(08)       VALUE ZERO.      00057000
+000580     03  FILLER          REDEFINES WS-PDATE.                      00058000
+000590         05  WS-PDATE-YYYY       PIC 9(04).                       00059000
+000600         05  WS-PDATE-MM         PIC 9(02).                       00060000
+000610         05  WS-PDATE-DD         PIC 9(02).                       00061000
+000620     03  WS-PDATE2               PIC 9(08)       VALUE ZERO.      00062000
+000630     03  FILLER          REDEFINES WS-PDATE2.                     00063000
+000640         05  WS-PDATE2-YYYY      PIC 9(04).                       00064000
+000650         05  WS-PDATE2-MM        PIC 9(02).                       00065000
+000660         05  WS-PDATE2-DD        PIC 9(02).                       00066000
+000670     03  WS-CURDT-YYYYMMDD       PIC S9(09)      COMP-3           00067000
+000680                                                 VALUE ZERO.      00068000
+000690     03  WS-7101KEFFDT           PIC S9(09)      COMP-3           00069000
+000700                                                 VALUE ZERO.      00070000
+000710     03  WS-ERRORMODEL           PIC X(01)       VALUE 'N'.       00071000
+000720     03  WS-CUSTOMERNAME         PIC X(40)       VALUE SPACE.     00072000
+000730     03  WS-DETAILDTRAW          PIC 9(08)       VALUE ZERO.      00073000
+000740     03  WS-RAWMODULE            PIC X(08)       VALUE SPACE.     00074000
+000750     03  WS-MODLIMIT             PIC S9(03)      COMP-3           00075000
+000760                                                 VALUE +11.       00076000
+000770     03  WS-EVTLIMIT             PIC S9(03)      COMP-3           00077000
+000780                                                 VALUE +10.       00078000
+000790     03  WS-SUBX                 PIC X(02).                       00079000
+000800     03  WS-SUBX9        REDEFINES WS-SUBX                        00080000
+000810                                 PIC 9(02).                       00081000
+000820     03  WS-SUBEVT               PIC S9(03)      COMP-3           00082000
+000830                                                 VALUE +10.       00083000
+000840     03  WS-PF7PAGE              PIC S9(05)      COMP-3           00084000
+000850                                                 VALUE ZERO.      00085000
+000860     03  WS-BACKPAGE             PIC S9(05)      COMP-3           00086000
+000870                                                 VALUE ZERO.      00087000
+000880     03  WS-PF7END               PIC X(01)       VALUE 'N'.       00088000
+000890     03  WS-PF8END               PIC X(01)       VALUE 'N'.       00089000
+000900     03  WS-YYYYMMDD             PIC 9(08).                       00090000
+000910     03  WS-DATECHG      REDEFINES WS-YYYYMMDD.                   00091000
+000920         05  WS-YYYY             PIC 9999.                        00092000
+000930         05  WS-MMMM             PIC 99.                          00093000
+000940         05  WS-DDDD             PIC 99.                          00094000
+000950     03  WS-BMMDDYY.                                              00095000
+000960         05  WS-BMMMM            PIC 99.                          00096000
+000970         05  WS-BDASH1           PIC X(01)       VALUE '-'.       00097000
+000980         05  WS-BDDDD            PIC 99.                          00098000
+000990         05  WS-BDASH2           PIC X(01)       VALUE '-'.       00099000
+001000         05  WS-BYYYY            PIC 9999.                        00100000
+001010                                                                  00101000
+001020     03  WS-SAVEMASTERGROUP.                                      00102000
+001030         05  WS-SAVEMSTINST      PIC 9(04).                       00103000
+001040         05  WS-SAVEMSTPRODCODE  PIC X(06).                       00104000
+001050         05  WS-SAVEMSTACCOUNT   PIC X(18).                       00105000
+001060         05  WS-SAVEMSTMODEL     PIC X(10).                       00106000
+001070*----------------------------------------------------------------*00107000
+001080 01  MIWPRI-AREAS.                                                00108000
+000000 COPY MIWPRI.                                                     00109000
+001100 01  MIWMSTA-AREAS.                                               00110000
+000000 COPY MIWMSTA.                                                    00111000
+001120 01  MIMST-RECORD.                                                00112000
+000000 COPY MISMST.                                                     00113000
+001140 01  MI2023-RECORD.                                               00114000
+000000 COPY MIS2023A.                                                   00115000
+001160 01  MI2011-RECORD.                                               00116000
+000000 COPY MIS2011A.                                                   00117000
+001180 01  MI7100-RECORD.                                               00118000
+000000 COPY MIS7100.                                                    00119000
+001200 01  MI7101-RECORD.                                               00120000
+000000 COPY MIS7101.                                                    00121000
+001220 01  MIWEVTA-AREAS.                                               00122000
+001230     03  MIC-EVT-ORG             PIC X(01)       VALUE SPACES.    00123000
+001240*----------------------------------------------------------------*00124000
+001250 01  RPWPRI-AREAS.                                                00125000
+000000 COPY RPWPRI.                                                     00126000
+001270 01  RPWEVT-AREA.                                                 00127000
+000000 COPY RPWEVTA.                                                    00128000
+001290 01  RPEVT-RECORD.                                                00129000
+000000 COPY RPSEVT.                                                     00130000
+001310 01  RPRF21-MESSAGE.                                              00131000
+000000 COPY MISCNT00      REPLACING                                     00132000
+001330             ==:MICNT:== BY ==RPRF21==.                           00133000
+000000 COPY RPSRF21.                                                    00134000
+001350*----------------------------------------------------------------*00135000
+001360 01  WS-TRACECODES.                                               00136000
+001370     03  WS-TR0001               PIC S9(04)      COMP             00137000
+001380                                                 VALUE +0001.     00138000
+001390     03  WS-TR0002               PIC S9(04)      COMP             00139000
+001400                                                 VALUE +0002.     00140000
+001410     03  WS-TR0003               PIC S9(04)      COMP             00141000
+001420                                                 VALUE +0003.     00142000
+001430     03  WS-TR0004               PIC S9(04)      COMP             00143000
+001440                                                 VALUE +0004.     00144000
+001450     03  WS-TR0005               PIC S9(04)      COMP             00145000
+001460                                                 VALUE +0005.     00146000
+001470     03  WS-TR0006               PIC S9(04)      COMP             00147000
+001480                                                 VALUE +0006.     00148000
+001490     03  WS-TR0007               PIC S9(04)      COMP             00149000
+001500                                                 VALUE +0007.     00150000
+001510     03  WS-TR0008               PIC S9(04)      COMP             00151000
+001520                                                 VALUE +0008.     00152000
+001530     03  WS-TR0009               PIC S9(04)      COMP             00153000
+001540                                                 VALUE +0009.     00154000
+001550     03  WS-TR0010               PIC S9(04)      COMP             00155000
+001560                                                 VALUE +0010.     00156000
+001570 01  WS-ABORTCODES.                                               00157000
+001580     03  WS-AB2000               PIC S9(04)      COMP             00158000
+001590                                                 VALUE +2000.     00159000
+001600     03  WS-AB2033               PIC S9(04)      COMP             00160000
+001610                                                 VALUE +2033.     00161000
+001620     03  WS-AB3051               PIC S9(04)      COMP             00162000
+001630                                                 VALUE +3051.     00163000
+001640     03  WS-AB6310               PIC S9(04)      COMP             00164000
+001650                                                 VALUE +6310.     00165000
+001660     03  WS-AB6320               PIC S9(04)      COMP             00166000
+001670                                                 VALUE +6320.     00167000
+001680     03  WS-AB6330               PIC S9(04)      COMP             00168000
+001690                                                 VALUE +6330.     00169000
+001700     03  WS-AB6350               PIC S9(04)      COMP             00170000
+001710                                                 VALUE +6350.     00171000
+001720******************************************************************00172000
+001730 01  SLW096-AREAS.                                                00173000
+000000 COPY SLW096.                                                     00174000
+001750******************************************************************00175000
+001760 LINKAGE SECTION.                                                 00176000
+001770 01  DFHCOMMAREA.                                                 00177000
+000000 COPY MISCNT00      REPLACING                                     00178000
+001790             ==:MICNT:== BY ==RPEVT01==.                          00179000
+000000 COPY RPSEVT01.                                                   00180000
+001810*01  SLW096-2023RECORDS.                                          00181000
+000000 COPY SLW096L.                                                    00182000
+001830******************************************************************00183000
+001840 PROCEDURE DIVISION.                                              00184000
+001850******************************************************************00185000
+001860 ENTRY-ROUTINE SECTION.                                           00186000
+001870 ER-START.                                                        00187000
+001880     MOVE 'RPLEVT01' TO SR-APIPROGLIT.                            00188000
+001890     MOVE 'RPLEVT01' TO RPEVT01-ABPROGID.                         00189000
+001900     PERFORM CICS-HANDLE-CONDITION.                               00190000
+001910     IF EIBCALEN IS EQUAL TO +0                                   00191000
+001920         MOVE WS-AB2000 TO RPEVT01-ABORT                          00192000
+001930         MOVE WS-TR0001 TO RPEVT01-ABTRACE                        00193000
+001940         GO TO CICS-RETURN.                                       00194000
+001950     MOVE ZERO TO RPEVT01-MSGNBR.                                 00195000
+001960     MOVE SPACE TO WS-FUNCTION.                                   00196000
+001970     MOVE ZEROS TO WS-SAVE-MSGNBR.                                00197000
+001980     MOVE RPEVT01-FILEOPTS TO WS-FILEOPTS.                        00198000
+001990     MOVE RPEVT01-OPERID TO WS-UPD-USER.                          00199000
+000000 COPY SLP094.                                                     00200000
+002010     GO TO VERIFY-KEY.                                            00201000
+002020 ER-EXIT.                                                         00202000
+002030     EXIT.                                                        00203000
+002040******************************************************************00204000
+002050 CICS-HANDLE-CONDITION SECTION.                                   00205000
+000000 COPY SLP702.                                                     00206000
+002070     MOVE WS-AB2033 TO RPEVT01-ABORT.                             00207000
+002080     MOVE WS-TR0002 TO RPEVT01-ABTRACE.                           00208000
+002090     GO TO CICS-RETURN.                                           00209000
+002100 CHC-EXIT.                                                        00210000
+002110     EXIT.                                                        00211000
+002120******************************************************************00212000
+002130 VERIFY-KEY SECTION.                                              00213000
+002140 VK-START.                                                        00214000
+002150     MOVE ZERO TO RPEVT01-ABORT.                                  00215000
+002160     MOVE ZERO TO COM-ABORT.                                      00216000
+002170     MOVE RPEVT01-DATE TO WS-CURDATE.                             00217000
+002180     MOVE WS-CURMM TO WS-PDATE-MM.                                00218000
+002190     MOVE WS-CURDD TO WS-PDATE-DD.                                00219000
+002200     MOVE WS-CURYYYY TO WS-PDATE-YYYY.                            00220000
+002210     MOVE WS-PDATE TO WS-CURDT-YYYYMMDD.                          00221000
+002220 VK-7100.                                                         00222000
+002230     PERFORM READ-MICM-7100.                                      00223000
+002240     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00224000
+002250         MOVE 500005 TO RPEVT01-MSGNBR                            00225000
+002260         GO TO VK-RETURN.                                         00226000
+002270 VK-NAME.                                                         00227000
+002280     MOVE SPACES TO RPRF21-FUNCTION.                              00228000
+002290     PERFORM REQUEST-CUSTOMER.                                    00229000
+002300     IF WS-FUNCTION IS EQUAL TO 'B'                               00230000
+002310         MOVE 'Y' TO WS-CLOSE-FLAG                                00231000
+002320         MOVE SPACES TO WS-FUNCTION.                              00232000
+002330     IF WS-FUNCTION IS EQUAL TO SPACES                            00233000
+002340         MOVE RPRF21-BASE-CUST-TYPE TO RPEVT01-CUST-TYPE          00234000
+002350         MOVE RPRF21-NAME TO WS-CUSTOMERNAME                      00235000
+002360         GO TO VK-EXIT.                                           00236000
+002370     MOVE SPACES TO RPEVT01-CUST-TYPE.                            00237000
+002380     MOVE 'CUSTOMER NOT FOUND' TO WS-CUSTOMERNAME.                00238000
+002390     GO TO VK-EXIT.                                               00239000
+002400 VK-RETURN.                                                       00240000
+002410     MOVE 'E' TO RPEVT01-RETURN.                                  00241000
+002420     PERFORM SET-RPEVT01-RETURN.                                  00242000
+002430     GO TO CICS-RETURN.                                           00243000
+002440 VK-EXIT.                                                         00244000
+002450     EXIT.                                                        00245000
+002460******************************************************************00246000
+002470 ROUTING-ROUTINE SECTION.                                         00247000
+002480 RR-START.                                                        00248000
+002490     PERFORM INITIALIZE-MSG.                                      00249000
+002500     PERFORM LOAD-EVT-RECORDS.                                    00250000
+002510     IF RPEVT01-MSGNBR IS GREATER THAN ZEROS                      00251000
+002520         MOVE '1' TO RPEVT01-SELECT-RTN                           00252000
+002530         MOVE 'E' TO RPEVT01-RETURN                               00253000
+002540         MOVE WS-PF7END TO RPEVT01-PF7END                         00254000
+002550         MOVE WS-PF8END TO RPEVT01-PF8END                         00255000
+002560         GO TO RR-RETURN.                                         00256000
+002570     IF WS-CLOSE-FLAG IS EQUAL TO 'Y'                             00257000
+002580         MOVE 500045 TO RPEVT01-MSGNBR                            00258000
+002590         GO TO RR-CONT.                                           00259000
+002600     IF WS-SAVE-MSGNBR IS NOT EQUAL TO ZEROS                      00260000
+002610         MOVE WS-SAVE-MSGNBR TO RPEVT01-MSGNBR.                   00261000
+002620 RR-CONT.                                                         00262000
+002630     PERFORM SET-RPEVT01-RETURN.                                  00263000
+002640 RR-RETURN.                                                       00264000
+002650     GO TO CICS-RETURN.                                           00265000
+002660 RR-EXIT.                                                         00266000
+002670     EXIT.                                                        00267000
+002680******************************************************************00268000
+002690 INITIALIZE-MSG SECTION.                                          00269000
+002700 IM-START.                                                        00270000
+002710     MOVE ZEROS TO RPEVT01-MSGNBR.                                00271000
+002720     MOVE +0000 TO RPEVT01-ABORT.                                 00272000
+002730     MOVE +0000 TO RPEVT01-ERRCNT.                                00273000
+002740     MOVE +0001 TO RPEVT01-OCCUR.                                 00274000
+002750     MOVE SPACE TO RPEVT01-SELECT-RTN.                            00275000
+002760     MOVE SPACE TO RPEVT01-PF7END.                                00276000
+002770     MOVE SPACE TO RPEVT01-PF8END.                                00277000
+002780 IM-EXIT.                                                         00278000
+002790     EXIT.                                                        00279000
+002800******************************************************************00280000
+002810 LOAD-EVT-RECORDS SECTION.                                        00281000
+002820 LER-START.                                                       00282000
+002830     MOVE +1 TO WS-SUB1.                                          00283000
+002840     PERFORM INIT-PANEL.                                          00284000
+002850     MOVE RPEVT01-GRP-KEY TO RPEVT-GRP-KEY.                       00285000
+002860     PERFORM RPS-EVT-GET-GE-REQUEST.                              00286000
+002870     IF WS-FUNCTION IS EQUAL TO 'E'                               00287000
+002880         MOVE ZERO TO RPEVT01-OCCUR                               00288000
+002890         MOVE 500003 TO RPEVT01-MSGNBR                            00289000
+002900         GO TO LER-EXIT.                                          00290000
+002910     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00291000
+002920         MOVE WS-AB6330 TO RPEVT01-ABORT                          00292000
+002930         MOVE WS-TR0005 TO RPEVT01-ABTRACE                        00293000
+002940         GO TO CICS-ABORT-EXIT.                                   00294000
+002950     MOVE RPEVT01-THIS-KEY TO RPEVT01-PREV-KEY.                   00295000
+002960     MOVE RPEVT-GRP-KEY TO RPEVT01-THIS-KEY.                      00296000
+002970     IF RPEVT01-REQUEST IS EQUAL TO 'PF8'                         00297000
+002980         GO TO LER-GET-NEXT.                                      00298000
+002990* ** THE BACKPAGE PROCESS CONSISTS OF STARTING AT                 00299000
+003000* ** THE FIRST DISPLAYED RECORD AND GOING FORWARD                 00300000
+003010* ** FOR A NUMBER OF PAGES.                                       00301000
+003020     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00302000
+003030         MOVE RPEVT01-CURPAGE TO WS-PF7PAGE                       00303000
+003040         MOVE ZERO TO WS-BACKPAGE                                 00304000
+003050         GO TO LER-CONT.                                          00305000
+003060     ADD +1 TO RPEVT01-OCCUR.                                     00306000
+003070     GO TO LER-CONT.                                              00307000
+003080* ** *************************************************            00308000
+003090 LER-GET-NEXT.                                                    00309000
+003100     MOVE SPACES TO WS-FUNCTION.                                  00310000
+003110     PERFORM RPS-EVT-GET-NEXT-REQUEST.                            00311000
+003120     IF WS-FUNCTION IS EQUAL TO 'E'                               00312000
+003130         MOVE 500003 TO RPEVT01-MSGNBR                            00313000
+003140         MOVE ZERO TO RPEVT01-OCCUR                               00314000
+003150         GO TO LER-EXIT.                                          00315000
+003160     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00316000
+003170         MOVE WS-AB6330 TO RPEVT01-ABORT                          00317000
+003180         MOVE WS-TR0006 TO RPEVT01-ABTRACE                        00318000
+003190         GO TO CICS-ABORT-EXIT.                                   00319000
+003200     ADD +1 TO RPEVT01-OCCUR.                                     00320000
+003210 LER-CONT.                                                        00321000
+003220     IF RPEVT01-KEY-INST IS NOT EQUAL TO RPEVT-INST               00322000
+003230         OR RPEVT01-KEY-PRODCODE IS NOT EQUAL TO RPEVT-PRODCODE   00323000
+003240         OR RPEVT01-KEY-ACCOUNT IS NOT EQUAL TO RPEVT-ACCOUNT     00324000
+003250         MOVE ZERO TO RPEVT01-OCCUR                               00325000
+003260         IF RPEVT01-CURPAGE IS EQUAL TO ZERO                      00326000
+003270             MOVE 500003 TO RPEVT01-MSGNBR                        00327000
+003280         ELSE                                                     00328000
+003290             PERFORM WHICHWAY                                     00329000
+003300         END-IF                                                   00330000
+003310         GO TO LER-EXIT.                                          00331000
+003320     IF RPEVT01-KEY-SDATE IS GREATER THAN RPEVT-DATE              00332000
+003330         GO TO LER-GET-NEXT.                                      00333000
+003340*----------------------------------------------------------------*00334000
+003350     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00335000
+003360         ADD +1 TO WS-BACKPAGE.                                   00336000
+003370     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00337000
+003380         AND                                                      00338000
+003390         WS-BACKPAGE IS NOT EQUAL TO WS-PF7PAGE                   00339000
+003400         GO TO LER-GET-NEXT.                                      00340000
+003410     PERFORM CHECKFORPF7.                                         00341000
+003420* **                                                              00342000
+003430     ADD +1 TO RPEVT01-CURPAGE.                                   00343000
+003440     MOVE RPEVT01-THIS-KEY TO RPEVT01-PREV-KEY.                   00344000
+003450     MOVE RPEVT-GRP-KEY TO RPEVT01-THIS-KEY.                      00345000
+003460     MOVE RPEVT-DATE TO WS-DETAILDTRAW.                           00346000
+003470     MOVE SPACE TO RPEVT01-EVENT-DATE.                            00347000
+003480     MOVE RPEVT-DATE TO WS-YYYYMMDD.                              00348000
+003490     MOVE WS-YYYY TO WS-BYYYY.                                    00349000
+003500     MOVE WS-MMMM TO WS-BMMMM.                                    00350000
+003510     MOVE WS-DDDD TO WS-BDDDD.                                    00351000
+003520     MOVE WS-BMMDDYY TO RPEVT01-EVENT-DATE.                       00352000
+003530     MOVE RPEVT-UPD-DATE TO RPEVT01-UPD-DATE.                     00353000
+003540     MOVE RPEVT-UPD-TIME TO RPEVT01-UPD-TIME.                     00354000
+003550     MOVE RPEVT-UPD-USER TO RPEVT01-UPD-USER.                     00355000
+003560     MOVE RPEVT-UPD-ORG TO RPEVT01-UPD-ORG.                       00356000
+003570     MOVE WS-CUSTOMERNAME TO RPEVT01-CUST-NAME.                   00357000
+003580     IF RPEVT-INST2 IS EQUAL TO ZERO                              00358000
+003590         MOVE RPEVT-INST TO RPEVT01-INST2                         00359000
+003600         MOVE RPEVT-PRODCODE TO RPEVT01-PRODCODE2                 00360000
+003610         MOVE RPEVT-ACCOUNT TO RPEVT01-ACCOUNT2                   00361000
+003620     ELSE                                                         00362000
+003630         MOVE RPEVT-INST2 TO RPEVT01-INST2                        00363000
+003640         MOVE RPEVT-PRODCODE2 TO RPEVT01-PRODCODE2                00364000
+003650         MOVE RPEVT-ACCOUNT2 TO RPEVT01-ACCOUNT2.                 00365000
+003660* **                                                              00366000
+003670     MOVE RPEVT-IDNUMBER TO RPEVT01-IDNUMBER.                     00367000
+003680     MOVE RPEVT-EVENT-CODE TO RPEVT01-EVENT-CODE.                 00368000
+003690     MOVE RPEVT-EVENT-CODE TO WS-SUBX.                            00369000
+003700     IF WS-SUBX9 IS GREATER THAN WS-EVTLIMIT                      00370000
+003710         MOVE RPEVT-EVENT-CODE TO RPEVT01-EVENTEXP                00371000
+003720         GO TO LER-CONTA.                                         00372000
+003730     MOVE RPS-EVT-EVENTCODE (WS-SUBX9) TO RPEVT01-EVENTEXP.       00373000
+003740 LER-CONTA.                                                       00374000
+003750     MOVE RPEVT-MODULE TO RPEVT01-MODULEEXP.                      00375000
+003760     MOVE RPEVT-MODULE TO WS-RAWMODULE.                           00376000
+003770     PERFORM EXPANDMODULE.                                        00377000
+003780* **                                                              00378000
+003790     MOVE RPEVT-MODEL2 TO RPEVT01-MODEL2.                         00379000
+003800     MOVE RPEVT-MODEL2 TO RPEVT01-MODEL-TYPE.                     00380000
+003810     MOVE SPACES TO RPEVT01-MODEL-DESC.                           00381000
+003820     IF RPEVT-MODEL2 IS EQUAL TO '0000000000'                     00382000
+003830         GO TO LER-CONTB.                                         00383000
+003840     PERFORM EXPANDMODEL.                                         00384000
+003850* **                                                              00385000
+003860 LER-CONTB.                                                       00386000
+003870     MOVE 50 TO WS-MANAGERNBR.                                    00387000
+003880     MOVE RPEVT-MSGNBR TO WS-MESSAGENBR.                          00388000
+003890     PERFORM GET-MESSAGE.                                         00389000
+003900     MOVE WS-MSGDATA TO RPEVT01-MESSAGEEXP.                       00390000
+003910*                                                                 00391000
+003920     MOVE RPEVT-SC-INC-OPTION TO RPEVT01-SC-INC-OPTION.           00392000
+003930     MOVE RPEVT-SC-INC-QUAL TO RPEVT01-SC-INC-QUAL.               00393000
+003940     MOVE RPEVT-DISCOUNT-AMOUNT TO RPEVT01-DISCOUNT-AMOUNT.       00394000
+003950     MOVE RPEVT-DISCOUNT-PERCENT TO RPEVT01-DISCOUNT-PERCENT.     00395000
+003960     MOVE RPEVT-RATE-INC-OPTION TO RPEVT01-RATE-INC-OPTION.       00396000
+003970     MOVE RPEVT-RATE-INC-QUAL TO RPEVT01-RATE-INC-QUAL.           00397000
+003980     MOVE RPEVT-RATE-OPTION TO RPEVT01-RATE-OPTION.               00398000
+003990     MOVE RPEVT-RATE-OPTION TO RPEVT01-RATOPT.                    00399000
+P0036      MOVE SPACES TO RPEVT01-RATE-TYPE.                            00400000
+004010     IF RPEVT-RATE-TYPE IS EQUAL TO 'I'                           00401000
+004020         MOVE 'INCREMENT' TO RPEVT01-RATE-TYPE.                   00402000
+004030     IF RPEVT-RATE-TYPE IS EQUAL TO 'D'                           00403000
+004040         MOVE 'DECREMENT' TO RPEVT01-RATE-TYPE.                   00404000
+004050     IF RPEVT-RATE-TYPE IS EQUAL TO 'R'                           00405000
+004060         MOVE 'REPLACEMENT' TO RPEVT01-RATE-TYPE.                 00406000
+004070     MOVE RPEVT-RATE-PERCENT TO RPEVT01-RATE-PERCENT.             00407000
+004080     IF RPEVT01-REQUEST IS NOT EQUAL TO 'PF7'                     00408000
+004090         PERFORM CHECK-FORWARD-NOW.                               00409000
+004100 LER-EXIT.                                                        00410000
+004110     EXIT.                                                        00411000
+004120******************************************************************00412000
+004130 INIT-PANEL SECTION.                                              00413000
+004140     MOVE SPACES TO RPEVT01-INST2.                                00414000
+004150     MOVE SPACES TO RPEVT01-PRODCODE2.                            00415000
+004160     MOVE SPACES TO RPEVT01-ACCOUNT2.                             00416000
+004170     MOVE SPACES TO RPEVT01-MODEL2.                               00417000
+004180     MOVE SPACES TO RPEVT01-CUST-NAME.                            00418000
+004190     MOVE SPACES TO RPEVT01-IDNUMBER.                             00419000
+004200     MOVE SPACES TO RPEVT01-EVENT-CODE.                           00420000
+004210     MOVE SPACES TO RPEVT01-EVENTEXP.                             00421000
+004220     MOVE SPACES TO RPEVT01-MODULEEXP.                            00422000
+004230     MOVE SPACES TO RPEVT01-MODEL-TYPE.                           00423000
+004240     MOVE SPACES TO RPEVT01-MODEL-DESC.                           00424000
+004250     MOVE SPACES TO RPEVT01-MESSAGEEXP.                           00425000
+004260     MOVE SPACES TO RPEVT01-SC-INC-OPTION.                        00426000
+004270     MOVE SPACES TO RPEVT01-SC-INC-QUAL.                          00427000
+004280     MOVE ZEROS TO RPEVT01-DISCOUNT-AMOUNT.                       00428000
+004290     MOVE ZEROS TO RPEVT01-DISCOUNT-PERCENT.                      00429000
+004300     MOVE SPACES TO RPEVT01-RATE-INC-OPTION.                      00430000
+004310     MOVE SPACES TO RPEVT01-RATE-INC-QUAL.                        00431000
+004320     MOVE SPACES TO RPEVT01-RATE-OPTION.                          00432000
+004330     MOVE SPACES TO RPEVT01-RATOPT.                               00433000
+004340     MOVE SPACES TO RPEVT01-RATE-TYPE.                            00434000
+004350     MOVE ZEROS TO RPEVT01-RATE-PERCENT.                          00435000
+004360     MOVE SPACES TO RPEVT01-EVENT-DATE.                           00436000
+004370 IP-EXIT.                                                         00437000
+004380     EXIT.                                                        00438000
+004390******************************************************************00439000
+004400 EXPANDMODULE SECTION.                                            00440000
+004410 EXMD100-START.                                                   00441000
+004420     MOVE +1 TO WS-SUBEVT.                                        00442000
+004430 EXMD100-LOOK.                                                    00443000
+004440     IF WS-SUBEVT IS GREATER THAN WS-MODLIMIT                     00444000
+004450         GO TO EXMD100-END.                                       00445000
+004460     IF WS-RAWMODULE IS EQUAL TO RPS-EVT-MODULENAME (WS-SUBEVT)   00446000
+004470         MOVE RPS-EVT-MODULEDESC (WS-SUBEVT)                      00447000
+004480         TO RPEVT01-MODULEEXP                                     00448000
+004490         GO TO EXMD100-END.                                       00449000
+004500     ADD +1 TO WS-SUBEVT.                                         00450000
+004510     GO TO EXMD100-LOOK.                                          00451000
+004520 EXMD100-END.                                                     00452000
+004530     EXIT.                                                        00453000
+004540******************************************************************00454000
+004550 EXPANDMODEL SECTION.                                             00455000
+004560 EXMO100-START.                                                   00456000
+004570     MOVE SPACES TO MI7101-RECORD.                                00457000
+004580     IF RPEVT-INST2 IS EQUAL TO ZEROS                             00458000
+004590         MOVE RPEVT-INST TO MIM-7101KINST                         00459000
+004600     ELSE                                                         00460000
+004610         MOVE RPEVT-INST2 TO MIM-7101KINST.                       00461000
+004620     MOVE MIM-7101KINST TO WS-INST.                               00462000
+004630     MOVE +7101 TO MIM-7101KREC.                                  00463000
+004640     MOVE RPEVT-MODEL2 TO MIM-7101KMODEL.                         00464000
+004650     COMPUTE WS-7101KEFFDT = WS-CURDT-YYYYMMDD - 99999999.        00465000
+004660     MOVE WS-7101KEFFDT TO MIM-7101KEFFDT.                        00466000
+004670     MOVE MIC-RPS-7101-PRI TO MIC-MST-REC-PRI.                    00467000
+004680     MOVE MI7101-RECORD TO MIMST-RECORD.                          00468000
+004690     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00469000
+004700     MOVE MIMST-RECORD TO MI7101-RECORD.                          00470000
+004710     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00471000
+004720         MOVE 'MODEL NOT FOUND' TO RPEVT01-MODEL-DESC             00472000
+004730         GO TO EXMO100-END.                                       00473000
+004740     IF MIM-7101KINST IS NOT EQUAL TO WS-INST                     00474000
+004750         OR MIM-7101KREC IS NOT EQUAL TO '7101'                   00475000
+004760         OR MIM-7101KMODEL IS NOT EQUAL TO RPEVT-MODEL2           00476000
+004770         MOVE 'MODEL NOT FOUND' TO RPEVT01-MODEL-DESC             00477000
+004780         GO TO EXMO100-END.                                       00478000
+004790     MOVE MIM-7101DESC TO RPEVT01-MODEL-DESC.                     00479000
+004800 EXMO100-END.                                                     00480000
+004810     EXIT.                                                        00481000
+004820******************************************************************00482000
+004830 WHICHWAY SECTION.                                                00483000
+004840     MOVE 'N' TO WS-PF7END.                                       00484000
+004850     MOVE 'N' TO WS-PF8END.                                       00485000
+004860     MOVE '000027' TO WS-MSGNBR.                                  00486000
+004870     MOVE WS-MSGNBR TO RPEVT01-MSGNBR.                            00487000
+004880     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00488000
+004890         MOVE 'Y' TO WS-PF7END.                                   00489000
+004900     IF RPEVT01-REQUEST IS EQUAL TO 'PF8'                         00490000
+004910         ADD +1 TO RPEVT01-CURPAGE                                00491000
+004920         MOVE 'Y' TO WS-PF8END.                                   00492000
+004930 WHICH-END.                                                       00493000
+004940     EXIT.                                                        00494000
+004950 CHECKFORPF7 SECTION.                                             00495000
+004960     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00496000
+004970         AND WS-BACKPAGE IS EQUAL TO WS-PF7PAGE                   00497000
+004980         SUBTRACT +1 FROM WS-PF7PAGE GIVING RPEVT01-CURPAGE.      00498000
+004990     IF RPEVT01-REQUEST IS EQUAL TO 'PF7'                         00499000
+005000         AND RPEVT01-CURPAGE IS EQUAL TO ZERO                     00500000
+005010         MOVE 'Y' TO WS-PF7END                                    00501000
+005020         MOVE WS-PF7END TO RPEVT01-PF7END.                        00502000
+005030 CFPF7-END.                                                       00503000
+005040     EXIT.                                                        00504000
+005050 CHECK-FORWARD-NOW SECTION.                                       00505000
+005060     MOVE SPACES TO WS-FUNCTION.                                  00506000
+005070     PERFORM RPS-EVT-GET-NEXT-REQUEST.                            00507000
+005080     IF WS-FUNCTION IS EQUAL TO 'E'                               00508000
+005090         MOVE 'Y' TO WS-PF8END                                    00509000
+005100         MOVE WS-PF8END TO RPEVT01-PF8END                         00510000
+005110         GO TO CFN-EXIT.                                          00511000
+005120     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00512000
+005130         MOVE 'Y' TO WS-PF8END                                    00513000
+005140         MOVE WS-PF8END TO RPEVT01-PF8END                         00514000
+005150         GO TO CFN-EXIT.                                          00515000
+005160     IF RPEVT01-KEY-INST IS NOT EQUAL TO RPEVT-INST               00516000
+005170         OR RPEVT01-KEY-PRODCODE IS NOT EQUAL TO RPEVT-PRODCODE   00517000
+005180         OR RPEVT01-KEY-ACCOUNT IS NOT EQUAL TO RPEVT-ACCOUNT     00518000
+005190         MOVE 'Y' TO WS-PF8END                                    00519000
+005200         MOVE WS-PF8END TO RPEVT01-PF8END                         00520000
+005210         GO TO CFN-EXIT.                                          00521000
+005220 CFN-EXIT.                                                        00522000
+005230     EXIT.                                                        00523000
+005240******************************************************************00524000
+005250 READ-MICM-7100 SECTION.                                          00525000
+005260 RM7100-START.                                                    00526000
+005270     MOVE SPACES TO WS-FUNCTION.                                  00527000
+005280     MOVE SPACES TO MI7100-RECORD.                                00528000
+005290     MOVE RPEVT01-KEY-INST TO MIM-7100KINST.                      00529000
+005300 RM7100-LOOP.                                                     00530000
+005310     MOVE +7100 TO MIM-7100KREC.                                  00531000
+005320     MOVE MIC-RPS-7100-PRI TO MIC-MST-REC-PRI.                    00532000
+005330     MOVE MI7100-RECORD TO MIMST-RECORD.                          00533000
+005340     PERFORM MIC-MST-GET-REQUEST.                                 00534000
+005350     MOVE MIMST-RECORD TO MI7100-RECORD.                          00535000
+005360     IF WS-FUNCTION IS EQUAL TO 'N'                               00536000
+005370         AND MIM-7100KINST IS GREATER THAN ZEROS                  00537000
+005380         GO TO RM7100-ZERO.                                       00538000
+005390     GO TO RM7100-EXIT.                                           00539000
+005400 RM7100-ZERO.                                                     00540000
+005410     MOVE SPACES TO MI7100-RECORD.                                00541000
+005420     MOVE ZEROS TO MIM-7100KINST.                                 00542000
+005430     GO TO RM7100-LOOP.                                           00543000
+005440 RM7100-EXIT.                                                     00544000
+005450     EXIT.                                                        00545000
+005460******************************************************************00546000
+005470 SET-RPEVT01-RETURN SECTION.                                      00547000
+005480 SCR-START.                                                       00548000
+005490     IF RPEVT01-OCCUR IS EQUAL TO ZERO                            00549000
+005500         MOVE '1' TO RPEVT01-SELECT-RTN                           00550000
+005510         GO TO SCR-EXIT.                                          00551000
+005520     MOVE '3' TO RPEVT01-SELECT-RTN.                              00552000
+005530 SCR-EXIT.                                                        00553000
+005540     EXIT.                                                        00554000
+005550******************************************************************00555000
+000000 COPY RPPEVTA.                                                    00556000
+005570******************************************************************00557000
+005580 MIC-MST-API SECTION.                                             00558000
+000000 COPY MIPMSTA.                                                    00559000
+005600******************************************************************00560000
+005610 SLP096-GET-2023-RECORD SECTION.                                  00561000
+000000 COPY SLP096.                                                     00562000
+005630******************************************************************00563000
+005640 REQUEST-CUSTOMER SECTION.                                        00564000
+005650 RC-START.                                                        00565000
+005660     MOVE 'A' TO RPRF21-FUNC.                                     00566000
+005670     MOVE RPEVT01-KEY-INST TO RPRF21-BASE-ACCT-INST.              00567000
+005680     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00568000
+005690         AND MIM-7100ENTERPRISEINST IS GREATER THAN ZEROS         00569000
+005700         MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST.    00570000
+005710     MOVE RPEVT01-KEY-PRODCODE TO RPRF21-BASE-ACCT-PRODCODE.      00571000
+005720     MOVE RPEVT01-KEY-ACCOUNT TO RPRF21-BASE-ACCT.                00572000
+005730     MOVE 'Y' TO RPRF21-CLOSEDACCTOPT.                            00573000
+005740     MOVE 'N' TO RPRF21-GLOBAL-CLOSE.                             00574000
+005750     MOVE WS-FILEOPTS TO RPRF21-FILEOPTS.                         00575000
+005760     EXEC CICS LINK                                               00576000
+005770         PROGRAM('RPO0RF21')                                      00577000
+005780         COMMAREA(RPRF21-MESSAGE)                                 00578000
+005790         LENGTH(LENGTH OF RPRF21-MESSAGE)                         00579000
+005800         RESP(WS-CICS-RESPONSE)                                   00580000
+005810         END-EXEC.                                                00581000
+005820     MOVE RPRF21-FUNCTION TO WS-FUNCTION.                         00582000
+005830     IF WS-CICS-RESPONSE IS NOT EQUAL TO ZERO                     00583000
+005840         MOVE 'L' TO WS-FUNCTION                                  00584000
+005850         MOVE 500036 TO RPEVT01-MSGNBR                            00585000
+005860         GO TO RC-EXIT.                                           00586000
+005870     IF WS-FUNCTION IS EQUAL TO 'B'                               00587000
+005880         GO TO RC-EXIT.                                           00588000
+005890     IF WS-FUNCTION IS EQUAL TO 'C'                               00589000
+005900         MOVE 500037 TO RPEVT01-MSGNBR                            00590000
+005910         GO TO RC-EXIT.                                           00591000
+005920     IF WS-FUNCTION IS EQUAL TO 'I'                               00592000
+005930         MOVE 500038 TO RPEVT01-MSGNBR.                           00593000
+005940 RC-EXIT.                                                         00594000
+005950     EXIT.                                                        00595000
+005960******************************************************************00596000
+005970 GET-MESSAGE SECTION.                                             00597000
+005980 GM-START.                                                        00598000
+005990     IF WS-MESSAGENBR IS EQUAL TO ZERO                            00599000
+006000         MOVE SPACE TO WS-MESSAGE                                 00600000
+006010         GO TO GM-EXIT.                                           00601000
+006020 GM-READ-MIC-2011.                                                00602000
+006030     MOVE ZERO TO MIM-2011KINST.                                  00603000
+006040     MOVE +2011 TO MIM-2011KREC.                                  00604000
+006050     MOVE WS-MESSAGENBRG TO MIM-2011KMSGNBR.                      00605000
+006060     MOVE 50 TO MIM-2011KMANGER.                                  00606000
+006070     MOVE 'EN' TO MIM-2011KLANG.                                  00607000
+006080     MOVE WS-FILEOPT (1) TO WS-SAVEFILEOPT.                       00608000
+006090     MOVE SPACE TO WS-FILEOPT (1).                                00609000
+006100     MOVE MIC-MST-2011-PRI TO MIC-MST-REC-PRI.                    00610000
+006110     MOVE MI2011-RECORD TO MIMST-RECORD.                          00611000
+006120     PERFORM MIC-MST-GET-REQUEST.                                 00612000
+006130     IF WS-FUNCTION IS EQUAL TO SPACE                             00613000
+006140         MOVE MIMST-RECORD TO MI2011-RECORD                       00614000
+006150         MOVE MIM-REC2011 TO WS-MSGDATA                           00615000
+006160     ELSE                                                         00616000
+006170         MOVE 'MESSAGE NOT ON FILE' TO WS-MSGDATA.                00617000
+006180     MOVE WS-SAVEFILEOPT TO WS-FILEOPT (1).                       00618000
+006190 GM-EXIT.                                                         00619000
+006200     EXIT.                                                        00620000
+006210******************************************************************00621000
+006220 CICS-ABORT-EXIT SECTION.                                         00622000
+006230 CAE-START.                                                       00623000
+006240     GO TO CICS-RETURN.                                           00624000
+006250 CAE-EXIT.                                                        00625000
+006260     EXIT.                                                        00626000
+006270******************************************************************00627000
+006280 CICS-RETURN SECTION.                                             00628000
+006290     IF COM-ABORT IS NOT EQUAL TO ZERO                            00629000
+006300         MOVE COM-ABORT TO RPEVT01-ABORT.                         00630000
+006310     IF RPEVT01-ABORT IS NOT EQUAL TO ZERO                        00631000
+006320         MOVE WS-FUNCTION TO RPEVT01-FUNCTION                     00632000
+006330         MOVE SRB-BMDB TO RPEVT01-SRBMDB                          00633000
+006340         MOVE EIBFN TO RPEVT01-ABEIBFN                            00634000
+006350         MOVE EIBRESP TO RPEVT01-ABEIBRESP                        00635000
+006360         MOVE EIBRESP2 TO RPEVT01-ABEIBRESP2                      00636000
+006370         MOVE EIBRCODE TO RPEVT01-ABEIBRCODE.                     00637000
+006380     IF RPEVT01-ABTYPE IS NOT EQUAL TO 'Y'                        00638000
+006390         PERFORM GLOBAL-CLOSE.                                    00639000
+000000 COPY SLP709.                                                     00640000
+006410******************************************************************00641000
+006420 GLOBAL-CLOSE SECTION.                                            00642000
+006430 GC-START.                                                        00643000
+006440     IF RPEVT01-GLOBAL-CLOSE IS NOT EQUAL TO 'N'                  00644000
+006450         PERFORM RPS-EVT-GLOBAL-CLOSE-REQUEST.                    00645000
+006460 GC-EXIT.                                                         00646000
+006470     EXIT.                                                        00647000
+006480******************************************************************00648000

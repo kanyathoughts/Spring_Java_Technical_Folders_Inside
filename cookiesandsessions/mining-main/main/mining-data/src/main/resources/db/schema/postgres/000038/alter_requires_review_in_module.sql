@@ -1,0 +1,1 @@
+ALTER TABLE module ALTER COLUMN requires_review SET DEFAULT FALSE;

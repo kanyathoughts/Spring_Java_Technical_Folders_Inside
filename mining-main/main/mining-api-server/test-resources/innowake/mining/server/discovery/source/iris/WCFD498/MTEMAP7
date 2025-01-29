@@ -1,0 +1,46 @@
+
+         TITLE 'COLOR TEST MAPSET'
+         PRINT NOGEN
+         SPACE
+MTEMAP7  DFHMSD TYPE=MAP,                                              *
+               MODE=INOUT,                                             *
+               MAPATTS=(COLOR,HILIGHT),                                *
+               DSATTS=(COLOR,HILIGHT),                                 *
+               LANG=COBOL,                                             *
+               BASE=MAPBASE,                                           *
+               DATA=FIELD,                                             *
+               TIOAPFX=YES
+MTEMAP7 DFHMDI SIZE=(24,80)
+        DFHMDF POS=(1,1),LENGTH=10,ATTRB=(PROT,NORM),                  *
+               INITIAL='WHITESPACE'
+HEADER1 DFHMDF POS=(5,11),LENGTH=10,                                   *
+               INITIAL='COLOR TEST',ATTRB=(ASKIP,NORM)
+HEADER2 DFHMDF POS=(6,11),LENGTH=11,                                   *
+               INITIAL='THIS IS RED',ATTRB=(PROT,NORM),COLOR=RED
+HEADER3 DFHMDF POS=(6,30),LENGTH=12,                                   *
+               INITIAL='THIS IS BLUE',ATTRB=(PROT,NORM),COLOR=BLUE
+HEADER4 DFHMDF POS=(7,11),LENGTH=13,                                   *
+               INITIAL='THIS IS GREEN',ATTRB=(PROT,NORM),COLOR=GREEN
+HEADER5 DFHMDF POS=(7,30),LENGTH=15,                                   *
+               INITIAL='THIS IS NEUTRAL',ATTRB=(PROT,NORM),            *
+               COLOR=NEUTRAL
+HEADER6 DFHMDF POS=(8,11),LENGTH=14,                                   *
+               INITIAL='THIS IS YELLOW',ATTRB=(PROT,NORM),COLOR=YELLOW
+HEADER7 DFHMDF POS=(8,30),LENGTH=17,                                   *
+               INITIAL='THIS IS TURQUOISE',ATTRB=(PROT,NORM),          *
+               COLOR=TURQUOISE
+HEADER8 DFHMDF POS=(9,11),LENGTH=12,                                   *
+               INITIAL='THIS IS PINK',ATTRB=(PROT,NORM),               *
+               COLOR=PINK
+HEADER9 DFHMDF POS=(9,30),LENGTH=13,                                   *
+               INITIAL='THIS IS BLACK',ATTRB=(PROT,NORM)
+PREF01  DFHMDF POS=(10,1),LENGTH=12,INITIAL='NORMAL INPUT',            *
+               ATTRB=(PROT,NORM)
+FIELD01 DFHMDF POS=(10,14),LENGTH=10,INITIAL='__________',             *
+               ATTRB=(UNPROT,IC)
+PREF03  DFHMDF POS=(12,1),LENGTH=9,INITIAL='OUTPUT 1:',                *
+               ATTRB=(PROT,NORM)
+OUT01   DFHMDF POS=(12,11),LENGTH=10,ATTRB=(PROT,NORM)
+        DFHMSD TYPE=FINAL
+        END
+

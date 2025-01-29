@@ -1,0 +1,356 @@
+**********************************************************************  00001000
+*  RELATIONSHIP PRICING 5.0 VSAM RECORD DEFINITIONS                     00002000
+*                                                                       00003000
+*  TYPE=RECORD - DEFINE RECORD ENTRY                                    00004000
+*                                                                       00005000
+*  NOTE: RECORD ENTRIES MUST BE IN ALPHABETICAL SEQUENCE                00006000
+*                                                                       00007000
+*  PARAMETERS: LABEL    ---> RECORD NAME (MUST BE 3 CHARS)              00008000
+*              ALIAS=   ---> RECORD ALIAS (OPTIONAL)                    00009000
+*              LDBNAME= ---> LOGICAL DATABASE NAME (MAX 8 CHARS)        00010000
+*              ACCESS=  ---> RECORD ACCESS TYPE                         00011000
+*                            (F=FILE, D=DATABASE, U=USER)               00012000
+*              ORGFM=   ---> RECORD ORG CODE FORMAT                     00013000
+*                            (N=NONE, 1=STANDARD, 2=GLOBAL)             00014000
+*              AUDITFM= ---> RECORD AUDIT STAMP FORMAT                  00015000
+*                            (N=NONE, 1=WITH ORG, 2=NO ORG)             00016000
+*              LOGUPD=  ---> DEFAULT AUDIT LOGGING VALUE                00017000
+*                            (N=DO NOT LOG, Y=LOG ALL UPDATES,          00018000
+*                             A=LOG ONLY ADDS, C=LOG ONLY CHANGES,      00019000
+*                             D=LOG ONLY DELETES)                       00020000
+*              USERMOD= ---> USER ACCESS OR EXIT MODULE NAME (OPTIONAL) 00021000
+*              USERLEN= ---> USER MODULE COMMAREA LENGTH (OPTIONAL)     00022000
+*              RECLEN=  ---> APPLICATION RECORD LENGTH                  00023000
+*              KEYLEN=  ---> APPLICATION PRIM RY KEY LENGTH             00024000
+*              ALT1LEN= ---> ALTERNATE KEY 1 LENGTH (OPTIONAL)          00025000
+*              ALT1OFF= ---> ALTERNATE KEY 1 OFFSET (OPTIONAL)          00026000
+*              ALT2LEN= ---> ALTERNATE KEY 2 LENGTH (OPTIONAL)          00027000
+*              ALT2OFF= ---> ALTERNATE KEY 2 OFFSET (OPTIONAL)          00028000
+*              ALT3LEN= ---> ALTERNATE KEY 3 LENGTH (OPTIONAL)          00029000
+*              ALT3OFF= ---> ALTERNATE KEY 3 OFFSET (OPTIONAL)          00030000
+**********************************************************************  00031000
+*                                                                       00032000
+*    RPS ACCOUNT RECORD (ACT)                                           00033000
+*                                                                       00034000
+SAA      BIMD1TAB TYPE=RECORD,                                         *00035000
+               LDBNAME=RPFACT,                                         *00036000
+               ACCESS=F,                                               *00037000
+               ORGFM=N,                                                *00038000
+               AUDITFM=2,                                              *00039000
+               LOGUPD=N,                                               *00040000
+               RECLEN=437,                                             *00041000
+               KEYLEN=28                                                00042000
+*                                                                       00043000
+*    RPS BANK RECORD (BNK)                                              00044000
+*                                                                       00045000
+SAB      BIMD1TAB TYPE=RECORD,                                         *00046000
+               LDBNAME=RPFBNK,                                         *00047000
+               ACCESS=F,                                               *00048000
+               ORGFM=N,                                                *00049000
+               AUDITFM=2,                                              *00050000
+               LOGUPD=N,                                               *00051000
+               RECLEN=142,                                             *00052000
+               KEYLEN=4                                                 00053000
+*                                                                       00054000
+*                                                                       00055000
+*    RPS ID XREF RECORD (IDX)                                           00056000
+*                                                                       00057000
+SAC      BIMD1TAB TYPE=RECORD,                                         *00058000
+               LDBNAME=RPFIDX,                                         *00059000
+               ACCESS=F,                                               *00060000
+               ORGFM=N,                                                *00061000
+               AUDITFM=2,                                              *00062000
+               LOGUPD=N,                                               *00063000
+               RECLEN=110,                                             *00064000
+               KEYLEN=28                                                00065000
+*                                                                       00066000
+*    RPS INTERFACE RECORD (INT)                                         00067000
+*                                                                       00068000
+SAD      BIMD1TAB TYPE=RECORD,                                         *00069000
+               LDBNAME=RPFINT,                                         *00070000
+               ACCESS=F,                                               *00071000
+               ORGFM=N,                                                *00072000
+               AUDITFM=2,                                              *00073000
+               LOGUPD=N,                                               *00074000
+               RECLEN=379,                                             *00075000
+               KEYLEN=66                                                00076000
+*                                                                       00077000
+*    RPS LOG RECORD (LOG)                                               00078000
+*                                                                       00079000
+SAE      BIMD1TAB TYPE=RECORD,                                         *00080000
+               LDBNAME=RPFLOG,                                         *00081000
+               ACCESS=F,                                               *00082000
+               ORGFM=N,                                                *00083000
+               AUDITFM=N,                                              *00084000
+               LOGUPD=N,                                               *00085000
+               RECLEN=592,                                             *00086000
+               KEYLEN=38                                                00087000
+*                                                                       00088000
+*    RPS MASTER RECORD (MST)                                            00089000
+*                                                                       00090000
+SAF      BIMD1TAB TYPE=RECORD,                                         *00091000
+               LDBNAME=RPFMST,                                         *00092000
+               ACCESS=F,                                               *00093000
+               ORGFM=N,                                                *00094000
+               AUDITFM=2,                                              *00095000
+               LOGUPD=N,                                               *00096000
+               RECLEN=238,                                             *00097000
+               KEYLEN=38                                                00098000
+*                                                                       00099000
+*    RPS QUALIFICATION RECORD (QUA)                                     00100000
+*                                                                       00101000
+SAG      BIMD1TAB TYPE=RECORD,                                         *00102000
+               LDBNAME=RPFQUA,                                         *00103000
+               ACCESS=F,                                               *00104000
+               ORGFM=N,                                                *00105000
+               AUDITFM=2,                                              *00106000
+               LOGUPD=N,                                               *00107000
+               RECLEN=232,                                             *00108000
+               KEYLEN=38                                                00109000
+*                                                                       00110000
+*    RPS RELATIONSHIP RECORD (REL)                                      00111000
+*                                                                       00112000
+SAH      BIMD1TAB TYPE=RECORD,                                         *00113000
+               LDBNAME=RPFREL,                                         *00114000
+               ACCESS=F,                                               *00115000
+               ORGFM=N,                                                *00116000
+               AUDITFM=2,                                              *00117000
+               LOGUPD=N,                                               *00118000
+               RECLEN=246,                                             *00119000
+               KEYLEN=66                                                00120000
+*                                                                       00121000
+*    RPS SECONDARY RECORD (SEC)                                         00122000
+*                                                                       00123000
+SAI      BIMD1TAB TYPE=RECORD,                                         *00124000
+               LDBNAME=RPFSEC,                                         *00125000
+               ACCESS=F,                                               *00126000
+               ORGFM=N,                                                *00127000
+               AUDITFM=2,                                              *00128000
+               LOGUPD=N,                                               *00129000
+               RECLEN=143,                                             *00130000
+               KEYLEN=66,                                              *00131000
+               ALT1LEN=28,                                             *00132000
+               ALT1OFF=90                                               00133000
+*                                                                       00134000
+*    RPS SYNCHRONIZATION RECORD (SYC)                                   00135000
+*                                                                       00136000
+SAJ      BIMD1TAB TYPE=RECORD,                                         *00137000
+               LDBNAME=RPFSYC,                                         *00138000
+               ACCESS=F,                                               *00139000
+               ORGFM=N,                                                *00140000
+               AUDITFM=2,                                              *00141000
+               LOGUPD=N,                                               *00142000
+               RECLEN=111,                                             *00143000
+               KEYLEN=24                                                00144000
+*                                                                       00145000
+*    RPS CASH REWARDS RECORD (CRW)                                      00146000
+*                                                                       00147000
+SAK      BIMD1TAB TYPE=RECORD,                                         *00148000
+               LDBNAME=RPFCRW,                                         *00149000
+               ACCESS=F,                                               *00150000
+               ORGFM=N,                                                *00151000
+               AUDITFM=2,                                              *00152000
+               LOGUPD=N,                                               *00153000
+               RECLEN=303,                                             *00154000
+               KEYLEN=066,                                             *00155000
+               ALT1LEN=028,                                            *00156000
+               ALT1OFF=038                                              00157000
+*                                                                       00158000
+*    RPS TRANSACTION MASTER RECORD (TRM)                                00159000
+*                                                                       00160000
+SAL      BIMD1TAB TYPE=RECORD,                                         *00161000
+               LDBNAME=RPFTRM,                                         *00162000
+               ACCESS=F,                                               *00163000
+               ORGFM=N,                                                *00164000
+               AUDITFM=2,                                              *00165000
+               LOGUPD=N,                                               *00166000
+               RECLEN=297,                                             *00167000
+               KEYLEN=38                                                00168000
+*                                                                       00169000
+*    RPS EVENT RECORD (EVT)                                             00170000
+*                                                                       00171000
+SAM      BIMD1TAB TYPE=RECORD,                                         *00172000
+               LDBNAME=RPFEVT,                                         *00173000
+               ACCESS=F,                                               *00174000
+               ORGFM=N,                                                *00175000
+               AUDITFM=2,                                              *00176000
+               LOGUPD=N,                                               *00177000
+               RECLEN=164,                                             *00178000
+               KEYLEN=77                                                00179000
+*                                                                       00180000
+*    RPS ENROLLMENT RECORD (ENR)                                        00181000
+*                                                                       00182000
+SAN      BIMD1TAB TYPE=RECORD,                                         *00183000
+               LDBNAME=RPFENR,                                         *00184000
+               ACCESS=F,                                               *00185000
+               ORGFM=N,                                                *00186000
+               AUDITFM=2,                                              *00187000
+               LOGUPD=N,                                               *00188000
+               RECLEN=554,                                             *00189000
+               KEYLEN=30                                                00190000
+*                                                                       00191000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7100                          00192000
+*                                                                       00193000
+S00      BIMD1TAB TYPE=RECORD,                                         *00194000
+               LDBNAME=MIFMST,                                         *00195000
+               ACCESS=F,                                               *00196000
+               ORGFM=N,                                                *00197000
+               AUDITFM=2,                                              *00198000
+               LOGUPD=N,                                               *00199000
+               RECLEN=62,                                              *00200000
+               KEYLEN=8                                                 00201000
+*                                                                       00202000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7101                          00203000
+*                                                                       00204000
+S01      BIMD1TAB TYPE=RECORD,                                         *00205000
+               LDBNAME=MIFMST,                                         *00206000
+               ACCESS=F,                                               *00207000
+               ORGFM=N,                                                *00208000
+               AUDITFM=2,                                              *00209000
+               LOGUPD=N,                                               *00210000
+               RECLEN=327,                                             *00211000
+               KEYLEN=26                                                00212000
+*                                                                       00213000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7102                          00214000
+*                                                                       00215000
+S02      BIMD1TAB TYPE=RECORD,                                         *00216000
+               LDBNAME=MIFMST,                                         *00217000
+               ACCESS=F,                                               *00218000
+               ORGFM=N,                                                *00219000
+               AUDITFM=2,                                              *00220000
+               LOGUPD=N,                                               *00221000
+               RECLEN=208,                                             *00222000
+               KEYLEN=27                                                00223000
+*                                                                       00224000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7103                          00225000
+*                                                                       00226000
+S03      BIMD1TAB TYPE=RECORD,                                         *00227000
+               LDBNAME=MIFMST,                                         *00228000
+               ACCESS=F,                                               *00229000
+               ORGFM=N,                                                *00230000
+               AUDITFM=2,                                              *00231000
+               LOGUPD=N,                                               *00232000
+               RECLEN=251,                                             *00233000
+               KEYLEN=22                                                00234000
+*                                                                       00235000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7104                          00236000
+*                                                                       00237000
+S04      BIMD1TAB TYPE=RECORD,                                         *00238000
+               LDBNAME=MIFMST,                                         *00239000
+               ACCESS=F,                                               *00240000
+               ORGFM=N,                                                *00241000
+               AUDITFM=2,                                              *00242000
+               LOGUPD=N,                                               *00243000
+               RECLEN=139,                                             *00244000
+               KEYLEN=14                                                00245000
+*                                                                       00246000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7105                          00247000
+*                                                                       00248000
+S05      BIMD1TAB TYPE=RECORD,                                         *00249000
+               LDBNAME=MIFMST,                                         *00250000
+               ACCESS=F,                                               *00251000
+               ORGFM=N,                                                *00252000
+               AUDITFM=2,                                              *00253000
+               LOGUPD=N,                                               *00254000
+               RECLEN=563,                                             *00255000
+               KEYLEN=14                                                00256000
+*                                                                       00257000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7106                          00258000
+*                                                                       00259000
+S06      BIMD1TAB TYPE=RECORD,                                         *00260000
+               LDBNAME=MIFMST,                                         *00261000
+               ACCESS=F,                                               *00262000
+               ORGFM=N,                                                *00263000
+               AUDITFM=2,                                              *00264000
+               LOGUPD=N,                                               *00265000
+               RECLEN=72,                                              *00266000
+               KEYLEN=14                                                00267000
+*                                                                       00268000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7107                          00269000
+*                                                                       00270000
+S07      BIMD1TAB TYPE=RECORD,                                         *00271000
+               LDBNAME=MIFMST,                                         *00272000
+               ACCESS=F,                                               *00273000
+               ORGFM=N,                                                *00274000
+               AUDITFM=2,                                              *00275000
+               LOGUPD=N,                                               *00276000
+               RECLEN=190,                                             *00277000
+               KEYLEN=14                                                00278000
+*                                                                       00279000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7108                          00280000
+*                                                                       00281000
+S08      BIMD1TAB TYPE=RECORD,                                         *00282000
+               LDBNAME=MIFMST,                                         *00283000
+               ACCESS=F,                                               *00284000
+               ORGFM=N,                                                *00285000
+               AUDITFM=2,                                              *00286000
+               LOGUPD=N,                                               *00287000
+               RECLEN=68,                                              *00288000
+               KEYLEN=14                                                00289000
+*                                                                       00290000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7109                          00291000
+*                                                                       00292000
+S09      BIMD1TAB TYPE=RECORD,                                         *00293000
+               LDBNAME=MIFMST,                                         *00294000
+               ACCESS=F,                                               *00295000
+               ORGFM=N,                                                *00296000
+               AUDITFM=2,                                              *00297000
+               LOGUPD=N,                                               *00298000
+               RECLEN=159,                                             *00299000
+               KEYLEN=14                                                00300000
+*                                                                       00301000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7110                          00302000
+*                                                                       00303000
+S10      BIMD1TAB TYPE=RECORD,                                         *00304000
+               LDBNAME=MIFMST,                                         *00305000
+               ACCESS=F,                                               *00306000
+               ORGFM=N,                                                *00307000
+               AUDITFM=2,                                              *00308000
+               LOGUPD=N,                                               *00309000
+               RECLEN=430,                                             *00310000
+               KEYLEN=14                                                00311000
+*                                                                       00312000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7111                          00313000
+*                                                                       00314000
+S11      BIMD1TAB TYPE=RECORD,                                         *00315000
+               LDBNAME=MIFMST,                                         *00316000
+               ACCESS=F,                                               *00317000
+               ORGFM=N,                                                *00318000
+               AUDITFM=2,                                              *00319000
+               LOGUPD=N,                                               *00320000
+               RECLEN=152,                                             *00321000
+               KEYLEN=25                                                00322000
+*                                                                       00323000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7112                          00324000
+*                                                                       00325000
+S12      BIMD1TAB TYPE=RECORD,                                         *00326000
+               LDBNAME=MIFMST,                                         *00327000
+               ACCESS=F,                                               *00328000
+               ORGFM=N,                                                *00329000
+               AUDITFM=2,                                              *00330000
+               LOGUPD=N,                                               *00331000
+               RECLEN=159,                                             *00332000
+               KEYLEN=14                                                00333000
+*                                                                       00334000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7113                          00335000
+*                                                                       00336000
+S13      BIMD1TAB TYPE=RECORD,                                         *00337000
+               LDBNAME=MIFMST,                                         *00338000
+               ACCESS=F,                                               *00339000
+               ORGFM=N,                                                *00340000
+               AUDITFM=2,                                              *00341000
+               LOGUPD=N,                                               *00342000
+               RECLEN=158,                                             *00343000
+               KEYLEN=14                                                00344000
+*                                                                       00345000
+*    RELATIONSHIP PRICING 5.0 MICM RECORD 7114                          00346000
+*                                                                       00347000
+S14      BIMD1TAB TYPE=RECORD,                                         *00348000
+               LDBNAME=MIFMST,                                         *00349000
+               ACCESS=F,                                               *00350000
+               ORGFM=N,                                                *00351000
+               AUDITFM=2,                                              *00352000
+               LOGUPD=N,                                               *00353000
+               RECLEN=193,                                             *00354000
+               KEYLEN=19                                                00355000
+*                                                                       00356000

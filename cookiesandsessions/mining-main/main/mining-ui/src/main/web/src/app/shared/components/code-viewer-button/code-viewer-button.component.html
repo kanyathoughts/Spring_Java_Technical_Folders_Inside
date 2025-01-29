@@ -1,0 +1,20 @@
+<ng-container *ngIf="contextMenu; else codeViewer">
+  <button #graph id="open-code" data-container-id="open-code-options" class="contextual-toolbar__menu-option"
+    (click)="codeViewerClick.emit($event)"></button>
+  <label for="open-code" nzTooltipPlacement="top" [ngClass]="{'code-viewer-button__disable-open-code': disableCodeViewer}"
+    nz-tooltip nzTooltipTitle="{{handleCodeViewerButton() | translate}}">
+    <img src="assets/graph-context-menu/icon-OpenCode.svg" alt="open Code icon" />
+    <em nz-icon nzType="caret-right" [nzRotate]="45" nzTheme="outline"
+      class="contextual-toolbar__caret-right-icon"></em>
+  </label>
+</ng-container>
+<ng-template #codeViewer>
+  <span nz-tooltip nzTooltipTitle="{{handleCodeViewerButton() | translate}}" nzTooltipPlacement="top">
+    <button nz-button nzType="default" (click)="openInNewBrowserTab('code-viewer')" [disabled]="disableCodeViewer"
+      [ngClass]="{'code-viewer-button__hover-btn': ! disableCodeViewer, 'code-viewer-button__module-btn': ! label}">
+      <i aria-hidden="true" nz-icon nzType="mining-icons:opencode_outlined"
+        [ngClass]="{'code-viewer-button__disable-icon': disableCodeViewer}"></i>
+      {{ label | translate }}
+    </button>
+  </span>
+</ng-template>

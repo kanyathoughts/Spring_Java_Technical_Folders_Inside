@@ -1,0 +1,151 @@
+//PROC_A1  PROC CYCLE=CYCXX,
+//             DBP4=DBT1,
+//             DBP4S=DBT1S,
+//             DMCLBT=BTCHRE22,
+//             DSNLOAD=DSNLOAD,
+//             GHPROD=GHTEST,
+//             IDMS=IDMS,
+//             PLAN=REPLAN,
+//             LINK=GHTEST,
+//             PROD=TEST,
+//             PRODREN=TESTREN,
+//             PRODREV=TESTREV,
+//             QSTART=NULL,
+//             RE027=RE027,
+//             RE213A=RE213A,
+//             RE213B=RE213B,
+//             WORKREN=TESTREN
+//RE213A   EXEC PGM=&RE213A
+//*            **                                  **
+//*            ** TO ADD AGE, GENDER, STATE AND    **
+//*            ** COUNTY IN PAID CLAIM ERROR FILE  **
+//*            **                                  **
+//STEPLIB  DD  DSN=&QSTART..LOAD,
+//             DISP=SHR
+//         DD  DSN=&DBP4S..DSNEXIT,
+//             DISP=SHR
+//         DD  DSN=DB2.&DSNLOAD,
+//             DISP=SHR
+//         DD  DSN=&LINK..LINKLIB,
+//             DISP=SHR
+//         DD  DSN=&GHPROD..LINKLIB,
+//             DISP=SHR
+//DSNPARMS DD  DSN=&PRODREN..&DBP4..&PLAN,
+//             DISP=SHR
+//REXPCLMR DD  DSN=&WORKREN..M.&CYCLE..RE628.CLAIMS.ERROR,
+//             DISP=(OLD,DELETE,KEEP)
+//DATEFIL  DD  DSN=&PRODREN..M.&CYCLE..RE601.DATEFIL,
+//             DISP=SHR
+//REXPCLMS DD  DSN=&WORKREN..M.&CYCLE..RE213A.CLAIMS.ERROR,
+//             DISP=(NEW,CATLG,CATLG),
+//             UNIT=SYSDA,
+//             RECFM=FB
+//SYSOUT   DD  SYSOUT=*
+//SYSDBOUT DD  SYSOUT=*
+//SYSUDUMP DD  SYSOUT=D
+//TAPEJRNL DD  DUMMY
+//J1JRNL   DD  DUMMY
+//ABENDA   EXEC PGM=ABEND,
+//             COND=(0,EQ,RE213A),
+//             PARM='UNSUCCESSFUL RE213A'
+//*            ** ABEND IF RE213A IS UNSUCCESSFUL        **
+//STEPLIB  DD  DSN=&GHPROD..LINKLIB,
+//             DISP=SHR
+//SYSUDUMP DD  SYSOUT=D
+//RE213B   EXEC PGM=&RE213B
+//*            **                                  **
+//*            ** TO BYPASS RIF RULE UNMATCH REC'S **
+//*            ** FROM PAID CLAIM ERROR FILE       **
+//*            **                                  **
+//STEPLIB  DD  DSN=&IDMS..&PROD..HUMANA.LOADLIB,
+//             DISP=SHR
+//         DD  DSN=&IDMS..&PROD..SUBSLOAD,
+//             DISP=SHR
+//         DD  DSN=&IDMS..&PROD..SYS.LOADLIB,
+//             DISP=SHR
+//         DD  DSN=&QSTART..LOAD,
+//             DISP=SHR
+//         DD  DSN=&DBP4S..DSNEXIT,
+//             DISP=SHR
+//         DD  DSN=DB2.&DSNLOAD,
+//             DISP=SHR
+//         DD  DSN=&LINK..LINKLIB,
+//             DISP=SHR
+//         DD  DSN=&GHPROD..LINKLIB,
+//             DISP=SHR
+//DSNPARMS DD  DSN=&PRODREN..&DBP4..&PLAN,
+//             DISP=SHR
+//REXPCLMS DD  DSN=&WORKREN..M.&CYCLE..RE213A.CLAIMS.ERROR,
+//             DISP=(OLD,DELETE,KEEP)
+//PRDCTFIL DD  DSN=&PRODREV..RE3118.PRODUCT.FILE,
+//             DISP=SHR
+//RIFCTRCT DD  DSN=&PRODREV..RE3118.RIF.RULE.FILE,
+//             DISP=SHR
+//REXPCLMR DD  DSN=&PRODREN..M.&CYCLE..RE213B.CLAIMS.ERROR,
+//             DISP=(NEW,CATLG,DELETE),
+//             UNIT=TAPE,
+//             RECFM=FB
+//REBYPASS DD  DSN=&PRODREN..M.&CYCLE..RE213B.CLAIMS.BYPASS,
+//             DISP=(NEW,CATLG,DELETE),
+//             UNIT=TAPE,
+//             RECFM=FB
+//SYSOUT   DD  SYSOUT=*
+//SYSPRINT DD  SYSOUT=*
+//SYSDBOUT DD  SYSOUT=*
+//SYSUDUMP DD  SYSOUT=D
+//DCMSG    DD  DSN=&IDMS..&PROD..SYSMSG.DDLDCMSG,
+//             DISP=SHR
+//SYSIDMS  DD  DSN=&IDMS..&PROD..SYSIDMS(&DMCLBT),
+//             DISP=SHR
+//TAPEJRNL DD  DUMMY
+//J1JRNL   DD  DUMMY
+//ABENDB   EXEC PGM=ABEND,
+//             COND=(0,EQ,RE213B),
+//             PARM='UNSUCCESSFUL RE213B'
+//*            ** ABEND IF RE213B IS UNSUCCESSFUL        **
+//STEPLIB  DD  DSN=&GHPROD..LINKLIB,
+//             DISP=SHR
+//SYSUDUMP DD  SYSOUT=D
+//RE027    EXEC PGM=&RE027
+//*            **                                  **
+//*            ** FIND RECOVERED CLAIMS..ACCESS XF **
+//*            **                                  **
+//STEPLIB  DD  DSN=&IDMS..XADC.&PROD..LOADLIB,
+//             DISP=SHR
+//         DD  DSN=&IDMS..&PROD..HUMANA.LOADLIB,
+//             DISP=SHR
+//         DD  DSN=&IDMS..&PROD..SUBSLOAD,
+//             DISP=SHR
+//         DD  DSN=&IDMS..&PROD..SYS.LOADLIB,
+//             DISP=SHR
+//         DD  DSN=&LINK..LINKLIB,
+//             DISP=SHR
+//         DD  DSN=&GHPROD..LINKLIB,
+//             DISP=SHR
+//IQCURR   DD  DSN=&PRODREV..RE027.CURR.FILE,
+//             DISP=SHR
+//REXPCLMR DD  DSN=&PRODREN..M.&CYCLE..RE213B.CLAIMS.ERROR,
+//             DISP=SHR
+//REXPCLM2 DD  DSN=&PRODREN..M.&CYCLE..RE628.CLAIMS.ERROR,
+//             DISP=(NEW,CATLG,DELETE),
+//             UNIT=TAPE,
+//             RECFM=FB
+//RECLMEXT DD  DSN=&WORKREN..M.&CYCLE..RE027.CLAIMS.TEMP,
+//             DISP=(NEW,DELETE,DELETE),
+//             SPACE=(170,(59040,29520),RLSE),
+//             UNIT=SYSDA,
+//             LRECL=170,
+//             RECFM=FB
+//RECLMEX2 DD  DSN=&PRODREN..M.&CYCLE..RE027.CLAIMS.TEMP2.PREGDG,
+//             DISP=(NEW,CATLG,CATLG),
+//             UNIT=SYSDA,
+//             RECFM=FB
+//SYSOUT   DD  SYSOUT=*
+//SYSDBOUT DD  SYSOUT=*
+//SYSUDUMP DD  SYSOUT=D
+//DCMSG    DD  DSN=&IDMS..&PROD..SYSMSG.DDLDCMSG,
+//             DISP=SHR
+//SYSIDMS  DD  DSN=&IDMS..&PROD..SYSIDMS(&DMCLBT),
+//             DISP=SHR
+//TAPEJRNL DD  DUMMY
+//J1JRNL   DD  DUMMY

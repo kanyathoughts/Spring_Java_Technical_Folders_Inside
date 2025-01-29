@@ -1,0 +1,25 @@
+# Modules
+"Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+1.0,"functionC","","C","C_FUNCTION","VIRTUAL",-1.0,0.0,-1.0,-1.0,-1.0,-1.0,5.0,10.0
+2.0,"MY_FUN1","","BASIC","BASIC_FUNCTION","VIRTUAL",-1.0,0.0,-1.0,-1.0,-1.0,-1.0,7.0,104.0
+3.0,"MY_BAS_FUN1","src/basic/WMIN1387B/MY_BAS_FUN1.bas","BASIC","BASIC_OBJECT","PHYSICAL",-1.0,0.0,7.0,0.0,-1.0,-1.0,0.0,178.0
+4.0,"MY_CBL_PRG1","src/cobol/WMIN1387B/programs/MY_CBL_PRG1.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1.0,0.0,12.0,0.0,10.0,0.0,1,-1.0
+5.0,"FUNCTIONC","src/c/WMIN1387B/FUNCTIONC.c","C","C_PROGRAM","PHYSICAL",-1.0,0.0,6.0,0.0,-1.0,-1.0,0.0,229.0
+# Statements
+"Uid","Module Name","Statement","String"
+4.0,"MY_CBL_PRG1","CALL","CALL "MY_FUN1" USING: [PARAM1, PARAM2]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+4.0,"MY_CBL_PRG1",2.0,"MY_FUN1","BASIC","BASIC_FUNCTION","EARLY","{"CALL_TYPE":["CALL"]}",-1.0,-1.0,7.0,104.0
+5.0,"FUNCTIONC",1.0,"functionC","C","C_FUNCTION","EARLY","{}",5.0,10.0,5.0,10.0
+3.0,"MY_BAS_FUN1",2.0,"MY_FUN1","BASIC","BASIC_FUNCTION","EARLY","{}",-1.0,-1.0,7.0,104.0
+3.0,"MY_BAS_FUN1",5.0,"FUNCTIONC","C","C_PROGRAM","EARLY","{"CALL_TYPE":"CALL FUNCTIONC"}",145.0,17.0,0.0,229.0
+3.0,"MY_BAS_FUN1",4.0,"MY_CBL_PRG1","COBOL","COBOL_PROGRAM","EARLY","{"CALL_TYPE":"CALL MY_CBL_PRG1"}",123.0,19.0,0.0,429.0
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

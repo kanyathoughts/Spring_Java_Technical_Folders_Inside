@@ -1,0 +1,29 @@
+#11 ProcedureDivision
+ #12 CobolIfStmt <branch stmt>, Label: IF MMRS-LOGIN-OK, FROM={TestEntryPoint}, TO={#15(TRUE), #19(FALSE)}
+  #15 CobolThenBlock, FROM={#12(TRUE)}, TO={#16}
+   #16 CobolDisplayStmt 'if', FROM={#15}, TO={#23}
+  #19 CobolElseBlock, FROM={#12(FALSE)}, TO={#20}
+   #20 CobolDisplayStmt 'else', FROM={#19}, TO={#23}
+ #23 CobolMoveStmt, FROM={#16, #20}, TO={#28}
+ #28 CobolEvaluateStmt <branch stmt>, Label: EVALUATE TESTFIELD, FROM={#23}, TO={#32(1), #40(2), #48(3), #53(4), #61(OTHER)}
+  #29 CobolEvaluateCondition
+  #32 CobolWhenStmt, FROM={#28(1)}, TO={#37}
+   #33 CobolComparisonExpression
+    #34 CobolEvaluationReference
+   #37 CobolDisplayStmt '1', FROM={#32}, TO={#65}
+  #40 CobolWhenStmt, FROM={#28(2)}, TO={#45}
+   #41 CobolComparisonExpression
+    #42 CobolEvaluationReference
+   #45 CobolDisplayStmt '2', FROM={#40}, TO={#65}
+  #48 CobolWhenStmt, FROM={#28(3)}, TO={#58}
+   #49 CobolComparisonExpression
+    #50 CobolEvaluationReference
+  #53 CobolWhenStmt, FROM={#28(4)}, TO={#58}
+   #54 CobolComparisonExpression
+    #55 CobolEvaluationReference
+   #58 CobolDisplayStmt '3 or 4', FROM={#48, #53}, TO={#65}
+  #61 CobolWhenStmt, FROM={#28(OTHER)}, TO={#62}
+   #62 CobolDisplayStmt 'other', FROM={#61}, TO={#65}
+ #65 CobolDisplayStmt 'after', FROM={#37, #45, #58, #62}, TO={#68}
+ #68 CobolGoBackStmt, FROM={#65}, TO={TestReturnPoint}
+ #69 CobolEndStmt

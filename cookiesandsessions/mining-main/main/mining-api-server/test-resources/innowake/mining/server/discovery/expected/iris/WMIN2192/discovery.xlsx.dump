@@ -1,0 +1,67 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3631,"","ESAO476W","src/cobol/WMIN2192/programs/ESAO476W.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,52,11,64,0,1,-1,-1
+3633,"","VADVC_ASSET_PROFL","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3636,"","VADVC_GOAL_AST_RL","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3637,"","VADVC_PROFL","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3634,"","VMBR_PSAV_DTL","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3632,"","VSAG","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3635,"","VSAG_BUS_RLSHP","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3631,"ESAO476W","SELECT",1154,6,6,59,39.18,6.78,"DECLARE PSAV_DTL_CURSOR CURSOR WITH RETURN FOR
+SELECT PSAV.GOAL_ID
+,PSAV.ADVC_PROFL_ID
+,PSAV.SCNRIO_NO
+,PSAV.SAG_ID
+,PSAV.ASSET_ID
+,PSAV.ASSET_SEQ_NO
+,STRT_PSAV_TYPE_CD
+,END_PSAV_TYPE_CD
+,PSAV_AMT
+,MAXIMIZE_CNTRBN_FL
+,VALUE(CAST (PSAV_STRT_DT AS CHAR(10)),' ')
+AS START_DT
+,VALUE(CAST (PSAV_END_DT AS CHAR(10)),' ')
+AS END_DT
+FROM VSAG SAG
+INNER JOIN VSAG_BUS_RLSHP SAGB
+ON SAGB.PO_ID = :WS-PO-ID
+AND SAGB.PO_ROLE_CD IN ('OW','OWNS')
+AND SAGB.SAG_ID = SAG.SAG_ID
+AND SAG.EFFTV_END_DT > CURRENT_DATE
+AND SAGB.EFFTV_END_DT > CURRENT_DATE
+AND SAG.SERV_ID = +413
+INNER JOIN VADVC_PROFL PROFL
+ON PROFL.SAG_ID = SAGB.SAG_ID
+INNER JOIN VADVC_ASSET_PROFL ASSET
+ON PROFL.SAG_ID = ASSET.SAG_ID
+AND ASSET.EFFTV_END_DT > CURRENT DATE
+INNER JOIN VADVC_GOAL_AST_RL ASTRL
+ON PROFL.ADVC_PROFL_ID = ASTRL.ADVC_PROFL_ID
+AND ASSET.SAG_ID = ASTRL.SAG_ID
+AND ASSET.ASSET_ID = ASTRL.ASSET_ID
+AND ASTRL.EFFTV_END_DT > CURRENT DATE
+INNER JOIN VMBR_PSAV_DTL PSAV
+ON ASTRL.ADVC_PROFL_ID = PSAV.ADVC_PROFL_ID
+AND ASTRL.GOAL_ID = PSAV.GOAL_ID
+AND ASTRL.SAG_ID = PSAV.SAG_ID
+AND ASTRL.SCNRIO_NO = PSAV.SCNRIO_NO
+AND ASTRL.ASSET_ID = PSAV.ASSET_ID
+AND PSAV.EFFTV_END_DT > CURRENT DATE"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3631,"ESAO476W",3633,"VADVC_ASSET_PROFL","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+3631,"ESAO476W",3636,"VADVC_GOAL_AST_RL","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+3631,"ESAO476W",3637,"VADVC_PROFL","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+3631,"ESAO476W",3634,"VMBR_PSAV_DTL","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+3631,"ESAO476W",3632,"VSAG","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+3631,"ESAO476W",3635,"VSAG_BUS_RLSHP","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1405,3370,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

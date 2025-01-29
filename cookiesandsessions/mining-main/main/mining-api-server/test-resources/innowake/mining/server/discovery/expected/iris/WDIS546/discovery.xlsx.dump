@@ -1,0 +1,31 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3448,"","BEN160_COVERAGE_CODE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3450,"","BEN161_COVERAGE_CODE_HISTORY","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3449,"","BEN162_CVRG_CD_OVER_AGE_RULE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3447,"","SINGLE_BRACKET_SQL","src/cobol/WDIS546/programs/SINGLE_BRACKET_SQL.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,23,1,33,0,1,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3447,"SINGLE_BRACKET_SQL","SELECT",327,3,3,9,8.22,2.22,"DECLARE DIST CURSOR FOR
+SELECT DISTINCT
+BEN162_CNCL_FREQ_CD AS CNCL_FREQ_CD,
+BEN161_CVRG_CD_EFF_DT AS CVRG_CD_EFF_DT,
+BEN161_EXPRN_DT AS CVRG_CD_EXP_DT
+FROM (BEN160_COVERAGE_CODE
+LEFT JOIN BEN161_COVERAGE_CODE_HISTORY
+ON BEN160_CVRG_CD = BEN161_CVRG_CD)
+LEFT JOIN BEN162_CVRG_CD_OVER_AGE_RULE
+ON BEN160_CVRG_CD = BEN162_CVRG_CD"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3447,"SINGLE_BRACKET_SQL",3448,"BEN160_COVERAGE_CODE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",372,624,-1,-1
+3447,"SINGLE_BRACKET_SQL",3450,"BEN161_COVERAGE_CODE_HISTORY","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",372,624,-1,-1
+3447,"SINGLE_BRACKET_SQL",3449,"BEN162_CVRG_CD_OVER_AGE_RULE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",372,624,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

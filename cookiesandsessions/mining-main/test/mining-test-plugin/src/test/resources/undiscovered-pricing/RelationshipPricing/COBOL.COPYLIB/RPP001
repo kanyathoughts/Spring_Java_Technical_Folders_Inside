@@ -1,0 +1,136 @@
+000010******************************************************************00001000
+000020* RPP001   TOTAL ROUTINE                                         *00002000
+000030******************************************************************00003000
+000040 TOTAL-ROUTINE-SECTION.                                           00004000
+000050 TR-START.                                                        00005000
+000060     IF LS-KEYBYTES IS EQUAL TO SPACES                            00006000
+000070         AND WS-ACCTSW IS EQUAL TO SPACES                         00007000
+000080         MOVE SPACES TO LS-CONTROL                                00008000
+000090         GO TO TR-EXIT.                                           00009000
+000100     MOVE ZERO TO WS-SUB1.                                        00010000
+000110     MOVE LS-KEYBYTES TO WS-KEYBYTES.                             00011000
+000120     IF LS-CONTROL IS EQUAL TO SPACES                             00012000
+000130         GO TO TR-CHECKAC.                                        00013000
+000140     MOVE SPACE TO LS-CONTROL.                                    00014000
+000150     GO TO                                                        00015000
+000160         TR-PRINTOF                                               00016000
+000170         TR-PRINTTY                                               00017000
+000180         TR-PRINTBR                                               00018000
+000190         TR-PRINTRG                                               00019000
+000200         TR-PRINTBK                                               00020000
+000210         TR-PRINTHC                                               00021000
+000220         TR-EXIT                                                  00022000
+000230         TR-EXIT                                                  00023000
+000240         TR-PRINTCU                                               00024000
+000250         DEPENDING ON WS-SUB2.                                    00025000
+000260 TR-CHECKAC.                                                      00026000
+000270     IF WS-ACCTSW IS EQUAL TO SPACES                              00027000
+000280         GO TO TR-PRINTCU.                                        00028000
+000290     MOVE RPRPTS-INST TO WS-NKINST.                               00029000
+000300     MOVE LS-APPL TO WS-NKAPPL.                                   00030000
+000310     MOVE RPRPTS-ACCOUNT TO WS-NKACCOUNT.                         00031000
+000320     IF WS-KB08 IS NOT EQUAL TO SPACES                            00032000
+000330         GO TO TR-PRINTAC.                                        00033000
+000340     IF WS-NEWKEY IS EQUAL TO WS-OLDKEY                           00034000
+000350         GO TO TR-PRINTCU.                                        00035000
+000360 TR-PRINTAC.                                                      00036000
+000370     PERFORM CHANGE-ACCOUNT.                                      00037000
+000380     MOVE WS-NEWKEY TO WS-OLDKEY.                                 00038000
+000390     MOVE 'G' TO LS-CONTROL.                                      00039000
+000400     MOVE +9 TO WS-SUB2.                                          00040000
+000410     GO TO END-ROUTINE.                                           00041000
+000420 TR-PRINTCU.                                                      00042000
+000430     IF WS-KB07 IS EQUAL TO SPACES                                00043000
+000440         GO TO TR-EXIT.                                           00044000
+000450     MOVE +1 TO WS-SUB3.                                          00045000
+000460     IF LS-KBCU IS EQUAL TO SPACES                                00046000
+000470         GO TO TR-PRINTOF.                                        00047000
+000480     MOVE SPACES TO LS-KBCU.                                      00048000
+000490     PERFORM PRINT-TOTALS.                                        00049000
+000500     MOVE 'G' TO LS-CONTROL.                                      00050000
+000510     MOVE +1 TO WS-SUB2.                                          00051000
+000520     GO TO END-ROUTINE.                                           00052000
+000530 TR-PRINTOF.                                                      00053000
+000540     IF WS-KB06 IS EQUAL TO SPACES                                00054000
+000550         GO TO TR-EXIT.                                           00055000
+000560     MOVE +2 TO WS-SUB3.                                          00056000
+000570     IF LS-KBOF IS EQUAL TO SPACES                                00057000
+000580         GO TO TR-PRINTTY.                                        00058000
+000590     MOVE SPACES TO LS-KBOF.                                      00059000
+000600     PERFORM PRINT-TOTALS.                                        00060000
+000610     IF LS-BBTY IS NOT EQUAL TO SPACES                            00061000
+000620         AND LS-LKTYPEX IS EQUAL TO LOW-VALUES                    00062000
+000630         MOVE 'X' TO LS-HEADSW.                                   00063000
+000640     MOVE 'G' TO LS-CONTROL.                                      00064000
+000650     MOVE +2 TO WS-SUB2.                                          00065000
+000660     GO TO END-ROUTINE.                                           00066000
+000670 TR-PRINTTY.                                                      00067000
+000680     IF WS-KB05 IS EQUAL TO SPACES                                00068000
+000690         GO TO TR-EXIT.                                           00069000
+000700     MOVE +3 TO WS-SUB3.                                          00070000
+000710     IF LS-KBTY IS EQUAL TO SPACES                                00071000
+000720         GO TO TR-PRINTBR.                                        00072000
+000730     MOVE SPACES TO LS-KBTY.                                      00073000
+000740     PERFORM PRINT-TOTALS.                                        00074000
+000750     IF LS-BBTY IS NOT EQUAL TO SPACES                            00075000
+000760         MOVE 'X' TO LS-HEADSW.                                   00076000
+000770     MOVE 'G' TO LS-CONTROL.                                      00077000
+000780     MOVE +3 TO WS-SUB2.                                          00078000
+000790     GO TO END-ROUTINE.                                           00079000
+000800 TR-PRINTBR.                                                      00080000
+000810     IF WS-KB04 IS EQUAL TO SPACES                                00081000
+000820         GO TO TR-EXIT.                                           00082000
+000830     MOVE +4 TO WS-SUB3.                                          00083000
+000840     IF LS-KBBR IS EQUAL TO SPACES                                00084000
+000850         GO TO TR-PRINTRG.                                        00085000
+000860     MOVE SPACES TO LS-KBBR.                                      00086000
+000870     PERFORM PRINT-TOTALS.                                        00087000
+000880     IF LS-BBBR IS NOT EQUAL TO SPACES                            00088000
+000890         MOVE 'X' TO LS-HEADSW.                                   00089000
+000900     MOVE 'G' TO LS-CONTROL.                                      00090000
+000910     MOVE +4 TO WS-SUB2.                                          00091000
+000920     GO TO END-ROUTINE.                                           00092000
+000930 TR-PRINTRG.                                                      00093000
+000940     IF WS-KB03 IS EQUAL TO SPACES                                00094000
+000950         GO TO TR-EXIT.                                           00095000
+000960     MOVE +5 TO WS-SUB3.                                          00096000
+000970     IF LS-KBRG IS EQUAL TO SPACES                                00097000
+000980         OR LS-LKALTBRNBRX IS NOT EQUAL TO LOW-VALUES             00098000
+000990         GO TO TR-PRINTBK.                                        00099000
+001000     MOVE SPACES TO LS-KBRG.                                      00100000
+001010     PERFORM PRINT-TOTALS.                                        00101000
+001020     MOVE 'X' TO LS-HEADSW.                                       00102000
+001030     MOVE 'G' TO LS-CONTROL.                                      00103000
+001040     MOVE +5 TO WS-SUB2.                                          00104000
+001050     GO TO END-ROUTINE.                                           00105000
+001060 TR-PRINTBK.                                                      00106000
+001070     IF WS-KB02 IS EQUAL TO SPACES                                00107000
+001080         GO TO TR-EXIT.                                           00108000
+001090     MOVE +6 TO WS-SUB3.                                          00109000
+001100     IF LS-KBBK IS EQUAL TO SPACES                                00110000
+001110         OR LS-LKALTBRNBRX IS NOT EQUAL TO LOW-VALUES             00111000
+001120         OR LS-LKREGNBRX IS NOT EQUAL TO LOW-VALUES               00112000
+001130         GO TO TR-PRINTHC.                                        00113000
+001140     MOVE SPACES TO LS-KBBK.                                      00114000
+001150     PERFORM PRINT-TOTALS.                                        00115000
+001160     MOVE 'X' TO LS-HEADSW.                                       00116000
+001170     MOVE 'G' TO LS-CONTROL.                                      00117000
+001180     MOVE +6 TO WS-SUB2.                                          00118000
+001190     GO TO END-ROUTINE.                                           00119000
+001200 TR-PRINTHC.                                                      00120000
+001210     IF WS-KB01 IS EQUAL TO SPACES                                00121000
+001220         GO TO TR-EXIT.                                           00122000
+001230     MOVE +7 TO WS-SUB3.                                          00123000
+001240     IF LS-KBHC IS EQUAL TO SPACES                                00124000
+001250         GO TO TR-EXIT.                                           00125000
+001260     MOVE SPACES TO LS-KBHC.                                      00126000
+001270     PERFORM PRINT-TOTALS.                                        00127000
+001280     MOVE 'X' TO LS-HEADSW.                                       00128000
+001290     MOVE 'G' TO LS-CONTROL.                                      00129000
+001300     MOVE +7 TO WS-SUB2.                                          00130000
+001310     GO TO END-ROUTINE.                                           00131000
+001320 TR-EXIT.                                                         00132000
+001330     GO TO REPORT-ROUTINE.                                        00133000
+001340*----------------------------------------------------------------*00134000
+001350*    END TOTAL-ROUTINE SECTION                                   *00135000
+001360*----------------------------------------------------------------*00136000

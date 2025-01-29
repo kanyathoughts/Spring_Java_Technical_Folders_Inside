@@ -1,0 +1,40 @@
+ DBACC: PROCEDURE OPTIONS(MAIN);
+
+
+
+    DECLARE cnt FIXED BIN(15);
+    DECLARE alpha_short CHAR(50);
+    DECLARE A FIXED DECIMAL(4,0) INIT(5);
+	DECLARE B FIXED DECIMAL(4,0) INIT(3);
+	DECLARE C FIXED DECIMAL(6,2);
+
+    cnt = 0;
+    alpha_short = 'empty';
+    
+    
+    
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    EXEC SQL COMMIT;
+
+    /* only statements inside branches should be identified */
+
+    if (C1 > 0) then do;
+    	EXEC SQL INSERT INTO IW_SQL_TEST ("ALPHA_SHORT")
+    		VALUES('HELLO');
+    	EXEC SQL COMMIT;
+    	A = B + C;
+    	B = B + 10;
+    	C = C + A;
+    end;
+
+    if (C2 > 10) then
+    	EXEC SQL SELECT ALPHA_SHORT INTO :alpha_short
+    		FROM IW_SQL_TEST;
+    
+    EXEC SQL SELECT COUNT(*) INTO :cnt FROM IW_SQL_TEST;
+
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    
+    EXEC SQL COMMIT;
+
+ END DBACC;

@@ -1,0 +1,15 @@
+FIND V1 WITH FFF = 'B' THRU 'BALBIN'                    
+  RETAIN AS 'SET1'                                       
+  IF *COUNTER = 4 THEN                                   
+    #ISN := *ISN                                         
+  END-IF                                                 
+  DISPLAY *ISN V1                                        
+END-FIND                                                 
+EMP. READ EMPLOY-VIEW BY NAME STARTING FROM 'JONES'                     
+  VEH. FIND VEHIC-VIEW WITH PERSONNEL-ID = PERSONNEL-ID (EMP.)          
+    IF NO RECORDS FOUND                                                 
+      MOVE '*** NO CAR ***' TO MAKE                                     
+    END-NOREC                                                    
+  END-FIND                           
+END-READ
+END

@@ -1,0 +1,340 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPD240.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*                                                                *00005000
+000060*    RPD240 - RELATIONSHIP PRICING SECONDARY RECORD BUILD        *00006000
+000070*                                                                *00007000
+000080******************************************************************00008000
+000090 ENVIRONMENT DIVISION.                                            00009000
+000100 CONFIGURATION SECTION.                                           00010000
+000110 SPECIAL-NAMES.                                                   00011000
+000120 INPUT-OUTPUT SECTION.                                            00012000
+000130 FILE-CONTROL.                                                    00013000
+000000 COPY RPSORTS.                                                    00014000
+000000 COPY MIOPRCS       REPLACING                                     00015000
+000160                                 MI-OPRCFIL BY MI-APIBFIL         00016000
+000170                DA-3380-S-MIOPRC BY DA-3390-S-MIAPIB.             00017000
+000180 I-O-CONTROL.                                                     00018000
+000190 DATA DIVISION.                                                   00019000
+000200 FILE SECTION.                                                    00020000
+000000 COPY RPSRT066.                                                   00021000
+000220 01  RP-SORTREC.                                                  00022000
+000230     03  RP-SREL-GRP-KEY.                                         00023000
+000240         05  RP-SREL-ACCT1-GRP.                                   00024000
+000250             07  RP-SREL-INST    PIC 9(04).                       00025000
+000260             07  RP-SREL-PRODCODE                                 00026000
+000270                                 PIC X(06).                       00027000
+000280             07  RP-SREL-ACCOUNT PIC X(18).                       00028000
+000290         05  RP-SREL-ACCT2-GRP.                                   00029000
+000300             07  RP-SREL-INST2   PIC 9(04).                       00030000
+000310             07  RP-SREL-PRODCODE2                                00031000
+000320                                 PIC X(06).                       00032000
+000330             07  RP-SREL-ACCOUNT2                                 00033000
+000340                                 PIC X(18).                       00034000
+000350             07  RP-SREL-MODEL2  PIC X(10).                       00035000
+000000 COPY MIOPRCF       REPLACING                                     00036000
+000370                                 MI-OPRCFIL BY MI-APIBFIL         00037000
+000380                                 MIOPRC-RECORD BY MIAPIB-RECORD.  00038000
+000390 01  MIAPIB-RECORD.                                               00039000
+000400     03  MIAPIB-ORGX             PIC X(06).                       00040000
+000410     03  MIAPIB-REC-CODE         PIC X(03).                       00041000
+000420     03  MIAPIB-BIN-ID           PIC S9(04)      COMP-4.          00042000
+000430     03  MIAPIB-PHY-KEY-LEN      PIC S9(04)      COMP-4.          00043000
+000440     03  MIAPIB-PHY-REC-LEN      PIC S9(04)      COMP-4.          00044000
+000450     03  MIAPIB-REC-AREA.                                         00045000
+000460         05  MIAPIB-REC-AREA-R   PIC X(01)       OCCURS 1 TO 2000 00046000
+000470                         DEPENDING ON MIAPIB-PHY-REC-LEN.         00047000
+000480 WORKING-STORAGE SECTION.                                         00048000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00049000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00049001
+000500 01  RP-RLSELIT.                                                  00050000
+000000 COPY RPWRLSE.                                                    00051000
+000520 01  MI-RLSELIT.                                                  00052000
+000000 COPY MIWRLSE.                                                    00053000
+000540*---------------------------------------------------------------  00054000
+000550* RUN TIME AREAS                                                  00055000
+000560*---------------------------------------------------------------  00056000
+000570*01  BICPBPRM.                                                    00057000
+000000 COPY BICPBPRM.                                                   00058000
+000590*01  BICRSRB.                                                     00059000
+000000 COPY BICRSRB.                                                    00060000
+000610*01  BICRPSB.                                                     00061000
+000000 COPY BICRPSB.                                                    00062000
+000630*01  BICRVERB.                                                    00063000
+000000 COPY BICRVERB.                                                   00064000
+000650*01  BICRSTAT.                                                    00065000
+000000 COPY BICRSTAT.                                                   00066000
+000670*01  BICRDBS.                                                     00067000
+000000 COPY BICRDBS.                                                    00068000
+000690*01  BICRLOG.                                                     00069000
+000000 COPY BICRLOG.                                                    00070000
+000710*---------------------------------------------------------------  00071000
+000720* RP RECORD AREAS                                                 00072000
+000730*---------------------------------------------------------------  00073000
+000740 01  FILLER                      PIC X(08)       VALUE '*RPWREL'. 00074000
+000750 01  RPWRELA-AREAS.                                               00075000
+000000 COPY RPWRELA.                                                    00076000
+000770 01  FILLER                      PIC X(08)       VALUE '*RPSREL'. 00077000
+000780 01  RPREL-RECORD.                                                00078000
+000000 COPY RPSREL.                                                     00079000
+000800 01  FILLER                      PIC X(08)       VALUE '*RPWSEC'. 00080000
+000810 01  RPWSECA-AREAS.                                               00081000
+000000 COPY RPWSECA.                                                    00082000
+000830 01  FILLER                      PIC X(08)       VALUE '*RPSSEC'. 00083000
+000840 01  RPSEC-RECORD.                                                00084000
+000000 COPY RPSSEC.                                                     00085000
+000860*---------------------------------------------------------------  00086000
+000870* MICM AREAS                                                      00087000
+000880*---------------------------------------------------------------  00088000
+000890 01  FILLER                      PIC X(08)       VALUE '*RP MICM'.00089000
+000900 01  MIMSTA-AREA.                                                 00090000
+000000 COPY MIWMSTA.                                                    00091000
+000920 01  MIMST-RECORD.                                                00092000
+000000 COPY MISMST.                                                     00093000
+000940 01  MIWPRI-AREAS.                                                00094000
+000000 COPY MIWPRI.                                                     00095000
+000960 01  RPWPRI-AREAS.                                                00096000
+000000 COPY RPWPRI.                                                     00097000
+000980*---------------------------------------------------------------  00098000
+000990* STANDARD AREAS                                                  00099000
+001000*---------------------------------------------------------------  00100000
+001010 01  FILLER                      PIC X(08)       VALUE '*SRW000*'.00101000
+001020 01  SRW000-AREAS.                                                00102000
+000000 COPY SRW000.                                                     00103000
+001040 01  FILLER                      PIC X(08)       VALUE '*SRW009*'.00104000
+001050 01  SRW009-AREAS.                                                00105000
+000000 COPY SRW009.                                                     00106000
+001070 01  FILLER                      PIC X(08)       VALUE '*SRW015*'.00107000
+001080 01  SRW015-AREAS.                                                00108000
+000000 COPY SRW015.                                                     00109000
+001100 01  WS-ABEND.                                                    00110000
+000000 COPY SRW028.                                                     00111000
+001120     03  WS-FUNCTION             PIC X(01).                       00112000
+001130 01  FILLER                      PIC X(08)       VALUE '*SRW105*'.00113000
+001140 01  SRW105-AREAS.                                                00114000
+000000 COPY SRW105.                                                     00115000
+001160*---------------------------------------------------------------  00116000
+001170* PROGRAM WORK AREAS                                              00117000
+001180*---------------------------------------------------------------  00118000
+001190 01  FILLER                      PIC X(08)       VALUE '*RPD240W'.00119000
+001200 01  WS-RPS-AREAS.                                                00120000
+001210     03  WS-SUB1                 PIC S9(04)      COMP.            00121000
+001220     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00122000
+001230     03  WS-EMPTY-FILE           PIC X(01)       VALUE 'N'.       00123000
+001240     03  WS-1ST-READ             PIC X(01)       VALUE 'Y'.       00124000
+001250     03  WS-ERROR-FOUND          PIC X(01)       VALUE 'N'.       00125000
+001260     03  WS-CNT-REL              PIC S9(09)      COMP-3.          00126000
+001270     03  WS-CNT-IN               PIC S9(09)      COMP-3.          00127000
+001280     03  WS-CNT-WRITE            PIC S9(09)      COMP-3.          00128000
+001290     03  WS-APPLCD               PIC 9(02)       VALUE 50.        00129000
+001300     03  WS-COBOLDATE.                                            00130000
+001310         05  WS-COBOLYY          PIC X(02).                       00131000
+001320         05  WS-COBOLMM          PIC X(02).                       00132000
+001330         05  WS-COBOLDD          PIC X(02).                       00133000
+001340*---------------------------------------------------------------- 00134000
+001350 PROCEDURE DIVISION.                                              00135000
+001360*---------------------------------------------------------------- 00136000
+001370 CONTROL-SECTION SECTION.                                         00137000
+001380 CS-START.                                                        00138000
+001390     PERFORM INITIALIZATION.                                      00139000
+001400     PERFORM MAIN-REL.                                            00140000
+001410     PERFORM END-OF-JOB.                                          00141000
+001420 CS-END.                                                          00142000
+001430     STOP RUN.                                                    00143000
+001440 CS-EXIT.                                                         00144000
+001450     EXIT.                                                        00145000
+001460*---------------------------------------------------------------- 00146000
+001470 INITIALIZATION SECTION.                                          00147000
+001480 IN-START.                                                        00148000
+001490     MOVE 'RPD240' TO WS-UPD-USER.                                00149000
+001500     MOVE WS-UPD-USER TO WS-ABPROGID.                             00150000
+001510     MOVE WS-UPD-USER TO SR-APIPROGLIT.                           00151000
+001520     MOVE MIC-RLSE-LIT TO SRB-RELEASE.                            00152000
+001530     MOVE 'N' TO WS-EMPTY-FILE.                                   00153000
+001540     MOVE 'N' TO WS-ERROR-FOUND.                                  00154000
+001550     MOVE 'Y' TO WS-1ST-READ.                                     00155000
+001560 IN-TESTING-TO.                                                   00156000
+001570     MOVE 'N' TO RPS-REL-LOG.                                     00157000
+001580     PERFORM GET-FILE-ORGANIZATION.                               00158000
+001590     MOVE ZEROS TO WS-CNT-REL.                                    00159000
+001600     MOVE ZEROS TO WS-CNT-IN.                                     00160000
+001610     MOVE ZEROS TO WS-CNT-WRITE.                                  00161000
+001620     ACCEPT WS-COBOLDATE FROM DATE.                               00162000
+001630     MOVE WS-COBOLMM TO SR-C6MON.                                 00163000
+001640     MOVE WS-COBOLDD TO SR-C6DAY.                                 00164000
+001650     MOVE WS-COBOLYY TO SR-C6YR.                                  00165000
+001660     PERFORM CONVERT-6-TO-8.                                      00166000
+001670 IN-EXIT.                                                         00167000
+001680     EXIT.                                                        00168000
+001690*---------------------------------------------------------------- 00169000
+001700 MAIN-REL SECTION.                                                00170000
+001710 MR-START.                                                        00171000
+001720     MOVE 200704 TO SORT-CORE-SIZE.                               00172000
+001730     SORT RP-SORTFIL                                              00173000
+001740         ASCENDING KEY                                            00174000
+001750         RP-SREL-GRP-KEY                                          00175000
+001760         INPUT PROCEDURE IS REL-INPUT                             00176000
+001770         OUTPUT PROCEDURE REL-OUTPUT.                             00177000
+001780     IF SORT-RETURN IS NOT EQUAL TO ZERO                          00178000
+001790         GO TO AR-0001.                                           00179000
+001800 MR-EXIT.                                                         00180000
+001810     EXIT.                                                        00181000
+001820*---------------------------------------------------------------- 00182000
+001830 REL-INPUT SECTION.                                               00183000
+001840 RI-START.                                                        00184000
+001850     MOVE SPACES TO RPREL-GRP-KEY.                                00185000
+001860     PERFORM RPS-REL-GET-GE-REQUEST.                              00186000
+001870     IF WS-FUNCTION IS EQUAL TO 'N'                               00187000
+001880         OR WS-FUNCTION IS EQUAL TO 'E'                           00188000
+001890         GO TO RI-EXIT.                                           00189000
+001900     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00190000
+001910         GO TO AR-0002.                                           00191000
+001920     GO TO RI-MATCH-REL.                                          00192000
+001930 RI-NEXT-REL.                                                     00193000
+001940     PERFORM RPS-REL-GET-NEXT-REQUEST.                            00194000
+001950     IF WS-FUNCTION IS EQUAL TO 'N'                               00195000
+001960         OR WS-FUNCTION IS EQUAL TO 'E'                           00196000
+001970         GO TO RI-REL-END.                                        00197000
+001980     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00198000
+001990         GO TO AR-0003.                                           00199000
+002000 RI-MATCH-REL.                                                    00200000
+002010     ADD 1 TO WS-CNT-REL.                                         00201000
+002020     IF RPREL-ACCT-STATUS IS EQUAL TO 'R'                         00202000
+002030         OR RPREL-ACCT-STATUS IS EQUAL TO 'Q'                     00203000
+002040         GO TO RI-NEXT-REL.                                       00204000
+002050 RI-WRITE-WREL.                                                   00205000
+002060     ADD 1 TO WS-CNT-IN.                                          00206000
+002070     MOVE SPACES TO RP-SORTREC.                                   00207000
+002080     IF RPREL-INST2 IS NOT EQUAL TO ZEROS                         00208000
+002090         GO TO RI-SWAP-KEYS.                                      00209000
+002100     MOVE RPREL-INST TO RP-SREL-INST.                             00210000
+002110     MOVE RPREL-PRODCODE TO RP-SREL-PRODCODE.                     00211000
+002120     MOVE RPREL-ACCOUNT TO RP-SREL-ACCOUNT.                       00212000
+002130     MOVE ZEROS TO RP-SREL-INST2.                                 00213000
+002140     MOVE RPREL-MODEL TO RP-SREL-MODEL2.                          00214000
+002150     GO TO RI-RELEASE.                                            00215000
+002160 RI-SWAP-KEYS.                                                    00216000
+002170     MOVE RPREL-INST2 TO RP-SREL-INST.                            00217000
+002180     MOVE RPREL-PRODCODE2 TO RP-SREL-PRODCODE.                    00218000
+002190     MOVE RPREL-ACCOUNT2 TO RP-SREL-ACCOUNT.                      00219000
+002200     MOVE RPREL-INST TO RP-SREL-INST2.                            00220000
+002210     MOVE RPREL-PRODCODE TO RP-SREL-PRODCODE2.                    00221000
+002220     MOVE RPREL-ACCOUNT TO RP-SREL-ACCOUNT2.                      00222000
+002230     MOVE RPREL-MODEL TO RP-SREL-MODEL2.                          00223000
+002240 RI-RELEASE.                                                      00224000
+002250     RELEASE RP-SORTREC.                                          00225000
+002260     GO TO RI-NEXT-REL.                                           00226000
+002270 RI-REL-END.                                                      00227000
+002280     IF WS-CNT-IN IS EQUAL TO ZEROS                               00228000
+002290         GO TO AR-0004.                                           00229000
+002300 RI-EXIT.                                                         00230000
+002310     EXIT.                                                        00231000
+002320*---------------------------------------------------------------- 00232000
+002330 REL-OUTPUT SECTION.                                              00233000
+002340 RO-START.                                                        00234000
+002350     OPEN OUTPUT MI-APIBFIL.                                      00235000
+002360 RO-LOOP.                                                         00236000
+002370     RETURN RP-SORTFIL                                            00237000
+002380         AT END                                                   00238000
+002390         GO TO RO-END.                                            00239000
+002400 RO-WRITE.                                                        00240000
+002410     INITIALIZE RPSEC-RECORD.                                     00241000
+002420     MOVE RP-SREL-GRP-KEY TO RPSEC-GRP-KEY.                       00242000
+002430     MOVE RPSEC-INST TO RPSEC-ALT-INST.                           00243000
+002440     MOVE RPSEC-PRODCODE TO RPSEC-ALT-PRODCODE.                   00244000
+002450     MOVE RPSEC-ACCOUNT TO RPSEC-ALT-ACCOUNT.                     00245000
+002460     MOVE SR-CYEAR-FIRST TO RPSEC-UPD-DATE.                       00246000
+002470     MOVE WS-UPD-USER TO RPSEC-UPD-USER.                          00247000
+002480     MOVE MIC-MST-APPL-ORG TO RPSEC-UPD-ORG.                      00248000
+002490     MOVE MIC-MST-APPL-ORG TO MIAPIB-ORGX.                        00249000
+002500     MOVE RPS-SEC-REC-PRI TO MIAPIB-REC-CODE.                     00250000
+002510     MOVE ZEROS TO MIAPIB-BIN-ID.                                 00251000
+002520     MOVE LENGTH OF RPSEC-GRP-KEY TO MIAPIB-PHY-KEY-LEN.          00252000
+002530     MOVE LENGTH OF RPSEC-RECORD TO MIAPIB-PHY-REC-LEN.           00253000
+002540     MOVE RPSEC-RECORD                                            00254000
+002550         TO MIAPIB-REC-AREA (1:LENGTH OF RPSEC-RECORD).           00255000
+002560     WRITE MIAPIB-RECORD                                          00256000
+002570         INVALID KEY                                              00257000
+002580         GO TO AR-0005.                                           00258000
+002590     ADD 1 TO WS-CNT-WRITE.                                       00259000
+002600     GO TO RO-LOOP.                                               00260000
+002610 RO-END.                                                          00261000
+002620     CLOSE MI-APIBFIL.                                            00262000
+002630 RO-EXIT.                                                         00263000
+002640     EXIT.                                                        00264000
+002650*---------------------------------------------------------------- 00265000
+002660 END-OF-JOB SECTION.                                              00266000
+002670 EOJ-START.                                                       00267000
+002680     PERFORM RPS-REL-GLOBAL-CLOSE-REQUEST.                        00268000
+002690     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00269000
+002700         MOVE '0006 - GLOBAL CLOSE FAILURE                '       00270000
+002710         TO WS-ABORTMSG                                           00271000
+002720         GO TO AR-0006.                                           00272000
+002730     DISPLAY 'RPD240 - SECONDARY RECORD BUILD'.                   00273000
+002740     DISPLAY 'REL RECORD COUNT.... = ' WS-CNT-REL.                00274000
+002750     DISPLAY 'INPUT RECORD COUNT.. = ' WS-CNT-IN.                 00275000
+002760     DISPLAY 'RECORDS TO BE LOADED = ' WS-CNT-WRITE.              00276000
+002770     MOVE ZEROS TO RETURN-CODE.                                   00277000
+002780     IF WS-CNT-WRITE IS EQUAL TO ZEROS                            00278000
+002790         DISPLAY '***** NO FILE LOAD NEEDED ****** '.             00279000
+002800 EOJ-EXIT.                                                        00280000
+002810     EXIT.                                                        00281000
+002820*---------------------------------------------------------------- 00282000
+002830 RPS-PROCA-REL SECTION.                                           00283000
+000000 COPY RPPRELA.                                                    00284000
+002850******************************************************************00285000
+002860 CALENDAR-365 SECTION.                                            00286000
+000000 COPY SRP003.                                                     00287000
+002880*----------------------------------------------------------       00288000
+002890 CONVERT-6-TO-8 SECTION.                                          00289000
+000000 COPY SRP011.                                                     00290000
+002910***************************************************************** 00291000
+002920 GET-FILE-ORGANIZATION SECTION.                                   00292000
+000000 COPY SRP093.                                                     00293000
+002940******************************************************************00294000
+002950 ABORT-ROUTINE SECTION.                                           00295000
+002960 AR-0001.                                                         00296000
+002970     MOVE 1 TO WS-ABCODE.                                         00297000
+002980     GO TO AR-MSG.                                                00298000
+002990 AR-0002.                                                         00299000
+003000     MOVE 2 TO WS-ABCODE.                                         00300000
+003010     GO TO AR-MSG.                                                00301000
+003020 AR-0003.                                                         00302000
+003030     MOVE 3 TO WS-ABCODE.                                         00303000
+003040     GO TO AR-MSG.                                                00304000
+003050 AR-0004.                                                         00305000
+003060     MOVE 4 TO WS-ABCODE.                                         00306000
+003070     GO TO AR-MSG.                                                00307000
+003080 AR-0005.                                                         00308000
+003090     MOVE 5 TO WS-ABCODE.                                         00309000
+003100     GO TO AR-MSG.                                                00310000
+003110 AR-0006.                                                         00311000
+003120     MOVE 6 TO WS-ABCODE.                                         00312000
+003130     GO TO AR-MSG.                                                00313000
+003140 AR-MSG.                                                          00314000
+003150     MOVE WS-FUNCTION TO WS-ABFC.                                 00315000
+003160 AR-PRINT.                                                        00316000
+000000 COPY SRP029.                                                     00317000

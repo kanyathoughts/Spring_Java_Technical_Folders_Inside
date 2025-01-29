@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGMCPY01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  NEW  PIC X(2).
+
+       COPY TEST10b.
+
+       PROCEDURE DIVISION.
+
+         DISPLAY A.
+         DISPLAY B.
+         DISPLAY C.
+         DISPLAY NEW.
+
+       END PROGRAM PGMCPY01.

@@ -1,0 +1,286 @@
+{
+  "object" : {
+    "className" : "innowake.mining.shared.model.datalineage.graph.DataFlowGraph",
+    "nodes" : [ {
+      "type" : "MODULE",
+      "id" : "module-2001",
+      "moduleId" : 2001,
+      "name" : "TEST7a",
+      "location" : {
+        "offset" : 0,
+        "length" : 0
+      },
+      "incomings" : [ ],
+      "outgoings" : [ ],
+      "direction" : null,
+      "parentModule" : null,
+      "children" : [ "module-2001-field-253", "module-2001-field-329", "module-2001-statement-668", "module-2001-statement-711", "module-2001-statement-777" ],
+      "statementLabel" : "",
+      "sourceLocation" : null,
+      "dataInterfaces" : [ "module-2001-container-CALL-777-interface-0", "module-2001-container-CALL-777-interface-1" ]
+    }, {
+      "type" : "DATA_INTERFACE",
+      "id" : "module-2001-container-CALL-777-interface-0",
+      "name" : "A-GROUP-FIELD",
+      "location" : null,
+      "incomings" : [ "module-2001-statement-777" ],
+      "outgoings" : [ "module-2002-container-ENTRY_POINT-305-interface-0" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : null
+    }, {
+      "type" : "DATA_INTERFACE",
+      "id" : "module-2001-container-CALL-777-interface-1",
+      "name" : "ANOTHER-GROUP-FIELD",
+      "location" : null,
+      "incomings" : [ "module-2001-statement-777" ],
+      "outgoings" : [ "module-2002-container-ENTRY_POINT-305-interface-1" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : null
+    }, {
+      "type" : "FIELD",
+      "id" : "module-2001-field-253",
+      "name" : "A-GROUP-FIELD",
+      "location" : {
+        "offset" : 253,
+        "length" : 27
+      },
+      "incomings" : [ "module-2001-statement-668", "module-2001-statement-777" ],
+      "outgoings" : [ "module-2001-statement-711", "module-2001-statement-777" ],
+      "direction" : "BOTH",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2001,
+        "moduleName" : "TEST7a",
+        "moduleLocation" : {
+          "offset" : 253,
+          "length" : 27
+        }
+      }
+    }, {
+      "type" : "FIELD",
+      "id" : "module-2001-field-329",
+      "name" : "ANOTHER-GROUP-FIELD",
+      "location" : {
+        "offset" : 329,
+        "length" : 32
+      },
+      "incomings" : [ "module-2001-statement-711", "module-2001-statement-777" ],
+      "outgoings" : [ "module-2001-statement-777" ],
+      "direction" : "BOTH",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2001,
+        "moduleName" : "TEST7a",
+        "moduleLocation" : {
+          "offset" : 329,
+          "length" : 32
+        }
+      }
+    }, {
+      "type" : "STATEMENT",
+      "id" : "module-2001-statement-668",
+      "name" : "Move",
+      "location" : {
+        "offset" : 668,
+        "length" : 30
+      },
+      "incomings" : [ ],
+      "outgoings" : [ "module-2001-field-253" ],
+      "direction" : "INCOMING",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "MOVE 'ABCDEF' TO A-GROUP-FIELD",
+      "sourceLocation" : {
+        "moduleId" : 2001,
+        "moduleName" : "TEST7a",
+        "moduleLocation" : {
+          "offset" : 668,
+          "length" : 30
+        }
+      }
+    }, {
+      "type" : "STATEMENT",
+      "id" : "module-2001-statement-711",
+      "name" : "Move",
+      "location" : {
+        "offset" : 711,
+        "length" : 41
+      },
+      "incomings" : [ "module-2001-field-253" ],
+      "outgoings" : [ "module-2001-field-329" ],
+      "direction" : "BOTH",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "MOVE A-GROUP-FIELD TO ANOTHER-GROUP-FIELD",
+      "sourceLocation" : {
+        "moduleId" : 2001,
+        "moduleName" : "TEST7a",
+        "moduleLocation" : {
+          "offset" : 711,
+          "length" : 41
+        }
+      }
+    }, {
+      "type" : "STATEMENT",
+      "id" : "module-2001-statement-777",
+      "name" : "Call",
+      "location" : {
+        "offset" : 777,
+        "length" : 54
+      },
+      "incomings" : [ "module-2001-field-253", "module-2001-field-329" ],
+      "outgoings" : [ "module-2001-container-CALL-777-interface-0", "module-2001-container-CALL-777-interface-1", "module-2001-field-253", "module-2001-field-329" ],
+      "direction" : "BOTH",
+      "parentModule" : "module-2001",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2001,
+        "moduleName" : "TEST7a",
+        "moduleLocation" : {
+          "offset" : 777,
+          "length" : 54
+        }
+      }
+    }, {
+      "type" : "MODULE",
+      "id" : "module-2002",
+      "moduleId" : 2002,
+      "name" : "TEST7b",
+      "location" : {
+        "offset" : 0,
+        "length" : 0
+      },
+      "incomings" : [ ],
+      "outgoings" : [ ],
+      "direction" : null,
+      "parentModule" : null,
+      "children" : [ "module-2002-field-225", "module-2002-field-266", "module-2002-statement-378", "module-2002-statement-431" ],
+      "statementLabel" : "",
+      "sourceLocation" : null,
+      "dataInterfaces" : [ "module-2002-container-ENTRY_POINT-305-interface-0", "module-2002-container-ENTRY_POINT-305-interface-1" ]
+    }, {
+      "type" : "DATA_INTERFACE",
+      "id" : "module-2002-container-ENTRY_POINT-305-interface-0",
+      "name" : "PARAMETER-FIELD",
+      "location" : null,
+      "incomings" : [ "module-2001-container-CALL-777-interface-0" ],
+      "outgoings" : [ "module-2002-field-225" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : null
+    }, {
+      "type" : "DATA_INTERFACE",
+      "id" : "module-2002-container-ENTRY_POINT-305-interface-1",
+      "name" : "PARAMETER-FIELD-2",
+      "location" : null,
+      "incomings" : [ "module-2001-container-CALL-777-interface-1" ],
+      "outgoings" : [ "module-2002-field-266" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : null
+    }, {
+      "type" : "FIELD",
+      "id" : "module-2002-field-225",
+      "name" : "PARAMETER-FIELD",
+      "location" : {
+        "offset" : 225,
+        "length" : 29
+      },
+      "incomings" : [ "module-2002-container-ENTRY_POINT-305-interface-0" ],
+      "outgoings" : [ "module-2002-statement-378" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2002,
+        "moduleName" : "TEST7b",
+        "moduleLocation" : {
+          "offset" : 225,
+          "length" : 29
+        }
+      }
+    }, {
+      "type" : "FIELD",
+      "id" : "module-2002-field-266",
+      "name" : "PARAMETER-FIELD-2",
+      "location" : {
+        "offset" : 266,
+        "length" : 30
+      },
+      "incomings" : [ "module-2002-container-ENTRY_POINT-305-interface-1" ],
+      "outgoings" : [ "module-2002-statement-431" ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2002,
+        "moduleName" : "TEST7b",
+        "moduleLocation" : {
+          "offset" : 266,
+          "length" : 30
+        }
+      }
+    }, {
+      "type" : "STATEMENT",
+      "id" : "module-2002-statement-378",
+      "name" : "Display",
+      "location" : {
+        "offset" : 378,
+        "length" : 40
+      },
+      "incomings" : [ "module-2002-field-225" ],
+      "outgoings" : [ ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2002,
+        "moduleName" : "TEST7b",
+        "moduleLocation" : {
+          "offset" : 378,
+          "length" : 40
+        }
+      }
+    }, {
+      "type" : "STATEMENT",
+      "id" : "module-2002-statement-431",
+      "name" : "Display",
+      "location" : {
+        "offset" : 431,
+        "length" : 44
+      },
+      "incomings" : [ "module-2002-field-266" ],
+      "outgoings" : [ ],
+      "direction" : "OUTGOING",
+      "parentModule" : "module-2002",
+      "children" : [ ],
+      "statementLabel" : "",
+      "sourceLocation" : {
+        "moduleId" : 2002,
+        "moduleName" : "TEST7b",
+        "moduleLocation" : {
+          "offset" : 431,
+          "length" : 44
+        }
+      }
+    } ]
+  }
+}

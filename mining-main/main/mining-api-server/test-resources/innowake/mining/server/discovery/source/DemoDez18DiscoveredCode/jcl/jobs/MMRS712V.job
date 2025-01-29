@@ -1,0 +1,40 @@
+//MMRS712V JOB 'MMRS00C',CLASS=A,TIME=(1),LINES=1,REGION=0M,
+//            MSGLEVEL=(2,1),MSGCLASS=A
+//*************************************************************************
+//***** MMRS-M01  MAINFRAME MODERNIZATION REFERENCE SYSTEM
+//*************************************************************************
+//***** PREPARE PS DATA FOR FTP (KEEP BDW)
+//*************************************************************************
+//***** IEBGENER  TO COPY RECORDTYPE VB TO U (ONLY MAINFRAME)
+//*****           CAUTION: THESE STEPS ARE JUST REQUIRED FOR VB FILES
+//*****           CAUTION: DCB FOR SYSUT1 IS SET TO U AND NOT SUPPORTED on mee
+//*************************************************************************
+//    SET VB=MMRS00C.AWA.MMRS7111.VAR.BLK
+//    SET VBRAW=MMRS00C.AWA.MMRS7111.VAR.BLK.RAW
+//*
+//    SET VBDCB=(RECFM=U,BLKSIZE=172)
+//    SET VBDCBR=(RECFM=U,BLKSIZE=172)
+//    SET UNLSPAC=(CYL,(1,5))
+//*
+//STEPDEL  EXEC PGM=IEFBR14
+//MYVBRAW DD DISP=(MOD,DELETE),SPACE=(TRK,(1,5)),DSN=&VBRAW
+//*
+//*   STOP HERE IN MEE ENVIRONMENT
+//*   STOP HERE IN MEE ENVIRONMENT
+//*   STOP HERE IN MEE ENVIRONMENT
+//*
+//*************************************************************************
+//***** MMRS712V  IEBGENER COPY UNLOAD DATA TO RAW DATA (RECFM=U)
+//*************************************************************************
+//STEPVBR  EXEC PGM=IEBGENER
+//SYSPRINT DD  SYSOUT=*
+//SYSOUT   DD  SYSOUT=*
+//SYSIN    DD  DUMMY
+//SYSUT1   DD  DSN=&VB,
+//             DISP=(OLD,KEEP,KEEP),
+//             DCB=&VBDCB
+//SYSUT2   DD  DSN=&VBRAW,
+//             DISP=(NEW,CATLG,DELETE),
+//             SPACE=&UNLSPAC,
+//             DCB=&VBDCBR
+//*

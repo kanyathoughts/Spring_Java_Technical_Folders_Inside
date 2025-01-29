@@ -1,0 +1,26 @@
+package business_logic;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+import entity.Employee;
+
+public class HighestSalriedEmployee {
+	
+	public static void main(String[] args) {
+		
+		List<Employee> employeeList = new ArrayList<Employee>();
+		
+		employeeList.add(new Employee("kanya", "kumari", 25, 56000.00));
+		employeeList.add(new Employee("jashu", "Manigandla", 05, 6000.00));
+		employeeList.add(new Employee("Thanvitha", "Manigandla", 01, 60000.00));
+		
+		Optional<Employee> first = employeeList.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).findFirst();
+		
+		System.out.println(first);
+		
+	}
+
+}

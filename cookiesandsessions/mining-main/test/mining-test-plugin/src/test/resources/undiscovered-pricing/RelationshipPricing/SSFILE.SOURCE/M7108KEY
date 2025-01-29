@@ -1,0 +1,46 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . M7108KEY                                          *
+*   Description  . . MICM 7108 (Work Unit Key Panel)                   *
+*   Product  . . . . RPS                                               *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ M7108KEY  ________  ________________________________________  ____  __________
+
+
+ Enter the following key parameters:
+
+
+   _____________________ ____                (0000 - 9999)
+
+   _____________________ ______
+
+
+
+
+
+
+
+
+
+
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL),        HELP=HXXX001M
+FIELD=PANNAME,  PIC='X(40)', ATTR=(DISPLAY,IMPORTANT),     HELP=HXXX052M
+                CASE=M
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), KEY,   HELP=HXXX002M
+FIELD=CURDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL),        HELP=HXXX003M
+FIELD=M08003SN, PIC='X(21)', ATTR=(DISPLAY,NORMAL), CASE=M,HELP=HXXX002M
+FIELD=M08003S,  PIC='X(04)', ATTR=(INPUT,OPTIONAL), HELP=HXXX002M
+FIELD=M08005SN, PIC='X(21)', ATTR=(DISPLAY,NORMAL), CASE=M,HELP=HM08005S
+FIELD=M08005S,  PIC='X(06)', ATTR=(INPUT,OPTIONAL), HELP=HM08005S
+FIELD=MSGLINE,PIC='X(78)',ATTR=(DISPLAY,IMPORTANT), CASE=M,HELP=HXXX023M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

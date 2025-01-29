@@ -1,0 +1,12 @@
+#5 ProcedureDivision
+ #6 CobolPerformStmt TESTPARA, FROM={TestEntryPoint}, TO={#9}
+  #7 CobolFieldReference
+ #8 CobolGoBackStmt, FROM={#14, #18}, TO={TestReturnPoint}
+ #9 CobolLabelStmt TESTPARA , FROM={#6}, TO={#10}
+  #10 CobolReadStmt <branch stmt>, Label: READ RECORDDUMMY NEXT AT END DISPLAY 'A' NOT AT END DISPLAY 'B' END-READ, FROM={#9}, TO={#14(AT END), #18(NOT AT END)}
+   #13 CobolAtEndBlock
+    #14 CobolDisplayStmt 'A', FROM={#10(AT END)}, TO={#8}
+   #17 CobolAtEndBlock
+    #18 CobolDisplayStmt 'B', FROM={#10(NOT AT END)}, TO={#8}
+ #21 CobolLabelStmt UNREACHABLE 
+  #22 CobolDisplayStmt 'UNREACHABLE'

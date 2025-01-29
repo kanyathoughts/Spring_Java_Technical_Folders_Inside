@@ -1,0 +1,8 @@
+       01 TESTFIELD X(80).
+       01 PARENT1 PIC X VALUE SPACE.
+          88  FLAG-ENABLED   VALUE "E".
+          88  FLAG-DISABLED  VALUE "D".
+       01 PARENT2 PIC X VALUE SPACE.
+          88  FLAG-ENABLED   VALUE "E".
+          88  FLAG-DISABLED  VALUE "D".
+       01 XYZ X(1).

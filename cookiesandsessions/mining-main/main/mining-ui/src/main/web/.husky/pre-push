@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Get the remote URL and branch
+remote="$1"
+url="$2"
+branch="$3"
+
+# Define the folder you want to monitor for changes
+folder_to_watch="main/mining-ui/src/main/web"
+
+# Get the list of files about to be pushed
+files=$(git show --pretty="" --name-only)
+
+# Check if changes are made to the specific folder
+if echo "$files" | grep -q "^$folder_to_watch/"; then
+    echo "Changes detected in $folder_to_watch. Running Angular linting and tests..."
+
+    # Change to the specific folder before running the Angular tests
+    cd "$folder_to_watch" || exit 1
+
+    # Add your Angular test command here
+    npm run lint && npm run test-headless
+
+    # If the test fails, prevent the push
+    if [ $? -ne 0 ]; then
+        echo "Angular lint/tests failed. Aborting push."
+        exit 1
+    fi
+
+    # Return to the original directory
+    cd - || exit 1
+else
+    echo "No changes detected in $folder_to_watch. Skipping Angular linting/tests run."
+fi
+
+# Allow the push to proceed
+exit 0

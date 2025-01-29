@@ -1,0 +1,31 @@
+//MMRS710J JOB 'MMRS00C',CLASS=A,TIME=(1),LINES=1,REGION=0M,
+//            MSGLEVEL=(2,1),MSGCLASS=A
+//*************************************************************************
+//***** MMRS-M01  mainframe modernization reference system
+//*************************************************************************
+//***** MMRS7101  cobol program was compiled into steplib
+//***** MMRS7101  cobol writes DISPLAY text via SYSPRINT to spool
+//***** MMRS7101  cobol moves 2 to return-code (RC)
+//***** MMRS7101  conditional jcl used to react on returncodes
+//*************************************************************************
+//STEP01   EXEC PGM=MMRS7101
+//STEPLIB  DD DSN=MMRS00C.A.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//*
+//IFSSRC1  IF (ABEND=FALSE & STEP01.RC =  0) THEN
+//STEP02   EXEC PGM=MMRS7101
+//STEPLIB  DD DSN=MMRS00C.A.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//IFESRC1  ENDIF
+//*
+//IFSSRC2  IF (ABEND=FALSE & STEP01.RC <  8) THEN
+//STEP03   EXEC PGM=MMRS7101
+//STEPLIB  DD DSN=MMRS00C.A.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//IFESRC2  ENDIF
+//*
+//IFSSRC3  IF (STEP01.RC <  8) THEN
+//STEP04   EXEC PGM=MMRS7101
+//STEPLIB  DD DSN=MMRS00C.A.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//IFESRC3  ENDIF

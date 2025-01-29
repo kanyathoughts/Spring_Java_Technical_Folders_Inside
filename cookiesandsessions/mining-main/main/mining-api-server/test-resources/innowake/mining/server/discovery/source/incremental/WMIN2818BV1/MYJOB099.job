@@ -1,0 +1,27 @@
+//MYJOB099 JOB (A,X,29UT00),'00  ADB/PLR  &:YWC',                       JOB49800
+//         MSGCLASS=W,                                                          
+//         USER=ZIIGADI                                                         
+//*--------------------------------------------------------------------*        
+//*+JBS BIND XPDDBA1.ONLINE                                                     
+//*--------------------------------------------------------------------*        
+//*AUTOBEEP PAGE=PMADB                                                          
+//*--------------------------------------------------------------------*        
+//PROCS JCLLIB ORDER=AX87CM.LBP.IIFS.PROC.JES.JCLLIB                            
+//*--------------------------------------------------------------------*        
+//* SET CARD GENERATION JOB. REQUIRED FOR CUBERFUSING THE O/P FILES             
+//* CREATED BY THE JOBs UTP241** TO THE TARGET SERVER WITH THE FIRM             
+//* NAME IN THE NAME OF THE TARGET TEXT FILE                                    
+//*--------------------------------------------------------------------*        
+//* THIS JOB SHOULD BE EXECUTED BEFORE EXECUTING THE FOLLOWING JOBs             
+//*     UTP241WW & UTCF241W,                                                    
+//*     UTP241MM & UTCF241M,                                                    
+//*     UTP241QQ & UTCF241Q,                                                    
+//*     UTP241AA & UTCF241A                                                     
+//*--------------------------------------------------------------------*        
+//MYSTEP99 EXEC PROC=MYPROC99,PROGRAM=MYPROG99,                                 
+//         DB2HLQ=AXXXA1,         DB2 HI-LEVEL LIBRARY QUAL                     
+//         LOADLIB=AX87CM.LBP.CSC.LOADLIB, LOAD LIBRARY                         
+//         SYSTEM=DBA1,           DB2 SUB-SYSTEM NAME                           
+//         PLAN=UTPADB01,         DB2 PLAN NAME                                 
+//         HIGHQUAL=AX29UT        HIGH LEVEL QUAL FOR FILES USED                
+//*                                                                             

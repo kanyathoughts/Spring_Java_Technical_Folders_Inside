@@ -1,0 +1,13 @@
+ #2 DefineDataStmt
+ #8 MoveStmt, FROM={TestEntryPoint}, TO={#12}
+ #12 DeleteSQLStmt, FROM={#8}, TO={#14}
+ #14 InsertStmt, FROM={#12}, TO={#19}
+ #19 SelectStmt, Label: SELECT * INTO VIEW IW_SOLID_TEST_VIEW FROM TPL-IW_SQL_TEST, FROM={#14, #32}, TO={#24(LOOP BODY), #33(LOOP END)}
+  #24 WRITE NOTITLE NOHDR IW_SOLID_TEST_VIEW.TIME_STAMP, FROM={#19(LOOP BODY)}, TO={#28}
+  #28 MoveStmt, FROM={#24}, TO={#32}
+  #32 UpdateStmt, FROM={#28}, TO={#19}
+ #33 WRITE NOTITLE NOHDR IW_SOLID_TEST_VIEW.TIME_STAMP, FROM={#19(LOOP END)}, TO={#37}
+ #37 SelectStmt, FROM={#33}, TO={#53}
+  #53 AddStmt, FROM={#37}, TO={#56}
+  #56 WRITE NOTITLE NOHDR SELECT-VIEW COUNTER, FROM={#53}, TO={#63}
+ #63 EndStmt, FROM={#56}, TO={TestReturnPoint}

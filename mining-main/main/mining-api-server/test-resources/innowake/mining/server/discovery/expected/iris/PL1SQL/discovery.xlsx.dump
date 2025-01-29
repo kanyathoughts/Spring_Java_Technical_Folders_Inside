@@ -1,0 +1,46 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2001,"","AM11853F","src/pl1/PL1SQL/programs/AM11853F.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,1,57,0,71,0,8,-1,-1
+2000,"","AM12291A","src/pl1/PL1SQL/programs/AM12291A.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,1,63,0,70,0,6,-1,-1
+2004,"","IW_ME11853_F","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2005,"","IW_SQL_TEST","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2002,2000,"M12291A","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,63,0,-1,0,0,1,2042
+2003,2001,"PROGRAM","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,57,0,-1,0,0,1,1814
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2001,"AM11853F","COMMIT",6,0,0,0,0.00,0.00,"COMMIT"
+2001,"AM11853F","UNKNOWN",18,0,0,0,0.00,0.00,"CONNECT TO DALLASC"
+2001,"AM11853F","CREATE_TABLE",104,0,0,0,0.00,0.00,"CREATE TABLE IW_ME11853_F ( ""C8T"" TIME , ""C10D"" DATE , ""C26TS"" TIMESTAMP ) DATA CAPTURE NONE COMPRESS NO"
+2001,"AM11853F","DELETE",24,1,1,1,0.50,0.50,"DELETE FROM IW_ME11853_F"
+2001,"AM11853F","DROP_TABLE",23,0,0,0,0.00,0.00,"DROP TABLE IW_ME11853_F"
+2001,"AM11853F","DROP_TABLE",23,0,0,0,0.00,0.00,"DROP TABLE IW_ME11853_F"
+2001,"AM11853F","INSERT",86,1,1,5,1.16,0.50,"INSERT INTO IW_ME11853_F ( ""C8T"" , ""C10D"" , ""C26TS"" ) VALUES ( :C8T , :C10D , :C26TS )"
+2001,"AM11853F","SELECT",76,1,1,8,3.17,1.00,"SELECT ""C8T"" , ""C10D"" , ""C26TS"" INTO :C8T , :C10D , :C26TS FROM IW_ME11853_F"
+2000,"AM12291A","COMMIT",6,0,0,0,0.00,0.00,"COMMIT"
+2000,"AM12291A","SELECT",86,1,1,6,5.17,2.00,"DECLARE C1 CURSOR FOR SELECT P_7_2 , ALPHA_SHORT FROM IW_SQL_TEST ORDER BY ALPHA_SHORT"
+2000,"AM12291A","DELETE",23,1,1,1,0.50,0.50,"DELETE FROM IW_SQL_TEST"
+2000,"AM12291A","DELETE",23,1,1,1,0.50,0.50,"DELETE FROM IW_SQL_TEST"
+2000,"AM12291A","FETCH",26,0,0,0,0.00,0.00,"FETCH C1 INTO :F1 , :ALPHA"
+2000,"AM12291A","OPEN",7,0,0,0,0.00,0.00,"OPEN C1"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2001,"AM11853F",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1179,190,-1,-1
+2001,"AM11853F",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1434,110,-1,-1
+2001,"AM11853F",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1693,34,-1,-1
+2000,"AM12291A",2005,"IW_SQL_TEST","SQL","SQL_TABLE","Accesses","","LATE","{}",795,33,-1,-1
+2000,"AM12291A",2005,"IW_SQL_TEST","SQL","SQL_TABLE","Accesses","","LATE","{}",1978,33,-1,-1
+2002,"M12291A",2005,"IW_SQL_TEST","SQL","SQL_TABLE","Accesses","","LATE","{}",795,33,-1,-1
+2002,"M12291A",2005,"IW_SQL_TEST","SQL","SQL_TABLE","Accesses","","LATE","{}",1978,33,-1,-1
+2003,"PROGRAM",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1179,190,-1,-1
+2003,"PROGRAM",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1434,110,-1,-1
+2003,"PROGRAM",2004,"IW_ME11853_F","SQL","SQL_TABLE","Accesses","","LATE","{}",1693,34,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2001,"AM11853F","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: COMMIT",-1,-1
+2000,"AM12291A","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: COMMIT",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

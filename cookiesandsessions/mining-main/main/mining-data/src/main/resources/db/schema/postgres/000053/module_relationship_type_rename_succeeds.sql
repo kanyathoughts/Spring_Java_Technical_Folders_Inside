@@ -1,0 +1,1 @@
+ALTER TYPE module_relationship_type RENAME VALUE 'SUCCEEDS' TO 'PRECEDES';

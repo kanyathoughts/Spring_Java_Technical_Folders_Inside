@@ -1,0 +1,12 @@
+#11 ProcedureDivision
+ #12 CobolEvaluateStmt <branch stmt>, Label: EVALUATE FALSE, FROM={TestEntryPoint}, TO={#16(TRUE), #24(OTHER)}
+  #13 CobolEvaluateCondition
+  #16 CobolWhenStmt, FROM={#12(TRUE)}, TO={#21}
+   #17 CobolComparisonExpression
+    #18 CobolEvaluationReference
+   #21 CobolDisplayStmt 'true', FROM={#16}, TO={#28}
+  #24 CobolWhenStmt, FROM={#12(OTHER)}, TO={#25}
+   #25 CobolDisplayStmt 'other', FROM={#24}, TO={#28}
+ #28 CobolDisplayStmt 'after', FROM={#21, #25}, TO={#31}
+ #31 CobolGoBackStmt, FROM={#28}, TO={TestReturnPoint}
+ #32 CobolEndStmt

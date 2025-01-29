@@ -1,0 +1,17 @@
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. UNKNOWNMODULE.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+
+         01 G1.
+        	05 G1-F1 PIC X.
+        	05 G1-F2 PIC X.
+        	05 G1-F3 PIC X.
+        	05 G1-F4 PIC X.
+
+        PROCEDURE DIVISION.
+
+          MOVE "X" TO G1-F1.
+          CALL "UNKNOWNUTILITY" USING G1.
+
+        END PROGRAM UNKNOWNMODULE.

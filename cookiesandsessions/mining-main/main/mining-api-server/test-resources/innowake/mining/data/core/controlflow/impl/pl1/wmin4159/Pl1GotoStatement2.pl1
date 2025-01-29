@@ -1,0 +1,15 @@
+ MAINP: Proc Options(Main);
+  dcl (U,V,W) bin float(53);
+  if U > V + W then
+   GOTO LABEL1;
+  else
+   GOTO LABEL2;
+  LABEL1:
+   X = Sprod(A,B,C);
+  PUT SKIP LIST(' INSIDE LABEL1');
+  Sprod: procedure (U,V,W)
+   returns (float(21));
+   dcl (U,V,W) float(53);
+  end Sprod;
+  LABEL2: PUT SKIP LIST(' INSIDE LABEL2');
+ End ceplcnd;

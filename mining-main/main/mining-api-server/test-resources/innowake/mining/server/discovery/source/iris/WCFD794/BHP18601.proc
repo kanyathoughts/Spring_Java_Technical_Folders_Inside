@@ -1,0 +1,236 @@
+//BHP18601 PROC                                                                 
+//*********************************************************************         
+//UNCAT001 EXEC PGM=IEXUNCAT                                                    
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// '&HIGHQUAL..&MIDQLFIL..BHP18601.AGENT.W&WEEKCY.                ',            
+// '&HIGHQUAL..&MIDQLFIL..BHP18601.AGENCY.W&WEEKCY.               ',            
+// '&HIGHQUAL..&MIDQLFIL..BHP18601.SLCEFEED.W&WEEKCY.             ',            
+// '&HIGHQUAL..&MIDQLFIL..BHP18601.AGENT.CNTL.W&WKCYCN.           ',            
+// '&HIGHQUAL..&MIDQLFIL..BHP18601.LICMASTR.W&WEEKCY.             ')            
+//**********************************************************************        
+//**FILE AID STEP TO FILTER THE VALID AUTH RECORDS FROM LICENSE MASTER**        
+//**********************************************************************        
+//FILE0001 EXEC PGM=FILEAID                                                     
+//SYSLIST  DD SYSOUT=*                                                          
+//SYSTOTAL DD SYSOUT=*                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//DD01     DD DSN=&HIGHQUAL..MSV.LICMASTR,                                      
+//            DISP=SHR                                                          
+//DD01O    DD DISP=(NEW,PASS),DSN=&&LICMSTR1,                                   
+//            DCB=(RECFM=FB,LRECL=150,BLKSIZE=0),AVGREC=K,                      
+//            SPACE=(CYL,(1500,100),RLSE),UNIT=DASD                             
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// '$$DD01 COPY IF=(7,EQ,C''AUTH''),                             ',             
+// '           AND=(11,EQ,C''NJ''),                              ',             
+// '           AND=(19,EQ,C''2007,2008,2010''),                  ',             
+// '           AND=(23,EQ,C''0001''),                            ',             
+// '           AND=(35,EQ,C''0001''),                            ',             
+// '           AND=(88,GT,C''&CUTOFFDT'')                        ')             
+//**********************************************************************        
+//XX079001 EXEC PGM=XX079,COND=(0,EQ,FILE0001)                                  
+//**********************************************************************        
+//*************SORT STEP TO REMOVE THE DUPLICATE CONTRACTS**************        
+//**********************************************************************        
+//DUPSORT1 EXEC PGM=SORT                                                        
+//SORTWK01 DD SPACE=(CYL,1500),UNIT=SYSOUT3                                     
+//SORTWK02 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK03 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK04 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=&&LICMSTR1,DISP=(OLD,DELETE,DELETE)                           
+//SORTOUT  DD DISP=(NEW,PASS),DSN=&&LICMSTR2,                                   
+//            DCB=(RECFM=FB,LRECL=150,BLKSIZE=0),AVGREC=K,                      
+//            SPACE=(CYL,(1000,100),RLSE),UNIT=DASD                             
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(1,06,CH,A)                                     ',             
+// ' SUM FIELDS=NONE                                             ')             
+//**********************************************************************        
+//XX079002 EXEC PGM=XX079,COND=(0,EQ,DUPSORT1)                                  
+//**********************************************************************        
+//***FILE AID STEP TO CREATE THE INPUT FILE WITH ONLY CONTRACT NUMBERS**        
+//**********************************************************************        
+//FILE0002 EXEC PGM=FILEAID                                                     
+//SYSLIST  DD SYSOUT=*                                                          
+//SYSTOTAL DD SYSOUT=*                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//DD01     DD DSN=&&LICMSTR2,DISP=(OLD,DELETE,DELETE)                           
+//DD01O    DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.LICMASTR.W&WEEKCY.,            
+//            DISP=(NEW,CATLG),DCB=(RECFM=FB,LRECL=6,BLKSIZE=0),                
+//            AVGREC=K,                                                         
+//            SPACE=(CYL,(25,5),RLSE),UNIT=DASD,LABEL=RETPD=180                 
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// '$$DD01 COPY MOVE=(1,6,1)                                     ')             
+//**********************************************************************        
+//XX079003 EXEC PGM=XX079,COND=(0,EQ,FILE0002)                                  
+//**********************************************************************        
+//*********BHP18601 EXECUTION STEP TO CREATE AGENT/AGENCY FILES*********        
+//**********************************************************************        
+//IKJEF001 EXEC PGM=IKJEFT01,DYNAMNBR=20                                        
+//STEPLIB  DD DSN=&DB2HLQ..DB2.SDSNLOAD,DISP=SHR                                
+//         DD DSN=&CMLIB,DISP=SHR                                               
+//INFILE1  DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.LICMASTR.W&WEEKCY.,            
+//            DISP=SHR                                                          
+//*INFILE2  DD DSN=&HIGHQUAL..BHP18601.SPLCNTR.INPUT,                           
+//INFILE2  DD DSN=&HIGHQUAL..BHP18601.SPLCNTR.W&WEEKCY.,                        
+//            DISP=SHR                                                          
+//ADSI01   DD DSN=&ADSIQUAL..ADSI.MASEXP.C9999,                                 
+//            DISP=SHR                                                          
+//ADSI011  DD DSN=&ADSIQUAL..ADSI.MASEXP.CONNUM.PATH.C9999,                     
+//            DISP=SHR                                                          
+//OUTFILE1 DD DSN=&&AGTINFO1,DISP=(NEW,PASS),                                   
+//            DCB=(BLKSIZE=0,LRECL=524,RECFM=FB),AVGREC=K,                      
+//            UNIT=DASD,SPACE=(CYL,(25,5),RLSE)                                 
+//OUTFILE2 DD DSN=&&OFFINFO1,DISP=(NEW,PASS),                                   
+//            DCB=(RECFM=FB,LRECL=383,BLKSIZE=0),AVGREC=K,                      
+//            SPACE=(CYL,(25,5),RLSE),UNIT=DASD                                 
+//OUTFILE4 DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.SLCEFEED.W&WEEKCY.,            
+//            DISP=(NEW,CATLG),                                                 
+//            UNIT=DASD,SPACE=(CYL,(25,5),RLSE),                                
+//            LABEL=RETPD=180,                                                  
+//            DCB=(BLKSIZE=0,LRECL=38,RECFM=FB)                                 
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=*                                                          
+//PRINT1   DD SYSOUT=*                                                          
+//PRINT2   DD SYSOUT=*                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSTSIN  DD SUBSYS=(CCSS,                                                     
+// '  DSN SYSTEM(&DB2SYS1) RETRY(10) TEST(0)                     ',             
+// '  RUN PROG(&PRGMNAME)                                       -',             
+// '  PLAN(&PLANNAME)                                           -',             
+// '  PARM(''&CUTOFFDT'')                                        ')             
+//**********************************************************************        
+//XX079004 EXEC PGM=XX079,COND=(0,EQ,IKJEF001)                                  
+//**********************************************************************        
+//***SORT STEP TO REMOVE THE DUPLICATE RECORDS IN AGENCY FILE***********        
+//**********************************************************************        
+//DUPSORT2 EXEC PGM=SORT                                                        
+//SORTWK01 DD SPACE=(CYL,1500),UNIT=SYSOUT3                                     
+//SORTWK02 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK03 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK04 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTIN   DD DSN=&&OFFINFO1,DISP=(OLD,DELETE,DELETE)                           
+//SORTOUT  DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.AGENCY.W&WEEKCY.,              
+//            DISP=(NEW,CATLG),                                                 
+//            UNIT=DASD,SPACE=(TRK,(20,4),RLSE),                                
+//            LABEL=RETPD=180,                                                  
+//            DCB=(BLKSIZE=0,LRECL=383,RECFM=FB)                                
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// '  SORT FIELDS=(1,5,CH,A)                                     ',             
+// '  SUM FIELDS=NONE                                            ')             
+//**********************************************************************        
+//XX079005 EXEC PGM=XX079,COND=(0,EQ,DUPSORT2)                                  
+//**********************************************************************        
+//********************SORT THE AGENT FEED ******************************        
+//**********************************************************************        
+//SORT0001 EXEC PGM=SORT                                                        
+//SORTWK01 DD SPACE=(CYL,1500),UNIT=SYSOUT3                                     
+//SORTWK02 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK03 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK04 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=&&AGTINFO1,DISP=(OLD,DELETE,DELETE)                           
+//SORTOUT  DD DSN=&&AGTINFO2,DISP=(NEW,PASS),                                   
+//            UNIT=DASD,SPACE=(CYL,(25,5),RLSE),                                
+//            DCB=(BLKSIZE=0,LRECL=524,RECFM=FB)                                
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(518,1,CH,A,75,9,CH,A,91,6,CH,A,107,1,CH,A, ',                 
+// '                                               1,73,CH,A) ',                
+// ' END                                                      ')                
+//**********************************************************************        
+//XX079009 EXEC PGM=XX079,COND=(0,EQ,SORT0001)                                  
+//**********************************************************************        
+//********SORT STEP TO REMOVE DUPLICATE RECORDS IN AGENT FILE***********        
+//**********************************************************************        
+//DUPSORT3 EXEC PGM=SORT                                                        
+//SORTWK01 DD SPACE=(CYL,1500),UNIT=SYSOUT3                                     
+//SORTWK02 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK03 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SORTWK04 DD SPACE=(CYL,1000),UNIT=SYSOUT3                                     
+//SYSOUT   DD SYSOUT=*                                                          
+//SORTIN   DD DSN=&&AGTINFO2,DISP=(OLD,DELETE,DELETE)                           
+//SORTOUT  DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.AGENT.W&WEEKCY.,               
+//            DISP=(NEW,CATLG),                                                 
+//            UNIT=DASD,SPACE=(CYL,(25,5),RLSE),                                
+//            LABEL=RETPD=180,                                                  
+//            DCB=(BLKSIZE=0,LRECL=524,RECFM=FB)                                
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// ' SORT FIELDS=(518,1,CH,A,75,9,CH,A,91,6,CH,A,1,73,CH,A) ',                  
+// ' SUM FIELDS=NONE                                         ',                 
+// ' END                                                     ')                 
+//**********************************************************************        
+//XX079009 EXEC PGM=XX079,COND=(0,EQ,DUPSORT3)                                  
+//**********************************************************************        
+//*THE FOLLOWING STEP WILL CREATE CONTROL FILE USING SAS UTILITY                
+//**********************************************************************        
+//RUNSAS   EXEC SAS,                                                            
+//         PARM=('SYSPARM=''&CRDT.W&WEEKCY.&NXTMD.''')                          
+//WORK     DD UNIT=SYSOUT3,SPACE=(CYL,(1100,300),,,ROUND)                       
+//SASLOG   DD SYSOUT=(,)                                                        
+//SASLIST  DD SYSOUT=(,)                                                        
+//SYSOUT   DD SYSOUT=(,)                                                        
+//SORTWK01 DD SPACE=(CYL,(100,100),RLSE),UNIT=SYSOUT3                           
+//SORTWK02 DD SPACE=(CYL,(100,100),RLSE),UNIT=SYSOUT3                           
+//SORTWK03 DD SPACE=(CYL,(100,100),RLSE),UNIT=SYSOUT3                           
+//SORTWK04 DD SPACE=(CYL,(100,100),RLSE),UNIT=SYSOUT3                           
+//EXTRFL   DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.AGENT.W&WEEKCY.,               
+//         DISP=SHR                                                             
+//HPCNTL   DD DSN=&HIGHQUAL..&MIDQLFIL..BHP18601.AGENT.CNTL.W&WKCYCN.,          
+//            DISP=(,CATLG),UNIT=DASD,RETPD=180,                                
+//            DCB=(RECFM=FB,LRECL=101,BLKSIZE=0),                               
+//            SPACE=(CYL,(1,1),RLSE)                                            
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+// 'OPTIONS NODATE ERRORS=0 PS=60 LS=80;                  ',                    
+// '%LET CYCLDATE = %SUBSTR(&SYSPARM,1,8);                ',                    
+// '%LET CYCLDAY = %SUBSTR(&SYSPARM,9,5);                 ',                    
+// '%LET NXTMDAY = %SUBSTR(&SYSPARM,14,8);                ',                    
+// '                                                      ',                    
+// 'DATA EXTRACT;                                         ',                    
+// 'INFILE EXTRFL MISSOVER;                               ',                    
+// 'INPUT    @1    RECORD1            $1.;                ',                    
+// '                                                      ',                    
+// 'DATA DUMMYDS;                                         ',                    
+// 'INPUT @01 DUMMYVAR  $1.;                              ',                    
+// 'DATALINES;                                            ',                    
+// '1                                                     ',                    
+// ';                                                     ',                    
+// '                                                      ',                    
+// 'DATA EXTRDA;                                          ',                    
+// 'SET EXTRACT END=EOF;                                  ',                    
+// 'RETAIN COUNTA ABYTES;                                 ',                    
+// 'COUNTA + 1;                                           ',                    
+// 'IF EOF THEN ABYTES = COUNTA *524;                     ',                    
+// 'IF EOF;                                               ',                    
+// '                                                      ',                    
+// 'DATA FINAL;                                           ',                    
+// 'MERGE EXTRDA  DUMMYDS ;                               ',                    
+// 'TIMEIS = TIME();                                      ',                    
+// 'SYS_TIME = TIME();                                    ',                    
+// 'HOURS = HOUR(SYS_TIME);                               ',                    
+// 'MINUTES = MINUTE(SYS_TIME);                           ',                    
+// 'SECONDS = SECOND(SYS_TIME);                           ',                    
+// 'HOURSX = INPUT(PUT(HOURS,Z2.),$CHAR2.);               ',                    
+// 'MINSX = INPUT(PUT(MINUTES,Z2.),$CHAR2.);              ',                    
+// 'SECSX = INPUT(PUT(SECONDS,Z2.),$CHAR2.);              ',                    
+// 'CURR_TM = HOURSX||MINSX||SECSX;                       ',                    
+// 'CALL SYMPUT("CURRTIME",CURR_TM);                      ',                    
+// '                                                      ',                    
+// 'DATA _NULL_;                                          ',                    
+// 'SET FINAL;                                            ',                    
+// '  FILE HPCNTL;                                        ',                    
+// 'PUT @1 "AX29UT.WBQ.BHP18601.AGENT." "&CYCLDAY" ","    ',                    
+// '     "MITHP_ROSTER" ","  @;                           ',                    
+// '     IF COUNTA = "." THEN PUT "0" "," @;              ',                    
+// '     ELSE PUT COUNTA +(-1) ","  @;                    ',                    
+// '     IF ABYTES = "." THEN PUT "0" "," @;              ',                    
+// '     ELSE PUT ABYTES +(-1) ","  @;                    ',                    
+// 'PUT  "1" ","                                          ',                    
+// '     "1" ","                                          ',                    
+// '     "1" ","                                          ',                    
+// '      "&CYCLDATE" ","                                 ',                    
+// '      "&CURRTIME" ","                                 ',                    
+// '      "&NXTMDAY" ","                                  ',                    
+// '     "MIDRPMSP" ;                                     ')                    
+//*                                                                             
+//ENDPROC  PEND                                                                 

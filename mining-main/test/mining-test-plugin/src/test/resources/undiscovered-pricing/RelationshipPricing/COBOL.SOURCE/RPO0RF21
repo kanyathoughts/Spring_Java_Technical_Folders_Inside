@@ -1,0 +1,839 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPO0RF21.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*    RPO0RF21 - RP PRODUCT INTERFACE TO RCIF 2.1                 *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 DATA DIVISION.                                                   00008000
+000090******************************************************************00009000
+000100 WORKING-STORAGE SECTION.                                         00010000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00011000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00011001
+000120 01  RPS-RLSELIT.                                                 00012000
+000000 COPY RPWRLSE.                                                    00013000
+000140 01  RCF-RLSELIT.                                                 00014000
+000000 COPY RFWRLSE.                                                    00015000
+000160 01  MIC-RLSELIT.                                                 00016000
+000000 COPY MIWRLSE.                                                    00017000
+000180 01  SRW000-AREAS.                                                00018000
+000000 COPY SRW000.                                                     00019000
+000200 01  SRW105-AREAS.                                                00020000
+000000 COPY SRW105.                                                     00021000
+000220*01  BICRSRB.                                                     00022000
+000000 COPY BICRSRB.                                                    00023000
+000240*01  BICRPSB.                                                     00024000
+000000 COPY BICRPSB.                                                    00025000
+000260*01  BICRVERB.                                                    00026000
+000000 COPY BICRVERB.                                                   00027000
+000280*01  BICRSTAT.                                                    00028000
+000000 COPY BICRSTAT.                                                   00029000
+000300*01  BICRDBS.                                                     00030000
+000000 COPY BICRDBS.                                                    00031000
+000320*01  BICRLOG.                                                     00032000
+000000 COPY BICRLOG.                                                    00033000
+000340 01  SRW710-AREAS.                                                00034000
+000000 COPY SRW710.                                                     00035000
+000360 01  WS-STORAGE.                                                  00036000
+000370     03  COM-ABORT               PIC S9(04)      COMP.            00037000
+000380     03  WS-CURDTYYYYMMDD        PIC 9(08)       VALUE ZERO.      00038000
+000390     03  FILLER          REDEFINES WS-CURDTYYYYMMDD.              00039000
+000400         05  WS-CURDTYYYY        PIC 9(04).                       00040000
+000410         05  WS-CURDTMMDD        PIC 9(04).                       00041000
+000420         05  FILLER      REDEFINES WS-CURDTMMDD.                  00042000
+000430             07  WS-CURDTMM      PIC 9(02).                       00043000
+000440             07  WS-CURDTDD      PIC 9(02).                       00044000
+000450     03  WS-DATEYYYYMMDD         PIC 9(08)       VALUE ZERO.      00045000
+000460     03  FILLER          REDEFINES WS-DATEYYYYMMDD.               00046000
+000470         05  WS-DATEYYYY         PIC 9(04).                       00047000
+000480         05  WS-DATEMM           PIC 9(02).                       00048000
+000490         05  WS-DATEDD           PIC 9(02).                       00049000
+000500     03  WS-RELATIONSHIP         PIC 9(03)       VALUE ZERO.      00050000
+000510     03  FILLER          REDEFINES WS-RELATIONSHIP.               00051000
+000520         05  WS-REL-POS1         PIC 9(01).                       00052000
+000530         05  WS-REL-CODE         PIC 9(02).                       00053000
+000540     03  WS-ACCSUB1              PIC S9(03)      COMP-3           00054000
+000550                                                 VALUE ZERO.      00055000
+000560     03  WS-SUB1                 PIC S9(03)      COMP-3           00056000
+000570                                                 VALUE ZERO.      00057000
+000580     03  WS-NEXTACC.                                              00058000
+000590         05  WS-NEXT-ACCT        PIC X(28).                       00059000
+000600         05  WS-NEXT-REL         PIC 9(03).                       00060000
+000610         05  WS-NEXT-CUST        PIC X(26).                       00061000
+000620     03  WS-ACC-TABLE.                                            00062000
+000630         05  WS-ACC-INFO                         OCCURS 33 TIMES. 00063000
+000640             07  WS-ACC-INST     PIC 9(04).                       00064000
+000650             07  WS-ACC-CUST-TYPE                                 00065000
+000660                                 PIC X(01).                       00066000
+000670             07  WS-ACC-CUST     PIC X(21).                       00067000
+000680             07  WS-ACC-RELNBR   PIC 9(02).                       00068000
+000690             07  WS-ACC-PRIM     PIC 9(01).                       00069000
+000700             07  WS-ACC-FILL     PIC X(01).                       00070000
+000710         05  WS-ACC-FILLER       PIC X(10).                       00071000
+000720     03  WS-CAC-TABLE.                                            00072000
+000730         05  WS-CAC-INFO                         OCCURS 33 TIMES. 00073000
+000740             07  WS-CAC-INST     PIC 9(04).                       00074000
+000750             07  WS-CAC-PRODCD   PIC X(06).                       00075000
+000760             07  WS-CAC-ACCT     PIC X(18).                       00076000
+000770             07  WS-CAC-RELNBR   PIC 9(02).                       00077000
+000780         05 FILLER               PIC X(10)       VALUE SPACES.    00078000
+000790******************************************************************00079000
+000800 01  RFWACCA-AREAS.                                               00080000
+000000 COPY RFWACCA.                                                    00081000
+000820 01  RFACC-RECORD.                                                00082000
+000000 COPY RFSACC.                                                     00083000
+000840*----------------------------------------------------------------*00084000
+000850 01  RFWACTA-AREAS.                                               00085000
+000000 COPY RFWACTA.                                                    00086000
+000870 01  RFACT-RECORD.                                                00087000
+000000 COPY RFSACT.                                                     00088000
+000890 01  RFACT-RECORD-INIT.                                           00089000
+000000 COPY RFSACTI.                                                    00090000
+000910*----------------------------------------------------------------*00091000
+000920 01  RFWCACA-AREAS.                                               00092000
+000000 COPY RFWCACA.                                                    00093000
+000940 01  RFCAC-RECORD.                                                00094000
+000000 COPY RFSCAC.                                                     00095000
+000960*----------------------------------------------------------------*00096000
+000970 01  RFWCRFA-AREAS.                                               00097000
+000000 COPY RFWCRFA.                                                    00098000
+000990 01  RFCRF-RECORD.                                                00099000
+000000 COPY RFSCRF.                                                     00100000
+001010 01  RFCRF-RECORD-INIT.                                           00101000
+000000 COPY RFSCRFI.                                                    00102000
+001030*----------------------------------------------------------------*00103000
+001040 01  RFWNONA-AREAS.                                               00104000
+000000 COPY RFWNONA.                                                    00105000
+001060 01  RFNON-RECORD.                                                00106000
+000000 COPY RFSNON.                                                     00107000
+001080 01  RFNON-RECORD-INIT.                                           00108000
+000000 COPY RFSNONI.                                                    00109000
+P0012 *----------------------------------------------------------------*00109100
+P0012  01  RFWPKYA-AREAS.                                               00109200
+000000 COPY RFWPKYA.                                                    00109300
+P0012  01  RFPKY-RECORD.                                                00109400
+000000 COPY RFSPKY.                                                     00109500
+001100*----------------------------------------------------------------*00110000
+001110 01  RFWPRI-AREAS.                                                00111000
+000000 COPY RFWPRI.                                                     00112000
+001130******************************************************************00113000
+001140 01  WS-TRACECODES.                                               00114000
+001150     03  WS-TR0001               PIC S9(04)      COMP             00115000
+001160                                                 VALUE +0001.     00116000
+001170     03  WS-TR0002               PIC S9(04)      COMP             00117000
+001180                                                 VALUE +0002.     00118000
+001190     03  WS-TR0003               PIC S9(04)      COMP             00119000
+001200                                                 VALUE +0003.     00120000
+001210     03  WS-TR0004               PIC S9(04)      COMP             00121000
+001220                                                 VALUE +0004.     00122000
+001230     03  WS-TR0005               PIC S9(04)      COMP             00123000
+001240                                                 VALUE +0005.     00124000
+001250     03  WS-TR0006               PIC S9(04)      COMP             00125000
+001260                                                 VALUE +0006.     00126000
+001270     03  WS-TR0007               PIC S9(04)      COMP             00127000
+001280                                                 VALUE +0007.     00128000
+001290     03  WS-TR0008               PIC S9(04)      COMP             00129000
+001300                                                 VALUE +0008.     00130000
+001310     03  WS-TR0009               PIC S9(04)      COMP             00131000
+001320                                                 VALUE +0009.     00132000
+001330     03  WS-TR0010               PIC S9(04)      COMP             00133000
+001340                                                 VALUE +0010.     00134000
+001350     03  WS-TR0011               PIC S9(04)      COMP             00135000
+001360                                                 VALUE +0011.     00136000
+001370     03  WS-TR0012               PIC S9(04)      COMP             00137000
+001380                                                 VALUE +0012.     00138000
+001390     03  WS-TR0013               PIC S9(04)      COMP             00139000
+001400                                                 VALUE +0013.     00140000
+001410     03  WS-TR0014               PIC S9(04)      COMP             00141000
+001420                                                 VALUE +0014.     00142000
+001430     03  WS-TR0015               PIC S9(04)      COMP             00143000
+001440                                                 VALUE +0015.     00144000
+001450     03  WS-TR0016               PIC S9(04)      COMP             00145000
+001460                                                 VALUE +0016.     00146000
+001470     03  WS-TR0017               PIC S9(04)      COMP             00147000
+001480                                                 VALUE +0017.     00148000
+P0012      03  WS-TR0018               PIC S9(04)      COMP             00148300
+P0012                                                  VALUE +0018.     00148600
+001490 01  WS-ABORTCODES.                                               00149000
+001500     03  WS-AB2000               PIC S9(04)      COMP             00150000
+001510                                                 VALUE +2000.     00151000
+001520     03  WS-AB2033               PIC S9(04)      COMP             00152000
+001530                                                 VALUE +2033.     00153000
+001540     03  WS-AB6100               PIC S9(04)      COMP             00154000
+001550                                                 VALUE +6100.     00155000
+001560     03  WS-AB6105               PIC S9(04)      COMP             00156000
+001570                                                 VALUE +6105.     00157000
+001580     03  WS-AB6115               PIC S9(04)      COMP             00158000
+001590                                                 VALUE +6115.     00159000
+001600     03  WS-AB6120               PIC S9(04)      COMP             00160000
+001610                                                 VALUE +6120.     00161000
+001620     03  WS-AB6135               PIC S9(04)      COMP             00162000
+001630                                                 VALUE +6135.     00163000
+P0012      03  WS-AB6220               PIC S9(04)      COMP             00163300
+P0012                                                  VALUE +6220.     00163600
+001640 01  SRW170-AREAS.                                                00164000
+000000 COPY SRW170.                                                     00165000
+001660******************************************************************00166000
+001670 LINKAGE SECTION.                                                 00167000
+001680******************************************************************00168000
+001690 01  DFHCOMMAREA.                                                 00169000
+000000 COPY MISCNT00      REPLACING                                     00170000
+001710             ==:MICNT:== BY ==RPRF21==.                           00171000
+000000 COPY RPSRF21.                                                    00172000
+001730******************************************************************00173000
+001740 PROCEDURE DIVISION.                                              00174000
+001750******************************************************************00175000
+001760 ENTRY-ROUTINE SECTION.                                           00176000
+001770 ER-START.                                                        00177000
+001780     MOVE 'RPO0RF21' TO SR-APIPROGLIT.                            00178000
+001790     PERFORM CICS-HANDLE-CONDITION.                               00179000
+001800     IF EIBCALEN IS EQUAL TO +0                                   00180000
+001810         MOVE WS-AB2000 TO RPRF21-ABORT                           00181000
+001820         MOVE WS-TR0001 TO RPRF21-ABTRACE                         00182000
+001830         GO TO CICS-RETURN.                                       00183000
+001840     MOVE 'RPO0RF21' TO RPRF21-ABPROGID.                          00184000
+001850     MOVE ZERO TO RPRF21-MSGNBR.                                  00185000
+001860     MOVE SPACES TO RPRF21-FUNCTION.                              00186000
+001870     MOVE ZERO TO RPRF21-ABORT.                                   00187000
+001880     MOVE ZERO TO COM-ABORT.                                      00188000
+001890     MOVE ZEROS TO RPRF21-ACCT-ALT-INST.                          00189000
+001900     MOVE SPACE TO WS-FUNCTION.                                   00190000
+001910     MOVE RPRF21-FILEOPTS TO WS-FILEOPTS.                         00191000
+001920     MOVE RPRF21-OPERID TO WS-UPD-USER.                           00192000
+001930     MOVE RPRF21-DATE TO WS-CURDTYYYYMMDD.                        00193000
+001940     GO TO MAIN-LINE.                                             00194000
+001950 ER-EXIT.                                                         00195000
+001960     EXIT.                                                        00196000
+001970******************************************************************00197000
+001980 CICS-HANDLE-CONDITION SECTION.                                   00198000
+000000 COPY SLP702.                                                     00199000
+002000     MOVE WS-AB2033 TO RPRF21-ABORT.                              00200000
+002010     MOVE WS-TR0002 TO RPRF21-ABTRACE.                            00201000
+002020     GO TO CICS-RETURN.                                           00202000
+002030 CHC-EXIT.                                                        00203000
+002040     EXIT.                                                        00204000
+002050******************************************************************00205000
+002060 MAIN-LINE SECTION.                                               00206000
+002070 ML-START.                                                        00207000
+002080     IF RPRF21-FUNCTION IS NOT EQUAL TO SPACES                    00208000
+002090         GO TO ML-EXIT.                                           00209000
+002100     IF RPRF21-FUNC IS EQUAL TO 'A'                               00210000
+002110         PERFORM ACCT-PRIMARY-CUST                                00211000
+002120         GO TO ML-EXIT.                                           00212000
+002130     IF RPRF21-FUNC IS EQUAL TO 'B'                               00213000
+002140         PERFORM PRIMARY-CUST-ACCT                                00214000
+002150         GO TO ML-EXIT.                                           00215000
+002160     IF RPRF21-FUNC IS EQUAL TO 'C'                               00216000
+002170         PERFORM PRIMARY-NEXT-ACCT                                00217000
+002180         GO TO ML-EXIT.                                           00218000
+002190     IF RPRF21-FUNC IS EQUAL TO 'D'                               00219000
+002200         PERFORM CHECK-RP-ACCOUNTS                                00220000
+002210         GO TO ML-EXIT.                                           00221000
+002220     IF RPRF21-FUNC IS EQUAL TO 'E'                               00222000
+002230         PERFORM VALIDATE-ACCOUNT                                 00223000
+002240         GO TO ML-EXIT.                                           00224000
+002250     IF RPRF21-FUNC IS EQUAL TO 'F'                               00225000
+002260         PERFORM ACCOUNT-STATUS                                   00226000
+002270         GO TO ML-EXIT.                                           00227000
+002280     IF RPRF21-FUNC IS EQUAL TO 'G'                               00228000
+002290         PERFORM ACCT-PRIMARY-CUST-ONLY                           00229000
+002300         GO TO ML-EXIT.                                           00230000
+002310     IF RPRF21-FUNC IS EQUAL TO 'N'                               00231000
+002320         PERFORM READ-ALL-CAC                                     00232000
+002330         GO TO ML-EXIT.                                           00233000
+P0012      IF RPRF21-FUNC IS EQUAL TO 'P'                               00233200
+P0012          PERFORM READ-CUST-KEY                                    00233400
+P0012          GO TO ML-EXIT.                                           00233600
+002340     IF RPRF21-FUNC IS EQUAL TO 'R'                               00234000
+002350         PERFORM READ-ACCTTOCUST                                  00235000
+002360         GO TO ML-EXIT.                                           00236000
+002370     IF RPRF21-FUNC IS EQUAL TO 'X'                               00237000
+002380         PERFORM READ-ALL-ACC                                     00238000
+002390         GO TO ML-EXIT.                                           00239000
+002400     MOVE 'I' TO RPRF21-FUNCTION.                                 00240000
+002410 ML-EXIT.                                                         00241000
+002420     GO TO CICS-RETURN.                                           00242000
+002430******************************************************************00243000
+002440 ACCT-PRIMARY-CUST SECTION.                                       00244000
+002450 APC-START.                                                       00245000
+002460     IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00246000
+002470         OR RPRF21-BASE-ACCT-PRODCODE IS NOT GREATER THAN SPACES  00247000
+002480         OR RPRF21-BASE-ACCT IS NOT GREATER THAN SPACES           00248000
+002490         MOVE 'I' TO RPRF21-FUNCTION                              00249000
+002500         GO TO APC-EXIT.                                          00250000
+002510 APC-GET-ACC.                                                     00251000
+002520     MOVE LOW-VALUES TO RFACC-GRP-KEY.                            00252000
+002530     MOVE RPRF21-BASE-ACCOUNT TO RFACC-ACCT-GRP.                  00253000
+002540     PERFORM RCF-ACC-GET-GE-REQUEST.                              00254000
+002550     IF WS-FUNCTION IS EQUAL TO 'E'                               00255000
+002560         MOVE 'N' TO RPRF21-FUNCTION                              00256000
+002570         GO TO APC-EXIT.                                          00257000
+002580     IF WS-FUNCTION IS EQUAL TO 'C'                               00258000
+002590         MOVE WS-FUNCTION TO RPRF21-FUNCTION                      00259000
+002600         GO TO APC-EXIT.                                          00260000
+002610     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00261000
+002620         MOVE WS-AB6105 TO RPRF21-ABORT                           00262000
+002630         MOVE WS-TR0003 TO RPRF21-ABTRACE                         00263000
+002640         GO TO CICS-ABORT-EXIT.                                   00264000
+002650     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00265000
+002660         MOVE 'N' TO RPRF21-FUNCTION                              00266000
+002670         GO TO APC-EXIT.                                          00267000
+002680     IF RFACC-REL IS GREATER THAN +99                             00268000
+002690         MOVE 'N' TO RPRF21-FUNCTION                              00269000
+002700         GO TO APC-EXIT.                                          00270000
+002710     MOVE RFACC-REL-NBR TO RPRF21-REL.                            00271000
+002720 APC-GET-ACT.                                                     00272000
+002730     INITIALIZE RFACT-RECORD.                                     00273000
+002740     MOVE RFACC-ACCT-GRP TO RFACT-GRP-KEY.                        00274000
+002750     PERFORM RCF-ACT-GET-REQUEST.                                 00275000
+002760     IF WS-FUNCTION IS EQUAL TO 'N'                               00276000
+002770         MOVE 'N' TO RPRF21-FUNCTION                              00277000
+002780         GO TO APC-EXIT.                                          00278000
+002790     IF WS-FUNCTION IS EQUAL TO 'C'                               00279000
+002800         MOVE 'C' TO RPRF21-FUNCTION                              00280000
+002810         GO TO APC-EXIT.                                          00281000
+002820     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00282000
+002830         MOVE WS-AB6100 TO RPRF21-ABORT                           00283000
+002840         MOVE WS-TR0004 TO RPRF21-ABTRACE                         00284000
+002850         GO TO CICS-ABORT-EXIT.                                   00285000
+002860     IF RFACT-STATUS IS EQUAL TO 'O'                              00286000
+002870         GO TO APC-CRF.                                           00287000
+002880     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00288000
+002890         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00289000
+002900         MOVE 'O' TO RFACT-STATUS                                 00290000
+002910         GO TO APC-CRF.                                           00291000
+002920     MOVE 'B' TO RPRF21-FUNCTION.                                 00292000
+002930 APC-CRF.                                                         00293000
+002940     IF RFACC-CUST-TYPE IS NOT EQUAL TO 'R'                       00294000
+002950         GO TO APC-NON.                                           00295000
+002960     MOVE RFACC-CUST-GRP TO RFCRF-GRP-KEY.                        00296000
+002970     PERFORM RCF-CRF-GET-REQUEST.                                 00297000
+002980     IF WS-FUNCTION IS EQUAL TO 'N'                               00298000
+002990         MOVE 'I' TO RPRF21-FUNCTION                              00299000
+003000         GO TO APC-EXIT.                                          00300000
+003010     IF WS-FUNCTION IS EQUAL TO 'C'                               00301000
+003020         MOVE 'C' TO RPRF21-FUNCTION                              00302000
+003030         GO TO APC-EXIT.                                          00303000
+003040     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00304000
+003050         MOVE WS-AB6135 TO RPRF21-ABORT                           00305000
+003060         MOVE WS-TR0005 TO RPRF21-ABTRACE                         00306000
+003070         GO TO CICS-ABORT-EXIT.                                   00307000
+003080     MOVE RFCRF-GRP-KEY TO RPRF21-BASE-CUSTOMER.                  00308000
+003090     MOVE RFCRF-NAME TO RPRF21-NAME.                              00309000
+003100     MOVE RFCRF-RECORD TO RPRF21-RETURNED-OBJECT.                 00310000
+003110     GO TO APC-EXIT.                                              00311000
+003120 APC-NON.                                                         00312000
+003130     MOVE RFACC-CUST-GRP TO RFNON-GRP-KEY.                        00313000
+003140     PERFORM RCF-NON-GET-REQUEST.                                 00314000
+003150     IF WS-FUNCTION IS EQUAL TO 'N'                               00315000
+003160         MOVE 'I' TO RPRF21-FUNCTION                              00316000
+003170         GO TO APC-EXIT.                                          00317000
+003180     IF WS-FUNCTION IS EQUAL TO 'C'                               00318000
+003190         MOVE 'C' TO RPRF21-FUNCTION                              00319000
+003200         GO TO APC-EXIT.                                          00320000
+003210     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00321000
+003220         MOVE WS-AB6120 TO RPRF21-ABORT                           00322000
+003230         MOVE WS-TR0006 TO RPRF21-ABTRACE                         00323000
+003240         GO TO CICS-ABORT-EXIT.                                   00324000
+003250     MOVE RFNON-GRP-KEY TO RPRF21-BASE-CUSTOMER.                  00325000
+003260     MOVE RFNON-NAME TO RPRF21-NAME.                              00326000
+003270     MOVE RFNON-RECORD TO RPRF21-RETURNED-OBJECT.                 00327000
+003280 APC-EXIT.                                                        00328000
+003290     EXIT.                                                        00329000
+003300******************************************************************00330000
+003310 PRIMARY-CUST-ACCT SECTION.                                       00331000
+003320 PCA-START.                                                       00332000
+003330     IF RPRF21-BASE-CUSTOMER IS NOT GREATER THAN SPACES           00333000
+003340         MOVE 'I' TO RPRF21-FUNCTION                              00334000
+003350         GO TO PCA-EXIT.                                          00335000
+003360     MOVE LOW-VALUES TO RFCAC-GRP-KEY.                            00336000
+003370     MOVE RPRF21-BASE-CUSTOMER TO RFCAC-CUST-GRP.                 00337000
+003380     MOVE RPRF21-BASE-ACCOUNT TO RFCAC-ACCT-GRP.                  00338000
+003390     PERFORM RCF-CAC-GET-GE-REQUEST.                              00339000
+003400     IF WS-FUNCTION IS EQUAL TO 'E'                               00340000
+003410         MOVE 'N' TO RPRF21-FUNCTION                              00341000
+003420         GO TO PCA-EXIT.                                          00342000
+003430     IF WS-FUNCTION IS EQUAL TO 'C'                               00343000
+003440         MOVE 'C' TO RPRF21-FUNCTION                              00344000
+003450         GO TO PCA-EXIT.                                          00345000
+003460     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00346000
+003470         MOVE WS-AB6115 TO RPRF21-ABORT                           00347000
+003480         MOVE WS-TR0007 TO RPRF21-ABTRACE                         00348000
+003490         GO TO CICS-ABORT-EXIT.                                   00349000
+003500     IF RFCAC-CUST-GRP IS NOT EQUAL TO RPRF21-BASE-CUSTOMER       00350000
+003510         MOVE 'N' TO RPRF21-FUNCTION                              00351000
+003520         GO TO PCA-EXIT.                                          00352000
+003530     IF RPRF21-BASE-ACCT-INST IS GREATER THAN ZEROS               00353000
+003540         AND RPRF21-BASE-ACCT-PRODCODE IS GREATER THAN SPACES     00354000
+003550         AND RPRF21-BASE-ACCT IS GREATER THAN SPACES              00355000
+003560         AND RFCAC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT   00356000
+003570         MOVE 'I' TO RPRF21-FUNCTION                              00357000
+003580         GO TO PCA-EXIT.                                          00358000
+003590     IF RPRF21-BASE-ACCT-INST IS GREATER THAN ZEROS               00359000
+003600         AND RPRF21-BASE-ACCT-PRODCODE IS GREATER THAN SPACES     00360000
+003610         AND RPRF21-BASE-ACCT IS GREATER THAN SPACES              00361000
+003620         AND RFCAC-ACCT-GRP IS EQUAL TO RPRF21-BASE-ACCOUNT       00362000
+003630         GO TO PCA-EXIT.                                          00363000
+003640 PCA-ACT.                                                         00364000
+003650     INITIALIZE RFACT-RECORD.                                     00365000
+003660     MOVE RFCAC-ACCT-GRP TO RFACT-GRP-KEY.                        00366000
+003670     PERFORM RCF-ACT-GET-REQUEST.                                 00367000
+003680     IF WS-FUNCTION IS EQUAL TO 'N'                               00368000
+003690         MOVE 'N' TO RPRF21-FUNCTION                              00369000
+003700         GO TO PCA-EXIT.                                          00370000
+003710     IF WS-FUNCTION IS EQUAL TO 'C'                               00371000
+003720         MOVE 'C' TO RPRF21-FUNCTION                              00372000
+003730         GO TO PCA-EXIT.                                          00373000
+003740     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00374000
+003750         MOVE WS-AB6100 TO RPRF21-ABORT                           00375000
+003760         MOVE WS-TR0008 TO RPRF21-ABTRACE                         00376000
+003770         GO TO CICS-ABORT-EXIT.                                   00377000
+003780     IF RFACT-STATUS IS EQUAL TO 'O'                              00378000
+003790         GO TO PCA-CONT.                                          00379000
+003800     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00380000
+003810         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00381000
+003820         MOVE 'O' TO RFACT-STATUS                                 00382000
+003830         GO TO PCA-CONT.                                          00383000
+003840     MOVE 'B' TO RPRF21-FUNCTION.                                 00384000
+003850 PCA-CONT.                                                        00385000
+003860     MOVE RFCAC-REL-NBR TO RPRF21-REL.                            00386000
+003870     MOVE RFCAC-ACCT-GRP TO RPRF21-BASE-ACCOUNT.                  00387000
+003880     MOVE RFACT-APPL-INST TO RPRF21-ACCT-ALT-INST.                00388000
+003890 PCA-EXIT.                                                        00389000
+003900     EXIT.                                                        00390000
+003910******************************************************************00391000
+003920 PRIMARY-NEXT-ACCT SECTION.                                       00392000
+003930 PNA-START.                                                       00393000
+003940     IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00394000
+003950         OR RPRF21-BASE-ACCT-PRODCODE IS NOT GREATER THAN SPACES  00395000
+003960         OR RPRF21-BASE-ACCT IS NOT GREATER THAN SPACES           00396000
+003970         OR RPRF21-BASE-CUSTOMER IS NOT GREATER THAN SPACES       00397000
+003980         MOVE 'I' TO RPRF21-FUNCTION                              00398000
+003990         GO TO PNA-EXIT.                                          00399000
+004000     MOVE LOW-VALUES TO RFCAC-GRP-KEY.                            00400000
+004010     MOVE RPRF21-BASE-CUSTOMER TO RFCAC-CUST-GRP.                 00401000
+004020     MOVE RPRF21-BASE-ACCOUNT TO RFCAC-ACCT-GRP.                  00402000
+004030     PERFORM RCF-CAC-GET-GE-REQUEST.                              00403000
+004040     IF WS-FUNCTION IS EQUAL TO 'E'                               00404000
+004050         MOVE 'I' TO RPRF21-FUNCTION                              00405000
+004060         GO TO PNA-EXIT.                                          00406000
+004070     IF WS-FUNCTION IS EQUAL TO 'C'                               00407000
+004080         MOVE 'C' TO RPRF21-FUNCTION                              00408000
+004090         GO TO PNA-EXIT.                                          00409000
+004100     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00410000
+004110         MOVE WS-AB6115 TO RPRF21-ABORT                           00411000
+004120         MOVE WS-TR0009 TO RPRF21-ABTRACE                         00412000
+004130         GO TO CICS-ABORT-EXIT.                                   00413000
+004140     IF RFCAC-CUST-GRP IS NOT EQUAL TO RPRF21-BASE-CUSTOMER       00414000
+004150         OR RFCAC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT    00415000
+004160         MOVE 'I' TO RPRF21-FUNCTION                              00416000
+004170         GO TO PNA-EXIT.                                          00417000
+004180 PNA-NEXT.                                                        00418000
+004190     PERFORM RCF-CAC-GET-NEXT-REQUEST.                            00419000
+004200     IF WS-FUNCTION IS EQUAL TO 'E'                               00420000
+004210         MOVE 'N' TO RPRF21-FUNCTION                              00421000
+004220         GO TO PNA-EXIT.                                          00422000
+004230     IF WS-FUNCTION IS EQUAL TO 'C'                               00423000
+004240         MOVE 'C' TO RPRF21-FUNCTION                              00424000
+004250         GO TO PNA-EXIT.                                          00425000
+004260     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00426000
+004270         MOVE WS-AB6115 TO RPRF21-ABORT                           00427000
+004280         MOVE WS-TR0010 TO RPRF21-ABTRACE                         00428000
+004290         GO TO CICS-ABORT-EXIT.                                   00429000
+004300     IF RFCAC-CUST-GRP IS NOT EQUAL TO RPRF21-BASE-CUSTOMER       00430000
+004310         MOVE 'N' TO RPRF21-FUNCTION                              00431000
+004320         GO TO PNA-EXIT.                                          00432000
+004330 PNA-ACT.                                                         00433000
+004340     INITIALIZE RFACT-RECORD.                                     00434000
+004350     MOVE RFCAC-ACCT-GRP TO RFACT-GRP-KEY.                        00435000
+004360     PERFORM RCF-ACT-GET-REQUEST.                                 00436000
+004370     IF WS-FUNCTION IS EQUAL TO 'N'                               00437000
+004380         MOVE 'N' TO RPRF21-FUNCTION                              00438000
+004390         GO TO PNA-EXIT.                                          00439000
+004400     IF WS-FUNCTION IS EQUAL TO 'C'                               00440000
+004410         MOVE 'C' TO RPRF21-FUNCTION                              00441000
+004420         GO TO PNA-EXIT.                                          00442000
+004430     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00443000
+004440         MOVE WS-AB6100 TO RPRF21-ABORT                           00444000
+004450         MOVE WS-TR0011 TO RPRF21-ABTRACE                         00445000
+004460         GO TO CICS-ABORT-EXIT.                                   00446000
+004470     IF RFACT-STATUS IS EQUAL TO 'O'                              00447000
+004480         GO TO PNA-CONT.                                          00448000
+004490     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00449000
+004500         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00450000
+004510         MOVE 'O' TO RFACT-STATUS                                 00451000
+004520         GO TO PNA-CONT.                                          00452000
+004530     MOVE 'B' TO RPRF21-FUNCTION.                                 00453000
+004540 PNA-CONT.                                                        00454000
+004550     MOVE RFCAC-REL-NBR TO RPRF21-REL.                            00455000
+004560     MOVE RFCAC-ACCT-GRP TO RPRF21-BASE-ACCOUNT.                  00456000
+004570     MOVE RFACT-APPL-INST TO RPRF21-ACCT-ALT-INST.                00457000
+004580 PNA-EXIT.                                                        00458000
+004590     EXIT.                                                        00459000
+004600******************************************************************00460000
+004610 CHECK-RP-ACCOUNTS SECTION.                                       00461000
+004620 CRPA-START.                                                      00462000
+004630     IF RPRF21-BASE-ACCOUNT IS NOT GREATER THAN SPACES            00463000
+004640         MOVE 'I' TO RPRF21-FUNCTION                              00464000
+004650         GO TO CRPA-EXIT.                                         00465000
+004660     MOVE LOW-VALUES TO RFCAC-GRP-KEY.                            00466000
+004670     MOVE RPRF21-BASE-CUSTOMER TO RFCAC-CUST-GRP.                 00467000
+004680     MOVE RPRF21-BASE-ACCOUNT TO RFCAC-ACCT-GRP.                  00468000
+004690     PERFORM RCF-CAC-GET-GE-REQUEST.                              00469000
+004700     IF WS-FUNCTION IS EQUAL TO 'E'                               00470000
+004710         GO TO CRPA-EXIT.                                         00471000
+004720     IF WS-FUNCTION IS EQUAL TO 'C'                               00472000
+004730         MOVE 'C' TO RPRF21-FUNCTION                              00473000
+004740         GO TO CRPA-EXIT.                                         00474000
+004750     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00475000
+004760         MOVE WS-AB6115 TO RPRF21-ABORT                           00476000
+004770         MOVE WS-TR0012 TO RPRF21-ABTRACE                         00477000
+004780         GO TO CICS-ABORT-EXIT.                                   00478000
+004790     IF RFCAC-CUST-GRP IS EQUAL TO RPRF21-BASE-CUSTOMER           00479000
+004800         AND RFCAC-ACCT-INST IS EQUAL TO RPRF21-BASE-ACCT-INST    00480000
+004810         AND RFCAC-PRODCODE IS EQUAL TO RPRF21-BASE-ACCT-PRODCODE 00481000
+004820         MOVE 'N' TO RPRF21-FUNCTION.                             00482000
+004830 CRPA-EXIT.                                                       00483000
+004840     EXIT.                                                        00484000
+004850******************************************************************00485000
+004860 READ-ACCTTOCUST SECTION.                                         00486000
+004870 RA-START.                                                        00487000
+004880     IF RPRF21-BASE-ACCOUNT IS NOT GREATER THAN SPACES            00488000
+004890         MOVE 'I' TO WS-FUNCTION                                  00489000
+004900         GO TO RA-EXIT.                                           00490000
+004910     MOVE LOW-VALUES TO RFACC-GRP-KEY.                            00491000
+004920     MOVE RPRF21-BASE-ACCOUNT TO RFACC-ACCT-GRP.                  00492000
+004930 RA-GET-ACC.                                                      00493000
+004940     PERFORM RCF-ACC-GET-GE-REQUEST.                              00494000
+004950     IF WS-FUNCTION IS EQUAL TO 'E'                               00495000
+004960         GO TO RA-EXIT.                                           00496000
+004970     IF WS-FUNCTION IS EQUAL TO 'C'                               00497000
+004980         MOVE 'C' TO RPRF21-FUNCTION                              00498000
+004990         GO TO RA-EXIT.                                           00499000
+005000     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00500000
+005010         MOVE WS-AB6105 TO RPRF21-ABTRACE                         00501000
+005020         MOVE WS-TR0016 TO RPRF21-ABTRACE                         00502000
+005030         GO TO RA-EXIT.                                           00503000
+005040     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00504000
+005050         MOVE 'N' TO WS-FUNCTION                                  00505000
+005060         GO TO RA-EXIT.                                           00506000
+005070 RA-END.                                                          00507000
+005080     MOVE RFACC-CUST-GRP TO RPRF21-BASE-CUSTOMER.                 00508000
+P0112      MOVE RFACC-REL-NBR TO RPRF21-REL.                            00508500
+005090 RA-EXIT.                                                         00509000
+005100     EXIT.                                                        00510000
+005110******************************************************************00511000
+005120 VALIDATE-ACCOUNT SECTION.                                        00512000
+005130 VA-START.                                                        00513000
+005140     IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00514000
+005150         OR RPRF21-BASE-ACCT-PRODCODE IS NOT GREATER THAN SPACES  00515000
+005160         OR RPRF21-BASE-ACCT IS NOT GREATER THAN SPACES           00516000
+005170         MOVE 'I' TO RPRF21-FUNCTION                              00517000
+005180         GO TO CRPA-EXIT.                                         00518000
+005190     MOVE LOW-VALUES TO RFACC-GRP-KEY.                            00519000
+005200     MOVE RPRF21-BASE-ACCOUNT TO RFACC-ACCT-GRP.                  00520000
+005210     PERFORM RCF-ACC-GET-GE-REQUEST.                              00521000
+005220     IF WS-FUNCTION IS EQUAL TO 'E'                               00522000
+005230         GO TO VA-EXIT.                                           00523000
+005240     IF WS-FUNCTION IS EQUAL TO 'C'                               00524000
+005250         MOVE 'C' TO RPRF21-FUNCTION                              00525000
+005260         GO TO VA-EXIT.                                           00526000
+005270     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00527000
+005280         MOVE WS-AB6105 TO RPRF21-ABORT                           00528000
+005290         MOVE WS-TR0013 TO RPRF21-ABTRACE                         00529000
+005300         GO TO CICS-ABORT-EXIT.                                   00530000
+005310     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00531000
+005320         MOVE 'N' TO RPRF21-FUNCTION                              00532000
+005330         GO TO VA-EXIT.                                           00533000
+005340 VA-ACT.                                                          00534000
+005350     INITIALIZE RFACT-RECORD.                                     00535000
+005360     MOVE RFACC-ACCT-GRP TO RFACT-GRP-KEY.                        00536000
+005370     PERFORM RCF-ACT-GET-REQUEST.                                 00537000
+005380     IF WS-FUNCTION IS EQUAL TO 'N'                               00538000
+005390         MOVE 'N' TO RPRF21-FUNCTION                              00539000
+005400         GO TO VA-EXIT.                                           00540000
+005410     IF WS-FUNCTION IS EQUAL TO 'C'                               00541000
+005420         MOVE 'C' TO RPRF21-FUNCTION                              00542000
+005430         GO TO VA-EXIT.                                           00543000
+005440     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00544000
+005450         MOVE WS-AB6100 TO RPRF21-ABORT                           00545000
+005460         MOVE WS-TR0014 TO RPRF21-ABTRACE                         00546000
+005470         GO TO CICS-ABORT-EXIT.                                   00547000
+005480     IF RFACT-STATUS IS EQUAL TO 'O'                              00548000
+005490         GO TO VA-CONT.                                           00549000
+005500     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00550000
+005510         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00551000
+005520         MOVE 'O' TO RFACT-STATUS                                 00552000
+005530         GO TO VA-CONT.                                           00553000
+005540     MOVE 'B' TO RPRF21-FUNCTION.                                 00554000
+005550     GO TO VA-EXIT.                                               00555000
+005560 VA-CONT.                                                         00556000
+005570     MOVE RFACC-REL-NBR TO RPRF21-REL.                            00557000
+005580 VA-EXIT.                                                         00558000
+005590     EXIT.                                                        00559000
+005600******************************************************************00560000
+005610 ACCOUNT-STATUS SECTION.                                          00561000
+005620 AS-ACT.                                                          00562000
+005630     IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00563000
+005640         OR RPRF21-BASE-ACCT-PRODCODE IS NOT GREATER THAN SPACES  00564000
+005650         OR RPRF21-BASE-ACCT IS NOT GREATER THAN SPACES           00565000
+005660         MOVE 'I' TO RPRF21-FUNCTION                              00566000
+005670         GO TO AS-EXIT.                                           00567000
+005680     INITIALIZE RFACT-RECORD.                                     00568000
+005690     MOVE RPRF21-BASE-ACCOUNT TO RFACT-GRP-KEY.                   00569000
+005700     PERFORM RCF-ACT-GET-REQUEST.                                 00570000
+005710     IF WS-FUNCTION IS EQUAL TO 'N'                               00571000
+005720         MOVE 'N' TO RPRF21-FUNCTION                              00572000
+005730         GO TO AS-EXIT.                                           00573000
+005740     IF WS-FUNCTION IS EQUAL TO 'C'                               00574000
+005750         MOVE 'C' TO RPRF21-FUNCTION                              00575000
+005760         GO TO AS-EXIT.                                           00576000
+005770     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00577000
+005780         MOVE WS-AB6100 TO RPRF21-ABORT                           00578000
+005790         MOVE WS-TR0015 TO RPRF21-ABTRACE                         00579000
+005800         GO TO CICS-ABORT-EXIT.                                   00580000
+005810     IF RFACT-STATUS IS EQUAL TO 'O'                              00581000
+005820         GO TO AS-EXIT.                                           00582000
+005830     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00583000
+005840         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00584000
+005850         MOVE 'O' TO RFACT-STATUS                                 00585000
+005860         GO TO AS-EXIT.                                           00586000
+005870     MOVE 'B' TO RPRF21-FUNCTION.                                 00587000
+005880 AS-EXIT.                                                         00588000
+005890     EXIT.                                                        00589000
+005900******************************************************************00590000
+005910 ACCT-PRIMARY-CUST-ONLY SECTION.                                  00591000
+005920 APCO-START.                                                      00592000
+005930     IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00593000
+005940         OR RPRF21-BASE-ACCT-PRODCODE IS NOT GREATER THAN SPACES  00594000
+005950         OR RPRF21-BASE-ACCT IS NOT GREATER THAN SPACES           00595000
+005960         MOVE 'I' TO RPRF21-FUNCTION                              00596000
+005970         GO TO APCO-EXIT.                                         00597000
+005980 APCO-GET-ACC.                                                    00598000
+005990     MOVE LOW-VALUES TO RFACC-GRP-KEY.                            00599000
+006000     MOVE RPRF21-BASE-ACCOUNT TO RFACC-ACCT-GRP.                  00600000
+006010     PERFORM RCF-ACC-GET-GE-REQUEST.                              00601000
+006020     IF WS-FUNCTION IS EQUAL TO 'E'                               00602000
+006030         MOVE 'N' TO RPRF21-FUNCTION                              00603000
+006040         GO TO APCO-EXIT.                                         00604000
+006050     IF WS-FUNCTION IS EQUAL TO 'C'                               00605000
+006060         MOVE WS-FUNCTION TO RPRF21-FUNCTION                      00606000
+006070         GO TO APCO-EXIT.                                         00607000
+006080     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00608000
+006090         MOVE WS-AB6105 TO RPRF21-ABORT                           00609000
+006100         MOVE WS-TR0017 TO RPRF21-ABTRACE                         00610000
+006110         GO TO CICS-ABORT-EXIT.                                   00611000
+006120     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00612000
+006130         MOVE 'N' TO RPRF21-FUNCTION                              00613000
+006140         GO TO APCO-EXIT.                                         00614000
+006150     IF RFACC-REL IS GREATER THAN +99                             00615000
+006160         MOVE 'N' TO RPRF21-FUNCTION                              00616000
+006170         GO TO APCO-EXIT.                                         00617000
+006180 APCO-EXIT.                                                       00618000
+006190     EXIT.                                                        00619000
+006200******************************************************************00620000
+006210 READ-ALL-CAC SECTION.                                            00621000
+006220 RAC-START.                                                       00622000
+006230     INITIALIZE WS-CAC-TABLE.                                     00623000
+006240     IF RPRF21-BASE-CUSTOMER IS NOT GREATER THAN SPACES           00624000
+006250         MOVE 'I' TO WS-FUNCTION                                  00625000
+006260         GO TO RAC-EXIT.                                          00626000
+006270     MOVE +1 TO WS-SUB1.                                          00627000
+006280     MOVE LOW-VALUES TO RFCAC-GRP-KEY.                            00628000
+006290     MOVE RPRF21-BASE-CUSTOMER TO RFCAC-CUST-GRP.                 00629000
+006300     MOVE RPRF21-BASE-ACCOUNT TO RFCAC-ACCT-GRP.                  00630000
+006310     PERFORM RCF-CAC-GET-GE-REQUEST.                              00631000
+006320     GO TO RAC-TEST.                                              00632000
+006330 RAC-NEXT-CAC.                                                    00633000
+006340     PERFORM RCF-CAC-GET-NEXT-REQUEST.                            00634000
+006350 RAC-TEST.                                                        00635000
+006360     IF WS-FUNCTION IS EQUAL TO 'E'                               00636000
+006370         MOVE SPACE TO WS-FUNCTION                                00637000
+006380         MOVE 'D' TO RPRF21-RETURN                                00638000
+006390         GO TO RAC-END.                                           00639000
+006400     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00640000
+006410         MOVE 'N' TO RPRF21-RETURN                                00641000
+006420         GO TO RAC-EXIT.                                          00642000
+006430     IF RFCAC-CUST-GRP IS NOT EQUAL TO RPRF21-BASE-CUSTOMER       00643000
+006440         MOVE 'D' TO RPRF21-RETURN                                00644000
+006450         GO TO RAC-END.                                           00645000
+006460     IF RFCAC-ACCT-GRP IS EQUAL TO RPRF21-BASE-ACCOUNT            00646000
+006470         GO TO RAC-NEXT-CAC.                                      00647000
+006480     MOVE RFCAC-ACCT-GRP TO RFACT-GRP-KEY.                        00648000
+006490     PERFORM RCF-ACT-GET-REQUEST.                                 00649000
+006500     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00650000
+006510         GO TO RAC-NEXT-CAC.                                      00651000
+006520     IF RFACT-STATUS IS EQUAL TO 'O'                              00652000
+006530         GO TO RAC-TEST-CONT.                                     00653000
+006540     IF RPRF21-CLOSEDACCTOPT IS EQUAL TO 'Y'                      00654000
+006550         AND RFACT-STATUS IS NOT EQUAL TO 'D'                     00655000
+006560         MOVE 'O' TO RFACT-STATUS                                 00656000
+006570         GO TO RAC-TEST-CONT.                                     00657000
+006580     GO TO RAC-NEXT-CAC.                                          00658000
+006590 RAC-TEST-CONT.                                                   00659000
+006600     MOVE RFACT-APPL-INST TO WS-CAC-INST (WS-SUB1).               00660000
+006610     MOVE RFCAC-PRODCODE TO WS-CAC-PRODCD (WS-SUB1).              00661000
+006620     MOVE RFCAC-ACCT TO WS-CAC-ACCT (WS-SUB1).                    00662000
+006630     MOVE RFCAC-REL-NBR TO WS-CAC-RELNBR (WS-SUB1).               00663000
+006640     IF WS-SUB1 IS EQUAL TO +33                                   00664000
+006650         MOVE 'M' TO RPRF21-RETURN                                00665000
+006660         GO TO RAC-END.                                           00666000
+006670     ADD +1 TO WS-SUB1.                                           00667000
+006680     GO TO RAC-NEXT-CAC.                                          00668000
+006690 RAC-END.                                                         00669000
+006700     MOVE WS-CAC-TABLE TO RPRF21-RETURNED-OBJECT.                 00670000
+006710 RAC-EXIT.                                                        00671000
+006720     EXIT.                                                        00672000
+P0012 ******************************************************************00672020
+P0012  READ-CUST-KEY SECTION.                                           00672040
+P0012  RCK-START.                                                       00672060
+P0012      IF RPRF21-BASE-ACCT-INST IS NOT GREATER THAN ZEROS           00672080
+P0012          MOVE 'I' TO RPRF21-FUNCTION                              00672100
+P0012          GO TO RCK-EXIT.                                          00672120
+P0012      IF RPRF21-CUST-NO IS NOT NUMERIC                             00672140
+P0012          MOVE 'I' TO RPRF21-FUNCTION                              00672160
+P0012          GO TO RCK-EXIT.                                          00672180
+P0012      IF RPRF21-CUST-NO IS EQUAL TO ZEROS                          00672200
+P0012          MOVE 'I' TO RPRF21-FUNCTION                              00672220
+P0012          GO TO RCK-EXIT.                                          00672240
+P0012  RCK-PKY.                                                         00672260
+P0012      MOVE RPRF21-BASE-ACCT-INST TO RFPKY-INST.                    00672280
+P0012      MOVE RPRF21-CUST-NO TO RFPKY-CUST-NO.                        00672300
+P0012  RCK-NEXT-PKY.                                                    00672320
+P0012      PERFORM RCF-PKY-GET-REQUEST.                                 00672340
+P0012      IF WS-FUNCTION IS EQUAL TO 'N'                               00672360
+P0012          MOVE 'N' TO RPRF21-FUNCTION                              00672380
+P0012          GO TO RCK-EXIT.                                          00672400
+P0012      IF WS-FUNCTION IS EQUAL TO 'C'                               00672420
+P0012          MOVE 'C' TO RPRF21-FUNCTION                              00672440
+P0012          GO TO RCK-EXIT.                                          00672460
+P0012      IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00672480
+P0012          MOVE WS-AB6220 TO RPRF21-ABORT                           00672500
+P0012          MOVE WS-TR0018 TO RPRF21-ABTRACE                         00672520
+P0012          GO TO CICS-ABORT-EXIT.                                   00672540
+P0012      IF RFPKY-RCIF-KEY-STATUS IS EQUAL TO 'D'                     00672560
+P0012          AND RFPKY-NEW-CUST-NO IS NOT EQUAL TO ZERO               00672580
+P0012          MOVE RFPKY-NEW-CUST-NO TO RFPKY-CUST-NO                  00672600
+P0012          GO TO RCK-NEXT-PKY.                                      00672620
+P0012      IF RFPKY-RCIF-KEY-STATUS IS EQUAL TO 'D'                     00672640
+P0012          MOVE 'N' TO RPRF21-FUNCTION                              00672660
+P0012          GO TO RCK-EXIT.                                          00672680
+P0012      MOVE RFPKY-RCIF-KEY TO RPRF21-RETURNED-OBJECT.               00672700
+P0012  RCK-EXIT.                                                        00672720
+P0012      EXIT.                                                        00672740
+006730******************************************************************00673000
+006740 READ-ALL-ACC SECTION.                                            00674000
+006750 RAA-START.                                                       00675000
+006760     INITIALIZE WS-ACC-TABLE.                                     00676000
+006770     IF RPRF21-BASE-ACCOUNT IS NOT GREATER THAN SPACES            00677000
+006780         MOVE 'I' TO WS-FUNCTION                                  00678000
+006790         MOVE 'N' TO RPRF21-RETURN                                00679000
+006800         MOVE 0021 TO RPRF21-ABTRACE                              00680000
+006810         GO TO RAA-RETURN.                                        00681000
+006820     MOVE +1 TO WS-ACCSUB1.                                       00682000
+006830     MOVE LOW-VALUES TO RFACC-GRP-KEY.                            00683000
+006840     MOVE RPRF21-BASE-ACCOUNT TO RFACC-ACCT-GRP.                  00684000
+006850* ** CHECK FOR CONTINUATION                                       00685000
+006860     IF RPRF21-RETURN IS EQUAL TO 'M'                             00686000
+006870         MOVE RPRF21-RETURNED-OBJECT TO WS-NEXTACC                00687000
+006880         MOVE WS-NEXT-REL TO RFACC-REL-GRP                        00688000
+006890         MOVE WS-NEXT-CUST TO RFACC-CUST-GRP                      00689000
+006900         GO TO RAA-NEXT-ACC.                                      00690000
+006910     PERFORM RCF-ACC-GET-GE-REQUEST.                              00691000
+006920     GO TO RAA-TEST.                                              00692000
+006930 RAA-NEXT-ACC.                                                    00693000
+006940     PERFORM RCF-ACC-GET-NEXT-REQUEST.                            00694000
+006950 RAA-TEST.                                                        00695000
+006960     IF WS-FUNCTION IS EQUAL TO 'E'                               00696000
+006970         MOVE SPACE TO WS-FUNCTION                                00697000
+006980         MOVE 'D' TO RPRF21-RETURN                                00698000
+006990         GO TO RAA-END.                                           00699000
+007000     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00700000
+007010         MOVE 'N' TO RPRF21-RETURN                                00701000
+007020         MOVE 0023 TO RPRF21-ABTRACE                              00702000
+007030         GO TO RAA-END.                                           00703000
+007040     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00704000
+007050         AND WS-ACCSUB1 IS EQUAL TO +1                            00705000
+007060         MOVE 'N' TO RPRF21-RETURN                                00706000
+007070         GO TO RAA-END.                                           00707000
+007080     IF RFACC-ACCT-GRP IS NOT EQUAL TO RPRF21-BASE-ACCOUNT        00708000
+007090         GO TO RAA-END.                                           00709000
+007100 RAA-TEST-CONT.                                                   00710000
+007110     MOVE RFACC-CUST-INST TO WS-ACC-INST (WS-ACCSUB1).            00711000
+007120     MOVE RFACC-CUST-TYPE TO WS-ACC-CUST-TYPE (WS-ACCSUB1).       00712000
+007130     MOVE RFACC-CUST TO WS-ACC-CUST (WS-ACCSUB1).                 00713000
+007140     MOVE RFACC-REL-NBR TO WS-ACC-RELNBR (WS-ACCSUB1).            00714000
+007150     MOVE RFACC-PRIM-FLAG TO WS-ACC-PRIM (WS-ACCSUB1).            00715000
+007160     IF WS-ACCSUB1 IS EQUAL TO +33                                00716000
+007170         MOVE 'M' TO RPRF21-RETURN                                00717000
+007180         GO TO RAA-END.                                           00718000
+007190     ADD +1 TO WS-ACCSUB1.                                        00719000
+007200     GO TO RAA-NEXT-ACC.                                          00720000
+007210 RAA-END.                                                         00721000
+007220     MOVE WS-ACC-TABLE TO RPRF21-RETURNED-OBJECT.                 00722000
+007230 RAA-RETURN.                                                      00723000
+007240*    GO TO RETURN-ROUTINE.                                        00724000
+007250 RAA-EXIT.                                                        00725000
+007260     EXIT.                                                        00726000
+007270******************************************************************00727000
+007280******************************************************************00728000
+000000 COPY RFPACCA.                                                    00729000
+007300******************************************************************00730000
+000000 COPY RFPACTA.                                                    00731000
+007320******************************************************************00732000
+000000 COPY RFPCACA.                                                    00733000
+007340******************************************************************00734000
+000000 COPY RFPCRFA.                                                    00735000
+007360******************************************************************00736000
+000000 COPY RFPNONA.                                                    00737000
+P0012 ******************************************************************00737300
+000000 COPY RFPPKYA.                                                    00737600
+007380******************************************************************00738000
+007390 CICS-ABORT-EXIT SECTION.                                         00739000
+007400 CAE-START.                                                       00740000
+007410     GO TO CICS-RETURN.                                           00741000
+007420 CAE-EXIT.                                                        00742000
+007430     EXIT.                                                        00743000
+007440******************************************************************00744000
+007450 CICS-RETURN SECTION.                                             00745000
+007460     IF COM-ABORT IS NOT EQUAL TO ZERO                            00746000
+007470         MOVE COM-ABORT TO RPRF21-ABORT.                          00747000
+007480     IF RPRF21-ABORT IS NOT EQUAL TO ZERO                         00748000
+007490         MOVE WS-FUNCTION TO RPRF21-FUNCTION                      00749000
+007500         MOVE SRB-BMDB TO RPRF21-SRBMDB                           00750000
+007510         MOVE EIBFN TO RPRF21-ABEIBFN                             00751000
+007520         MOVE EIBRCODE TO RPRF21-ABEIBRCODE                       00752000
+007530         MOVE EIBRESP TO RPRF21-ABEIBRESP                         00753000
+007540         MOVE EIBRESP2 TO RPRF21-ABEIBRESP2.                      00754000
+007550     PERFORM GLOBAL-CLOSE.                                        00755000
+000000 COPY SLP709.                                                     00756000
+007570******************************************************************00757000
+007580 GLOBAL-CLOSE SECTION.                                            00758000
+007590 GC-START.                                                        00759000
+007600     IF RPRF21-GLOBAL-CLOSE IS NOT EQUAL TO 'N'                   00760000
+007610         PERFORM RCF-CRF-GLOBAL-CLOSE-REQUEST.                    00761000
+007620 GC-EXIT.                                                         00762000
+007630     EXIT.                                                        00763000
+007640******************************************************************00764000

@@ -1,0 +1,113 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2016,2014,"bump_salary","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,0,67
+2023,"","EMPLOYEE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2017,2015,"MAX_SALARY","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,1,79
+2014,"","NestCase","src/sql/WDIS502/NestCase.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,53,0,55,0,8,-1,-1
+2019,2015,"OUT_AVERAGE","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,1444,156
+2018,2015,"OUT_MEDIAN","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,452,129
+2022,"","SALES","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2015,"","SqlStatements","src/sql/WDIS502/SqlStatements.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,89,1,114,0,16,-1,-1
+2021,"","STAFF","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2020,2015,"update_salary_if","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,2113,103
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2014,"NestCase","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE bump_salary (IN deptnumber SMALLINT)
+LANGUAGE SQL"
+2014,"NestCase","SELECT",75,1,1,6,4.98,1.50,"SELECT id, CAST(salary AS DOUBLE), years
+FROM staff
+WHERE dept = deptnumber"
+2014,"NestCase","UPDATE",45,1,1,4,2.81,1.00,"UPDATE staff
+SET job = 'PREZ'
+WHERE id = v_id"
+2014,"NestCase","UPDATE",56,1,1,5,4.75,1.50,"UPDATE staff
+SET salary = 15500* v_years
+WHERE id = v_id"
+2014,"NestCase","UPDATE",57,1,1,5,4.75,1.50,"UPDATE staff
+SET salary = 20000 * v_years
+WHERE id = v_id"
+2014,"NestCase","UPDATE",47,1,1,4,2.81,1.00,"UPDATE staff
+SET salary = 99000
+WHERE id = v_id"
+2014,"NestCase","UPDATE",47,1,1,4,2.81,1.00,"UPDATE staff
+SET salary = 99000
+WHERE id = v_id"
+2014,"NestCase","UPDATE",57,1,1,5,4.75,1.50,"UPDATE staff
+SET salary = v_salary * 1.10
+WHERE id = v_id"
+2015,"SqlStatements","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE MAX_SALARY (OUT maxSalary DOUBLE)
+LANGUAGE SQL
+READS SQL DATA"
+2015,"SqlStatements","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE OUT_AVERAGE (OUT averageSalary DOUBLE, OUT medianSalary DOUBLE, OUT maxSalary DOUBLE)
+DYNAMIC RESULT SETS 2
+LANGUAGE SQL
+MODIFIES SQL DATA"
+2015,"SqlStatements","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE OUT_MEDIAN (OUT medianSalary DOUBLE, OUT maxSalary DOUBLE)
+DYNAMIC RESULT SETS 0
+LANGUAGE SQL
+MODIFIES SQL DATA"
+2015,"SqlStatements","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE update_salary_if
+(IN employee_number CHAR(6), IN rating SMALLINT)
+LANGUAGE SQL"
+2015,"SqlStatements","DELETE",40,1,1,2,2.32,1.00,"DELETE FROM staff
+WHERE WORKDEPT = 'D11'"
+2015,"SqlStatements","INSERT",100,2,2,7,6.64,2.00,"INSERT INTO staff
+(SELECT * FROM REMOTESYS.TESTSCHEMA.SALES WHERE SALES_DATE = CURRENT DATE - 1 DAY)"
+2015,"SqlStatements","SELECT",48,1,1,5,3.88,1.50,"SELECT AVG(salary) INTO averageSalary FROM staff"
+2015,"SqlStatements","SELECT",56,1,1,5,5.17,2.00,"SELECT CAST(salary AS DOUBLE) FROM staff
+ORDER BY salary"
+2015,"SqlStatements","SELECT",44,1,1,5,3.88,1.50,"SELECT COUNT(*) INTO v_numRecords FROM staff"
+2015,"SqlStatements","SELECT",44,1,1,5,3.88,1.50,"SELECT MAX(salary) INTO maxSalary FROM staff"
+2015,"SqlStatements","SELECT",98,1,1,8,8.86,2.67,"SELECT name, job, CAST(salary AS DOUBLE)
+FROM staff
+WHERE salary < averageSalary
+ORDER BY name ASC"
+2015,"SqlStatements","SELECT",98,1,1,8,8.86,2.67,"SELECT name, job, CAST(salary AS DOUBLE)
+FROM staff
+WHERE salary > averageSalary
+ORDER BY name ASC"
+2015,"SqlStatements","UPDATE",83,1,1,7,5.69,1.71,"UPDATE employee
+SET salary = salary * 1.03, bonus = 0
+WHERE empno = employee_number"
+2015,"SqlStatements","UPDATE",85,1,1,7,5.69,1.71,"UPDATE employee
+SET salary = salary * 1.05, bonus = 500
+WHERE empno = employee_number"
+2015,"SqlStatements","UPDATE",86,1,1,7,5.69,1.71,"UPDATE employee
+SET salary = salary * 1.10, bonus = 1000
+WHERE empno = employee_number"
+2015,"SqlStatements","UPDATE",119,2,2,7,5.19,1.50,"UPDATE staff
+SET DEPTNO =
+(SELECT WORKDEPT FROM EMPLOYEE
+WHERE PROJECT.RESPEMP = EMPLOYEE.EMPNO)
+WHERE RESPEMP='000030'"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",305,87,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",665,79,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",762,86,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",1064,85,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",1171,93,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",1306,85,-1,-1
+2014,"NestCase",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",1424,65,-1,-1
+2015,"SqlStatements",2023,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",2731,103,-1,-1
+2015,"SqlStatements",2023,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",299,142,-1,-1
+2015,"SqlStatements",2023,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",2466,106,-1,-1
+2015,"SqlStatements",2023,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",2613,105,-1,-1
+2015,"SqlStatements",2022,"SALES","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",188,109,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",299,142,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",801,61,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",867,44,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1659,110,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1826,110,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1942,48,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""DELETE""]}",141,45,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",93,44,-1,-1
+2015,"SqlStatements",2021,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""STORE""]}",188,109,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

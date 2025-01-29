@@ -1,0 +1,157 @@
+<nz-row [nzGutter]="[16, 8]" class="ant-toolbar mining-fixed-page-header showHide" nzAlign="middle"
+  *ngIf=" ! networkUid">
+  <nz-col>
+    <app-module-breadcrumb [breadcrumbItems]="reachabilityBreadcrumbItems"
+      [projectId]="projectId"></app-module-breadcrumb>
+  </nz-col>
+  <nz-col nzFlex="auto">
+    <nz-page-header-subtitle  *ngIf="modulesWithErrorsAndWarnings?.errors.length || modulesWithErrorsAndWarnings?.warnings.length">{{'reachability.moduleswith' | translate}}</nz-page-header-subtitle>
+      <nz-page-header-tags *ngIf="modulesWithErrorsAndWarnings?.errors.length">
+        <nz-tag  nzColor="error" class="block-card__title-pointer" (click)="openModulesTable('errors')">{{'reachability.errors' | translate}} 
+          <nz-badge class="block-card__badge-margin" [nzCount]="modulesWithErrorsAndWarnings?.errors.length" nzSize="small"></nz-badge>
+        </nz-tag>
+      </nz-page-header-tags>
+      <nz-page-header-tags *ngIf="modulesWithErrorsAndWarnings?.warnings.length">
+        <nz-tag  nzColor="warning" class="block-card__title-pointer" (click)="openModulesTable('warnings')">{{'reachability.warnings' | translate}} 
+          <nz-badge class="block-card__badge-margin block-card__warning-badge" [nzCount]="modulesWithErrorsAndWarnings?.warnings.length" nzSize="small"></nz-badge>
+        </nz-tag>
+      </nz-page-header-tags>
+  </nz-col>
+  <nz-col nzFlex="auto fit-content">
+    <nz-row [nzGutter]="[16, 8]">
+      <nz-col *ngIf="reachabilityGraph">
+        <nz-badge [nzDot]="isFiltersActive" class="reachability-graph__custom-badge">
+          <button nz-button (click)="showFilter()"
+            [ngClass]="isFiltersActive ? 'functional-analysis-component__filter-tree-icon': 'functional-analysis-component__tree-icon'">
+            <span nz-tooltip nzTooltipTitle="{{'reachability.filterTooltip' | translate}}" nz-icon nzType="filter"
+              nzTheme="outline"></span>
+          </button>
+        </nz-badge>
+      </nz-col>
+      <nz-col>
+        <nz-input-group nzCompact>
+          <ng-container *ngTemplateOutlet="graphExport" />
+        </nz-input-group>
+      </nz-col>
+      <nz-col *ngIf="graphInfo?.nodes.length && reachabilityGraph">
+        <button nz-tooltip [nzTooltipTitle]="'dependencyGraph.toggleSidePanelToolTip' | translate"
+          nzTooltipPlacement="top" nz-button nzType="default" (click)="toggleSidePanel()">
+          <i nz-icon nzType="profile" nzTheme="outline"></i>
+        </button>
+      </nz-col>
+    </nz-row>
+  </nz-col>
+</nz-row>
+<ng-container *ngIf="networkUid" >
+  <ng-container *ngTemplateOutlet="graphExport" />
+</ng-container>
+<ng-template #graphExport>
+  <mining-graphs-export [ngClass]="{'reachability-graph__graphExport': networkUid }" *ngIf="showExports && graphComponent && reachabilityGraph"
+    [isGraphEmpty]="isGraphEmpty" [moduleName]="networkUid ? networkGraphExportName : moduleName" projectId="projectId" moduleId="moduleId"
+    [graphComponent]="graphComponent">
+  </mining-graphs-export>
+</ng-template>
+<auto-detect-alert *ngIf="! networkUid" [isDeleteActionRequired]="false" [projectId]="projectId"></auto-detect-alert>
+<nz-alert nzType="info" class="mining__content-page-header" [nzIconType]="'exclamation-circle'" *ngIf="selectedNodes.length > 0 && showMergeInfoBanner && networkUid"
+  [nzMessage]="networkEdgeSelected" nzShowIcon></nz-alert>
+<ng-template #networkEdgeSelected>
+  <div nz-row nz-justify="space-between">
+      <span nz-col nzFlex="auto">{{ 'reachability.networkEdgeSelectedTxt' | translate }}</span>
+      <button nz-col nz-button nzSize="small" nzType="primary" (click)="closeMergeInfoBanner()"> 
+        {{'btnLabel.dismiss' | translate}}
+      </button>
+  </div>
+</ng-template>
+<nz-card class="filter-display__pop-over" [ngClass]="{'functional-analysis-component__display-filter': ! toggleFilter}">
+  <ng-container *ngTemplateOutlet="filterModal"></ng-container>
+  <ng-container *ngTemplateOutlet="filterModalFooter"></ng-container>
+</nz-card>
+<ng-template #filterModal>
+  <h5 nz-typography><strong>{{ 'filter' | translate }}</strong></h5>
+  <p nz-typography nzType="secondary">{{ 'reachability.filterGraphSubTitle' | translate }}</p>
+  <div nz-row [nzGutter]="24">
+      <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+          <nz-form-control class="block-view__form-control">
+              <nz-form-label [nzSpan]="24" nzFor="name">{{ 'functionalAnalysis.taxonomyLbl' |
+                  translate }}</nz-form-label>
+              <app-taxonomy-filter [useMetricsFilterService]="false" #taxonomyFilter
+                  (selectedTaxonomyDetails)="getTaxonomySelection($event)"></app-taxonomy-filter>
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+        <nz-form-control  class="block-view__form-control">
+        <nz-form-label [nzSpan]="24" nzFor="name">{{ 'reachability.technologyAndType' |
+          translate }}</nz-form-label>
+          <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+            [(ngModel)]="selectedTechnologyAndType" [nzMaxTagCount]="3">
+            <nz-option *ngFor="let option of listOfTechnologyType" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+          <nz-form-control class="block-view__form-control">
+              <nz-form-label [nzSpan]="24" nzFor="name">{{'reachability.functionalBlocks' | translate}}</nz-form-label>
+              <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+                  (nzOnSearch)="onFunctionalBlockSearch($event)" [nzAutoClearSearchValue]="true"
+                  [(ngModel)]="selectedFunctionalBlock">
+                  <nz-option *ngFor="let option of listOfFunctionalBlocks" [nzValue]="option.uid"
+                      [nzLabel]="option.name"></nz-option>
+              </nz-select>
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+          <nz-form-control class="block-view__form-control">
+              <nz-form-label [nzSpan]="24" nzFor="name">{{ 'reachability.referenceType' | translate
+                  }}</nz-form-label>
+              <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+                  (nzOnSearch)="onReferenceTypeSearch()" [nzAutoClearSearchValue]="true"
+                  [(ngModel)]="selectedReferenceType">
+                  <nz-option *ngFor="let option of listOfReferenceType" [nzValue]="option"
+                      [nzLabel]="option"></nz-option>
+              </nz-select>
+          </nz-form-control>
+      </nz-form-item>
+  </div>
+</ng-template>
+<ng-template #filterModalFooter>
+  <div class="functional-analysis-component__btn-container">
+      <button [disabled]="isButtonDisabled()" (click)="onResetFilter()" nz-button nzType="default">
+          {{ 'miningTable.reset' | translate }}
+      </button>
+      <button (click)="onApplyFilter()" nz-button nzType="primary" class="functional-analysis-component__apply-btn">
+          {{ 'functionalAnalysis.apply' | translate }}
+      </button>
+  </div>
+</ng-template>
+<nz-modal [(nzVisible)]="displayModal" [nzFooter]="null" [nzClosable]="false">
+  <mn-loader></mn-loader>
+</nz-modal>
+<div class="dependency-graph__module-sidepanel" [ngClass]="{'reachability-graph': networkUid}"
+>
+  <div #graphComponentRef *ngIf="graphInfo?.nodes.length && reachabilityGraph" class="graph-global-style">
+    <graph-overview-panel></graph-overview-panel>
+    <graph-context-menu (contextMenuHideNode)="contextMenuHideNode($event)"
+      (openInNewBrowserTab)="openInNewBrowserTab($event)" (openInEclipse)="openInEclipse()"
+      [graphComp]="getGraphComponent()" [selectedNode]="getSelectedNode()"
+      [graphRootNode]="rootNodeEvent.asObservable()" [resetFilterOptions]="resetFilterOptions.asObservable()"
+      [resetGraph]="resetGraph.asObservable()" (toggleDPSidePanel)="toggleSidePanel()"
+      [isEclipseFeatureActive]="isEclipseFeatureActive" [disableCodeViewer]="disableCodeViewer"
+      [codeViewerTooltip]="codeViewerTooltip" [projectId]="projectId" [moduleDetails]="moduleDetails"
+      [dependencyGraphComponent]="this" [explorable]="this.explorable" [selectedNodes]="selectedNodes" [contextMenuOptionType]="contextMenuOptionType">
+      <mn-code-viewer-button [projectId]="projectId" [moduleDetails]="moduleDetails"></mn-code-viewer-button>
+    </graph-context-menu>
+  </div>
+  <ng-container *ngIf="sidePanelIconState">
+    <nz-card [nzExtra]="closeIconTemplate"
+      class="mining__card-drawer shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open shared-module dependency-graph__noData-sidepanel">
+      <nz-empty class="dependency-graph__sidepanel"
+        [nzNotFoundContent]="'dependencyGraph.sidePanelNoDataContent' | translate"></nz-empty>
+    </nz-card>
+    <ng-template #closeIconTemplate>
+      <button nz-button nzType="text" (click)="toggleSidePanel()">
+        <em nz-icon nzType="close" nzTheme="outline"></em>
+      </button>
+    </ng-template>
+  </ng-container>
+  <ng-template #sidePanel></ng-template>
+</div>

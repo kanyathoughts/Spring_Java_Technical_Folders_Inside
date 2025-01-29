@@ -1,0 +1,7 @@
+ #2 DefineDataStmt
+ #8 InputUsingMapStmt, FROM={#18, #29, TestEntryPoint}, TO={#12}
+ #12 IfStmt, Label: IF #FIELD1 EQ ' ', FROM={#8}, TO={#18(TRUE), #23(FALSE)}
+   #18 ReinputStmt, FROM={#12(TRUE)}, TO={#8}
+ #23 IfStmt, Label: IF #FIELD1 EQ 'HELP', FROM={#12(FALSE)}, TO={#29(TRUE), #36(FALSE)}
+   #29 ReinputStmt, FROM={#23(TRUE)}, TO={#8}
+ #36 EndStmt, FROM={#23(FALSE)}, TO={TestReturnPoint}

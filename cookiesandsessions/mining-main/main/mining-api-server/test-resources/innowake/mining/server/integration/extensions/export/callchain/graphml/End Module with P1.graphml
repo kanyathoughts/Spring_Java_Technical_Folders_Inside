@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.1/graphml.xsd">
+    <key attr.name="labelV" attr.type="string" for="node" id="labelV"/>
+    <key attr.name="technology" attr.type="string" for="node" id="technology"/>
+    <key attr.name="type" attr.type="string" for="node" id="type"/>
+    <key attr.name="labelE" attr.type="string" for="edge" id="labelE"/>
+    <key attr.name="FILE_ACCESS_TYPE" attr.type="string" for="edge" id="FILE_ACCESS_TYPE"/>
+    <key attr.name="DB_ACCESS_TYPE" attr.type="string" for="edge" id="DB_ACCESS_TYPE"/>
+    <graph edgedefault="directed" id="G">
+        <node id="ID_End">
+            <data key="labelV">End</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_P1">
+            <data key="labelV">P1</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_Start">
+            <data key="labelV">Start</data>
+            <data key="technology">JCL</data>
+            <data key="type">JOB</data>
+        </node>
+        <edge id="ID_P1_CALLS_ID_End" source="ID_P1" target="ID_End">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_Start_CALLS_ID_P1" source="ID_Start" target="ID_P1">
+            <data key="labelE">CALLS</data>
+        </edge>
+    </graph>
+</graphml>

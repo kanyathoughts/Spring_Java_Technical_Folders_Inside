@@ -1,0 +1,3 @@
+DROP INDEX functional_block_generated_from_functional_block;
+
+CREATE INDEX functional_block_reachability_data_functional_block ON functional_block_reachability_data (functional_block);

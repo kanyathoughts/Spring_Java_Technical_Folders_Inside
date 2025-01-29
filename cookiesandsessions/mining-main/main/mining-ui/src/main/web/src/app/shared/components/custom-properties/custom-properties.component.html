@@ -1,0 +1,36 @@
+<nz-content class="mining__content-margin">
+  <nz-card [nzTitle]="titleTemplate">
+    <mn-table [config]="tableConfig" [totalRecords]="totalRecords" [loading]="tableConfig.loading"
+      [value]="propertiesMetaModel" (optionSelected)="openCustomPropertyEditor($event)"></mn-table>
+  </nz-card>
+</nz-content>
+<ng-template #titleTemplate>
+  <nz-row [nzGutter]="[16, 8]" nzAlign="middle">
+    <nz-col nzFlex="auto">
+      {{ 'customProperties' | translate }}
+      <i aria-hidden="true" class="ant-helper-info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+        [nzTooltipTitle]="tooltipText"></i>
+    </nz-col>
+    <nz-col *ngIf="isClientAdmin">
+      <nz-row [nzGutter]="[16, 8]" class="container">
+        <nz-col>
+          <button nz-button nzType="primary" (click)="openCustomPropertyEditor()">
+            <i nz-icon nzType="plus" aria-hidden="true"></i>{{ 'btnLabel.add' | translate }}</button>
+        </nz-col>
+      </nz-row>
+    </nz-col>
+  </nz-row>
+</ng-template>
+<ng-template #tooltipText>
+  {{ 'customPropertyTooltipText1' | translate }}
+  <a target="_blank" [routerLink]="routerToLink">
+  {{toolTipEditor}}</a>, {{ 'customPropertyTooltipText2' | translate: { toolTipEditor } }}
+</ng-template>
+<app-custom-property-editor *ngIf="newRecord" [selectedCustomProperty]="selectedCustomProperty"
+  (sendtoTable)="updateTable($event)" (hideShowTab)="setDrawerVisibilty($event)" [customCategoryList]="customCategoryList"
+  [propertiesMetaModel]="propertiesMetaModel" [projectId]="projectId" [customPropertyClass]="customPropertyClass">
+</app-custom-property-editor>
+<ng-template #tooltipDisabledBtn>
+  {{ 'customPropertyTable.disabledButtonToolTip' | translate }}
+  <a href="mailto:innowakesupport@deloitte.com">{{ 'sharedDataDictionaryEditor.supportMail' | translate }}</a>.
+</ng-template>

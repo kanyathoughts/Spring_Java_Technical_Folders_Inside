@@ -1,0 +1,85 @@
+**********************************************************************  00001000
+*  RELATIONSHIP PRICING 5.0 VSAM LDB DEFINITIONS (SCALABLE)             00002000
+**                                                                      00003000
+**          SCALABLE - RPPR3A2 TABLE                                    00004000
+**                                                                      00005000
+*  TYPE=LDB - DEFINE THE DEFAULT PHYSICAL DATABASE OR FILE FOR THIS     00006000
+*             LOGICAL DATABASE.                                         00007000
+*                                                                       00008000
+*  NOTE: TYPE=ORG ENTRIES FOR THIS LOGICAL DATABASE MUST IMMEDIATELY    00009000
+*        FOLLOW THIS ENTRY.                                             00010000
+*                                                                       00011000
+*  PARAMETERS: LABEL    ---> LOGICAL DATABASE NAME (MAX 8 CHARS)        00012000
+*              DBID=    ---> DATACOM DATABASE ID                        00013000
+*              PLANOVR= ---> DB2 APPLICATION PLAN OVERRIDE              00014000
+*              DDNAME=  ---> VSAM DDNAME                                00015000
+**********************************************************************  00016000
+*                                                                       00017000
+*                                                                       00018000
+*                                                                       00019000
+**********************************************************************  00020000
+*  TYPE=ORG - DEFINE THE SPECIFIC PHYSICAL DATABASE OR FILE FOR THIS    00021000
+*             LOGICAL DATABASE AND ORG.                                 00022000
+*                                                                       00023000
+*  NOTE: UP TO 99 TYPE=ORG ENTRIES ARE ALLOWED FOR EACH TYPE=LDB        00024000
+*        ENTRY.                                                         00025000
+*                                                                       00026000
+*  PARAMETERS: LABEL    ---> ORGANIZATION ID (MAX 6 CHARS)              00027000
+*              DBID=    ---> DATACOM DATABASE ID                        00028000
+*              PLANOVR= ---> DB2 APPLICATION PLAN OVERRIDE              00029000
+*              DDNAME=  ---> VSAM DDNAME                                00030000
+**********************************************************************  00031000
+RPFACT   BIMD2TAB TYPE=LDB,DDNAME=RPFACT                                00032000
+RPFBNK   BIMD2TAB TYPE=LDB,DDNAME=RPFBNK                                00033000
+RPFCRW   BIMD2TAB TYPE=LDB,DDNAME=RPFCRW                                00034000
+RPFENR   BIMD2TAB TYPE=LDB,DDNAME=RPFENR                                00035000
+RPFEVT   BIMD2TAB TYPE=LDB,DDNAME=RPFEVT                                00036000
+RPFIDX   BIMD2TAB TYPE=LDB,DDNAME=RPFIDX                                00037000
+RPFINT   BIMD2TAB TYPE=LDB,DDNAME=RPFINT                                00038000
+         BIMD2TAB TYPE=ORG,ORGID=A,DDNAME=RPFINTA                       00039000
+         BIMD2TAB TYPE=ORG,ORGID=C,DDNAME=RPFINTC                       00040000
+         BIMD2TAB TYPE=ORG,ORGID=1,SEGID=1                              00041000
+         BIMD2TAB TYPE=SEG,SEGID=1,RECID=SAD0,                         X00042000
+               FRKEY01='',                                             X00043000
+               TOKEY01='0001',                                         X00044000
+               ORGID01=A,                                              X00045000
+               FRKEY02='0002',                                         X00046000
+               TOKEY02='',                                             X00047000
+               ORGID02=C                                                00048000
+RPFLOG   BIMD2TAB TYPE=LDB,DDNAME=RPFLOG                                00049000
+RPFMST   BIMD2TAB TYPE=LDB,DDNAME=RPFMST                                00050000
+         BIMD2TAB TYPE=ORG,ORGID=A,DDNAME=RPFMSTA                       00051000
+         BIMD2TAB TYPE=ORG,ORGID=C,DDNAME=RPFMSTC                       00052000
+         BIMD2TAB TYPE=ORG,ORGID=1,SEGID=1                              00053000
+         BIMD2TAB TYPE=SEG,SEGID=1,RECID=SAF0,                         X00054000
+               FRKEY01='',                                             X00055000
+               TOKEY01='0001',                                         X00056000
+               ORGID01=A,                                              X00057000
+               FRKEY02='0002',                                         X00058000
+               TOKEY02='',                                             X00059000
+               ORGID02=C                                                00060000
+RPFQUA   BIMD2TAB TYPE=LDB,DDNAME=RPFQUA                                00061000
+RPFREL   BIMD2TAB TYPE=LDB,DDNAME=RPFREL                                00062000
+         BIMD2TAB TYPE=ORG,ORGID=A,DDNAME=RPFRELA                       00063000
+         BIMD2TAB TYPE=ORG,ORGID=C,DDNAME=RPFRELC                       00064000
+         BIMD2TAB TYPE=ORG,ORGID=1,SEGID=1                              00065000
+         BIMD2TAB TYPE=SEG,SEGID=1,RECID=SAH0,                         X00066000
+               FRKEY01='',                                             X00067000
+               TOKEY01='0001',                                         X00068000
+               ORGID01=A,                                              X00069000
+               FRKEY02='0002',                                         X00070000
+               TOKEY02='',                                             X00071000
+               ORGID02=C                                                00072000
+RPFSEC   BIMD2TAB TYPE=LDB,DDNAME=RPFSEC                                00073000
+RPFSYC   BIMD2TAB TYPE=LDB,DDNAME=RPFSYC                                00074000
+RPFTRM   BIMD2TAB TYPE=LDB,DDNAME=RPFTRM                                00075000
+         BIMD2TAB TYPE=ORG,ORGID=A,DDNAME=RPFTRMA                       00076000
+         BIMD2TAB TYPE=ORG,ORGID=C,DDNAME=RPFTRMC                       00077000
+         BIMD2TAB TYPE=ORG,ORGID=1,SEGID=1                              00078000
+         BIMD2TAB TYPE=SEG,SEGID=1,RECID=SAL0,                         X00079000
+               FRKEY01='',                                             X00080000
+               TOKEY01='0001',                                         X00081000
+               ORGID01=A,                                              X00082000
+               FRKEY02='0002',                                         X00083000
+               TOKEY02='',                                             X00084000
+               ORGID02=C                                                00085000

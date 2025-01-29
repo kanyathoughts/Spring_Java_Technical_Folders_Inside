@@ -1,0 +1,54 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . RPSSINQ                                           *
+*   Description  . . Secondary Services Inquiry                        *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ RPSSINQ   ________        Secondary Services Inquiry          ____  __________
+                                                                      _____ _ _
+
+ Product Code  : ______   Account Number : __________________
+
+ Service Description                     Service Description
+
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+ ______  ______________________________  ______  ______________________________
+
+
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M
+FIELD=SYSDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=MORE,     PIC='X(05)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M, CASE=M
+FIELD=MINUS,    PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PLUS,     PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PRODCD,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HMST004S
+FIELD=ACCOUNT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST005S
+LABEL=(LABEL,IMPORTANT)
+LABEL=(LABEL,IMPORTANT)
+OCCURS 10 MULTI
+FIELD=SERVICEA, PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HM08005S
+FIELD=DESCA,    PIC='X(30)', ATTR=(DISPLAY,NORMAL), HELP=HM08050S
+FIELD=SERVICEB, PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HM08005S
+FIELD=DESCB,    PIC='X(30)', ATTR=(DISPLAY,NORMAL), HELP=HM08050S
+END
+FIELD=MSGLINE,  PIC='X(78)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

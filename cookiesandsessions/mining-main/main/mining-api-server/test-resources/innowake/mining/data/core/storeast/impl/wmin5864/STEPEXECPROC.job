@@ -1,0 +1,11 @@
+//MYJOB    JOB 1
+//*---------------------------------*
+//MYPROC   PROC
+//MYSORT   EXEC PGM=SORT
+//SORTIN   DD DISP=SHR,DSN=&SORTDSN
+//SORTOUT  DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//         PEND
+//*---------------------------------*
+//STEP1    EXEC MYPROC,SORTDSN=ZPROF.AREA.CODES
+//SYSIN     DD *

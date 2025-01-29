@@ -1,0 +1,17 @@
+
+  FOR iterate_employees AS emp_cursor CURSOR FOR (SELECT ID, NAME, DEPARTMENT, JOB, YEARS, SALARY
+                                                  FROM OLD TABLE (DELETE FROM company_a )) 
+  DO
+
+    CASE
+    WHEN (YEARS > 14) 
+      THEN SET benefits = 'Advanced Health Coverage and Pension Plan';
+    WHEN (YEARS > 9)
+      THEN SET benefits = 'Advanced Health Coverage';
+    WHEN (YEARS > 4)
+      THEN SET benefits = 'Basic Health Coverage';
+    ELSE 
+      SET benefits = 'No Benefits';
+    END CASE;
+
+  END FOR;

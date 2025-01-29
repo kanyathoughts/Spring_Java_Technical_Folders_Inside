@@ -1,0 +1,16 @@
+         PRINT NOGEN                                                            
+         DBD   NAME=DBD4030C,                                          X        
+               ACCESS=(PHDAM,OSAM),                                    X        
+               RMNAME=(DFSHDC40,1,1)                                            
+         SEGM    NAME=ABC,PARENT=0,POINTER=T,BYTES=30
+         FIELD   NAME=(AFIELDA,SEQ,U),BYTES=10,START=1,TYPE=C
+         FIELD   NAME=AFIELDB,BYTES=10,START=11,TYPE=C
+         FIELD   NAME=AFIELDC,BYTES=10,START=21,TYPE=C
+         LCHILD  NAME=(SGONE,INDB1I),POINTER=INDX
+         SEGM    NAME=DEF,PARENT=ABC,BYTES=30
+         FIELD   NAME=(BFIELDA,SEQ,U),BYTES=10,START=1,TYPE=C
+         FIELD   NAME=BFIELDB,BYTES=10,START=11,TYPE=C
+         FIELD   NAME=BFIELDC,BYTES=10,START=21,TYPE=C
+         DBDGEN                                                                 
+         FINISH                                                                 
+         END                                                                    

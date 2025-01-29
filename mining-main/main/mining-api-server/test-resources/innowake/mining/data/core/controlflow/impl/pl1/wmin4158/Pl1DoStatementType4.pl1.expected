@@ -1,0 +1,21 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 DeclareStatement, FROM={#6}, TO={#39}
+  #39 DeclareStatement, FROM={#15}, TO={#63}
+  #63 DoGroup, Label: DO LOOP; I = I + 1; PUT SKIP LIST('INSIDE DO LOOP'); IF ( I < 3) THEN GO TO LABEL1; END;, FROM={#121, #39}, TO={#124(LOOP END), #68(LOOP BODY)}
+   #64 DoStatement
+   #68 AssignmentStatement, FROM={#63(LOOP BODY)}, TO={#84}
+   #84 PutStatement, FROM={#68}, TO={#99}
+   #99 IfStatement, Label: IF ( I < 3) THEN GO TO LABEL1;, FROM={#84}, TO={#115(TRUE), #121(FALSE)}
+     #115 GoToStatement, FROM={#99(TRUE)}, TO={#124(JUMP)}
+   #121 EndStatement, FROM={#99(FALSE)}, TO={#63}
+  #124 DoGroup, Label: LABEL1 : DO FOREVER; J = J + 1; PUT SKIP LIST('INSIDE FOREVER LOOP'); IF( J < 3) THEN LEAVE; ELSE ITERATE TYPE4; END;, FROM={#115(JUMP), #186, #63(LOOP END)}, TO={#132(LOOP BODY), #189(LOOP END)}
+   #128 DoStatement
+   #132 AssignmentStatement, FROM={#124(LOOP BODY)}, TO={#148}
+   #148 PutStatement, FROM={#132}, TO={#163}
+   #163 IfStatement, Label: IF( J < 3) THEN LEAVE; ELSE ITERATE TYPE4;, FROM={#148}, TO={#179(TRUE), #184(FALSE)}
+     #179 LeaveStatement, FROM={#163(TRUE)}, TO={#189}
+     #184 Pl1UnknownBlock, FROM={#163(FALSE)}, TO={#186}
+      #185 Pl1Unknown
+   #186 EndStatement, FROM={#184}, TO={#124}
+  #189 EndStatement, FROM={#124(LOOP END), #179}, TO={TestHaltPoint}

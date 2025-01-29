@@ -1,0 +1,17 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN2777_SECTION_EMPTY5.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+         IF FOO EQ 'BAR' THEN
+           DISPLAY 'TRUE'
+          IF FOO EQ 'BAR' AND BAR EQ 'FOO'THEN
+           DISPLAY 'FALSE'
+          END-IF.
+         END-IF.
+         SEC1 SECTION
+         SEC2 SECTION
+           DISPLAY 'SEC2'
+           GOBACK.
+         SEC3 SECTION

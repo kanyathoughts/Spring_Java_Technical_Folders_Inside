@@ -1,0 +1,1056 @@
+Form CEPL506AA
+   /* Start.Documentation
+
+   SYSTEM:   CEP (Claims/Encounter Processing)
+   PROGRAM:  CEPL506AA
+   TITLE:    Authorization Print form
+   ALIAS:    CEPL506AA
+   DATE:     January 1991
+
+   MOD:	    {DD-Mmm-YY}
+ 	    {Name}
+ 	    {Modification_Description}
+
+   OVERVIEW:
+
+    This form is called by CEPS506AA_Auth_Print and is displayed 
+    from authorization maintenance or requested directly from the menu. */
+    /* Table fields and other  */
+
+    Form Data 
+        HEADER_1 Character(30)
+        HEADER_2 Character(30)
+        PAR_HEADER_1 Character(31)
+        PAR_HEADER_2 Character(31)
+        HEADER_NODE_ID Character(3)
+        HEADER_ENV_ID Character(3)
+        AUTH_ID Character(7)
+        AUTH_BEN_ADM Character(6)
+        BATCH_PRINT_SW Character(1)
+        SEND_BA_SW Character(1)
+        PRINT_YN Character(1)
+        PRINT_QUEUE_ID Character(3)
+        PRINT_QUEUE Character(15)
+        PROG_MODE Character(1)
+        SCREEN_MODE Character(8)
+        RETURN_COND Character(3)
+        PROCESS_COND Character(3)
+        ENTER_FLD Character(2)
+        RET_VALUE Unsigned Longword
+        TRUE Longword Integer
+            Value -1
+        FALSE Longword Integer
+            Value 0
+	RET_AUTH_ID Character(7)
+        VALID_AUTH_ID Unsigned Longword
+        LIC_NAME Character(40)
+        TODAY Date Current
+        PGM_NAME Character(20)
+        SYS_NAME Character(40)
+	SAVE_AUTH_ID_MSG    Character(51)
+        PRINT_QUEUE_DESC Character(35)
+	ERR_MSG		    Character(80)
+        AUTH_BEN_ADM_DESC Character(25)
+        ABORT_FLD Character(5)
+        SESSION Character(16) Builtin
+        MSG_ID Longword Integer
+        MESSAGE_LINE Character(80)
+        SCR_COLS Word Integer
+            Value 80
+        CEP_AUTNOTFOU Longword Integer
+        GEN_INVOPT Longword Integer
+        GEN_INVFLDNUM Longword Integer
+        GEN_REPLYYN Longword Integer
+        /* GEN_INVPRTQUE Longword Integer */
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_DIR Character(1)
+        TABLE_CODE Character(6)
+        TABLE_CODE_OUT Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+        VALID_OPTION Unsigned Longword
+      /*  Copy
+            "CDD$DEFAULT:SDD_Licensee_REC" from Dictionary
+        End Copy
+
+        Copy
+            "CDD$DEFAULT:SDD_UBA_Master_REC" from Dictionary
+        End Copy  */
+
+    End Data
+
+    Form Record HEADER_REC
+        HEADER_NODE_ID Character(3)
+        HEADER_ENV_ID Character(3)
+    End Record
+
+    Form Record AUTPRINT_REC
+        RETURN_COND	    Character(3)
+        PROCESS_COND	    Character(3)
+        AUTH_ID		    Character(7)
+        AUTH_BEN_ADM	    Character(6)
+        SEND_BA_SW	    Character(1)
+        PRINT_YN	    Character(1)
+        BATCH_PRINT_SW	    Character(1)
+        PRINT_QUEUE	    Character(15)
+	Err_Msg		    Character(80)
+    End Record
+
+    Form Record MESSAGE_IDS
+        GEN_INVFLDNUM Longword Integer
+        GEN_INVOPT Longword Integer
+        GEN_REPLYYN Longword Integer
+        /* GEN_INVPRTQUE Longword Integer */
+        CEP_AUTNOTFOU Longword Integer
+    End Record
+
+    Form Record AUTMAIN_REC
+        AUTH_ID Character(7)
+        AUTH_ITEM Word Integer
+        AUTH_REC_TYPE Character(1)
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        AUTH_TYPE Character(1)
+        AUTH_STATUS_CODE Character(1)
+        AUTH_STATUS_EFF_DATE Longword Integer
+        AUTH_STATUS_EFF_TIME Longword Integer
+        AUTH_PMG_ID Character(4)
+        AUTH_SERV_PROV_NAME Character(44)
+        AUTH_WKCOMP Character(1)
+	AUTH_INJ_DATE LONGWORD INTEGER
+        AUTH_COB Character(1)
+        AUTH_MEDICARE Character(1)
+        AUTH_SEVERITY_CODE Character(1)
+        AUTH_PRI_DIAG Character(5)
+        AUTH_DIS_REASON_CODE Character(1)
+        AUTH_ADM_TYPE_CODE Character(1)
+        AUTH_EST_ADM_DATE Longword Integer
+        AUTH_EST_ADM_TIME Longword Integer
+        AUTH_EST_DIS_DATE Longword Integer
+        AUTH_EST_DIS_TIME Longword Integer
+        AUTH_INPATIENT Character(1)
+        AUTH_OUT_EMER Character(1)
+        AUTH_OUT_SURG Character(1)
+        AUTH_PATH_PROF Character(1)
+        AUTH_RAD_PROF Character(1)
+        AUTH_AMBULANCE Character(1)
+        AUTH_HOME_HEALTH Character(1)
+        AUTH_HOSPICE Character(1)
+        AUTH_OTHER Character(1)
+        AUTH_CREATION_ICIDATE Longword Integer
+        AUTH_CREATION_ICITIME Longword Integer
+        AUTH_CREATION_USERNAME Character(3)
+        AUTH_FILLER_19 Character(19)
+        AUTH_LAST_UPD_ICIDATE Longword Integer
+        AUTH_LAST_UPD_ICITIME Longword Integer
+        AUTH_LAST_UPD_USERNAME Character(3)
+        AUTH_FILLER_1 Character(1)
+    End Record
+
+ /*   Form Record SDD_LICENSEE_REC
+        Copy
+            "CDD$DEFAULT:SDD_Licensee_REC" from Dictionary
+        End Copy
+
+    End Record
+
+    Form Record UBA_MAST_REC
+        Copy
+            "CDD$DEFAULT:SDD_UBA_Master_REC" from Dictionary
+        End Copy
+
+    End Record   */
+
+    Form Record MESSAGE_REC
+        MESSAGE_LINE Character(80)
+    End Record
+
+    Form Record GENF113AA_REC
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_CODE Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+    End Record
+
+    Form Record GENF114AA_REC
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_CODE Character(6)
+        TABLE_DIR Character(1)
+        TABLE_CODE_OUT Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+    End Record
+
+
+    Layout VT_LAYOUT
+        Device
+            Terminal
+                Type %VT100
+        End Device
+        Size 24 Lines by 80 Columns
+
+        Viewport HEADER_VIEWPORT
+            Lines 1 Through 1
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport AUTPRINT_VP
+            Lines 2 Through 22
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport PROMPT_VIEWPORT
+            Lines 23 Through 24
+            Columns 1 Through 80
+        End Viewport
+
+        Function ENTER_KEY
+            Is %CARRIAGE_RETURN
+               %KP_ENTER
+        End Function
+
+        Function BACK_FLD
+            Is %F12
+               %CONTROL_H
+        End Function
+
+        Function PF1_QUIT
+            Is %PF1
+        End Function
+
+        Function PF2_QUIT
+            Is %PF2
+        End Function
+
+        Function PF3_KEY
+            Is %PF3
+        End Function
+
+        Function PF4_QUIT
+            Is %PF4
+        End Function
+
+        Function INSERT_KEY
+            Is %INSERT_HERE
+        End Function
+
+        Function REMOVE_KEY
+            Is %REMOVE
+        End Function
+
+        Function DO_KEY
+            Is %DO
+        End Function
+
+        Function SELECT_KEY
+            Is %SELECT
+        End Function
+
+        Function FIND_KEY
+            Is %FIND
+        End Function
+
+        Function NEXT_PAGE
+            Is %NEXT_SCREEN
+        End Function
+
+        Function PREV_PAGE
+            Is %PREV_SCREEN
+        End Function
+
+        Function UP_ITEM
+            Is %UP
+        End Function
+
+        Function DOWN_ITEM
+            Is %DOWN
+        End Function
+
+        Function LEFT_ITEM
+            Is %LEFT
+        End Function
+
+        Function RIGHT_ITEM
+            Is %RIGHT
+        End Function
+
+        Internal Response SHOW_MESSAGE
+            Call "GENF032AA_DISPLAY_MESSAGE" Using
+                    By Descriptor SESSION
+                    By Descriptor "MESSAGE_REC"
+                    By Value MSG_ID
+                    By Reference SCR_COLS
+                    Giving RET_VALUE
+        End Response
+
+        Internal Response INVALID_FUNCTION
+            Message
+                "Invalid Function"
+            Invalid
+        End Response
+
+        Internal Response ABORT_REQUEST
+            Display
+                ABORT_PANEL
+            Activate
+                Panel ABORT_PANEL
+            Position Immediate To Field ABORT_FLD On ABORT_PANEL
+        End Response
+
+        Internal Response INIT_HDR
+            Call "HN_FRM_HDR_INFO" Using
+                    By Reference HEADER_NODE_ID
+                    By Reference HEADER_ENV_ID
+            Call "ICTRNLNM_XLATE_01" Using
+                    By Descriptor "ICSCR_HDR1"
+                    By Descriptor PAR_HEADER_1
+		    Giving RET_VALUE
+	    	IF PAR_HEADER_1 = "" THEN
+		   LET PAR_HEADER_1 = " Claims Administration System "
+		END IF
+		LET HEADER_1 = PAR_HEADER_1
+			
+            Call "ICTRNLNM_XLATE_01" Using
+                    By Descriptor "ICSCR_HDR2"
+                    By Descriptor PAR_HEADER_2
+		    Giving RET_VALUE
+		LET HEADER_2 = PAR_HEADER_2
+
+         /*   Call "SDDF001AA_GET_LICENSEE" Using
+                    By Reference SDD_LICENSEE_REC
+                    Giving RET_VALUE
+            Let LIC_NAME = LICENSEE_DATA.LICENSEE_NAME */
+
+        End Response
+
+        Internal Response TABLE_INIT
+            Let TABLE_DIR = "N"
+            Let TABLE_CODE = ""
+            Call "GENF114AA_DISPLAY_TABLE" Using
+                    By Reference GENF114AA_REC
+        End Response
+
+        Internal Response SCROLL_TABLE
+            Let TABLE_CODE = TABLE_CODE_OUT
+            Call "GENF114AA_DISPLAY_TABLE" Using
+                    By Reference GENF114AA_REC
+        End Response
+
+        Internal Response VALIDATE_TABLE
+            Call "GENF113AA_VALIDATE_TABLE_CODE" Using
+                    By Reference GENF113AA_REC
+                    Giving VALID_OPTION
+        End Response
+
+	Internal Response GET_NEXT_AUTH_ID
+	    Call "CEPF510AA_GET_AUTH_ID" Using
+		By Reference AUTH_ID
+		By Reference ERR_MSG
+                Giving RET_VALUE
+
+            If (RET_VALUE = FALSE) Then
+		Let RETURN_COND = "ERR"
+                Let PROCESS_COND = "   "
+                Return Immediate
+            End If
+	End Response
+
+
+        Internal Response GET_BEN_ADM
+            If (AUTH_BEN_ADM <> " ")
+	    Then
+		If AUTH_BEN_ADM = "SELF  "
+		Then
+		    Let AUTH_BEN_ADM_DESC = LIC_NAME
+		Else	
+		   /* Call "SDDF002AA_VALID_UBA" Using
+                        By Reference AUTH_BEN_ADM
+                        By Reference UBA_MAST_REC
+                        Giving RET_VALUE            */
+		    If (RET_VALUE = FALSE) Then
+			Let AUTH_BEN_ADM_DESC = "** Invalid Benefit Admin"
+		    Else
+			/* Let AUTH_BEN_ADM_DESC = UBA_DATA.UBA_NAME */
+		    End If
+		End If
+            End If
+        End Response
+
+        Internal Response PROCESS_ENTER_FLD
+            If (ENTER_FLD = "1") Then
+		/* Activate
+		    Field SEND_BA_SW on AUTPRINT_PANEL
+                    Field ENTER_FLD on ENTER_PANEL
+                Position Immediate To Field SEND_BA_SW On 
+		    AUTPRINT_PANEL  */
+            Else
+                If (ENTER_FLD = "2") Then
+		    /* Allow update to PRINT_YN field only if this screen
+		       was called from authorization maintenance (which
+		       means SCREEN_MODE = UPDATE */
+		  /*  If SCREEN_MODE = "UPDATE"
+		    Then	
+			Activate
+			    Field PRINT_YN on AUTPRINT_PANEL
+			    Field BATCH_PRINT_SW on AUTPRINT_PANEL
+			    Field PRINT_QUEUE_ID on AUTPRINT_PANEL
+			    Field ENTER_FLD on ENTER_PANEL
+			Position Immediate To Field PRINT_YN On AUTPRINT_PANEL
+		    Else
+			Activate
+			    Field BATCH_PRINT_SW on AUTPRINT_PANEL
+			    Field PRINT_QUEUE_ID on AUTPRINT_PANEL
+			    Field ENTER_FLD on ENTER_PANEL
+			Position Immediate To Field BATCH_PRINT_SW On 
+			    AUTPRINT_PANEL
+		    End If			*/
+                End If
+            End If
+            Let ENTER_FLD = ""
+        End Response
+
+        Send Response MESSAGE_REC
+            Message
+                MESSAGE_LINE
+        End Response
+
+        Transceive Response AUTPRINT_REC AUTPRINT_REC
+	    If SCREEN_MODE = "INQUIRY"
+	    Then
+		Reset
+		    PRINT_QUEUE_DESC
+		    PRINT_QUEUE_ID
+		    AUTH_BEN_ADM_DESC
+		    AUTH_BEN_ADM
+		    SAVE_AUTH_ID_MSG
+		    AUTH_ID
+	    Else
+		Let SAVE_AUTH_ID_MSG = "Save this Auth. Id for future reference"
+	    End If
+            Display
+                HEADER_PANEL
+                AUTPRINT_PANEL
+                ENTER_PANEL
+	    Activate
+		Panel AUTPRINT_PANEL
+		Panel ENTER_PANEL
+            Let PGM_NAME = "CEPS506"
+            If (LIC_NAME = " ") Then
+                Include INIT_HDR
+            End If
+	    If SCREEN_MODE = "INQUIRY"
+	    Then
+		Let PRINT_YN = "Y"  /* Of course you want to print */
+	/*	Deactivate Field PRINT_YN on AUTPRINT_PANEL	    */
+		Position Immediate To Field AUTH_ID On AUTPRINT_PANEL
+	    Else
+		Deactivate
+		    Field Auth_ID on AUTPRINT_PANEL
+		If AUTH_ID = "       "
+		Then
+		    Include GET_NEXT_AUTH_ID
+		End If
+		/* Include GET_BEN_ADM  */
+		/* Position Immediate To Field SEND_BA_SW On AUTPRINT_PANEL */
+		Position Immediate To Field ENTER_FLD On ENTER_PANEL
+	    End If
+        End Response
+
+        Control Text Response "UPD"
+            Let PROG_MODE = "U"
+            Let SCREEN_MODE = "UPDATE"
+        End Response
+
+        Control Text Response "INQ"
+            Let PROG_MODE = "I"
+            Let SCREEN_MODE = "INQUIRY"
+        End Response
+
+        Function Response PF1_QUIT
+            Let RETURN_COND = "PF1"
+            Include ABORT_REQUEST
+        End Response
+
+        Function Response PF2_QUIT
+            Let RETURN_COND = "PF2"
+            Include ABORT_REQUEST
+        End Response
+
+        Function Response PF3_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response PF4_QUIT
+	    If SCREEN_MODE = "INQUIRY" /* Reenter if in Reprint screen*/
+	    Then
+		Deactivate
+		    Panel AUTPRINT_PANEL
+		Reset
+		    AUTH_ID
+		    AUTH_BEN_ADM
+		    AUTH_BEN_ADM_DESC
+		    SEND_BA_SW
+		    PRINT_YN
+		    BATCH_PRINT_SW
+		    PRINT_QUEUE_ID  
+		    PRINT_QUEUE_DESC
+		Activate
+		    Panel AUTPRINT_PANEL
+		Position Immediate To Field AUTH_ID On AUTPRINT_PANEL
+	    Else
+		Let RETURN_COND = "PF4"
+		Include ABORT_REQUEST
+	    End If
+        End Response
+
+        Function Response PREV_PAGE
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response NEXT_PAGE
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response SELECT_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response DO_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response REMOVE_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response INSERT_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response FIND_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response BACK_FLD
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response UP_ITEM
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response DOWN_ITEM
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response LEFT_ITEM
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response RIGHT_ITEM
+            Include INVALID_FUNCTION
+        End Response
+
+
+        Panel HEADER_PANEL
+            Viewport HEADER_VIEWPORT
+            /* header line */
+            Field HEADER_NODE_ID
+                Line 1
+                Column 1
+            End Field
+
+            Literal Text
+                Line 1
+                Column 5
+                Value "::"
+            End Literal
+
+            Field HEADER_ENV_ID
+                Line 1
+                Column 6
+            End Field
+
+            Field HEADER_1
+                Line 1
+                Column 26
+            End Field
+
+            Field TODAY
+                Line 1
+                Column 69
+            End Field
+
+/*            Field PGM_NAME
+                Line 1
+                Column 1
+                Protected
+            End Field
+
+            Field LIC_NAME
+                Line 1
+                Column 28
+            End Field     */
+
+        End Panel
+
+
+        Panel ENTER_PANEL
+            Viewport PROMPT_VIEWPORT
+            Literal Text
+                Line 1
+                /*  Column 64
+                Value "ENTER FIELD:"   */
+		Column 53
+		Value "Hit RETURN to Continue:"
+            End Literal
+
+            Field ENTER_FLD
+                Line 1
+                Column 77
+
+                Entry Response
+                    Deactivate
+			Panel AUTPRINT_PANEL
+                End Response
+
+                Function Response ENTER_KEY
+                    If (ENTER_FLD = "") Then
+                        Let RETURN_COND = "UDF"
+                        Let PROCESS_COND = "   "
+			/* Erase this screen if calling the screen from
+			   Authorization Maintenance (SCREEN_MODE = UPDATE) 
+			   since we'll be returning to the Auth Main screen. */
+			If SCREEN_MODE = "UPDATE"
+			Then
+			    Remove All
+			    Reset
+				AUTH_BEN_ADM_DESC
+				PRINT_QUEUE_DESC
+			End If
+                        Return Immediate
+                    Else
+                       /* Deactivate
+                            Panel ENTER_PANEL        */
+                        /* Include PROCESS_ENTER_FLD */
+			Include INVALID_FUNCTION
+                    End If
+                End Response
+
+		Function Response PF4_Quit
+		    If SCREEN_MODE = "INQUIRY" /* Reenter if in Reprint screen*/
+		    Then
+			Reset
+			    AUTH_ID
+			    AUTH_BEN_ADM
+			    AUTH_BEN_ADM_DESC
+			    SEND_BA_SW
+			    PRINT_YN
+			    BATCH_PRINT_SW
+			    PRINT_QUEUE_ID  
+			    PRINT_QUEUE_DESC
+			Activate
+			    Panel AUTPRINT_PANEL
+			Position Immediate To Field AUTH_ID On AUTPRINT_PANEL
+		    Else
+			Let RETURN_COND = "PF4"
+			Include ABORT_REQUEST
+		    End If
+		End Response
+            End Field
+
+        End Panel
+
+
+        Panel ABORT_PANEL
+            Viewport PROMPT_VIEWPORT
+            Literal Text
+                Line 1
+                Column 30
+                Value "Enter RETURN to continue, 'ABORT' to abort"
+            End Literal
+
+            Field ABORT_FLD
+                Line 1
+                Column 74
+                Entry Response
+                    Reset
+                        ABORT_FLD
+                End Response
+
+                Function Response PF1_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF2_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF4_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response ENTER_KEY
+                    If (ABORT_FLD = "ABORT") Then
+                        If ((RETURN_COND = "PF1") OR (RETURN_COND = "PF2")) Then
+                            Let PROCESS_COND = "   "
+                        Else
+                            If (RETURN_COND = "PF4") Then
+				Let PROCESS_COND = "MAN"
+                            End If
+                        End If
+                        Remove All
+                        Return Immediate
+                    End If
+                    If (ABORT_FLD <> "     ") Then
+                        Reset
+                            ABORT_FLD
+                        Position Immediate To Field ABORT_FLD On ABORT_PANEL
+                    Else
+                        Deactivate
+                            Panel ABORT_PANEL
+                        Display
+                            ENTER_PANEL
+                        Position Immediate To Field ENTER_FLD On ENTER_PANEL
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+        End Panel
+
+
+
+        Panel AUTPRINT_PANEL
+            Viewport AUTPRINT_VP
+            Display
+                %Keypad_Unchanged
+
+            Field HEADER_2
+                Line 1
+                Column 26
+            End Field
+
+            Literal Text
+                Line 2
+                Column 28
+                Value "A U T H O R I Z A T I O N"
+            End Literal
+
+         /*   Literal Text
+                Line 6
+                Column 34
+                Value "P R I N T "
+            End Literal   */
+
+
+            Literal Text
+                Line 7
+                Column 1
+		Value "Save this Auth. Id for future reference"
+		Display
+		    Font Size Double Wide
+            End Literal
+
+            Literal Polyline
+                Line 9	Column 1
+                Line 9	Column 80
+            End Literal
+
+            Literal Polyline
+                Line 12	Column 1
+                Line 12	Column 80
+            End Literal	
+
+      /*      Literal Text
+                Line 9
+                Column 1
+                Value "     Authorization ID:               Ben Adm:"
+            End Literal
+
+            Literal Text
+                Line 13
+                Column 14
+                Value "1.  Send to Ben Adm? :"
+            End Literal
+
+            Literal Text
+                Line 15
+                Column 14
+                Value "2.  Print?:"
+            End Literal
+
+            Literal Text
+                Line 17
+                Column 14
+                Value "    Batch Print? :"
+            End Literal
+
+            Literal Text
+                Line 19
+                Column 14
+                Value "    Printer:"
+            End Literal			*/
+
+            Field SCREEN_MODE
+                Line 1
+                Column 1
+                Display
+                    Bold
+                Protected
+            End Field
+
+            Field AUTH_ID
+              /*  Line 9
+                Column 25     */
+                Line 11
+                Column 33
+
+                Validation Response
+		    Message ""
+		    If AUTH_ID = "        "
+		    Then
+			Invalid
+		    Else
+			Call "CEPF515AA_Reset_Auth_ID" Using
+			    By Descriptor   AUTH_ID
+			    By Descriptor   RET_AUTH_ID
+			    Giving	    RET_VALUE
+			If RET_VALUE <> FALSE
+			Then
+			    Let AUTH_ID = RET_AUTH_ID
+			End If	
+
+			Call "CEPF501AA_VALID_AUTH" Using
+			    By Reference AUTMAIN_REC
+			    Giving VALID_AUTH_ID
+			If (VALID_AUTH_ID = FALSE) Then
+			    Let MSG_ID = CEP_AUTNOTFOU
+			    Include SHOW_MESSAGE
+			    Let AUTH_ID = "        "
+			    Invalid
+			Else
+			    Include GET_BEN_ADM
+			End If
+		    End If
+                End Response
+
+                Function Response PF1_QUIT
+		    Let RETURN_COND = "PF1"
+                    Remove All
+		    Return Immediate
+                End Response
+
+                Function Response PF2_QUIT
+		    Let RETURN_COND = "PF2"
+                    Remove All
+		    Return Immediate
+                End Response
+
+                Function Response PF4_QUIT
+		    Let RETURN_COND = "PF4"
+                    Remove All
+		    Return Immediate
+                End Response
+                Display
+                   /*  Reverse  */
+		   Font Size Double High
+		   Bold
+                Uppercase
+            End Field
+
+/*            Field AUTH_BEN_ADM
+                Line 9
+                Column 47
+		  Display  
+                      Reverse
+                Protected
+            End Field
+
+            Field AUTH_BEN_ADM_DESC
+                Line 9
+                Column 55
+		  Display  
+                      Reverse
+                Protected
+            End Field				
+
+            Field SAVE_AUTH_ID_MSG
+                Line 11
+                Column 14
+		Display
+                    Bold
+                Protected
+            End Field
+
+            Field SEND_BA_SW
+                Line 13
+                Column 37
+                Entry Response
+                    If (AUTH_BEN_ADM = " " OR AUTH_BEN_ADM = "SELF") Then
+                        Let SEND_BA_SW = "N"
+                        Deactivate
+                            Field SEND_BA_SW on AUTPRINT_PANEL
+		    Else
+			Let SEND_BA_SW = "Y"
+                    End If
+                End Response
+
+                Validation Response
+                    If ((SEND_BA_SW <> "Y") AND (SEND_BA_SW <> "N")) Then
+                        Let MSG_ID = GEN_REPLYYN
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+                End Response
+
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field PRINT_YN
+                Line 15
+                Column 37
+
+                Entry Response
+		    If PRINT_YN = " " Then
+			Let PRINT_YN = "Y"
+		    End If
+                End Response
+
+                Validation Response
+                    If ((PRINT_YN <> "Y") AND (PRINT_YN <> "N")) Then
+                        Let MSG_ID = GEN_REPLYYN
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+		End Response
+		    
+		Exit Response
+		    If PRINT_YN = "N"
+			Then
+			    Let PRINT_QUEUE = ""
+			    Reset
+				BATCH_PRINT_SW 
+				PRINT_QUEUE_ID 
+				PRINT_QUEUE_DESC 
+			    Deactivate
+				Field BATCH_PRINT_SW on AUTPRINT_PANEL
+				Field PRINT_QUEUE_ID on AUTPRINT_PANEL
+			    Position Immediate to Field ENTER_FLD on ENTER_PANEL
+			End If				
+                End Response
+
+                Uppercase
+		  Display  
+                      Reverse
+            End Field
+
+            Field BATCH_PRINT_SW
+                Line 17
+                Column 37
+                Entry Response
+		    If BATCH_PRINT_SW = " " Then
+			Let BATCH_PRINT_SW = "Y"
+		    End If
+                End Response
+
+                Validation Response
+                    If ((BATCH_PRINT_SW <> "Y") AND (BATCH_PRINT_SW <> "N")) 
+                        Then
+                        Let MSG_ID = GEN_REPLYYN
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+                End Response
+
+		Exit Response
+		    IF BATCH_PRINT_SW = "Y"
+		    Then
+			Reset
+			    PRINT_QUEUE_ID 
+			    PRINT_QUEUE_DESC 
+			Deactivate
+			    Field PRINT_QUEUE_ID on AUTPRINT_PANEL
+			Position Immediate to Field ENTER_FLD on ENTER_PANEL
+		    End If
+		End Response
+
+		  Display  
+                      Reverse
+                Uppercase
+            End Field
+
+            Field PRINT_QUEUE_ID
+                Line 19
+                Column 37
+                Entry Response
+                    If (PRINT_QUEUE_ID = "") Then
+                        Let TABLE_TYPE = "U"
+                        Let TABLE_ID = "GAD_PRIN_QUE"
+                        Include TABLE_INIT
+                        Let PRINT_QUEUE_ID = TABLE_CODE_OUT
+                        Let PRINT_QUEUE = TABLE_TERSE
+                        Let PRINT_QUEUE_DESC = TABLE_DESC
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let PRINT_QUEUE_ID = TABLE_CODE_OUT
+                    Let PRINT_QUEUE = TABLE_TERSE
+                    Let PRINT_QUEUE_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let PRINT_QUEUE_ID = TABLE_CODE_OUT
+                    Let PRINT_QUEUE = TABLE_TERSE
+                    Let PRINT_QUEUE_DESC = TABLE_DESC
+                End Response
+
+                Function Response ENTER_KEY
+                    Let TABLE_CODE = PRINT_QUEUE_ID
+                    Include VALIDATE_TABLE
+                    If (VALID_OPTION = 0) Then
+                        Let PRINT_QUEUE_DESC = " "
+                        Let MSG_ID = GEN_INVPRTQUE
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let PRINT_QUEUE = TABLE_TERSE
+                        Let PRINT_QUEUE_DESC = TABLE_DESC
+                        Deactivate
+                            Field PRINT_QUEUE_ID on AUTPRINT_PANEL
+                    End If
+                End Response
+
+		  Display  
+                      Reverse
+                Uppercase
+            End Field
+
+            Field PRINT_QUEUE_DESC
+                Line 19
+                Column 41
+		  Display  
+                      Reverse
+                Protected
+            End Field					*/
+
+        End Panel
+
+    End Layout
+End Form

@@ -1,0 +1,8 @@
+ #2 DefineDataStmt
+ #9 FormatStmt
+ #12 WRITE (1) NOTITLE NOHDR 'Start', FROM={TestEntryPoint}, TO={#16}
+ #16 ResetStmt, FROM={#12}, TO={#18}
+ #18 HistogramStmt, Label: HISTOGRAM HIST-VIEW D-KNR-TNR-FAP-SUCHBEGRIFF-GDAT, FROM={#16, #22}, TO={#22(LOOP BODY), #29(LOOP END)}
+  #22 WRITE (1) '=' HIST-VIEW, FROM={#18(LOOP BODY)}, TO={#18}
+ #29 WRITE (1) NOTITLE NOHDR 'End', FROM={#18(LOOP END)}, TO={#33}
+ #33 EndStmt, FROM={#29}, TO={TestReturnPoint}

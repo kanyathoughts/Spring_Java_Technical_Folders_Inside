@@ -1,0 +1,80 @@
+* -------------------------------------------------------------------------------------
+* Test for WMEE-4640
+* When reading INPUT from stack in a numerical field, leading '0' have to be stripped.
+* -------------------------------------------------------------------------------------
+
+DEFINE DATA
+LOCAL USING Z1069--A
+LOCAL USING Z1069--L
+LOCAL
+1 #P4 (P4)
+1 #DATA (A10)
+END-DEFINE
+
+INCLUDE Z1069--C
+FORMAT (1) PS=0
+
+WRITE (1) NOTITLE NOHDR 'Start'
+
+#DATA := '00000'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '00001'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '01223'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '+0000'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '+0001'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '+1234'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '-0000'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '-0001'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+#DATA := '-1234'
+WRITE (1) 'Value put on stack:' '=' #DATA
+STACK TOP DATA #DATA
+INPUT #P4
+WRITE (1) *PROGRAM 'after input of P4' '=' #P4
+
+WRITE (1) NOTITLE NOHDR 'End'
+
+ON ERROR
+  WRITE (1) 'Error' *ERROR-NR
+  ESCAPE MODULE
+END-ERROR
+
+END

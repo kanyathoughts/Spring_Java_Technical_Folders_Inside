@@ -1,0 +1,65 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3557,"","EMPLOYEE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3558,"","TABLE_A","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3555,"","TABLE_B","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3554,"","TABLE_C","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3556,"","VDTRACT1","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3553,"","WMIN12259","src/cobol/WMIN12259/programs/WMIN12259.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,52,0,53,0,4,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3553,"WMIN12259","SELECT",99,1,1,7,4.98,1.50,"DECLARE EMPCURS CURSOR FOR
+SELECT LNAME, FNAME, PAYRATE, HOURS
+FROM EMPLOYEE
+WHERE DEPT = :DEPT-NUM"
+3553,"WMIN12259","INSERT",633,3,2,37,15.79,3.10,"INSERT INTO TABLE_A
+(SELECT :T2-TXN-ACTVTY-ID
+, :T2-EVENT-TYPE
+, A.TXN_FND_ID
+, A.TXN_SRC_ID
+, :T2-AMOUNT-TYPE
+, A.TXN_PC
+, :T2-XCHNG-TYPE :T2-XCHNG-TYPE-NI
+FROM VDTRACT1 A
+WHERE A.TXN_CONF_ID = :VDTRACT1-TXN-CONF-ID
+AND A.PLN_ID = :VDTRACT1-PLN-ID
+AND A.PART_ID = :VDTRACT1-PART-ID
+AND A.TXN_SEQ_NO = :VDTRACT1-TXN-SEQ-NO
+AND A.TXN_LN_USAGE_CD = 'D'
+AND A.TXN_ID = 815
+AND A.TXN_SRC_ID IN
+(SELECT DISTINCT(TXN_SRC_ID)
+FROM VDTRACT1 B
+WHERE B.TXN_CONF_ID =
+:VDTRACT1-TXN-CONF-ID
+AND B.PLN_ID =
+:VDTRACT1-PLN-ID
+AND B.PART_ID =
+:VDTRACT1-PART-ID
+AND B.TXN_SEQ_NO =
+:VDTRACT1-TXN-SEQ-NO
+AND B.TXN_LN_USAGE_CD = 'D'
+AND B.TXN_ID = 381))"
+3553,"WMIN12259","SELECT",45,1,1,5,3.88,1.50,"SELECT COUNT(*)
+INTO :ROW_COUNT
+FROM TABLE_A;"
+3553,"WMIN12259","SELECT",90,2,2,9,9.97,3.00,"SELECT MAX(COL1)
+INTO :MAX-COL1
+FROM TABLE_B
+WHERE COL2 = (SELECT MIN(COL2) FROM TABLE_C);"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3553,"WMIN12259",3557,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1354,176,-1,-1
+3553,"WMIN12259",3558,"TABLE_A","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""STORE""]}",155,1187,-1,-1
+3553,"WMIN12259",3558,"TABLE_A","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1734,119,-1,-1
+3553,"WMIN12259",3555,"TABLE_B","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1542,179,-1,-1
+3553,"WMIN12259",3554,"TABLE_C","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",1542,179,-1,-1
+3553,"WMIN12259",3556,"VDTRACT1","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",155,1187,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

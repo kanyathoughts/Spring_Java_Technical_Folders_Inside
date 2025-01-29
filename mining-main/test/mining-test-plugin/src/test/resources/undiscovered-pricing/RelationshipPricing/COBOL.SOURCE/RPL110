@@ -1,0 +1,1008 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPL110.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*    RPL110 - ACCOUNT INCENTIVE PROFILE                          *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 DATA DIVISION.                                                   00008000
+000090******************************************************************00009000
+000100 WORKING-STORAGE SECTION.                                         00010000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00011000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00011001
+000120 01  RPS-RLSELIT.                                                 00012000
+000000 COPY RPWRLSE.                                                    00013000
+000140 01  MIC-RLSELIT.                                                 00014000
+000000 COPY MIWRLSE.                                                    00015000
+000160 01  RPW014-AREAS.                                                00016000
+000000 COPY RPW014.                                                     00017000
+000180 01  RPW130-AREAS.                                                00018000
+000000 COPY RPW130.                                                     00019000
+000200*01  BICRSRB.                                                     00020000
+000000 COPY BICRSRB.                                                    00021000
+000220*01  BICRPSB.                                                     00022000
+000000 COPY BICRPSB.                                                    00023000
+000240*01  BICRVERB.                                                    00024000
+000000 COPY BICRVERB.                                                   00025000
+000260*01  BICRSTAT.                                                    00026000
+000000 COPY BICRSTAT.                                                   00027000
+000280*01  BICRCONS.                                                    00028000
+000000 COPY BICRCONS.                                                   00029000
+000300*01  BICRDBS.                                                     00030000
+000000 COPY BICRDBS.                                                    00031000
+000320*01  BICRPAN.                                                     00032000
+000000 COPY BICRPAN.                                                    00033000
+000340 01  SRW710-AREAS.                                                00034000
+000000 COPY SRW710.                                                     00035000
+000360 01  RPV110K-PANL-DATA-BLOCK.                                     00036000
+000000 COPY RPV110KW.                                                   00037000
+000380 01  RPV110-PANL-DATA-BLOCK.                                      00038000
+000000 COPY RPV110W.                                                    00039000
+000400 01  RPV1101-PANL-DATA-BLOCK.                                     00040000
+000000 COPY RPV1101W.                                                   00041000
+000420 01  WS-WORKAREAS.                                                00042000
+000430     03  WS-NEXTKEY.                                              00043000
+000440         05  WS-EXTID            PIC X(08).                       00044000
+000450         05  WS-DELIM1           PIC X(01)       VALUE ','.       00045000
+000460         05  WS-DATA.                                             00046000
+000470             07  WS-PRODCODE     PIC X(06)       VALUE SPACES.    00047000
+000480             07  WS-DELIM2       PIC X(01)       VALUE ','.       00048000
+000490             07  WS-ACCTX.                                        00049000
+000500                 09  WS-ACCT     PIC Z(18)       VALUE ZEROS.     00050000
+000510             07  WS-DELIM3       PIC X(01)       VALUE ','.       00051000
+000520         05  FILLER              PIC X(42)       VALUE SPACES.    00052000
+000530     03  WS-LNKPROG              PIC X(08)       VALUE 'RPLACT00'.00053000
+000540     03  WS-LKLGTH               PIC S9(04)      COMP             00054000
+000550                                                 VALUE +4088.     00055000
+000560     03  WS-PDATE                PIC 9(08).                       00056000
+000570     03  WS-PDATE-R      REDEFINES WS-PDATE.                      00057000
+000580         05  WS-PDATE-YYYY       PIC 9(04).                       00058000
+000590         05  WS-PDATE-MM         PIC 9(02).                       00059000
+000600         05  WS-PDATE-DD         PIC 9(02).                       00060000
+000610     03  WS-HELPRETURN           PIC X(01).                       00061000
+000620 01  WS-LINKMSG                  PIC X(4500).                     00062000
+000630 01  RPACT00-MESSAGE.                                             00063000
+000000 COPY MISCNT00      REPLACING                                     00064000
+000650             ==:MICNT:== BY ==RPACT00==.                          00065000
+000000 COPY RPSACT00.                                                   00066000
+000670 01  WS-TSQAREAS.                                                 00067000
+000680     03  WS-TSQITEM              PIC S9(04)      COMP             00068000
+000690                                                 VALUE +0001.     00069000
+000700     03  WS-TSQLGTH              PIC S9(04)      COMP             00070000
+000710                                                 VALUE +4096.     00071000
+000720     03  WS-TSQKEY.                                               00072000
+000730         05  WS-TSQID            PIC X(04).                       00073000
+000740         05  WS-TSQTRMID         PIC X(04).                       00074000
+000750 01  LS-TSQAREA.                                                  00075000
+000760     03  LS-TSQKEY               PIC X(08).                       00076000
+000770     03  LS-TSQDATA              PIC X(4088).                     00077000
+000780 01  MIWPRI-AREAS.                                                00078000
+000000 COPY MIWPRI.                                                     00079000
+000800 01  MIWMSTA-AREAS.                                               00080000
+000000 COPY MIWMSTA.                                                    00081000
+000820 01  MIMST-RECORD.                                                00082000
+000000 COPY MISMST.                                                     00083000
+000840 01  MI2023-RECORD.                                               00084000
+000000 COPY MIS2023A.                                                   00085000
+000860 01  WS-ABORTCODES.                                               00086000
+000870     03  WS-AB0009               PIC S9(04)      COMP             00087000
+000880                                                 VALUE +0009.     00088000
+000890     03  WS-AB0106               PIC S9(04)      COMP             00089000
+000900                                                 VALUE +0106.     00090000
+000910     03  WS-AB2033               PIC S9(04)      COMP             00091000
+000920                                                 VALUE +2033.     00092000
+000930 01  WS-TRACECODES.                                               00093000
+000940     03  WS-TR0001               PIC S9(04)      COMP             00094000
+000950                                                 VALUE +0001.     00095000
+000960     03  WS-TR0002               PIC S9(04)      COMP             00096000
+000970                                                 VALUE +0002.     00097000
+000980 01  SLW096-AREAS.                                                00098000
+000000 COPY SLW096.                                                     00099000
+001000 01  SRW025-AREAS.                                                00100000
+000000 COPY SRW025.                                                     00101000
+001020 01  SRW030-AREAS.                                                00102000
+000000 COPY SRW030.                                                     00103000
+001040 01  SRW031-AREAS.                                                00104000
+000000 COPY SRW031.                                                     00105000
+001060 01  SRW067-AREAS.                                                00106000
+000000 COPY SRW067.                                                     00107000
+001080 01  SRW105-AREAS.                                                00108000
+000000 COPY SRW105.                                                     00109000
+001100 01  SRW161-AREAS.                                                00110000
+000000 COPY SRW161.                                                     00111000
+001120 01  SRW170-AREAS.                                                00112000
+000000 COPY SRW170.                                                     00113000
+001140 COPY DFHAID.                                                     00114000
+001150******************************************************************00115000
+001160 LINKAGE SECTION.                                                 00116000
+001170 01  DFHCOMMAREA.                                                 00117000
+000000 COPY SLS1112.                                                    00118000
+001190     03  COM-WORKAREAS   REDEFINES COM-WORKAREA.                  00119000
+001200         05  COM-PROGRAM-ID      PIC X(06).                       00120000
+001210         05  COM-EDIT-DATE       PIC X(10).                       00121000
+001220         05  COM-PANEL-ACTION    PIC X(01).                       00122000
+001230             88  INITIAL-PANEL                   VALUE ' '.       00123000
+001240             88  EDIT-PANEL                      VALUE 'E'.       00124000
+001250         05  COM-FROM-PANEL      PIC X(01).                       00125000
+001260             88  FROM-KEY-PANEL                  VALUE 'K'.       00126000
+001270             88  FROM-INFO-PANEL                 VALUE 'I'.       00127000
+001280             88  FROM-BREAKAWAY                  VALUE 'B'.       00128000
+001290             88  FROM-HELP                       VALUE 'H'.       00129000
+001300         05  COM-KEY-FIELDS.                                      00130000
+001310             07  COM-KEY-PRODCODE                                 00131000
+001320                                 PIC X(06).                       00132000
+001330             07  COM-KEY-ACCOUNT PIC X(18).                       00133000
+001340             07  COM-KEY-ACCOUNT-N                                00134000
+001350                         REDEFINES COM-KEY-ACCOUNT                00135000
+001360                                 PIC 9(18).                       00136000
+001370         05  COM-KEY-MSGNBR      PIC X(06).                       00137000
+001380         05  COM-KEY-COMMAND     PIC X(50).                       00138000
+001390         05  COM-KEY-FORMATTEDACCT                                00139000
+001400                                 PIC X(22).                       00140000
+001410*01  SLW096-2023RECORDS.                                          00141000
+000000 COPY SLW096L.                                                    00142000
+001430******************************************************************00143000
+001440 PROCEDURE DIVISION.                                              00144000
+001450******************************************************************00145000
+001460 ENTRY-ROUTINE SECTION.                                           00146000
+001470     MOVE 'RPL110' TO COM-ABPROGID.                               00147000
+000000 COPY SLP771.                                                     00148000
+001490******************************************************************00149000
+001500 TRANSACTION-CLEAN-UP SECTION.                                    00150000
+001510 TCU-START.                                                       00151000
+001520 TCU-EXIT.                                                        00152000
+001530     EXIT.                                                        00153000
+001540******************************************************************00154000
+001550 CICS-HANDLE-CONDITION SECTION.                                   00155000
+000000 COPY SLP772.                                                     00156000
+001570     MOVE WS-AB2033 TO COM-ABORT.                                 00157000
+001580     MOVE WS-TR0001 TO COM-ABTRACE.                               00158000
+001590     GO TO ABORT-EXIT.                                            00159000
+001600 CHC-EXIT.                                                        00160000
+001610     EXIT.                                                        00161000
+001620******************************************************************00162000
+001630 ROUTING-ROUTINE SECTION.                                         00163000
+001640 RR-START.                                                        00164000
+001650     MOVE LOW-VALUES TO RPACT00-MESSAGE.                          00165000
+001660     MOVE LOW-VALUES TO RPV110K-PANL-DATA-AREA.                   00166000
+001670     MOVE LOW-VALUES TO RPV110-PANL-DATA-AREA.                    00167000
+001680     MOVE LOW-VALUES TO RPV1101-PANL-DATA-AREA.                   00168000
+001690     MOVE ZERO TO WS-MSGNBR.                                      00169000
+001700     MOVE 'RP00' TO WS-TSQFILEID.                                 00170000
+001710     MOVE 'RPI' TO WS-TSQSYSID.                                   00171000
+001720     IF COM-SRBTAG IS EQUAL TO '**BSRB**'                         00172000
+001730         MOVE COM-PAN TO BICRPAN                                  00173000
+001740         MOVE COM-PSB TO BICRPSB                                  00174000
+001750         MOVE COM-SRB TO BICRSRB                                  00175000
+001760     ELSE                                                         00176000
+001770         MOVE '1' TO BPSB-LEVEL.                                  00177000
+001780     IF COM-RETURN IS EQUAL TO 'B'                                00178000
+001790         GO TO BREAKAWAY-RETURN.                                  00179000
+001800     IF COM-RETURN IS EQUAL TO '0'                                00180000
+001810         MOVE COM-SSDATASET TO BPSB-MAP-DIR                       00181000
+001820         MOVE SPACES TO COM-WORKAREAS                             00182000
+001830         MOVE '1' TO SRB-VERSION                                  00183000
+001840         MOVE 'IPRP' TO SRB-APPL-ID                               00184000
+001850         MOVE 'RPL110' TO SRB-PROG-ID                             00185000
+001860         MOVE 'RPL110' TO COM-PROGRAM-ID                          00186000
+001870         MOVE RPS-RLSE-LIT TO SRB-RELEASE                         00187000
+001880         MOVE 'P' TO PAN-TYPE                                     00188000
+001890         MOVE SPACE TO PAN-OVERLAY                                00189000
+001900         MOVE SPACE TO PAN-CLOSE                                  00190000
+001910         MOVE SPACE TO PAN-ALARM                                  00191000
+001920         MOVE SPACE TO PAN-CURSOR-PAN                             00192000
+001930         MOVE SPACE TO PAN-CURSOR-FLD                             00193000
+001940         MOVE SPACE TO PAN-SET-FLD                                00194000
+001950         MOVE SPACE TO PAN-SET-VID                                00195000
+001960         MOVE SPACE TO PAN-SET-EMP                                00196000
+001970         MOVE PDB-RPV110-NAME TO PAN-NAME                         00197000
+001980         PERFORM PANEL-INIT                                       00198000
+001990         MOVE BICRPAN TO COM-PAN                                  00199000
+002000         MOVE BICRPSB TO COM-PSB                                  00200000
+002010         MOVE BICRSRB TO COM-SRB                                  00201000
+002020         PERFORM INITIALIZE-DATE                                  00202000
+002030         GO TO PANEL-ROUTER.                                      00203000
+002040     PERFORM PANEL-NAME-SET.                                      00204000
+002050     IF COM-RETURN IS EQUAL TO 'A'                                00205000
+002060         MOVE PDB-RPV1101-NAME TO PAN-NAME.                       00206000
+002070     IF COM-HELPSW IS EQUAL TO 'Y'                                00207000
+002080         GO TO HELP-RETURN.                                       00208000
+002090     IF COM-RETURN IS EQUAL TO 'A'                                00209000
+002100         GO TO DISPLAY-DETAIL-RETURN.                             00210000
+002110     PERFORM PANEL-RECEIVE.                                       00211000
+002120     PERFORM PANEL-DATA-GET.                                      00212000
+002130     PERFORM PANEL-PFKEY-SET.                                     00213000
+002140     IF COM-RETURN IS EQUAL TO '1'                                00214000
+002150         AND EIBAID IS EQUAL TO DFHPF6                            00215000
+002160         GO TO DISPLAY-DETAIL.                                    00216000
+002170*                                                                 00217000
+002180     PERFORM VALIDATE-PFKEYS.                                     00218000
+002190     IF EIBAID IS EQUAL TO DFHPF1                                 00219000
+002200         GO TO GET-HELP.                                          00220000
+002210     IF EIBAID IS EQUAL TO DFHPF11                                00221000
+002220         GO TO BREAK-AWAY.                                        00222000
+002230     IF (COM-RETURN IS EQUAL TO 'E'                               00223000
+002240         OR COM-RETURN IS EQUAL TO '1')                           00224000
+002250         AND (EIBAID IS EQUAL TO DFHPF2                           00225000
+002260         OR EIBAID IS EQUAL TO DFHPF3                             00226000
+002270         OR EIBAID IS EQUAL TO DFHPF4                             00227000
+002280         OR EIBAID IS EQUAL TO DFHPF7                             00228000
+002290         OR EIBAID IS EQUAL TO DFHPF8                             00229000
+002300         OR EIBAID IS EQUAL TO DFHPF12)                           00230000
+002310         GO TO CLOSE-TRANSACTION.                                 00231000
+002320     IF EIBAID IS EQUAL TO DFHPF6                                 00232000
+002330         GO TO DISPLAY-DETAIL.                                    00233000
+002340     IF COM-RETURN IS EQUAL TO '0'                                00234000
+002350         OR COM-RETURN IS EQUAL TO 'E'                            00235000
+002360         OR COM-RETURN IS EQUAL TO '1'                            00236000
+002370         GO TO PANEL-ROUTER.                                      00237000
+002380 RR-END.                                                          00238000
+002390     GO TO CLOSE-TRANSACTION.                                     00239000
+002400 RR-EXIT.                                                         00240000
+002410     EXIT.                                                        00241000
+002420******************************************************************00242000
+002430 DISPLAY-DETAIL SECTION.                                          00243000
+002440 DD-START.                                                        00244000
+002450     MOVE 'W' TO COM-HELPSW.                                      00245000
+002460 DD-CONTINUE.                                                     00246000
+002470     MOVE 'VKL' TO RPACT00-APIFUNC.                               00247000
+002480     MOVE 'M' TO RPACT00-FUNC.                                    00248000
+002490     PERFORM RPACT00-LINK-MESSAGE.                                00249000
+002500 DD-RPACT00-RETURN-CHECK.                                         00250000
+002510     IF RPACT00-RETURN IS EQUAL TO 'E'                            00251000
+002520         MOVE RPACT00-MSGNBR TO WS-MSGNBR                         00252000
+002530         MOVE 'E' TO COM-RETURN                                   00253000
+002540         MOVE 'E' TO COM-PANEL-ACTION                             00254000
+002550         MOVE 'I' TO COM-FROM-PANEL                               00255000
+002560         GO TO PANEL-ROUTER.                                      00256000
+002570     MOVE PDB-RPV1101-NAME TO PAN-NAME.                           00257000
+002580*    MOVE COM-PREVKEY TO COM-SELECTKEY.                           00258000
+002590* **                                                              00259000
+002600     MOVE RPACT00-RATEAMT-1 TO SR-EDITMSKV00.                     00260000
+002610     MOVE SR-EDIT11X TO RPV1101-BALANC1.                          00261000
+002620     MOVE RPACT00-RATEPCT-1 TO SR-EDITMSKV09.                     00262000
+002630     MOVE SR-EDIT10X TO RPV1101-RATE1.                            00263000
+002640     MOVE RPACT00-RATEAMT-2 TO SR-EDITMSKV00.                     00264000
+002650     MOVE SR-EDIT11X TO RPV1101-BALANC2.                          00265000
+002660     MOVE RPACT00-RATEPCT-2 TO SR-EDITMSKV09.                     00266000
+002670     MOVE SR-EDIT10X TO RPV1101-RATE2.                            00267000
+002680     MOVE RPACT00-RATEAMT-3 TO SR-EDITMSKV00.                     00268000
+002690     MOVE SR-EDIT11X TO RPV1101-BALANC3.                          00269000
+002700     MOVE RPACT00-RATEPCT-3 TO SR-EDITMSKV09.                     00270000
+002710     MOVE SR-EDIT10X TO RPV1101-RATE3.                            00271000
+002720     MOVE RPACT00-RATEAMT-4 TO SR-EDITMSKV00.                     00272000
+002730     MOVE SR-EDIT11X TO RPV1101-BALANC4.                          00273000
+002740     MOVE RPACT00-RATEPCT-4 TO SR-EDITMSKV09.                     00274000
+002750     MOVE SR-EDIT10X TO RPV1101-RATE4.                            00275000
+002760     MOVE RPACT00-RATEAMT-5 TO SR-EDITMSKV00.                     00276000
+002770     MOVE SR-EDIT11X TO RPV1101-BALANC5.                          00277000
+002780     MOVE RPACT00-RATEPCT-5 TO SR-EDITMSKV09.                     00278000
+002790     MOVE SR-EDIT10X TO RPV1101-RATE5.                            00279000
+002800     MOVE RPACT00-RATEAMT-6 TO SR-EDITMSKV00.                     00280000
+002810     MOVE SR-EDIT11X TO RPV1101-BALANC6.                          00281000
+002820     MOVE RPACT00-RATEPCT-6 TO SR-EDITMSKV09.                     00282000
+002830     MOVE SR-EDIT10X TO RPV1101-RATE6.                            00283000
+002840     MOVE RPACT00-RATEAMT-7 TO SR-EDITMSKV00.                     00284000
+002850     MOVE SR-EDIT11X TO RPV1101-BALANC7.                          00285000
+002860     MOVE RPACT00-RATEPCT-7 TO SR-EDITMSKV09.                     00286000
+002870     MOVE SR-EDIT10X TO RPV1101-RATE7.                            00287000
+002880     MOVE RPACT00-RATEAMT-8 TO SR-EDITMSKV00.                     00288000
+002890     MOVE SR-EDIT11X TO RPV1101-BALANC8.                          00289000
+002900     MOVE RPACT00-RATEPCT-8 TO SR-EDITMSKV09.                     00290000
+002910     MOVE SR-EDIT10X TO RPV1101-RATE8.                            00291000
+002920     MOVE RPACT00-RATEAMT-9 TO SR-EDITMSKV00.                     00292000
+002930     MOVE SR-EDIT11X TO RPV1101-BALANC9.                          00293000
+002940     MOVE RPACT00-RATEPCT-9 TO SR-EDITMSKV09.                     00294000
+002950     MOVE SR-EDIT10X TO RPV1101-RATE9.                            00295000
+002960     MOVE RPACT00-RATEAMT-10 TO SR-EDITMSKV00.                    00296000
+002970     MOVE SR-EDIT11X TO RPV1101-BALANC10.                         00297000
+002980     MOVE RPACT00-RATEPCT-10 TO SR-EDITMSKV09.                    00298000
+002990     MOVE SR-EDIT10X TO RPV1101-RATE10.                           00299000
+003000     MOVE RPACT00-RATEAMT-11 TO SR-EDITMSKV00.                    00300000
+003010     MOVE SR-EDIT11X TO RPV1101-BALANC11.                         00301000
+003020     MOVE RPACT00-RATEPCT-11 TO SR-EDITMSKV09.                    00302000
+003030     MOVE SR-EDIT10X TO RPV1101-RATE11.                           00303000
+003040     MOVE RPACT00-RATEAMT-12 TO SR-EDITMSKV00.                    00304000
+003050     MOVE SR-EDIT11X TO RPV1101-BALANC12.                         00305000
+003060     MOVE RPACT00-RATEPCT-12 TO SR-EDITMSKV09.                    00306000
+003070     MOVE SR-EDIT10X TO RPV1101-RATE12.                           00307000
+003080     MOVE RPACT00-RATEAMT-13 TO SR-EDITMSKV00.                    00308000
+003090     MOVE SR-EDIT11X TO RPV1101-BALANC13.                         00309000
+003100     MOVE RPACT00-RATEPCT-13 TO SR-EDITMSKV09.                    00310000
+003110     MOVE SR-EDIT10X TO RPV1101-RATE13.                           00311000
+003120     MOVE RPACT00-RATEAMT-14 TO SR-EDITMSKV00.                    00312000
+003130     MOVE SR-EDIT11X TO RPV1101-BALANC14.                         00313000
+003140     MOVE RPACT00-RATEPCT-14 TO SR-EDITMSKV09.                    00314000
+003150     MOVE SR-EDIT10X TO RPV1101-RATE14.                           00315000
+003160     MOVE RPACT00-RATEAMT-15 TO SR-EDITMSKV00.                    00316000
+003170     MOVE SR-EDIT11X TO RPV1101-BALANC15.                         00317000
+003180     MOVE RPACT00-RATEPCT-15 TO SR-EDITMSKV09.                    00318000
+003190     MOVE SR-EDIT10X TO RPV1101-RATE15.                           00319000
+003200     MOVE PDB-RPV1101-NAME TO PAN-NAME.                           00320000
+003210     MOVE PDB-RPV1101-BALANC1 TO PAN-SET-FLD.                     00321000
+003220     MOVE REQ-SET-CURSOR TO PAN-REQ-VERB.                         00322000
+003230     PERFORM CALL-BISPAN-RPV110.                                  00323000
+003240* **                                                              00324000
+003250     IF COM-RETURN IS EQUAL TO 'A'                                00325000
+003260         GO TO DD-SEND-PANEL.                                     00326000
+003270     MOVE 'A' TO COM-RETURN.                                      00327000
+003280     ADD 1 TO BPSB-LEVEL.                                         00328000
+003290 DD-SEND-PANEL.                                                   00329000
+003300     MOVE REQ-SET-CURSOR TO PAN-REQ-VERB.                         00330000
+003310     MOVE PAN-CURSOR-FLD TO PAN-SET-FLD.                          00331000
+003320     PERFORM CALL-BISPAN-RPV1101.                                 00332000
+003330     PERFORM PANEL-PUT-WINDOW-RPV1101.                            00333000
+003340     PERFORM PANEL-SEND.                                          00334000
+003350     MOVE BICRPSB TO COM-PSB.                                     00335000
+003360     MOVE BICRSRB TO COM-SRB.                                     00336000
+003370     MOVE BICRPAN TO COM-PAN.                                     00337000
+003380     MOVE COM-INTID TO WS-TRANSID.                                00338000
+003390     GO TO CICS-RETURN-TRANSID.                                   00339000
+003400 DD-END.                                                          00340000
+003410* **                                                              00341000
+003420 DD-EXIT.                                                         00342000
+003430     EXIT.                                                        00343000
+003440******************************************************************00344000
+003450 DISPLAY-DETAIL-RETURN SECTION.                                   00345000
+003460 DDR-START.                                                       00346000
+003470     PERFORM PANEL-RECEIVE.                                       00347000
+003480     PERFORM PANEL-GET-WINDOW-RPV1101.                            00348000
+003490     IF EIBAID IS EQUAL TO DFHPF1                                 00349000
+003500         GO TO GET-HELP.                                          00350000
+003510     MOVE 'Y' TO WS-HELPRETURN.                                   00351000
+003520     MOVE 'Y' TO WS-RETURNSW.                                     00352000
+003530*    MOVE COM-PAN-CURSOR-FLD TO PAN-CURSOR-FLD.                   00353000
+003540     MOVE SPACE TO COM-HELPSW.                                    00354000
+003550     PERFORM CLOSE-PANEL.                                         00355000
+003560     SUBTRACT 1 FROM BPSB-LEVEL.                                  00356000
+003570     MOVE REQ-POP TO PAN-REQ-VERB.                                00357000
+000000     CALL 'BISPAN' USING                                          00358000
+003590         BICRPSB                                                  00359000
+003600         BICRSRB                                                  00360000
+003610         BICRPAN.                                                 00361000
+003620     MOVE BICRPSB TO COM-PSB.                                     00362000
+003630     MOVE BICRSRB TO COM-SRB.                                     00363000
+003640     MOVE BICRPAN TO COM-PAN.                                     00364000
+003650     MOVE '1' TO COM-RETURN.                                      00365000
+003660     MOVE PDB-RPV110-NAME TO PAN-NAME.                            00366000
+003670     PERFORM PANEL-GET-RPV110.                                    00367000
+003680     GO TO PIP-CONTINUE.                                          00368000
+003690 DDR-EXIT.                                                        00369000
+003700     EXIT.                                                        00370000
+003710******************************************************************00371000
+003720 INITIALIZE-DATE SECTION.                                         00372000
+003730 ID-START.                                                        00373000
+003740     MOVE COM-DATE TO WS-CURDATE8.                                00374000
+003750     MOVE '-' TO WS-CD8DSH1.                                      00375000
+003760     MOVE '-' TO WS-CD8DSH2.                                      00376000
+003770     MOVE WS-CURDATE8X TO COM-EDIT-DATE.                          00377000
+003780 ID-EXIT.                                                         00378000
+003790     EXIT.                                                        00379000
+003800******************************************************************00380000
+003810 PANEL-NAME-SET SECTION.                                          00381000
+003820 PNS-START.                                                       00382000
+003830     IF COM-RETURN IS EQUAL TO '0'                                00383000
+003840         MOVE PDB-RPV110K-NAME TO PAN-NAME.                       00384000
+003850     IF COM-RETURN IS EQUAL TO 'E'                                00385000
+003860         MOVE PDB-RPV110K-NAME TO PAN-NAME.                       00386000
+003870     IF COM-RETURN IS EQUAL TO '1'                                00387000
+003880         MOVE PDB-RPV110-NAME TO PAN-NAME.                        00388000
+003890     IF COM-RETURN IS EQUAL TO 'A'                                00389000
+003900         MOVE PDB-RPV1101-NAME TO PAN-NAME.                       00390000
+003910 PNS-EXIT.                                                        00391000
+003920     EXIT.                                                        00392000
+003930******************************************************************00393000
+003940 PANEL-DATA-GET SECTION.                                          00394000
+003950 PDG-START.                                                       00395000
+003960     IF COM-RETURN IS EQUAL TO '0'                                00396000
+003970         PERFORM PANEL-GET-RPV110K.                               00397000
+003980     IF COM-RETURN IS EQUAL TO 'E'                                00398000
+003990         PERFORM PANEL-GET-RPV110K                                00399000
+004000         MOVE RPV110K-COMMAND TO WS-NEXTKEY                       00400000
+004010         MOVE PDB-RPV110K-COMMAND-DCHG TO WS-COMMAND-DCHG.        00401000
+004020     IF COM-RETURN IS EQUAL TO '1'                                00402000
+004030         PERFORM PANEL-GET-RPV110                                 00403000
+004040         MOVE RPV110-COMMAND TO WS-NEXTKEY                        00404000
+004050         MOVE PDB-RPV110-COMMAND-DCHG TO WS-COMMAND-DCHG.         00405000
+004060 PDG-EXIT.                                                        00406000
+004070     EXIT.                                                        00407000
+004080******************************************************************00408000
+004090 PANEL-PFKEY-SET SECTION.                                         00409000
+004100 PPS-START.                                                       00410000
+004110 PPS-EXIT.                                                        00411000
+004120     EXIT.                                                        00412000
+004130******************************************************************00413000
+004140 PANEL-ROUTER SECTION.                                            00414000
+004150 PR-START.                                                        00415000
+004160     IF COM-RETURN IS EQUAL TO '0'                                00416000
+004170         GO TO PROCESS-KEY-PANEL.                                 00417000
+004180     IF COM-RETURN IS EQUAL TO 'E'                                00418000
+004190         GO TO PROCESS-KEY-PANEL.                                 00419000
+004200     IF COM-RETURN IS EQUAL TO '1'                                00420000
+004210         GO TO PROCESS-INFO-PANEL.                                00421000
+004220     IF COM-RETURN IS EQUAL TO 'A'                                00422000
+004230         GO TO DISPLAY-DETAIL.                                    00423000
+004240     GO TO CLOSE-TRANSACTION.                                     00424000
+004250 PR-EXIT.                                                         00425000
+004260     EXIT.                                                        00426000
+004270******************************************************************00427000
+004280 HELP-RETURN SECTION.                                             00428000
+000000 COPY SRP074.                                                     00429000
+004300******************************************************************00430000
+004310 HELP-RETURN-FINISH SECTION.                                      00431000
+004320 HRF-START.                                                       00432000
+004330     PERFORM PANEL-DATA-GET.                                      00433000
+004340     MOVE 'H' TO COM-FROM-PANEL.                                  00434000
+004350     GO TO PANEL-ROUTER.                                          00435000
+004360 HRF-EXIT.                                                        00436000
+004370     EXIT.                                                        00437000
+004380******************************************************************00438000
+004390 HELP-MISSING-FINISH SECTION.                                     00439000
+004400 HMF-START.                                                       00440000
+004410     MOVE 'H' TO COM-FROM-PANEL.                                  00441000
+004420     MOVE WS-HELPMSG TO COM-KEY-MSGNBR.                           00442000
+004430     GO TO PANEL-ROUTER.                                          00443000
+004440 HMF-EXIT.                                                        00444000
+004450     EXIT.                                                        00445000
+004460******************************************************************00446000
+004470 BREAK-AWAY SECTION.                                              00447000
+000000 COPY SRP0752.                                                    00448000
+004490******************************************************************00449000
+004500 BREAKAWAY-RETURN-FINISH SECTION.                                 00450000
+004510 BRF-START.                                                       00451000
+004520     PERFORM PANEL-DATA-GET.                                      00452000
+004530     MOVE 'B' TO COM-FROM-PANEL.                                  00453000
+004540     GO TO PANEL-ROUTER.                                          00454000
+004550 BRF-EXIT.                                                        00455000
+004560     EXIT.                                                        00456000
+004570******************************************************************00457000
+004580 PROCESS-KEY-PANEL SECTION.                                       00458000
+004590 PKP-START.                                                       00459000
+004600     IF INITIAL-PANEL                                             00460000
+004610         MOVE COM-NEXTKEY TO COM-EXTERNALID                       00461000
+004620         GO TO PKP-COM-INIT.                                      00462000
+004630     IF EDIT-PANEL                                                00463000
+004640         AND FROM-INFO-PANEL                                      00464000
+004650         MOVE SPACE TO COM-FROM-PANEL                             00465000
+004660         GO TO PKP-RELOAD-PANEL.                                  00466000
+004670 PKP-COM-INIT.                                                    00467000
+004680     MOVE COM-NEXTKEY TO SR-PSLIST.                               00468000
+004690     IF WS-PFKEYERR IS EQUAL TO 'Y'                               00469000
+004700         GO TO PKP-SEND-PANEL.                                    00470000
+004710 PKP-BEGIN-EDITS.                                                 00471000
+004720     MOVE RPV110K-PRODCD TO RPW014-PRODCODE.                      00472000
+004730     MOVE RPV110K-ACCOUNT TO RPW014-ACCT.                         00473000
+004740     PERFORM EDIT-ACCOUNT-KEY.                                    00474000
+004750     IF EDIT-PANEL                                                00475000
+004760         GO TO PKP-RETURN-EDITS.                                  00476000
+004770     PERFORM PARAMETER-SEARCH.                                    00477000
+004780 PKP-RETURN-EDITS.                                                00478000
+004790     MOVE RPW014-PRODCODE TO COM-PRODCODE.                        00479000
+004800     MOVE RPW014-APPLNBR TO COM-APPL.                             00480000
+004810     MOVE RPW014-DIALOGROUT TO COM-DIALOGROUT.                    00481000
+004820     MOVE RPW014-PRODCODE TO COM-KEY-PRODCODE.                    00482000
+004830     MOVE RPW014-ACCT TO COM-KEY-ACCOUNT.                         00483000
+004840     MOVE RPW014-FORMATTEDACCT TO COM-KEY-FORMATTEDACCT.          00484000
+004850     IF INITIAL-PANEL                                             00485000
+004860         AND RPW014-PRODCODE IS EQUAL TO LOW-VALUES               00486000
+004870         AND RPW014-ACCT IS EQUAL TO LOW-VALUES                   00487000
+004880         MOVE '000001' TO WS-MSGNBR                               00488000
+004890         GO TO PKP-SEND-PANEL.                                    00489000
+004900     MOVE COM-KEY-PRODCODE TO COM-PRODCODE.                       00490000
+004910     MOVE COM-KEY-ACCOUNT TO COM-ACCOUNTALPHA.                    00491000
+004920     IF COM-KEY-ACCOUNT-N IS NUMERIC                              00492000
+004930         MOVE COM-KEY-ACCOUNT-N TO COM-ACCOUNT                    00493000
+004940     ELSE                                                         00494000
+004950         MOVE ZERO TO COM-ACCOUNT.                                00495000
+004960     IF FROM-BREAKAWAY                                            00496000
+004970         OR FROM-HELP                                             00497000
+004980         OR WS-MSGNBR IS NOT EQUAL TO ZERO                        00498000
+004990         GO TO PKP-RELOAD-PANEL.                                  00499000
+005000 PKP-EDITS-READY.                                                 00500000
+005010     MOVE SPACE TO COM-PANEL-ACTION.                              00501000
+005020     MOVE '1' TO COM-RETURN.                                      00502000
+005030     MOVE 'K' TO COM-FROM-PANEL.                                  00503000
+005040     GO TO PANEL-ROUTER.                                          00504000
+005050 PKP-RELOAD-PANEL.                                                00505000
+005060     IF COM-KEY-PRODCODE IS EQUAL TO SPACES                       00506000
+005070         MOVE LOW-VALUES TO RPV110K-PRODCD                        00507000
+005080     ELSE                                                         00508000
+005090         MOVE COM-KEY-PRODCODE TO RPV110K-PRODCD.                 00509000
+005100     IF COM-KEY-ACCOUNT IS EQUAL TO SPACES                        00510000
+005110         OR COM-KEY-ACCOUNT IS EQUAL TO ZEROES                    00511000
+005120         MOVE LOW-VALUES TO RPV110K-ACCOUNT                       00512000
+005130     ELSE                                                         00513000
+005140         MOVE COM-KEY-ACCOUNT TO RPV110K-ACCOUNT.                 00514000
+005150 PKP-SEND-PANEL.                                                  00515000
+005160     MOVE PDB-RPV110K-NAME TO PAN-NAME.                           00516000
+005170     MOVE REQ-SET-CURSOR TO PAN-REQ-VERB.                         00517000
+005180     IF FROM-BREAKAWAY                                            00518000
+005190         OR FROM-HELP                                             00519000
+005200         MOVE PAN-CURSOR-FLD TO PAN-SET-FLD                       00520000
+005210     ELSE                                                         00521000
+005220         MOVE PDB-RPV110K-PRODCD TO PAN-SET-FLD.                  00522000
+005230     PERFORM CALL-BISPAN-RPV110K.                                 00523000
+005240     MOVE COM-OPERID TO RPV110K-OPERID.                           00524000
+005250     MOVE COM-INST TO RPV110K-INST.                               00525000
+005260     MOVE COM-EDIT-DATE TO RPV110K-SYSDATE.                       00526000
+005270     IF RPV110K-PRODCD IS EQUAL TO SPACES                         00527000
+005280         MOVE LOW-VALUES TO RPV110K-PRODCD.                       00528000
+005290     MOVE RPV110K-ACCOUNT TO SR-JUSTLONGIN.                       00529000
+005300     MOVE +18 TO SR-JLGTH.                                        00530000
+005310     PERFORM LEFT-JUSTIFY.                                        00531000
+005320     MOVE SR-JUSTLONGOUT TO RPV110K-ACCOUNT.                      00532000
+005330     IF RPV110K-ACCOUNT IS EQUAL TO SPACES                        00533000
+005340         MOVE LOW-VALUES TO RPV110K-ACCOUNT.                      00534000
+005350     IF WS-HELPMSG IS NOT EQUAL TO ZERO                           00535000
+005360         MOVE WS-HELPMSG TO WS-MSGNBR.                            00536000
+005370     IF WS-PFKEYERR IS EQUAL TO 'Y'                               00537000
+005380         MOVE '000027' TO WS-MSGNBR                               00538000
+005390     ELSE                                                         00539000
+005400         PERFORM BUILD-NEXTKEY                                    00540000
+005410         PERFORM COMPRESS-NEXTKEY                                 00541000
+005420         MOVE WS-NEXTKEY TO RPV110K-COMMAND.                      00542000
+005430     IF FROM-BREAKAWAY                                            00543000
+005440         OR FROM-HELP                                             00544000
+005450         MOVE SPACE TO COM-FROM-PANEL                             00545000
+005460         MOVE COM-KEY-COMMAND TO RPV110K-COMMAND                  00546000
+005470         MOVE COM-KEY-MSGNBR TO WS-MSGNBR                         00547000
+005480     ELSE                                                         00548000
+005490         MOVE WS-NEXTKEY TO COM-KEY-COMMAND                       00549000
+005500         MOVE WS-MSGNBR TO COM-KEY-MSGNBR.                        00550000
+005510     MOVE 'E' TO COM-RETURN.                                      00551000
+005520     PERFORM GET-MESSAGE.                                         00552000
+005530     MOVE WS-MESSAGE TO RPV110K-MSGLINE.                          00553000
+005540     PERFORM PANEL-PFKEY-SET.                                     00554000
+005550     PERFORM BUILD-PFKEY-LINE.                                    00555000
+005560     MOVE WS-PFLINE1 TO RPV110K-PFLINE1.                          00556000
+005570     MOVE WS-PFLINE2 TO RPV110K-PFLINE2.                          00557000
+005580     PERFORM PANEL-PUT-RPV110K.                                   00558000
+005590     PERFORM PANEL-SEND.                                          00559000
+005600     MOVE 'E' TO COM-PANEL-ACTION.                                00560000
+005610     MOVE COM-INTID TO WS-TRANSID.                                00561000
+005620     GO TO CICS-RETURN-TRANSID.                                   00562000
+005630 PKP-EXIT.                                                        00563000
+005640     EXIT.                                                        00564000
+005650******************************************************************00565000
+005660 PROCESS-INFO-PANEL SECTION.                                      00566000
+005670 PIP-START.                                                       00567000
+005680     IF FROM-HELP                                                 00568000
+005690         OR FROM-BREAKAWAY                                        00569000
+005700         MOVE SPACE TO COM-FROM-PANEL                             00570000
+005710         MOVE COM-KEY-MSGNBR TO WS-MSGNBR                         00571000
+005720         MOVE PAN-CURSOR-FLD TO WS-CURSOR-FIELD                   00572000
+005730         GO TO PIP-CONTINUE.                                      00573000
+005740* ** RETURN FROM HELP, READ THE RECORD AND LOAD PANEL             00574000
+005750     MOVE 'E' TO COM-END.                                         00575000
+005760     IF INITIAL-PANEL                                             00576000
+005770         GO TO PIP-CONTINUE.                                      00577000
+005780     MOVE COM-NEXTKEY TO WS-NEXTKEY.                              00578000
+005790 PIP-PFKEYS.                                                      00579000
+005800     IF WS-PFKEYERR IS EQUAL TO 'Y'                               00580000
+005810         GO TO PIP-SEND-PANEL.                                    00581000
+005820     IF EIBAID IS EQUAL TO DFHENTER                               00582000
+005830         MOVE '2' TO COM-RETURN                                   00583000
+005840         MOVE SPACE TO COM-PANEL-ACTION                           00584000
+005850         GO TO PANEL-ROUTER.                                      00585000
+005860     GO TO PIP-SEND-PANEL.                                        00586000
+005870 PIP-CONTINUE.                                                    00587000
+005880     MOVE 'VKL' TO RPACT00-APIFUNC.                               00588000
+005890     MOVE 'M' TO RPACT00-FUNC.                                    00589000
+005900     PERFORM RPACT00-LINK-MESSAGE.                                00590000
+005910 PIP-RPACT00-RETURN-CHECK.                                        00591000
+005920     IF RPACT00-RETURN IS EQUAL TO 'E'                            00592000
+005930         AND FROM-KEY-PANEL                                       00593000
+005940         AND INITIAL-PANEL                                        00594000
+005950         MOVE RPACT00-MSGNBR TO WS-MSGNBR                         00595000
+005960         MOVE 'E' TO COM-RETURN                                   00596000
+005970         MOVE 'E' TO COM-PANEL-ACTION                             00597000
+005980         MOVE 'I' TO COM-FROM-PANEL                               00598000
+005990         GO TO PANEL-ROUTER.                                      00599000
+006000     MOVE PDB-RPV110-NAME TO PAN-NAME.                            00600000
+006010 PIP-EDIT-PANEL.                                                  00601000
+006020     PERFORM EDIT-INFO-PANEL.                                     00602000
+006030 PIP-SEND-PANEL.                                                  00603000
+006040     IF WS-CURSOR-FIELD IS EQUAL TO SPACE                         00604000
+006050         MOVE PDB-RPV110-COMMAND TO PAN-SET-FLD                   00605000
+006060     ELSE                                                         00606000
+006070         MOVE WS-CURSOR-FIELD TO PAN-SET-FLD.                     00607000
+006080     MOVE REQ-SET-CURSOR TO PAN-REQ-VERB.                         00608000
+006090     PERFORM CALL-BISPAN-RPV110.                                  00609000
+006100     MOVE COM-INST TO RPV110-INST.                                00610000
+006110     MOVE COM-OPERID TO RPV110-OPERID.                            00611000
+006120     MOVE COM-EDIT-DATE TO RPV110-SYSDATE.                        00612000
+006130     IF WS-HELPMSG IS NOT EQUAL TO ZERO                           00613000
+006140         MOVE WS-HELPMSG TO WS-MSGNBR.                            00614000
+006150     IF WS-PFKEYERR IS EQUAL TO 'Y'                               00615000
+006160         AND WS-MSGNBR IS EQUAL TO ZERO                           00616000
+006170         MOVE '000027' TO WS-MSGNBR                               00617000
+006180     ELSE                                                         00618000
+006190         PERFORM BUILD-NEXTKEY                                    00619000
+006200         PERFORM COMPRESS-NEXTKEY                                 00620000
+006210         MOVE WS-NEXTKEY TO RPV110-COMMAND.                       00621000
+006220     MOVE WS-MSGNBR TO COM-KEY-MSGNBR.                            00622000
+006230     PERFORM GET-MESSAGE.                                         00623000
+006240     MOVE WS-MESSAGE TO RPV110-MSGLINE.                           00624000
+006250     IF RPACT00-RATE-OPTION IS EQUAL TO '2'                       00625000
+006260         MOVE 'SPLRATE' TO WS-PF6                                 00626000
+006270         MOVE 'SplRate' TO WS-PF6L                                00627000
+006280         MOVE 'A' TO WS-PF6-FLG.                                  00628000
+006290     PERFORM PANEL-PFKEY-SET.                                     00629000
+006300     PERFORM BUILD-PFKEY-LINE.                                    00630000
+006310     MOVE WS-PFLINE1 TO RPV110-PFLINE1.                           00631000
+006320     MOVE WS-PFLINE2 TO RPV110-PFLINE2.                           00632000
+006330     PERFORM PANEL-PUT-RPV110.                                    00633000
+006340     PERFORM PANEL-SEND.                                          00634000
+006350     MOVE '1' TO COM-RETURN.                                      00635000
+006360     MOVE 'E' TO COM-PANEL-ACTION.                                00636000
+006370     MOVE COM-INTID TO WS-TRANSID.                                00637000
+006380     GO TO CICS-RETURN-TRANSID.                                   00638000
+006390 PIP-EXIT.                                                        00639000
+006400     EXIT.                                                        00640000
+006410******************************************************************00641000
+006420 EDIT-INFO-PANEL SECTION.                                         00642000
+006430 EIP-START.                                                       00643000
+006440     MOVE COM-KEY-ACCOUNT TO RPV110-ACCOUNT.                      00644000
+006450     MOVE COM-PRODCODE TO RPV110-PRODCD.                          00645000
+006460     MOVE SPACES TO RPV110-QUAL1.                                 00646000
+006470     MOVE SPACES TO RPV110-QUAL2.                                 00647000
+006480     MOVE SPACES TO RPV110-QUAL3.                                 00648000
+006490 EIP-SVC.                                                         00649000
+006500     IF RPACT00-SC-INC-QUAL IS NOT EQUAL TO 'Y'                   00650000
+006510         MOVE '(Does Not Qualify)' to RPV110-QUAL1                00651000
+006520         MOVE '.00' TO RPV110-SCAMT                               00652000
+006530         MOVE '.00000' TO RPV110-SCPRCENT                         00653000
+006540         GO TO EIP-RATE.                                          00654000
+006550     MOVE RPACT00-DISCOUNT-AMOUNT TO SR-EDITSGNV02.               00655000
+006560     MOVE SR-EDIT10X TO RPV110-SCAMT.                             00656000
+006570     MOVE RPV110-SCAMT TO SR-JUSTLONGIN.                          00657000
+006580     MOVE 10 TO SR-JLGTH.                                         00658000
+006590     PERFORM LEFT-JUSTIFY.                                        00659000
+006600     MOVE SR-JUSTLONGOUT TO RPV110-SCAMT.                         00660000
+006610     MOVE RPACT00-DISCOUNT-PERCENT TO SR-EDITMSKV05.              00661000
+006620     MOVE SR-EDIT06X TO RPV110-SCPRCENT.                          00662000
+006630     MOVE RPV110-SCPRCENT TO SR-JUSTLONGIN.                       00663000
+006640     MOVE 06 TO SR-JLGTH.                                         00664000
+006650     PERFORM LEFT-JUSTIFY.                                        00665000
+006660     MOVE SR-JUSTLONGOUT TO RPV110-SCPRCENT.                      00666000
+006670     MOVE RPACT00-SC-MODEL TO RPV110-SCMODEL.                     00667000
+006680 EIP-RATE.                                                        00668000
+006690     IF RPACT00-RATE-INC-QUAL IS NOT EQUAL TO 'Y'                 00669000
+006700         MOVE '(Does Not Qualify)' to RPV110-QUAL2                00670000
+006710         MOVE '.000000000' TO RPV110-RTRATE                       00671000
+006720         GO TO EIP-SECSERV.                                       00672000
+006730     IF RPACT00-RATE-OPTION IS EQUAL TO '2'                       00673000
+006740         MOVE '* Split Rates Are Used *' to RPV110-QUAL25.        00674000
+006750     MOVE SPACES TO RPV110-RATTYPE.                               00675000
+006760     IF RPACT00-RATE-TYPE IS EQUAL TO 'I'                         00676000
+006770         MOVE 'Increment Rate  ' TO RPV110-RATTYPE.               00677000
+006780     IF RPACT00-RATE-TYPE IS EQUAL TO 'D'                         00678000
+006790         MOVE 'Decrement Rate  ' TO RPV110-RATTYPE.               00679000
+006800     IF RPACT00-RATE-TYPE IS EQUAL TO 'R'                         00680000
+006810         MOVE 'Replacement Rate' TO RPV110-RATTYPE.               00681000
+006820     MOVE RPACT00-RATE-PERCENT TO SR-EDITMSKV09.                  00682000
+006830     MOVE SR-EDIT10X TO RPV110-RTRATE.                            00683000
+006840     MOVE RPV110-RTRATE TO SR-JUSTLONGIN.                         00684000
+006850     MOVE 10 TO SR-JLGTH.                                         00685000
+006860     PERFORM LEFT-JUSTIFY.                                        00686000
+006870     MOVE SR-JUSTLONGOUT TO RPV110-RTRATE.                        00687000
+006880     MOVE RPACT00-RATE-MODEL TO RPV110-RATMODL.                   00688000
+006890 EIP-SECSERV.                                                     00689000
+006900     IF RPACT00-SECSVCS-INC-OPTION IS NOT EQUAL TO 'Y'            00690000
+006910         MOVE SPACES TO RPV110-SECSV1                             00691000
+006920         MOVE SPACES TO RPV110-SECSV2                             00692000
+006930         MOVE SPACES TO RPV110-SECSV3                             00693000
+006940         MOVE SPACES TO RPV110-SECSV4                             00694000
+006950         MOVE SPACES TO RPV110-SECSV5                             00695000
+006960         MOVE SPACES TO RPV110-SECSV6                             00696000
+006970         MOVE SPACES TO RPV110-SECSV7                             00697000
+006980         MOVE SPACES TO RPV110-SECSV8                             00698000
+006990         MOVE SPACES TO RPV110-SECSV9                             00699000
+007000         MOVE SPACES TO RPV110-SECSV10                            00700000
+007010         MOVE SPACES TO RPV110-SECSV11                            00701000
+007020         MOVE SPACES TO RPV110-SECSV12                            00702000
+007030         MOVE SPACES TO RPV110-SECSV13                            00703000
+007040         MOVE SPACES TO RPV110-SECSV14                            00704000
+007050         MOVE SPACES TO RPV110-SECSV15                            00705000
+007060         MOVE SPACES TO RPV110-SECSV16                            00706000
+007070         MOVE SPACES TO RPV110-SECSV17                            00707000
+007080         MOVE SPACES TO RPV110-SECSV18                            00708000
+007090         MOVE SPACES TO RPV110-SECSV19                            00709000
+007100         MOVE SPACES TO RPV110-SECSV20                            00710000
+007110         GO TO EIP-EXIT.                                          00711000
+007120     MOVE RPACT00-SECSERV1 TO RPV110-SECSV1.                      00712000
+007130     MOVE RPACT00-SECSERV2 TO RPV110-SECSV2.                      00713000
+007140     MOVE RPACT00-SECSERV3 TO RPV110-SECSV3.                      00714000
+007150     MOVE RPACT00-SECSERV4 TO RPV110-SECSV4.                      00715000
+007160     MOVE RPACT00-SECSERV5 TO RPV110-SECSV5.                      00716000
+007170     MOVE RPACT00-SECSERV6 TO RPV110-SECSV6.                      00717000
+007180     MOVE RPACT00-SECSERV7 TO RPV110-SECSV7.                      00718000
+007190     MOVE RPACT00-SECSERV8 TO RPV110-SECSV8.                      00719000
+007200     MOVE RPACT00-SECSERV9 TO RPV110-SECSV9.                      00720000
+007210     MOVE RPACT00-SECSERV10 TO RPV110-SECSV10.                    00721000
+007220     MOVE RPACT00-SECSERV11 TO RPV110-SECSV11.                    00722000
+007230     MOVE RPACT00-SECSERV12 TO RPV110-SECSV12.                    00723000
+007240     MOVE RPACT00-SECSERV13 TO RPV110-SECSV13.                    00724000
+007250     MOVE RPACT00-SECSERV14 TO RPV110-SECSV14.                    00725000
+007260     MOVE RPACT00-SECSERV15 TO RPV110-SECSV15.                    00726000
+007270     MOVE RPACT00-SECSERV16 TO RPV110-SECSV16.                    00727000
+007280     MOVE RPACT00-SECSERV17 TO RPV110-SECSV17.                    00728000
+007290     MOVE RPACT00-SECSERV18 TO RPV110-SECSV18.                    00729000
+007300     MOVE RPACT00-SECSERV19 TO RPV110-SECSV19.                    00730000
+007310     MOVE RPACT00-SECSERV20 TO RPV110-SECSV20.                    00731000
+007320 EIP-EXIT.                                                        00732000
+007330     EXIT.                                                        00733000
+007340******************************************************************00734000
+007350 MORE-DATA-PANELS SECTION.                                        00735000
+007360 MDP-START.                                                       00736000
+007370     GO TO PANEL-ROUTER.                                          00737000
+007380 MDP-EXIT.                                                        00738000
+007390     EXIT.                                                        00739000
+007400******************************************************************00740000
+007410 CLOSE-TRANSACTION SECTION.                                       00741000
+000000 COPY SRP0722.                                                    00742000
+007430******************************************************************00743000
+007440 PANEL-INIT SECTION.                                              00744000
+000000 COPY SRP073.                                                     00745000
+007460******************************************************************00746000
+007470 BUILD-NEXTKEY SECTION.                                           00747000
+007480 BXN-START.                                                       00748000
+007490     MOVE SPACES TO WS-NEXTKEY.                                   00749000
+007500     MOVE ',' TO WS-DELIM1.                                       00750000
+007510     MOVE ',' TO WS-DELIM2.                                       00751000
+007520     MOVE ',' TO WS-DELIM3.                                       00752000
+007530     MOVE COM-KEY-PRODCODE TO WS-PRODCODE.                        00753000
+007540     IF COM-KEY-ACCOUNT IS NOT NUMERIC                            00754000
+007550         MOVE COM-KEY-ACCOUNT TO WS-ACCTX                         00755000
+007560     ELSE                                                         00756000
+007570         MOVE COM-KEY-ACCOUNT-N TO WS-ACCT.                       00757000
+007580     MOVE COM-EXTERNALID TO WS-EXTID.                             00758000
+007590 BXN-EXIT.                                                        00759000
+007600     EXIT.                                                        00760000
+007610******************************************************************00761000
+007620 ABORT-EXIT SECTION.                                              00762000
+007630 AE-START.                                                        00763000
+007640     MOVE EIBFN TO COM-ABEIBFN.                                   00764000
+007650     MOVE EIBRCODE TO COM-ABEIBRCODE.                             00765000
+007660     GO TO CICS-ABORT-EXIT.                                       00766000
+007670 AE-EXIT.                                                         00767000
+007680     EXIT.                                                        00768000
+007690******************************************************************00769000
+007700 RPACT00-LINK-MESSAGE SECTION.                                    00770000
+007710 CXLM-START.                                                      00771000
+007720     MOVE 'Y' TO RPACT00-GLOBAL-CLOSE.                            00772000
+007730     MOVE WS-FILEOPTIONS TO RPACT00-FILEOPTS.                     00773000
+007740     MOVE COM-RETURN TO RPACT00-RETURN.                           00774000
+007750     MOVE COM-MODELID TO RPACT00-MODELID.                         00775000
+007760     MOVE COM-SECALT TO RPACT00-SECALT.                           00776000
+007770     MOVE COM-OPERID TO RPACT00-OPERID.                           00777000
+007780     MOVE COM-DATE TO RPACT00-DATE.                               00778000
+007790     MOVE COM-EXTERNALID TO RPACT00-EXTERNALID.                   00779000
+007800     MOVE COM-INST TO RPACT00-KEY-INST.                           00780000
+007810     MOVE COM-PRODCODE TO RPACT00-KEY-PRODCODE.                   00781000
+007820     MOVE COM-KEY-ACCOUNT TO RPACT00-KEY-ACCOUNT.                 00782000
+007830     MOVE COM-LANG TO RPACT00-COM-LANG.                           00783000
+007840     MOVE COM-CURN-CODE TO RPACT00-COM-CURNCD.                    00784000
+007850     EXEC CICS LINK                                               00785000
+007860         PROGRAM('RPLACT00')                                      00786000
+007870         COMMAREA(RPACT00-MESSAGE)                                00787000
+007880         LENGTH(LENGTH OF RPACT00-MESSAGE)                        00788000
+007890         RESP(WS-CICS-RESPONSE)                                   00789000
+007900         END-EXEC.                                                00790000
+007910     IF WS-CICS-RESPONSE IS NOT EQUAL TO ZERO                     00791000
+007920         MOVE 'RPLACT00 LINK FAILED' TO COM-ABMSG                 00792000
+007930         MOVE WS-TR0002 TO COM-ABTRACE                            00793000
+007940         MOVE WS-AB0009 TO COM-ABORT                              00794000
+007950         GO TO CICS-ABORT-EXIT.                                   00795000
+007960     MOVE RPACT00-FUNCTION TO WS-FUNCTION.                        00796000
+007970     IF RPACT00-ABORT IS NOT EQUAL TO ZERO                        00797000
+007980         MOVE RPACT00-ABORT TO COM-ABORT                          00798000
+007990         MOVE RPACT00-ABTRACE TO COM-ABTRACE                      00799000
+008000         MOVE RPACT00-ABEIBFN TO COM-ABEIBFN                      00800000
+008010         MOVE RPACT00-ABEIBRCODE TO COM-ABEIBRCODE                00801000
+008020         MOVE RPACT00-ABPROGID TO COM-ABPROGID                    00802000
+008030         MOVE RPACT00-SRBMDB TO COM-SRBMDB                        00803000
+008040         MOVE RPACT00-ABTYPE TO COM-ABTYPE                        00804000
+008050         GO TO CICS-ABORT-EXIT.                                   00805000
+008060     MOVE RPACT00-ABORT TO COM-ABORT.                             00806000
+008070     MOVE RPACT00-MSGNBR TO WS-MSGNBR.                            00807000
+008080 CXLM-EXIT.                                                       00808000
+008090     EXIT.                                                        00809000
+008100******************************************************************00810000
+008110 CLOSE-PANEL SECTION.                                             00811000
+008120 CP-START.                                                        00812000
+008130     MOVE REQ-GLOBAL-CLOSE TO PAN-REQ-VERB.                       00813000
+008140     IF COM-RETURN IS EQUAL TO 'E'                                00814000
+008150         PERFORM CALL-BISPAN-RPV110K.                             00815000
+008160     IF COM-RETURN IS EQUAL TO '1'                                00816000
+008170         PERFORM CALL-BISPAN-RPV110.                              00817000
+008180     IF COM-RETURN IS EQUAL TO 'A'                                00818000
+008190         PERFORM CALL-BISPAN-RPV1101.                             00819000
+008200 CP-EXIT.                                                         00820000
+008210     EXIT.                                                        00821000
+008220******************************************************************00822000
+008230 CALL-BISPAN-RPV110K SECTION.                                     00823000
+008240 CBD1-START.                                                      00824000
+008250     CALL 'BISPAN' USING                                          00825000
+008260         BICRPSB,                                                 00826000
+008270         BICRSRB,                                                 00827000
+008280         BICRPAN,                                                 00828000
+008290         RPV110K-PANL-DATA-BLOCK,                                 00829000
+008300         RPV110K-PANL-DATA-AREA.                                  00830000
+008310 CBD1-EXIT.                                                       00831000
+008320     EXIT.                                                        00832000
+008330******************************************************************00833000
+008340 CALL-BISPAN-RPV110 SECTION.                                      00834000
+008350 CBD2-START.                                                      00835000
+008360     CALL 'BISPAN' USING                                          00836000
+008370         BICRPSB,                                                 00837000
+008380         BICRSRB,                                                 00838000
+008390         BICRPAN,                                                 00839000
+008400         RPV110-PANL-DATA-BLOCK,                                  00840000
+008410         RPV110-PANL-DATA-AREA.                                   00841000
+008420 CBD2-EXIT.                                                       00842000
+008430     EXIT.                                                        00843000
+008440******************************************************************00844000
+008450 CALL-BISPAN-RPV1101 SECTION.                                     00845000
+008460 CBD21-START.                                                     00846000
+008470     CALL 'BISPAN' USING                                          00847000
+008480         BICRPSB,                                                 00848000
+008490         BICRSRB,                                                 00849000
+008500         BICRPAN,                                                 00850000
+008510         RPV1101-PANL-DATA-BLOCK,                                 00851000
+008520         RPV1101-PANL-DATA-AREA.                                  00852000
+008530 CBD21-EXIT.                                                      00853000
+008540     EXIT.                                                        00854000
+008550******************************************************************00855000
+008560 PANEL-PUT-WINDOW-RPV1101 SECTION.                                00856000
+008570 PANEL-PUT-WINDOW-RPV1101-START.                                  00857000
+008580     MOVE PDB-RPV1101-NAME TO PAN-NAME.                           00858000
+008590     MOVE REQ-PUT-WINDOW TO PAN-REQ-VERB.                         00859000
+008600     CALL 'BISPAN' USING                                          00860000
+008610         BICRPSB                                                  00861000
+008620         BICRSRB                                                  00862000
+008630         BICRPAN                                                  00863000
+008640         RPV1101-PANL-DATA-BLOCK,                                 00864000
+008650         RPV1101-PANL-DATA-AREA.                                  00865000
+008660 PANEL-PUT-WINDOW-RPV1101-EXIT.                                   00866000
+008670     EXIT.                                                        00867000
+008680******************************************************************00868000
+008690 PANEL-GET-RPV110 SECTION.                                        00869000
+008700 PANEL-GET-RPV110-START.                                          00870000
+008710     MOVE 'N' TO RPV110-SW-SET-CURSOR.                            00871000
+008720     MOVE PDB-RPV110-NAME TO PAN-NAME.                            00872000
+008730     MOVE REQ-GET TO PAN-REQ-VERB.                                00873000
+008740     CALL 'BISPAN' USING                                          00874000
+008750         BICRPSB                                                  00875000
+008760         BICRSRB                                                  00876000
+008770         BICRPAN                                                  00877000
+008780         RPV110-PANL-DATA-BLOCK,                                  00878000
+008790         RPV110-PANL-DATA-AREA.                                   00879000
+008800 PANEL-GET-RPV110-EXIT.                                           00880000
+008810     EXIT.                                                        00881000
+008820******************************************************************00882000
+008830 PANEL-GET-WINDOW-RPV1101 SECTION.                                00883000
+008840 PANEL-GET-WINDOW-RPV1101-START.                                  00884000
+008850     MOVE PDB-RPV1101-NAME TO PAN-NAME.                           00885000
+008860     MOVE REQ-GET-WINDOW TO PAN-REQ-VERB.                         00886000
+008870     CALL 'BISPAN' USING                                          00887000
+008880         BICRPSB                                                  00888000
+008890         BICRSRB                                                  00889000
+008900         BICRPAN                                                  00890000
+008910         RPV1101-PANL-DATA-BLOCK,                                 00891000
+008920         RPV1101-PANL-DATA-AREA.                                  00892000
+008930 PANEL-GET-WINDOW-RPV1101-EXIT.                                   00893000
+008940     EXIT.                                                        00894000
+008950******************************************************************00895000
+008960 PANEL-PUT-RPV110 SECTION.                                        00896000
+008970 PANEL-PUT-RPV110-START.                                          00897000
+008980     MOVE PDB-RPV110-NAME TO PAN-NAME.                            00898000
+008990     MOVE REQ-PUT TO PAN-REQ-VERB.                                00899000
+009000     CALL 'BISPAN' USING                                          00900000
+009010         BICRPSB                                                  00901000
+009020         BICRSRB                                                  00902000
+009030         BICRPAN                                                  00903000
+009040         RPV110-PANL-DATA-BLOCK,                                  00904000
+009050         RPV110-PANL-DATA-AREA.                                   00905000
+009060 PANEL-PUT-RPV110-EXIT.                                           00906000
+009070     EXIT.                                                        00907000
+009080******************************************************************00908000
+009090 PANEL-GET-RPV110K SECTION.                                       00909000
+009100 PANEL-GET-RPV110K-START.                                         00910000
+009110     MOVE 'N' TO RPV110K-SW-SET-CURSOR.                           00911000
+009120     MOVE PDB-RPV110K-NAME TO PAN-NAME.                           00912000
+009130     MOVE REQ-GET TO PAN-REQ-VERB.                                00913000
+009140     CALL 'BISPAN' USING                                          00914000
+009150         BICRPSB                                                  00915000
+009160         BICRSRB                                                  00916000
+009170         BICRPAN                                                  00917000
+009180         RPV110K-PANL-DATA-BLOCK,                                 00918000
+009190         RPV110K-PANL-DATA-AREA.                                  00919000
+009200 PANEL-GET-RPV110K-EXIT.                                          00920000
+009210     EXIT.                                                        00921000
+009220******************************************************************00922000
+009230 PANEL-PUT-RPV110K SECTION.                                       00923000
+009240 PANEL-PUT-RPV110K-START.                                         00924000
+009250     MOVE PDB-RPV110K-NAME TO PAN-NAME.                           00925000
+009260     MOVE REQ-PUT TO PAN-REQ-VERB.                                00926000
+009270     CALL 'BISPAN' USING                                          00927000
+009280         BICRPSB                                                  00928000
+009290         BICRSRB                                                  00929000
+009300         BICRPAN                                                  00930000
+009310         RPV110K-PANL-DATA-BLOCK,                                 00931000
+009320         RPV110K-PANL-DATA-AREA.                                  00932000
+009330 PANEL-PUT-RPV110K-EXIT.                                          00933000
+009340     EXIT.                                                        00934000
+009350******************************************************************00935000
+009360 MIC-MST-API SECTION.                                             00936000
+000000 COPY MIPMSTA.                                                    00937000
+009380******************************************************************00938000
+009390 EDIT-ACCOUNT-KEY SECTION.                                        00939000
+000000 COPY RPP014.                                                     00940000
+009410******************************************************************00941000
+009420 ACCOUNT-KEY-EDIT SECTION.                                        00942000
+000000 COPY RPP130.                                                     00943000
+009440******************************************************************00944000
+009450 LEFT-JUSTIFY SECTION.                                            00945000
+000000 COPY SRP068.                                                     00946000
+009470******************************************************************00947000
+009480 RIGHT-JUSTIFY SECTION.                                           00948000
+000000 COPY SRP026.                                                     00949000
+009500******************************************************************00950000
+009510 PARAMETER-SEARCH SECTION.                                        00951000
+000000 COPY SRP030.                                                     00952000
+009530******************************************************************00953000
+009540 COMPRESS-NEXTKEY SECTION.                                        00954000
+000000 COPY SRP070.                                                     00955000
+009560******************************************************************00956000
+009570 GET-MESSAGE SECTION.                                             00957000
+000000 COPY SRP071.                                                     00958000
+009590******************************************************************00959000
+009600 SRP170-ROUTINE SECTION.                                          00960000
+000000 COPY SRP170.                                                     00961000
+009620******************************************************************00962000
+009630 BUILD-PFKEY-LINE SECTION.                                        00963000
+000000 COPY SRP710.                                                     00964000
+009650******************************************************************00965000
+009660 VALIDATE-PFKEYS SECTION.                                         00966000
+000000 COPY SRP711.                                                     00967000
+009680******************************************************************00968000
+009690 SLP096-GET-2023-RECORD SECTION.                                  00969000
+000000 COPY SLP096.                                                     00970000
+009710******************************************************************00971000
+009720 CICS-XCTL SECTION.                                               00972000
+000000 COPY SLP704.                                                     00973000
+009740******************************************************************00974000
+009750 CICS-RETURN-TRANSID SECTION.                                     00975000
+000000 COPY SLP710.                                                     00976000
+009770******************************************************************00977000
+009780 TSQ-DELETE SECTION.                                              00978000
+009790 TSQD-START.                                                      00979000
+009800 TSQD-EXIT.                                                       00980000
+009810     EXIT.                                                        00981000
+009820******************************************************************00982000
+009830 CICS-ABORT-EXIT SECTION.                                         00983000
+000000 COPY SLP798.                                                     00984000
+009850******************************************************************00985000

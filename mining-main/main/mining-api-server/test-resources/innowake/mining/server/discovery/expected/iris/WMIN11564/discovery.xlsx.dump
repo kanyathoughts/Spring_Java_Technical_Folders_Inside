@@ -1,0 +1,56 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2028,"","DET_SEG","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2029,"","EMP","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2027,"","SEG_CODE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2024,"","TEST","src/sql/WMIN11564/TEST.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,15,0,15,0,1,-1,-1
+2026,"","TEST1","src/sql/WMIN11564/TEST1.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,10,0,10,0,1,-1,-1
+2025,"","TEST2","src/sql/WMIN11564/TEST2.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,16,0,16,0,1,-1,-1
+2031,"","VAFFE_SOI_LST","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2030,"","VT_ADVC_RBL_VLTA","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2024,"TEST","SELECT",344,1,1,21,22.77,4.74,"SELECT ASD.ADVC_PROFL_ID
+, ASD.GOAL_ID
+, ASD.RULE_NM
+, ASD.VALID_UNTIL_DT
+, ASD.CREW_PO_ID
+, ASD.TXN_STRT_TS
+FROM VT_ADVC_RBL_VLTA
+WHERE ASD.ADVC_PROFL_ID = V_ADVC_PROFL_ID
+AND ASD.ORIG_APPR_FL = 'Y'
+AND ASD.ORIG_APPR_FLA = 10000
+AND ASD.ORIG_APPR_FLB <= 20000
+AND ASD.ORIG_APPR_FLC >= 30000
+AND ASD.ORIG_APPR_FLD != 90000
+ORDER BY 1
+LIMIT 1000"
+2026,"TEST1","SELECT",288,3,3,22,29.40,6.05,"SELECT COUNT(*)
+INTO v_cnt
+FROM TCSDBOWNER.DET_SEG DS,
+TCSDBOWNER.emp E ,
+tcsdbowner.seg_code SC
+WHERE E.EMP_SK = DS.EMP_SK
+AND ds.seg_code_sk = sc.seg_code_sk
+AND TRIM(E.ID) = TRIM(in_crew_i)
+AND to_date('30-12-1899', 'DD-MM-YYYY') + DS.NOM_DATE = TRUNC(in_a)
+AND TRIM(sc.code) = 'SHIFT'"
+2025,"TEST2","INSERT",959,1,1,7,1.40,0.50,"INSERT INTO VAFFE_SOI_LST
+           (                                                                                   AFFE_SECTY_ID,                                                                   AFFE_SECTY_SHRT_NM,                                                              FND_ID,                                                                          LST_UPDTD_DT_TM,                                                                 LST_UPDTD_USER_ID                                                             )                                                                                   VALUES                                                                        (                                                                     1000000,
+                WS_LK_SEC_NAME,                                                                  80000,                                                   WS_TS,
+                70000            )"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2024,"TEST",2030,"VT_ADVC_RBL_VLTA","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",0,991,-1,-1
+2026,"TEST1",2028,"DET_SEG","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",0,374,-1,-1
+2026,"TEST1",2029,"EMP","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",0,374,-1,-1
+2026,"TEST1",2027,"SEG_CODE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",0,374,-1,-1
+2025,"TEST2",2031,"VAFFE_SOI_LST","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""STORE""]}",0,1170,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

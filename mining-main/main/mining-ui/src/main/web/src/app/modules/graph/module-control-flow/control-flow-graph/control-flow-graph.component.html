@@ -1,0 +1,10 @@
+<div class="control-flow-graph__meta-side-panel">
+  <div #graphComponentRef class="graph-global-style" [ngClass]="{'graph-global-style--eclipse-view' : eclipseView}">
+    <graph-overview-panel></graph-overview-panel>
+  </div>
+
+  <control-flow-meta-data [ngClass]="{'control-flow-meta-data__display' : ! isCFGMetaDataVisible}"
+    [sidePanelTitle]="sidePanelTitle" [cfgMetaData]="panelElements" [projectId]="projectId" (hideShowDrawer)="showCfgMetaDataDrawer($event)"
+    [nodeSelection]="nodeSelectionEvent.asObservable()" (annotationChange)="onAnnotationChange()">
+  </control-flow-meta-data>
+</div>

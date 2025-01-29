@@ -1,0 +1,44 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=RELATIONSHIP SYNCHRONIZATION                            00002000
+000030*    PROD=RPS WU=SYC0                                             00003000
+000040*    LDB=BKI136                                                   00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPSYC-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSACT - RP RELATIONSHIP SYNCHRONIZATION RECORD (SYC)        00010000
+000110******************************************************************00011000
+000120     03  RPSYC-GRP-KEY.                                           00012000
+000130         05  RPSYC-INST          PIC 9(04).                       00013000
+000140         05  RPSYC-APPL          PIC X(02).                       00014000
+000150         05  RPSYC-ACCOUNT       PIC X(18).                       00015000
+000160     03  RPSYC-AUDIT-STAMP.                                       00016000
+000170         05  RPSYC-DATE-AUDT     PIC S9(09)      COMP-3.          00017000
+000180         05  RPSYC-TIME-AUDT     PIC S9(09)      COMP-3.          00018000
+000190         05  RPSYC-USERID-AUDT   PIC X(08).                       00019000
+000200         05  RPSYC-ORGID-AUDT    PIC X(06).                       00020000
+000210*----------------------------------------------------------------*00021000
+000220     03  RPSYC-GRP-DATA.                                          00022000
+000230         05  RPSYC-PRODCODE      PIC X(06).                       00023000
+000240         05  RPSYC-SC-INC-OPTION PIC X(01).                       00024000
+000250         05  RPSYC-SC-INC-QUAL   PIC X(01).                       00025000
+000260         05  RPSYC-RATE-INC-OPTION                                00026000
+000270                                 PIC X(01).                       00027000
+000280         05  RPSYC-RATE-INC-QUAL PIC X(01).                       00028000
+000290         05  RPSYC-PROCOPT       PIC X(01).                       00029000
+000300         05  RPSYC-USER-INCENTIVES.                               00030000
+000310             07  RPSYC-USER-INCENTIVE-01                          00031000
+000320                                 PIC X(01).                       00032000
+000330             07  RPSYC-USER-INCENTIVE-02                          00033000
+000340                                 PIC X(01).                       00034000
+000350             07  RPSYC-USER-INCENTIVE-03                          00035000
+000360                                 PIC X(01).                       00036000
+000370             07  RPSYC-USER-INCENTIVE-04                          00037000
+000380                                 PIC X(01).                       00038000
+000390             07  RPSYC-USER-INCENTIVE-05                          00039000
+000400                                 PIC X(01).                       00040000
+000410         05  RPSYC-RESERVED      PIC X(47).                       00041000
+000420***************************************************************** 00042000
+000430*        END  RP RELATIONSHIP SYNCHRONIZATION RECORD (SYC)        00043000
+000440***************************************************************** 00044000

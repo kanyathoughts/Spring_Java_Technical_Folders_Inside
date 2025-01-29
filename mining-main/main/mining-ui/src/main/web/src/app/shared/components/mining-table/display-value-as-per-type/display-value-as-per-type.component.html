@@ -1,0 +1,80 @@
+<ng-container *ngIf="checkArray; else isNotList">
+  <ng-container *ngIf="stringList && stringList.length > 0; else emptyList">
+  <ng-container [ngSwitch]="displayAs">
+    <ng-container *ngSwitchCase="viewMode.TAG">
+      <nz-tag *ngFor="let items of stringList">{{items}}</nz-tag>
+    </ng-container>
+    <ul class="mining-table__list-field" *ngSwitchCase="viewMode.LINK">
+      <li *ngFor="let items of stringList; let i = index;" class="mining-table__list-field--list-item">
+        <a [routerLink]="column?.columnAction.resolveURL(data, i)">{{items}}</a>
+      </li>
+    </ul>
+    <ul class="mining-table__list-field" *ngSwitchCase="viewMode.LINKOPENMODAL">
+      <li *ngFor="let item of stringList; let i = index" class="mining-table__list-field--list-item">{{item}} <a class="mining-table__list-field--linkModalIcon" nz-icon nzType="profile" nzTheme="outline" (click)="showDetailsOfBusinessVariableReferenced(i, item)"></a></li>
+    </ul>
+    <ul class="mining-table__list-field" *ngSwitchDefault>
+      <li *ngFor="let items of stringList" class="mining-table__list-field--list-item">{{items}}</li>
+    </ul>
+  </ng-container>
+</ng-container>
+<ng-template #emptyList><span class="mining-table__empty-list">None</span></ng-template>
+</ng-container>
+<ng-template #isNotList>
+  <ng-container [ngSwitch]="displayAs">
+    <ng-container *ngSwitchCase="viewMode.ICON">
+      <span nz-icon [nzType]="iconDetails.iconType" [nzTheme]="iconDetails.iconTheme"
+        *ngIf="showIcon; else justText"></span>
+    </ng-container>
+    <ng-container *ngSwitchCase="viewMode.LINK">
+      <span *ngIf="stringList === linkNotApplicable; else linkField">{{stringList}}</span>
+      <ng-template #linkField>
+        <a [routerLink]="url" class="mining-table__link-field" [queryParams]="params">{{getDisplayText(stringList)}}</a>
+      </ng-template>
+    </ng-container>
+    <ng-container *ngSwitchCase="viewMode.DISABLEDLINK">
+      <span>{{stringList}}</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="viewMode.EXTERNALLINK">
+      <span *ngIf="stringList === linkNotApplicable; else linkField">{{stringList}}</span>
+      <ng-template #linkField>
+        <a href="{{stringList}}" class="mining-table__link-field" target="_blank">{{getDisplayText(stringList)}}</a>
+      </ng-template>
+    </ng-container>
+    <ng-container *ngSwitchCase="viewMode.HTML">
+      <span [innerHTML]="stringList"></span>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      <form (keydown.enter)="$event.preventDefault()" *ngIf="isEditable?.enableEditing; else justText"
+        [formGroup]="fieldForm" class="mining-table__editable-field--form-input" [ngClass]="! fieldForm.valid ? 'mining-table__editable-field--invalid-input' : ''">
+        <nz-form-control [nzErrorTip]="errorToolTip">
+          <nz-input-group nzSearch [nzAddOnAfter]="actionButton">
+            <input *ngIf="data?.isEditable || showInputType || ! isBulkInsertEnabled" type="text" #textFieldInput
+              nz-input formControlName="textField" [placeholder]="placeholder" (keyup.enter)="checkNewRecord()" />
+            <nz-select *ngIf=" ! showInputType && ! data?.isEditable && isBulkInsertEnabled"
+              (keyup.enter)="convertToTagOnEnter(fieldForm.controls.textField.value)" nzMode="tags" #textFieldInput
+              [nzPlaceHolder]="placeholder" formControlName="textField" nzDropdownClassName="hide" class="select_width">
+            </nz-select>
+          </nz-input-group>
+          <ng-template #actionButton>
+            <nz-button-group>
+              <button nz-button (click)="onFormSubmit()"><em nz-icon nzType="check"></em></button>
+              <button nz-button (click)="changeEditableState(true)"><em nz-icon nzType="close"></em></button>
+            </nz-button-group>
+          </ng-template>
+          <ng-template #errorToolTip let-control>
+            <ng-container *ngFor="let validation of editOptions?.validationMessages | keyvalue">
+              <ng-container *ngIf="control.hasError(validation.key)">
+                {{ validation.value | translate }}
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </form>
+    </ng-container>
+  </ng-container>
+</ng-template>
+<ng-template #justText>
+  <span nz-tooltip nzTooltipTitle="{{data?.toolTip | translate}}"  nzTooltipPlacement="left"
+    [ngClass]="{'mining-table__view-field': (! isEditable || notAllowed || ! isEditable.enableEditing), 'mining-table__editable-field': (isEditable?.enableEditing === false && ! notAllowed)}"
+    (click)="changeEditableState()" >{{formatNumber(stringList)}}</span>
+</ng-template>

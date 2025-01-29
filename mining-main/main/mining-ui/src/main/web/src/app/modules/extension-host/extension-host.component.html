@@ -1,0 +1,19 @@
+<!-- Load stylesheets if any available -->
+<ng-container *ngIf="styleSheets.length">
+    <link *ngFor="let path of styleSheets" rel="stylesheet" type="text/css" [href]="getSafeUrl(path)" />
+</ng-container>
+
+<!-- 
+    Logic will change in future if we have more embed types for now we have only one that's iFrame.
+    Currently using 2 separate Iframe as even empty sandbox attribute have restrictions. 
+-->
+<iframe class="extensition-host__external-page" *ngIf="page && ! sandboxAttribute"
+    [src]="srcUrl"
+    [class]="classes"
+    [style]="styles"></iframe>
+
+<iframe class="extensition-host__external-page" *ngIf="page && sandboxAttribute"
+    [src]="srcUrl"
+    [class]="classes"
+    [style]="styles"
+    [sandbox]="sandboxAttribute"></iframe>

@@ -1,0 +1,21 @@
+<nz-card [nzTitle]="cardData?.name" class="functional-block-card" [nzExtra]="closeButton">
+  <p>{{cardData?.description}}</p>
+  <nz-divider></nz-divider>
+  <nz-card-meta nzTitle="{{'functionalBlock.cardOverview' | translate}}" [nzDescription]="childTemplate">
+  </nz-card-meta>
+</nz-card>
+<ng-template #childTemplate>
+    <div *ngIf="cardData?.children?.content?.length; else noChild">
+      <ng-container *ngFor="let child of cardData?.children?.content">
+        <button class="functional-block-card__child-card" nz-row nz-button nzType="default" nzSize="small" nzShape="round" (click)="openChildCard(child)">{{child?.name}}</button>
+      </ng-container>
+    </div>
+    <ng-template #noChild>
+      <p>{{'functionalBlock.noChild' | translate}}</p>
+    </ng-template>
+</ng-template>
+<ng-template #closeButton>
+    <button *ngIf=" ! isRoot" nz-button nzType="text" (click)="closeCard(cardData.uid)">
+      <em nz-icon nzType="close" nzTheme="outline"></em>
+    </button>
+</ng-template>

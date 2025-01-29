@@ -1,0 +1,14 @@
+ CMP037A: PROCEDURE OPTIONS(MAIN);
+ 
+    DCL A BIT(8) INIT(1);
+    DCL B BIT(8) INIT(2);
+    
+    IF ( A ! B) THEN DO;    
+     PUT SKIP LIST('A ! B', A ! B);
+    END;
+    IF ( A | B) THEN DO;    
+     PUT SKIP LIST('A | B', A | B);
+    END;
+    PUT SKIP LIST('');
+    
+ END CMP037A;

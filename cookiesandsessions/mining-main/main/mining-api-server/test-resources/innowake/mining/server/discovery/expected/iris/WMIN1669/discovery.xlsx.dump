@@ -1,0 +1,42 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2180,"","MIPS235.P.M1100IA.DATA.VSAM","","RESOURCE","RESOURCE_VSAM_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2183,"","MIPS235.T.M1100IA.DATA.VSAM","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2182,"","MIPS235.T.M1100SA.BACKUP","","RESOURCE","RESOURCE_GDG_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2181,"","MIPS235.T.SYSIN","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2175,"","WMIN1669A","src/jcl/WMIN1669/procs/WMIN1669A.proc","JCL","JCL_PROC","PHYSICAL",0,0,17,31,48,2,0,-1,-1
+2176,2175,"WMIN1669A.PS01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2178,2175,"WMIN1669A.PS02.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,1,-1,-1,-1,0,0,-1,-1
+2177,"","WMIN1669B","src/jcl/WMIN1669/jobs/WMIN1669B.job","JCL","JCL_JOB","PHYSICAL",1,1,2,4,6,1,0,-1,-1
+2179,2177,"WMIN1669B.PS01.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2174,"","WMIN1669S","src/jcl/WMIN1669/controlcards/WMIN1669S.crd","JCL","JCL_CONTROLCARD","PHYSICAL",0,0,0,0,22,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2175,"WMIN1669A","EXEC","Properties: [PGM=IDCAMS,TIME=30,COND=8,LT], Data Definitions: [SYSUT1{DSN=MIPS235.T.M1100SA.BACKUP(+0),DISP=SHR},SYSUT2{DSN=MIPS235.T.M1100IA.DATA.VSAM,DISP=SHR,AMP=BUFNI=2,BUFND=57},SYSIN{DSN=MIPS235.T.SYSIN(REPRO),DISP=SHR},SYSIN{*= },SYSOUT{SYSOUT=,},SYSPRINT{SYSOUT=,}], Additional Properties: [Fully Qualified Step name=PS01.PS02,Step name=PS02,Job name=WMIN1669B]"
+2175,"WMIN1669A","EXEC","Properties: [PGM=IDCAMS,TIME=30], Data Definitions: [SYSIN{DSN=MIPS235.T.SYSIN(WMIN1669S),DISP=SHR},SYSOUT{SYSOUT=,},SYSPRINT{SYSOUT=,}], Additional Properties: [Fully Qualified Step name=PS01.PS01,Step name=PS01,Job name=WMIN1669B]"
+2177,"WMIN1669B","EXEC_PROC","Properties: [PROC=WMIN1669A,TIME=30], Data Definitions: [], Additional Properties: [Fully Qualified Step name=PS01,Step name=PS01,Job name=WMIN1669B]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2175,"WMIN1669A",2176,"WMIN1669A.PS01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2175,"WMIN1669A",2178,"WMIN1669A.PS02.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2176,"WMIN1669A.PS01.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","[2179]","LATE","{""INBOUND"":0,""OUTBOUND"":1,""OUTBOUND_TARGETS"":[""MIPS235.P.M1100IA.DATA.VSAM""]}",-1,-1,-1,-1
+2176,"WMIN1669A.PS01.EXEC_PGM",2180,"MIPS235.P.M1100IA.DATA.VSAM","RESOURCE","RESOURCE_VSAM_FILE","Accesses","[2179]","LATE","{}",-1,-1,-1,-1
+2176,"WMIN1669A.PS01.EXEC_PGM",2181,"MIPS235.T.SYSIN","RESOURCE","RESOURCE_FILE","Accesses","[2179]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSIN""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2176,"WMIN1669A.PS01.EXEC_PGM",2174,"WMIN1669S","JCL","JCL_CONTROLCARD","Calls","[2179]","LATE","{""PROPERTIES"":[{""DSN"":""MIPS235.T.SYSIN(WMIN1669S)"",""DISP"":""SHR"",""ID_NAME"":""SYSIN""}]}",-1,-1,-1,-1
+2178,"WMIN1669A.PS02.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","[2179]","LATE","{""INBOUND"":0,""OUTBOUND"":0,""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+2178,"WMIN1669A.PS02.EXEC_PGM",2183,"MIPS235.T.M1100IA.DATA.VSAM","RESOURCE","RESOURCE_FILE","Accesses","[2179]","LATE","{""PROPERTIES"":[{""AMP"":""BUFNI=2,BUFND=57"",""DISP"":""SHR"",""ID_NAME"":""SYSUT2""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2178,"WMIN1669A.PS02.EXEC_PGM",2182,"MIPS235.T.M1100SA.BACKUP","RESOURCE","RESOURCE_GDG_FILE","Accesses","[2179]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSUT1""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2178,"WMIN1669A.PS02.EXEC_PGM",2181,"MIPS235.T.SYSIN","RESOURCE","RESOURCE_FILE","Accesses","[2179]","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSIN""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2178,"WMIN1669A.PS02.EXEC_PGM",-1,"REPRO","JCL","JCL_CONTROLCARD","Calls","[2179]","LATE","{""PROPERTIES"":[{""DSN"":""MIPS235.T.SYSIN(REPRO)"",""DISP"":""SHR"",""ID_NAME"":""SYSIN""}]}",-1,-1,-1,-1
+2177,"WMIN1669B",2179,"WMIN1669B.PS01.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+2179,"WMIN1669B.PS01.EXEC",2175,"WMIN1669A","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2178,"WMIN1669A.PS02.EXEC_PGM","WARNING","UNDISCOVERED_DEPENDENCY"," An error occurred while fetching the content for the control card named: REPRO",-1,-1
+2177,"WMIN1669B","ERROR","PARSE_ERROR","Line 4: Cannot invoke ""innowake.ndt.jcl.parser.model.Step.getLastAddedDD()"" because ""this.currentStep"" is null",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

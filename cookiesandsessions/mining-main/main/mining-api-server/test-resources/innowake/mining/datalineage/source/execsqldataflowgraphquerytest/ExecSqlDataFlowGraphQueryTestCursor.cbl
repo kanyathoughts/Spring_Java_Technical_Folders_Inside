@@ -1,0 +1,32 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WCFD459A.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       DATA DIVISION.
+       FILE SECTION.
+       WORKING-STORAGE SECTION.
+       01  HOST-VARS.
+           10 ALPHA-SHORT PIC X(8).
+     
+       EXEC SQL
+          INCLUDE EMPREC
+       END-EXEC.
+       
+       EXEC SQL
+          INCLUDE SQLCA
+       END-EXEC.
+
+       LINKAGE SECTION.
+       PROCEDURE DIVISION.
+       BEGIN.
+      * some DECLARE CURSOR test
+           EXEC SQL
+            DECLARE EMPCURS CURSOR FOR
+            SELECT LNAME, FNAME, PAYRATE, HOURS
+			INTO :HOST-VARS
+            FROM EMPLOYEE
+            WHERE DEPT = :ALPHA-SHORT
+           END-EXEC.
+       END PROGRAM WCFD68A.
+

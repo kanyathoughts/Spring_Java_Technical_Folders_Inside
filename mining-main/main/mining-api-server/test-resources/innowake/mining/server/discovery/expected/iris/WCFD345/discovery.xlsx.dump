@@ -1,0 +1,63 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+276,"","LOG","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+277,"","LOG.MGO","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+268,"","MGOJOB3","src/jcl/WCFD345/jobs/MGOJOB3.job","JCL","JCL_JOB","PHYSICAL",3,2,16,3,19,5,0,-1,-1
+269,268,"MGOJOB3.STEP1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+272,268,"MGOJOB3.STEP8A.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+273,268,"MGOJOB3.STEP8B.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+267,"","MGOJOB4","src/jcl/WCFD345/jobs/MGOJOB4.job","JCL","JCL_JOB","PHYSICAL",4,3,21,3,24,7,0,-1,-1
+270,267,"MGOJOB4.STEP1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+271,267,"MGOJOB4.STEP8A.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+274,267,"MGOJOB4.STEP8B.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+275,267,"MGOJOB4.STEP8C.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+268,"MGOJOB3","CONDITIONAL","IF STEP3A.RC EQ 0"
+268,"MGOJOB3","CONDITIONAL","IF STEP3A.RC NE 0"
+268,"MGOJOB3","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP1], Data Definitions: [SYSOUT{DSN=LOG,DISP=NEW,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP1,Step name=STEP1,Job name=IFELSE01]"
+268,"MGOJOB3","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP8A THEN], Data Definitions: [SYSOUT{DSN=LOG.MGO,DISP=MOD,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP8A,Step name=STEP8A,Job name=IFELSE01]"
+268,"MGOJOB3","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP8B ELSE IF], Data Definitions: [SYSOUT{DSN=LOG,DISP=MOD,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP8B,Step name=STEP8B,Job name=IFELSE01]"
+267,"MGOJOB4","CONDITIONAL","IF STEP3A.RC EQ 2"
+267,"MGOJOB4","CONDITIONAL","IF STEP3A.RC NE 1"
+267,"MGOJOB4","CONDITIONAL","IF STEP3A.RC NE 3"
+267,"MGOJOB4","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP1], Data Definitions: [SYSOUT{DSN=LOG,DISP=NEW,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP1,Step name=STEP1,Job name=IFELSE01]"
+267,"MGOJOB4","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP8A THEN], Data Definitions: [SYSOUT{DSN=LOG.MGO,DISP=MOD,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP8A,Step name=STEP8A,Job name=IFELSE01]"
+267,"MGOJOB4","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP8B ELSE IF], Data Definitions: [SYSOUT{DSN=LOG,DISP=MOD,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP8B,Step name=STEP8B,Job name=IFELSE01]"
+267,"MGOJOB4","EXEC","Properties: [PGM=COBOLWRITE,PARM=STEP8C THEN], Data Definitions: [SYSOUT{DSN=LOG.MGO,DISP=MOD,CATLG,DELETE}], Additional Properties: [Fully Qualified Step name=STEP8C,Step name=STEP8C,Job name=IFELSE01]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+269,"MGOJOB3.STEP1.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+272,"MGOJOB3.STEP8A.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+273,"MGOJOB3.STEP8B.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+270,"MGOJOB4.STEP1.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+271,"MGOJOB4.STEP8A.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+274,"MGOJOB4.STEP8B.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+275,"MGOJOB4.STEP8C.EXEC_PGM",-1,"COBOLWRITE","UNKNOWN","UNKNOWN","Calls","","LATE","{}",-1,-1,-1,-1
+268,"MGOJOB3",269,"MGOJOB3.STEP1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+268,"MGOJOB3",272,"MGOJOB3.STEP8A.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+268,"MGOJOB3",273,"MGOJOB3.STEP8B.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+267,"MGOJOB4",270,"MGOJOB4.STEP1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+267,"MGOJOB4",271,"MGOJOB4.STEP8A.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+267,"MGOJOB4",274,"MGOJOB4.STEP8B.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+267,"MGOJOB4",275,"MGOJOB4.STEP8C.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+269,"MGOJOB3.STEP1.EXEC_PGM",276,"LOG","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""NEW,CATLG,DELETE""}]}",-1,-1,-1,-1
+273,"MGOJOB3.STEP8B.EXEC_PGM",276,"LOG","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""MOD,CATLG,DELETE""}]}",-1,-1,-1,-1
+270,"MGOJOB4.STEP1.EXEC_PGM",276,"LOG","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""NEW,CATLG,DELETE""}]}",-1,-1,-1,-1
+274,"MGOJOB4.STEP8B.EXEC_PGM",276,"LOG","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""MOD,CATLG,DELETE""}]}",-1,-1,-1,-1
+272,"MGOJOB3.STEP8A.EXEC_PGM",277,"LOG.MGO","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""MOD,CATLG,DELETE""}]}",-1,-1,-1,-1
+271,"MGOJOB4.STEP8A.EXEC_PGM",277,"LOG.MGO","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""MOD,CATLG,DELETE""}]}",-1,-1,-1,-1
+275,"MGOJOB4.STEP8C.EXEC_PGM",277,"LOG.MGO","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""ID_NAME"":""SYSOUT"",""DISP"":""MOD,CATLG,DELETE""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+268,"MGOJOB3","ERROR","PARSE_ERROR","INVALID REFERBACK IN THE RC FIELD: STEP3A",-1,-1
+268,"MGOJOB3","ERROR","PARSE_ERROR","INVALID REFERBACK IN THE RC FIELD: STEP3A",-1,-1
+267,"MGOJOB4","ERROR","PARSE_ERROR","INVALID REFERBACK IN THE RC FIELD: STEP3A",-1,-1
+267,"MGOJOB4","ERROR","PARSE_ERROR","INVALID REFERBACK IN THE RC FIELD: STEP3A",-1,-1
+267,"MGOJOB4","ERROR","PARSE_ERROR","INVALID REFERBACK IN THE RC FIELD: STEP3A",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

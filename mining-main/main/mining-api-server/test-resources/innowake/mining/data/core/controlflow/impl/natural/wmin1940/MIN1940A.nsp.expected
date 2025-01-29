@@ -1,0 +1,25 @@
+ #2 DefineDataStmt
+ #22 IncludeStmt, FROM={TestEntryPoint}, TO={#26}
+ #23 FormatStmt
+ #26 WRITE (1) NOTITLE NOHDR *PROGRAM, FROM={#22}, TO={#30}
+ #30 ForStmt, Label: FOR #I EQ 1 TO 7 STEP 1, FROM={#26, #75, #87, #92}, TO={#35(LOOP BODY), #98(LOOP END)}
+  #35 IfStmt, Label: IF #I EQ 1 OR = 2, FROM={#30(LOOP BODY)}, TO={#42(TRUE), #47(FALSE)}
+    #42 MoveStmt, FROM={#35(TRUE)}, TO={#64}
+    #47 IfStmt, Label: IF #I EQ 3 OR = 4 OR = 5, FROM={#35(FALSE)}, TO={#55(TRUE), #60(FALSE)}
+      #55 MoveStmt, FROM={#47(TRUE)}, TO={#64}
+      #60 MoveStmt, FROM={#47(FALSE)}, TO={#64}
+  #64 MoveStmt, FROM={#42, #55, #60}, TO={#68}
+  #68 IfStmt, Label: IF #I EQ 1 OR = 2, FROM={#64}, TO={#75(TRUE), #80(FALSE)}
+    #75 MoveStmt, FROM={#68(TRUE)}, TO={#30}
+    #80 IfStmt, Label: IF #I EQ 3 OR = 4, FROM={#68(FALSE)}, TO={#87(TRUE), #92(FALSE)}
+      #87 MoveStmt, FROM={#80(TRUE)}, TO={#30}
+      #92 MoveStmt, FROM={#80(FALSE)}, TO={#30}
+  #96 EndAllMarkStmt
+ #97 Labeled
+  #98 SortStmt, FROM={#108, #112, #113, #30(LOOP END)}, TO={#108(AT BREAK (L1.) OF #F1), #112(AT BREAK (L1.) OF #F2), #113(LOOP BODY), #127(LOOP END)}
+   #105 BreakStmt, Label: AT BREAK (L1.) OF #F1
+    #108 SuspendIdenticalSuppressStmt, FROM={#98(AT BREAK (L1.) OF #F1)}, TO={#98}
+   #109 BreakStmt, Label: AT BREAK (L1.) OF #F2
+    #112 SuspendIdenticalSuppressStmt, FROM={#98(AT BREAK (L1.) OF #F2)}, TO={#98}
+   #113 WRITE (1) NOTITLE (AD=I ZP=OFF) #F1 (IS=ON) #F2 (IS=ON) #F3, FROM={#98(LOOP BODY)}, TO={#98}
+ #127 EndStmt, FROM={#98(LOOP END)}, TO={TestReturnPoint}

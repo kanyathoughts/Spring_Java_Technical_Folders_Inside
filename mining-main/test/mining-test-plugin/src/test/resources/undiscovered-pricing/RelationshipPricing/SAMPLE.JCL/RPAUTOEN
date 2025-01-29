@@ -1,0 +1,651 @@
+//RPAUTOEN JOB
+//*    ********************************************************         00001000
+//*    * RPAUTOEN - RELATIONSHIP PRICING AUTOMATIC ENROLLMENT *         00002000
+//*    ********************************************************         00003000
+//JOBLIB   DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.DP86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.TI86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//         DD  DSN=CICSTS22.CICS.SDFHEXCI,DISP=SHR                      00005000
+//*                                                                     00006000
+//*    **********************************************************       00007000
+//*    * RPR090 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 1  *       00008000
+//*    **********************************************************       00009000
+//STEP005  EXEC PGM=IEFBR14,COND=(0,LT)                                 00010000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,                              00011000
+//             DISP=(MOD,DELETE,DELETE),                                00012000
+//             UNIT=SYSDA,                                              00013000
+//             SPACE=(TRK,(1,1),RLSE)                                   00014000
+//*                                                                     00015000
+//STEP010  EXEC PGM=RPR090,REGION=4096K,COND=(0,LT)                     00016000
+//SYSPRINT DD  SYSOUT=*                                                 00017000
+//SYSUDUMP DD  SYSOUT=*                                                 00018000
+//SYSOUT   DD  SYSOUT=*                                                 00019000
+//PRINTR   DD  SYSOUT=*                                                 00020000
+//PRFICH   DD  SYSOUT=*                                                 00021000
+//PRINTA   DD  SYSOUT=*                                                 00022000
+//PRINTB   DD  SYSOUT=*                                                 00023000
+//PRINTC   DD  SYSOUT=*                                                 00024000
+//PRINTD   DD  SYSOUT=*                                                 00025000
+//PRINTE   DD  SYSOUT=*                                                 00026000
+//PRINTF   DD  SYSOUT=*                                                 00027000
+//PRINTG   DD  SYSOUT=*                                                 00028000
+//PRINTH   DD  SYSOUT=*                                                 00029000
+//PRINTI   DD  SYSOUT=*                                                 00030000
+//PRINTJ   DD  SYSOUT=*                                                 00031000
+//PRNTR01  DD  SYSOUT=*                                                 00032000
+//PRNTRST  DD  SYSOUT=*                                                 00033000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00034000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00035000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,                              00040000
+//             DISP=(NEW,CATLG,DELETE),                                 00041000
+//             UNIT=SYSDA,                                              00042000
+//             DCB=(RECFM=FB,LRECL=0028,BLKSIZE=27972),                 00043000
+//             SPACE=(CYL,(10,5),RLSE)                                  00044000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00046000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR090),DISP=SHR              00047000
+//*                                                                     00048000
+/*                                                                      00049000
+//*                                                                     00050000
+//*    **********************************************************       00051000
+//*    * RPR092 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 2  *       00052000
+//*    **********************************************************       00053000
+//STEP015  EXEC PGM=IEFBR14,COND=(0,LT)                                 00054000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,                              00055000
+//             DISP=(MOD,DELETE,DELETE),                                00056000
+//             UNIT=SYSDA,                                              00057000
+//             SPACE=(TRK,(1,1),RLSE)                                   00058000
+//*                                                                     00059000
+//STEP020  EXEC PGM=RPR092,REGION=4096K,COND=(0,LT)                     00060000
+//SYSPRINT DD  SYSOUT=*                                                 00061000
+//SYSUDUMP DD  SYSOUT=*                                                 00062000
+//SYSOUT   DD  SYSOUT=*                                                 00063000
+//PRINTR   DD  SYSOUT=*                                                 00064000
+//PRFICH   DD  SYSOUT=*                                                 00065000
+//PRINTA   DD  SYSOUT=*                                                 00066000
+//PRINTB   DD  SYSOUT=*                                                 00067000
+//PRINTC   DD  SYSOUT=*                                                 00068000
+//PRINTD   DD  SYSOUT=*                                                 00069000
+//PRINTE   DD  SYSOUT=*                                                 00070000
+//PRINTF   DD  SYSOUT=*                                                 00071000
+//PRINTG   DD  SYSOUT=*                                                 00072000
+//PRINTH   DD  SYSOUT=*                                                 00073000
+//PRINTI   DD  SYSOUT=*                                                 00074000
+//PRINTJ   DD  SYSOUT=*                                                 00075000
+//PRNTR01  DD  SYSOUT=*                                                 00076000
+//PRNTRST  DD  SYSOUT=*                                                 00077000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00078000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00079000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,DISP=SHR                      00084000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,                              00085000
+//             DISP=(NEW,CATLG,DELETE),                                 00086000
+//             UNIT=SYSDA,                                              00087000
+//             DCB=(RECFM=FB,LRECL=0057,BLKSIZE=27987),                 00088000
+//             SPACE=(CYL,(10,5),RLSE)                                  00089000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00091000
+/*                                                                      00092000
+//*                                                                     00093000
+//*    **********************************************************       00094000
+//*    * RPR094 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 3  *       00095000
+//*    **********************************************************       00096000
+//STEP025  EXEC PGM=IEFBR14,COND=(0,LT)                                 00097000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,                              00098000
+//             DISP=(MOD,DELETE,DELETE),                                00099000
+//             UNIT=SYSDA,                                              00100000
+//             SPACE=(TRK,(1,1),RLSE)                                   00101000
+//*                                                                     00102000
+//STEP030  EXEC PGM=RPR094,REGION=4096K,COND=(0,LT)                     00103000
+//SYSPRINT DD  SYSOUT=*                                                 00104000
+//SYSUDUMP DD  SYSOUT=*                                                 00105000
+//SYSOUT   DD  SYSOUT=*                                                 00106000
+//PRINTR   DD  SYSOUT=*                                                 00107000
+//PRFICH   DD  SYSOUT=*                                                 00108000
+//PRINTA   DD  SYSOUT=*                                                 00109000
+//PRINTB   DD  SYSOUT=*                                                 00110000
+//PRINTC   DD  SYSOUT=*                                                 00111000
+//PRINTD   DD  SYSOUT=*                                                 00112000
+//PRINTE   DD  SYSOUT=*                                                 00113000
+//PRINTF   DD  SYSOUT=*                                                 00114000
+//PRINTG   DD  SYSOUT=*                                                 00115000
+//PRINTH   DD  SYSOUT=*                                                 00116000
+//PRINTI   DD  SYSOUT=*                                                 00117000
+//PRINTJ   DD  SYSOUT=*                                                 00118000
+//PRNTR01  DD  SYSOUT=*                                                 00119000
+//PRNTRST  DD  SYSOUT=*                                                 00120000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00121000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00122000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,DISP=SHR                      00127000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,                              00128000
+//             DISP=(NEW,CATLG,DELETE),                                 00129000
+//             UNIT=SYSDA,                                              00130000
+//             DCB=(RECFM=FB,LRECL=0062,BLKSIZE=27962),                 00131000
+//             SPACE=(CYL,(10,5),RLSE)                                  00132000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00134000
+/*                                                                      00135000
+//*                                                                     00136000
+//*    **********************************************************       00137000
+//*    * RPR096 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 4  *       00138000
+//*    **********************************************************       00139000
+//STEP035  EXEC PGM=IEFBR14,COND=(0,LT)                                 00140000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,                              00141000
+//             DISP=(MOD,DELETE,DELETE),                                00142000
+//             UNIT=SYSDA,                                              00143000
+//             SPACE=(TRK,(1,1),RLSE)                                   00144000
+//*                                                                     00145000
+//STEP040  EXEC PGM=RPR096,REGION=4096K,COND=(0,LT)                     00146000
+//SYSPRINT DD  SYSOUT=*                                                 00147000
+//SYSUDUMP DD  SYSOUT=*                                                 00148000
+//SYSOUT   DD  SYSOUT=*                                                 00149000
+//PRINTR   DD  SYSOUT=*                                                 00150000
+//PRFICH   DD  SYSOUT=*                                                 00151000
+//PRINTA   DD  SYSOUT=*                                                 00152000
+//PRINTB   DD  SYSOUT=*                                                 00153000
+//PRINTC   DD  SYSOUT=*                                                 00154000
+//PRINTD   DD  SYSOUT=*                                                 00155000
+//PRINTE   DD  SYSOUT=*                                                 00156000
+//PRINTF   DD  SYSOUT=*                                                 00157000
+//PRINTG   DD  SYSOUT=*                                                 00158000
+//PRINTH   DD  SYSOUT=*                                                 00159000
+//PRINTI   DD  SYSOUT=*                                                 00160000
+//PRINTJ   DD  SYSOUT=*                                                 00161000
+//PRNTR01  DD  SYSOUT=*                                                 00162000
+//PRNTRST  DD  SYSOUT=*                                                 00163000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00164000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00165000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,DISP=SHR                      00170000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,                              00171000
+//             DISP=(NEW,CATLG,DELETE),                                 00172000
+//             UNIT=SYSDA,                                              00173000
+//             DCB=(RECFM=FB,LRECL=0375,BLKSIZE=27750),                 00174000
+//             SPACE=(CYL,(10,5),RLSE)                                  00175000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00177000
+/*                                                                      00178000
+//*                                                                     00179000
+//*    **********************************************************       00180000
+//*    * RPR100 - RELATIONSHIP PRICING AUTO ENROLLMENT          *       00181000
+//*    **********************************************************       00182000
+//STEP045  EXEC PGM=IEFBR14,COND=(0,LT)                                 00183000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00184000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00185000
+//RPEXCP   DD  DSN=BNKCA.IN0.RP50.RPEXCP,                               00186000
+//             DISP=(MOD,DELETE,DELETE),                                00187000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00188000
+//*                                                                     00189000
+//STEP050  EXEC PGM=RPR100,REGION=4096K,COND=(0,LT)                     00190000
+//SYSPRINT DD  SYSOUT=*                                                 00191000
+//SYSUDUMP DD  SYSOUT=*                                                 00192000
+//SYSOUT   DD  SYSOUT=*                                                 00193000
+//PRINTR   DD  SYSOUT=*                                                 00194000
+//PRFICH   DD  SYSOUT=*                                                 00195000
+//PRINTA   DD  SYSOUT=*                                                 00196000
+//PRINTB   DD  SYSOUT=*                                                 00197000
+//PRINTC   DD  SYSOUT=*                                                 00198000
+//PRINTD   DD  SYSOUT=*                                                 00199000
+//PRINTE   DD  SYSOUT=*                                                 00200000
+//PRINTF   DD  SYSOUT=*                                                 00201000
+//PRINTG   DD  SYSOUT=*                                                 00202000
+//PRINTH   DD  SYSOUT=*                                                 00203000
+//PRINTI   DD  SYSOUT=*                                                 00204000
+//PRINTJ   DD  SYSOUT=*                                                 00205000
+//PRNTR01  DD  SYSOUT=*                                                 00206000
+//PRNTRST  DD  SYSOUT=*                                                 00207000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00208000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00209000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,DISP=SHR                      00214000
+//RPEXCP   DD  DSN=BNKCA.IN0.RP50.RPEXCP,                               00215000
+//             DISP=(NEW,CATLG,DELETE),                                 00216000
+//             UNIT=SYSDA,                                              00217000
+//             DCB=(RECFM=FB,LRECL=0113,BLKSIZE=27911),                 00218000
+//             SPACE=(CYL,(10,5),RLSE)                                  00219000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00220000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),      00221000
+//             SPACE=(CYL,(1,1),RLSE)                                   00222000
+//*                                                                     00223000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR100),DISP=SHR              00224000
+//*                                                                     00225000
+//*                                                                     00226000
+//

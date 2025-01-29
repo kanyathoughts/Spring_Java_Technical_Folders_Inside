@@ -1,0 +1,63 @@
+//RPD350S JOB
+//*    *****************************                                    00001000
+//*    * RPD350 - STOCK FORM PRINT *                                    00002000
+//*    *****************************                                    00003000
+//SCRATCH  EXEC PGM=IEFBR14                                             00004000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,                               00005000
+//             DISP=(MOD,DELETE,DELETE),                                00006000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00007000
+//*                                                                     00008000
+//RPD350   EXEC PGM=RPD350,PARM='ORG=(1)',REGION=2048K                  00009000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00011000
+//SYSUDUMP DD  SYSOUT=*                                                 00012000
+//SYSOUT   DD  SYSOUT=*                                                 00013000
+//PRINTR   DD  SYSOUT=*                                                 00014000
+//PRFICH   DD  SYSOUT=*                                                 00015000
+//PRINTA   DD  SYSOUT=*                                                 00016000
+//PRINTB   DD  SYSOUT=*                                                 00017000
+//PRINTC   DD  SYSOUT=*                                                 00018000
+//PRINTD   DD  SYSOUT=*                                                 00019000
+//PRINTE   DD  SYSOUT=*                                                 00020000
+//PRINTF   DD  SYSOUT=*                                                 00021000
+//PRINTG   DD  SYSOUT=*                                                 00022000
+//PRINTH   DD  SYSOUT=*                                                 00023000
+//PRINTI   DD  SYSOUT=*                                                 00024000
+//PRINTJ   DD  SYSOUT=*                                                 00025000
+//PRNTR01  DD  SYSOUT=*                                                 00026000
+//PRNTRST  DD  SYSOUT=*                                                 00027000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00028000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00029000
+//*    **********************************************************       00001000
+//*    * RPVSAMD1 - REL PRICING VSAM API SCALABLE DD STATEMENTS *       00002000
+//*    **********************************************************       00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00007000
+//RPFINTA  DD  DSN=BNKCAV.IN0.RP50.RPFINTA,DISP=SHR                     00008000
+//RPFINTC  DD  DSN=BNKCAV.IN0.RP50.RPFINTC,DISP=SHR                     00009000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00010000
+//RPFMSTA  DD  DSN=BNKCAV.IN0.RP50.RPFMSTA,DISP=SHR                     00011000
+//RPFMSTC  DD  DSN=BNKCAV.IN0.RP50.RPFMSTC,DISP=SHR                     00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFRELA  DD  DSN=BNKCAV.IN0.RP50.RPFRELA,DISP=SHR                     00014000
+//RPFRELC  DD  DSN=BNKCAV.IN0.RP50.RPFRELC,DISP=SHR                     00015000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00016000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00017000
+//RPFTRMA  DD  DSN=BNKCAV.IN0.RP50.RPFTRMA,DISP=SHR                     00018000
+//RPFTRMC  DD  DSN=BNKCAV.IN0.RP50.RPFTRMC,DISP=SHR                     00019000
+//RPRPT3   DD  DSN=BNKCA.IN0.RP50.RPRPT3,DISP=(OLD,KEEP,KEEP)           00031000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,                               00032000
+//             DISP=(NEW,CATLG,DELETE),                                 00033000
+//             DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),                 00034000
+//             SPACE=(CYL,(1,1),RLSE),                                  00035000
+//             UNIT=SYSDA                                               00036000
+//*                                                                     00037000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD350),DISP=SHR              00038000
+//*                                                                     00039000
+//

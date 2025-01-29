@@ -1,0 +1,4 @@
+ #2 JclJobNode, Label: T446KADL {MSGLEVEL=1,1, TIME=99, CLASS=H, MSGCLASS=R}, FROM={TestEntryPoint}, TO={#3}
+  #3 JclStepExec, Label: STEP06 EXEC PGM=IFCOND6, FROM={#2}, TO={#5}
+  #4 JclStepExec, Label: STEP02 EXEC PGM=MYCOBB, FROM={#5(FALSE)}, TO={TestReturnPoint}
+   #5 JclCondition, Label: STP01 EQ 0, FROM={#3}, TO={#4(FALSE), TestReturnPoint}

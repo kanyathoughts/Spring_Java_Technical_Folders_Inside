@@ -1,0 +1,94 @@
+<nz-row nzJustify="space-between" class="mining-table__header-row mining-table-title">
+  <nz-col nzFlex="0 0 auto" class="mining-table-title__column-margin" *ngIf="tableConfig.showTotalCount">
+    <ng-container>
+      {{ total | numberFormatter }} {{ 'miningTable.result' | translate }}
+      <ng-container *ngIf="tableConfig.bulkActions?.length || allowSelectDeselectRows">
+        <nz-divider nzType="vertical"></nz-divider>
+        {{ (selectedReachabilityRow && selectedReachabilityRow.length)  ? selectedReachabilityRow.length :  selectedRecords.size | number : '1.0-2' }} {{ 'miningTable.selected' | translate }}
+      </ng-container>
+    </ng-container>
+  </nz-col>
+
+  <nz-col nzFlex="1 1 auto">
+    <mn-toolbar-button [moreBtnSize]="'small'">
+      <ng-container *ngFor="let item of tableConfig.bulkActions">
+        <ng-template mn-toolbar-button-dir>
+          <button id="{{item.id}}-sub-actions" class="buttonTruncTemplate" nzSize="small" [nzDropdownMenu]="menu"
+            nz-button nz-dropdown nzTrigger="click" nzType="default" *ngIf="item.label && item.subActions"
+            [disabled]=" ! selectedRecords.size" [nzTooltipTitle]="item.tooltip" nz-tooltip
+            [ngClass]="selectedRecords.size ? item.class : ''">
+            <i *ngIf="item.icon" nz-icon nzType="{{item.icon}}" nzTheme="outline"></i>{{item.label}}
+            <span nz-icon nzType="down"></span>
+          </button>
+          <button id="{{item.id}}" class="buttonTruncTemplate" [nzTooltipTitle]="item.tooltip" nz-tooltip nzSize="small"
+            nz-button nzType="default" *ngIf="item.label && !item.subActions" (click)="item.action(selectedRecords)"
+            [nzDanger]="item.isDanger" [ngClass]="item.class"
+            [disabled]="!selectedRecords.size">
+            <i *ngIf="item.icon" nz-icon nzType="{{item.icon}}" nzTheme="outline"></i>{{item.label}}
+          </button>
+        </ng-template>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <div *ngFor="let option of item.subActions">
+              <li nz-menu-item
+                (click)="option.action(selectedRecords); clearTooltip(option)" (mouseenter)="restoreTooltip(item)">
+                <span [nzTooltipTitle]="option.tooltip" nz-tooltip>{{option.label}}</span>
+              </li>
+            </div>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-container>
+      <!-- tableActions for reachability blocks -->
+      <ng-container *ngFor="let item of tableConfig.tableActions">
+        <ng-template mn-toolbar-button-dir>
+          <button id="{{item.id}}-table-actions" nzSize="small" class="buttonTruncTemplate" nz-button nzType="default"
+            (click)="item.action(item.isBulkSelection ? selectedRecords : columns)" [disabled]="item.isBulkSelection ? ! selectedRecords.size : false">
+            <i *ngIf="item.icon" nz-icon nzType="{{item.icon}}" nzTheme="outline"></i>
+            {{item.label}}
+          </button>
+        </ng-template>
+      </ng-container>
+    </mn-toolbar-button>
+  </nz-col>
+
+  <nz-col nzFlex="0 0 auto" class="mining-table__header-column">
+    <nz-space nzSize="small">
+      <ng-container *nzSpaceItem>
+        <button *ngIf="tableConfig.isCustomizable" nz-button nzType="link" nz-popover [nzPopoverTitle]="settingTitle"
+          nzPopoverTrigger="click" [nzPopoverContent]="settingContent" nzPopoverPlacement="bottomRight" nzSize="small">
+          <i nz-icon nzType="setting" aria-hidden="true"></i>
+        </button>
+      </ng-container>
+      <ng-container *nzSpaceItem>
+        <div>
+          <button *ngIf="tableConfig.isExportVisible" nz-button nzType="link" (click)="export('csv')"  nzSize="small"
+            nz-tooltip [nzTooltipTitle] = "'miningTable.csvTooltip' | translate ">
+            {{ 'miningTable.exportCSV' | translate }}
+          </button>
+          <button *ngIf="tableConfig?.isImportVisible" nz-button nzType="link" (click)="tableConfig.importAction()" nzSize="small"
+            nz-tooltip [nzTooltipTitle] = "tableConfig?.importToolTipText">
+          <i nz-icon nzType="import" nzTheme="outline" aria-hidden="true"></i>
+          </button>
+          <button *ngIf="tableConfig.isCustomizable" nz-button nzType="link" nzSize="small" (click)="export('confluence-table')">
+            {{ 'miningTable.exportConfluence' | translate }}
+          </button>
+          <button *ngIf="showBusinessRuleCsvButton && enableOrderedBusinessRuleCsv" nz-button nzType="link" nzSize="small" (click)="exportBusinessRules()">
+            {{ 'miningTable.orderedAnnotationRules' | translate }}
+          </button>
+        </div>
+      </ng-container>
+    </nz-space>
+    <ng-template #settingTitle>
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input type="text" nz-input placeholder="{{ 'miningTable.popoverSearch' | translate }}..."
+          [(ngModel)]="searchValue" />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search" class="ant-helper-secondary-text" aria-hidden="true"></i>
+      </ng-template>
+    </ng-template>
+    <ng-template #settingContent>
+      <mn-setting-popover [searchValue]="searchValue"></mn-setting-popover>
+    </ng-template>
+  </nz-col>
+</nz-row>

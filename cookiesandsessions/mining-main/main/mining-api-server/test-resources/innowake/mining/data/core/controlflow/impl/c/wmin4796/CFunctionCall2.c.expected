@@ -1,0 +1,12 @@
+  #16 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#24}
+   #22 CExpressionStatement, FROM={#39}, TO={#28}
+     #24 CFunctionReference, Label: foo(), FROM={#16}, TO={#33(CALL)}
+   #26 CExpressionStatement, FROM={#50}, TO={#30}
+     #28 CFunctionReference, Label: bar(), FROM={#22}, TO={#44(CALL)}
+   #30 CReturnStatement, FROM={#26}, TO={TestReturnPoint}
+  #33 CFunctionDefinition, Function Name : foo, FROM={#24(CALL), TestEntryPoint}, TO={#39}
+   #39 CExpressionStatement, FROM={#33}, TO={#22, TestReturnPoint}
+     #41 CFunctionReference
+  #44 CFunctionDefinition, Function Name : bar, FROM={#28(CALL), TestEntryPoint}, TO={#50}
+   #50 CExpressionStatement, FROM={#44}, TO={#26, TestReturnPoint}
+     #52 CFunctionReference

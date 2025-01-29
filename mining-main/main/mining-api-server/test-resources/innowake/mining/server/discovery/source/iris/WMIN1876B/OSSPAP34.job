@@ -1,0 +1,80 @@
+//VSSPAP34 JOB (VS04000,NSNS),'AP34 PROD ',REGION=4096K,                00010008
+//             TIME=(1400),MSGCLASS=T,CLASS=V,USER=VSPRCTL              00020008
+
+//STEP1   EXEC VSNATBAP,PARM='MAXCL=0,IM=D,MT=0,AUTO=ON'                00042108
+//CMPRT01  DD  SYSOUT=T                                                 00042208
+//CMWKF01  DD  DSN=VSTA.PRD1.VSSPAP34.HEADER,DISP=OLD                   00042308
+//CMWKF02  DD  DSN=VSTA.PRD1.VSSPAP34.LINE,DISP=OLD                     00042408
+//SYSIN    DD  *                                                        00042508
+LOGON SPBATCH                                                           00042601
+SP3400P0                                                                00042700
+000000                                                                  00042800
+SEND ALL REQUESTS                                                       00042900
+//MQTANK  EXEC PGM=IDCAMS,REGION=2048K                                  00070008
+//SYSPRINT DD  SYSOUT=*                                                 00080000
+//EMPTY    DD  DSN=VSTA.PRD1.FRE.MQTANK.EMPTY,DISP=SHR                  00090000
+//SYSIN    DD  *                                                        00100000
+ DELETE VSTA.PRD1.FRE.MQTANK3                                   PURGE   00110000
+ DEFINE CLUSTER (NAME         (VSTA.PRD1.FRE.MQTANK3)                  -00120000
+                 OWNER        (VSTA011)                                -00130000
+                 INDEXED                                               -00140000
+                 BUFFERSPACE  (37376)                                  -00150000
+                 SHAREOPTIONS (2 3)                                    -00160000
+                 NONSPANNED                                            -00170000
+                 NOREUSE                                               -00180000
+                 NOWRITECHECK                                          -00190000
+                 NOERASE                                               -00200000
+                 RECOVERY)                                             -00210000
+        DATA    (NAME         (VSTA.PRD1.FRE.MQTANK3.DATA)            - 00220000
+                 RECORDSIZE   (16455 16455)                            -00230000
+                 CISZ         (18432)                                  -00240000
+                 CYLINDER     (75 75)                                 - 00250000
+                 KEYS         (52 0)                                   -00260000
+                 FREESPACE    (0 0)                                    -00270000
+                 VOLUMES      (FINRE1)                                 -00280000
+                 UNORDERED)                                            -00290000
+        INDEX   (NAME         (VSTA.PRD1.FRE.MQTANK3.INDEX)            -00300000
+                 CISZ         (512)                                    -00310000
+                 TRACK        (37 1)                                   -00320000
+                 VOLUMES      (FINRE1)                                 -00330000
+                 UNORDERED                                             -00340000
+                 NOIMBED                                               -00350000
+                 NOREPLICATE)                                           00360000
+ REPRO INFILE(EMPTY) OUTDATASET(VSTA.PRD1.FRE.MQTANK3)                  00370000
+//STEP2   EXEC PGM=MQFTOT,PARM='FROM.CHVIS1                     '       00600002
+//STEPLIB  DD  DSN=VSTA.PRD1.COBOL.BATCH.USERLOAD,DISP=SHR              00610008
+//MQTANK   DD  DSN=VSTA.PRD1.FRE.MQTANK3,DISP=SHR                       00620000
+//MQTCB    DD  DSN=VSTA.PRD1.FRE.MQTCB.CLUSTER,DISP=SHR                 00630001
+//MQTCB1   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH1,DISP=SHR                   00640001
+//MQTCB2   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH2,DISP=SHR                   00650001
+//MQLIST   DD  DSN=VSTA.PRD1.VSSPCAGT.MQLIST,DISP=SHR                   00660000
+//MQTSEQ   DD  DSN=VSTA.PRD1.FRE.MQSEQ,DISP=SHR                         00670001
+//AP11DIS  DD  DUMMY                                                    00680000
+//AP11HEA  DD  DUMMY                                                    00690000
+//AP11LIN  DD  DUMMY                                                    00700000
+//AP11LL   DD  DUMMY                                                    00710000
+//AP11REL  DD  DUMMY                                                    00720000
+//AR9BCR   DD  DUMMY                                                    00730000
+//AR9BSRF  DD  DUMMY                                                    00740000
+//GL614    DD  DUMMY                                                    00750000
+//PR016001 DD  DUMMY                                                    00760000
+//PR016002 DD  DUMMY                                                    00770000
+//AP34HEA  DD  DSN=VSTA.PRD1.VSSPAP34.HEADER,DISP=SHR                   00780000
+//AP34LIN  DD  DSN=VSTA.PRD1.VSSPAP34.LINE,DISP=SHR                     00790000
+//SYSOUT   DD  SYSOUT=*                                                 00800000
+//STEP3   EXEC PGM=MQTTOQ,COND=(4,LT)                                   00850002
+//STEPLIB  DD  DSN=VSTA.PRD1.COBOL.BATCH.USERLOAD,DISP=SHR              00860008
+//         DD  DSN=SYSP.MQSERIES.V5R2.SCSQAUTH,DISP=SHR                 00870008
+//SYSOUT   DD  SYSOUT=*                                                 00880000
+//MQTANK   DD  DSN=VSTA.PRD1.FRE.MQTANK3,DISP=SHR                       00890000
+//MQTCB    DD  DSN=VSTA.PRD1.FRE.MQTCB.CLUSTER,DISP=SHR                 00900001
+//MQTCB1   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH1,DISP=SHR                   00910001
+//MQTCB2   DD  DSN=VSTA.PRD1.FRE.MQTCB.PATH2,DISP=SHR                   00920001
+//MQTLEN   DD  DSN=VSTA.PRD1.FRE.AP34.MQLEN,DISP=SHR                    00930000
+//*                                                                     00940000
+//SYSIN    DD  *                                                        00950000
+FROM.CHVIS1                                                             00960001
+MQS1                                                                    00970000
+/*                                                                      00980000
+//*                                                                     00990000
+//                                                                      01000000

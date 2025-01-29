@@ -1,0 +1,289 @@
+<nz-layout>
+  <nz-page-header>
+    <nz-page-header-title class="block-view__title">
+      <span *ngIf="switchBlockGraph === 'block'" class="block-view__title-margin">{{'reachability.reachabilityBlocks' | translate}}</span>
+      <span *ngIf="switchBlockGraph === 'graph'" class="block-view__title-margin">{{'reachability.reachabilityNetwork' | translate}}</span>
+      <span class="block-view__info-modal" nz-icon nzType="info-circle" nzTheme="outline" (click)="showReachabilityInfo()"></span>
+    </nz-page-header-title>
+    <nz-page-header-extra [ngClass]="(filterAppliedNoData && switchBlockGraph === 'block') ? 'block-view__headerExtra' : 'block-view__headerExtra.graph'">
+      <nz-input-group class="block-view__content-width" nzSearch [nzSuffix]="suffixTemplateInfo"
+        [nzAddOnAfter]="suffixIconButton"
+        *ngIf="(filterAppliedNoData && switchBlockGraph === 'block')">
+        <input type="text" [(ngModel)]="blockNameSearch" (keyup.enter)="onReachabilityNameSearch()" nz-input
+          placeholder="{{'reachability.searchPlaceholder' | translate}}" />
+      </nz-input-group>
+      <ng-template #suffixIconButton>
+        <button nz-button nzSearch (click)="onReachabilityNameSearch()"><span nz-icon nzType="search"></span></button>
+      </ng-template>
+      <ng-template #suffixTemplateInfo>
+        <span nz-icon class="block-view__info-icon" nz-tooltip
+          nzTooltipTitle="{{'reachability.infoIconTooltipText' | translate}}" nzType="info-circle"></span>
+      </ng-template>
+      <ng-container *ngIf="filterAppliedNoData || numberOfReachabilityBlocksInProject > 0">
+        <button nz-button *ngIf="switchBlockGraph === 'block'" [disabled]=" ! enableCreateReachability" (click)="createReachability()" class="block-view__add-reachability">
+          <span nz-icon nzType="plus" nzTheme="outline"></span>{{'reachability.addReachability' | translate}}</button>
+        <nz-badge [nzDot]="isFiltersActive" class="block-view__custom-badge">
+          <button nz-button (click)="showFilter()"
+            [ngClass]="isFiltersActive ? 'functional-analysis-component__filter-tree-icon': 'functional-analysis-component__tree-icon'">
+            <span nz-tooltip nzTooltipTitle="{{'reachability.filterTooltip' | translate}}" nz-icon nzType="filter"
+              nzTheme="outline"></span>
+          </button>
+        </nz-badge>
+      </ng-container>
+      <nz-radio-group *ngIf="commonParent" class="block-view__radio-group"
+        [ngClass]="{'block-view__radio-margin': switchBlockGraph === 'graph' && isNetworkGraphVisible }"
+        (ngModelChange)="checkFilterValue($event)" [(ngModel)]="switchBlockGraph">
+        <label nz-radio-button nz-tooltip nzTooltipTitle="{{'reachability.blockView' | translate}}" nzValue="block">
+          <span nz-icon nzType="appstore" nzTheme="outline"></span>
+        </label>
+        <label nz-radio-button nz-tooltip nzTooltipTitle="{{'reachability.networkView' | translate}}" nzValue="graph">
+          <i aria-hidden="true" nz-icon nzType="mining-icons:dependencies" nzTheme="outline"></i>
+        </label>
+      </nz-radio-group>
+      <nz-card class="filter-display__pop-over"
+        [ngClass]="{'functional-analysis-component__display-filter': ! toggleFilter}">
+        <ng-container *ngTemplateOutlet="filterModal"></ng-container>
+        <ng-container *ngTemplateOutlet="filterModalFooter"></ng-container>
+      </nz-card>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <auto-detect-alert [projectId]="projectId" [networkView]="switchBlockGraph === 'graph'" (actionClicked)="onActionClicked($event)"></auto-detect-alert>
+
+  <div *ngIf="switchBlockGraph === 'block'" [ngClass]="{'block-view__wrapper-color': reachabilityBlocks.length && showBlocks}">
+    <nz-content class="block-view__content" [ngClass]="{'block-view__content-height': totalElements > pageSize }">
+      <mn-loader *ngIf=" ! showBlocks"></mn-loader>
+      <nz-list nzGrid *ngIf="showBlocks && reachabilityBlocks.length" [nzHeader]="blocksTitle">
+        <div nz-row [nzGutter]="[16,16]">
+          <ng-container *ngFor="let blocks of reachabilityBlocks">
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="6" [nzXl]="6" [nzXXl]="6">
+              <div class="block-view__card-height">
+                <block-card class="block-view__block-card" (blockSelectionEvent)="onBlockSelectionChanged(blocks)"
+                  (updateBlockStatus)="updateBlockStatus($event)" [allReachabilityBlocksData]="reachabilityBlocks"
+                  [reachabilityBlockData]="blocks" (siderEvent)="getAllBlocks()" [projectId]="projectId"
+                  [canEditRB]="canEditRB" (recalculateEvent)="recalculateFromBlockCard($event)"></block-card>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </nz-list>
+
+      <nz-empty *ngIf=" ! reachabilityBlocks.length && showBlocks"
+        nzNotFoundContent="{{'reachability.noData' | translate}}" [nzNotFoundFooter]="filterAppliedNoData ? '' : noReachabilityContent" class="block-view__no-content">
+      </nz-empty>
+    </nz-content>
+
+    <nz-pagination [ngClass]="{'block-view__pagination-margin': totalElements > pageSize }" *ngIf="totalElements"
+      class="block-view__pagination" [nzPageIndex]="pageIndex + 1" [nzTotal]="totalElements" [nzPageSize]="pageSize"
+      (nzPageIndexChange)="paginate($event)" nzHideOnSinglePage="true" nzSimple>
+    </nz-pagination>
+  </div>
+
+  <app-reachability-block-graph [isGraphUpdated]="isGraphUpdated" *ngIf="switchBlockGraph === 'graph'" [networkFilter]="networkViewFilter"
+  [networkUid]="commonParent" (isNetworkGraphVisible)="networkGraphData($event)">
+  </app-reachability-block-graph>
+</nz-layout>
+
+<nz-modal [(nzVisible)]="generateConfirmVisible" nzWidth="600px"
+  nzTitle="{{ 'reachability.generateConfirmModalTitle' | translate }}" [nzFooter]="modalFooter"
+  (nzOnCancel)="closeConfirmModal()">
+  <ng-container *nzModalContent>
+    <p>{{ 'reachability.generateConfirmModalDescription' | translate }}</p>
+    <label nz-checkbox [(ngModel)]="overwriteExistingDescriptions">
+      <p [innerHTML]="'reachability.overwriteExistingDescriptions' | translate"></p>
+    </label>
+    <p>{{ 'reachability.generateModuleDescriptions' | translate }}</p>
+    <label nz-checkbox [(ngModel)]="generateModuleDescriptions">
+      <p [innerHTML]="'reachability.generateModuleDescriptionsCheckbox' | translate"></p>
+    </label>
+    <nz-space [nzSize]="4">
+      <div *nzSpaceItem class="gen-Ai__icon-color">
+        <span nz-icon nzType="mining-icons:gen-ai-stars" nzTheme="fill"></span>
+        <div class="gen-Ai__hint">{{ "genAI.hint" | translate }}</div>
+      </div>
+      <div *nzSpaceItem>{{ 'genAI.contentWarning' | translate }}</div>
+    </nz-space>
+  </ng-container>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="closeConfirmModal()">{{ 'btnLabel.cancel' | translate }}</button>
+    <button class="gen-Ai__generateBtn" nz-button (click)="handleConfirmModalOk()">
+      <span nz-icon nzType="mining-icons:gen-ai-stars" nzTheme="outline" nzSize="small"></span>
+      {{ 'functionalBlock.generate' | translate }}
+    </button>
+  </ng-template>
+</nz-modal>
+
+<ng-template #noReachabilityContent>
+  <button nz-button nzType="primary" [disabled]=" ! enableCreateReachability" (click)="createReachability()" >{{'reachability.createReachability' | translate}}</button>
+  <p class="block-view__nodata-title">{{'reachability.reachabilityTitle' | translate}}</p>
+  <div class="block-view__nodata-content"><label>{{'reachability.reachabilityContent' | translate}}</label></div>
+  <img src="assets/Illustration Generic.svg" alt="{{ 'reachability.reachabilityIllustration' | translate }}"/>
+</ng-template>
+
+<nz-modal [(nzVisible)]="isReachabilityInfoVisible" [nzTitle]="modalTitleTemplate"
+  [nzFooter]="reachabilityInfoFooter" nzClassName="block-view__info-title" (nzOnCancel)="closeInfoModal()" [nzWidth]="switchBlockGraph === 'graph' ? '1050px' : '560px'">
+  <ng-container *nzModalContent>
+    <ng-container *ngIf="switchBlockGraph === 'graph'; else blockContent">
+      <p>
+        {{'reachability.networkContent' | translate}}
+        <img class="block-view__network-illustration" src="assets/Illustration Network.png" alt="{{ 'reachability.networkIllustration' | translate }}" />
+      </p>
+      <p>
+        {{'reachability.networkSchedulerAdditionalContent' | translate}}
+        <a [routerLink]="['/project-' + projectId + '/configuration/scheduler-data']">{{ 'reachability.schedulerConfigerationSettings' | translate }}</a>
+        <img class="block-view__network-illustration" src="assets/reachability-network-scheduler-illustration.svg" alt="{{ 'reachability.schedulerNetworkIllustration' | translate }}" />
+      </p>
+    </ng-container>
+
+    <ng-template #blockContent >
+      <p>{{'reachability.reachabilityContent' | translate}}</p>
+      <img src="assets/Illustration Generic.svg" alt="{{ 'reachability.reachabilityIllustration' | translate }}" />
+    </ng-template>
+  </ng-container>
+
+  <ng-template #reachabilityInfoFooter>
+    <button (click)="closeInfoModal()" nz-button>{{'btnLabel.close' | translate}}</button>
+  </ng-template>
+
+  <ng-template #modalTitleTemplate>
+    <span *ngIf="switchBlockGraph === 'graph'">
+      {{'reachability.networkTitle' | translate}}
+    </span>
+    <span *ngIf="switchBlockGraph === 'block'">
+      {{'reachability.reachabilityTitle' | translate}}
+    </span>
+  </ng-template>
+</nz-modal>
+
+<ng-template #blocksTitle>
+  <label nz-checkbox [(ngModel)]="allBlocksChecked" (ngModelChange)="updateAllBlocksChecked()"
+    [nzIndeterminate]="(allReachabilityIds.length > 0 && allReachabilityIds.length !== totalElements)">
+    {{'reachability.selectAll' | translate}}
+  </label>
+  <nz-divider class="block-view__divider" nzType="vertical"></nz-divider>
+  <ng-container>
+    <label class="block-view__label-font">{{'reachability.selectedBlocks' | translate: {count: allReachabilityIds.length, total: totalElements} }}</label>
+    <nz-divider class="block-view__divider-height" nzType="vertical"></nz-divider>
+    <nz-col class="block-view__actions-title">
+      <button class="block-view__table-view-button" nz-button [disabled]=" ! allReachabilityIds.length"
+        (click)="openMultiSelectionTableView()" nzSize="small">{{'reachability.tableView' | translate}}</button>
+      <button *ngIf="canEditRB" nz-button [disabled]=" ! (allReachabilityIds.length > 1 && commonParent)"
+        (click)="openModalToMerge()" class="block-view__align-merge" nzSize="small">{{'reachability.merge' | translate}}</button>
+      <button class="block-view__inactivate_button" nz-button [disabled]=" ( ! allReachabilityIds.length || ! enableCreateReachability)"
+        (click)="bulkUpdateFunctionalBlocksStatus('INACTIVE')" nzSize="small">{{'btnLabel.inactivate' | translate}}</button>
+      <button class="block-view__recalculate_button" nz-button [disabled]=" ( ! allReachabilityIds.length || ! enableCreateReachability)"
+        (click)="recalculateReachabilityAnalysisOnSelectedBlocks()" nzSize="small">{{'reachability.recalculate' | translate}}</button>
+      <button id="generate-button" *ngIf="genAiTranslateActive" nz-button [disabled]=" ! allReachabilityIds.length" class="gen-Ai__generateBtn"
+        nzSize="small" (click)="showConfirmModal()" nz-tooltip nzTooltipTitle="{{'genAI.contentWarning' | translate}}">
+        <span nz-icon nzType="mining-icons:gen-ai-stars" nzTheme="outline"></span>{{'reachability.generateDescriptions' | translate}}
+      </button>
+    </nz-col>
+  </ng-container>
+</ng-template>
+
+<ng-template #filterModal>
+  <p>{{ 'reachability.filterSubTitle' | translate }}</p>
+  <div nz-row [nzGutter]="24">
+    <nz-divider [nzText]="'reachability.reachabilityBlockFiltering' | translate" nzOrientation="left" *ngIf="switchBlockGraph === 'graph'"
+      class="block-view__dependency-filter"></nz-divider>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+      <nz-form-control  class="block-view__form-control">
+      <nz-form-label [nzSpan]="24" nzFor="name">{{ 'functionalAnalysis.taxonomyLbl' |
+        translate }}</nz-form-label>
+        <app-taxonomy-filter [useMetricsFilterService]="false" [selectedIds]="selectedTaxonomyIds" #taxonomyFilter
+          (selectedTaxonomyDetails)="getTaxonomySelection($event)"></app-taxonomy-filter>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+      <nz-form-control class="block-view__form-control">
+      <nz-form-label [nzSpan]="24" nzFor="name">{{'reachability.functionalBlocks' |
+        translate}}</nz-form-label>
+        <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+          (nzOnSearch)="onFunctionalBlockSearch($event)"
+          [nzAutoClearSearchValue]="true" [(ngModel)]="selectedFunctionalBlock">
+          <nz-option *ngFor="let option of listOfFunctionalBlocks" [nzValue]="option" [nzLabel]="option"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+      <nz-form-control class="block-view__form-control">
+      <nz-form-label [nzSpan]="24" nzFor="name">{{ 'moduleName' | translate
+        }}</nz-form-label>
+        <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+          [nzDropdownClassName]="'module-listing__select-dropdown'" [nzAutoClearSearchValue]="true"
+          (nzOnSearch)="moduleSearchText.next($event.trim());" [(ngModel)]="selectedModuleIds">
+          <nz-option nzCustomContent *ngFor="let option of listSearchModule" [nzLabel]="option.label" [nzValue]="option.label">
+            <nz-row class="functional-analysis-component__list-item">
+              <nz-col>
+                <nz-space>
+                  <span *nzSpaceItem [innerHTML]="option.label" title="" nz-tooltip [nzTooltipTitle]="option.label"></span>
+                  <ng-container *nzSpaceItem>
+                    <span class="functional-analysis-component__subtitle" nz-typography nzEllipsis nzType="secondary"
+                      *ngIf="option?.path" [innerHTML]="option.path" nz-tooltip [nzTooltipTitle]="option.path"></span>
+                  </ng-container>
+                </nz-space>
+                <nz-row *ngIf="option?.description">
+                  <span nz-typography nzEllipsis nz-tooltip [nzTooltipTitle]="option.description"
+                    [innerHTML]="option.description">
+                  </span>
+                </nz-row>
+              </nz-col>
+            </nz-row>
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <nz-divider [nzText]="'reachability.edgeFiltering' | translate" nzOrientation="left" *ngIf="switchBlockGraph === 'graph'"
+      class="block-view__dependency-filter"></nz-divider>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8" class="block-view__switch">
+      <nz-form-control class="block-view__form-control">
+        <nz-form-label [nzSpan]="24" nzFor="name">{{ (switchBlockGraph === 'block' ?
+           'reachability.lowerBoundTypeTechnology' : 'reachability.sharedLowerBoundTypeTechnology') | translate }}</nz-form-label>
+        <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.filterPlaceholder' | translate "
+          [(ngModel)]="selectTypeTechnology" [nzMaxTagCount]="3">
+          <nz-option *ngFor="let option of listOfTypeTech" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8"
+      [ngClass]="switchBlockGraph === 'block' ? 'block-view__switch' : 'block-view__filter-hide'">
+      <nz-form-control class="block-view__form-control">
+        <nz-form-label [nzSpan]="24" nzFor="name">{{ 'reachability.lowerBoundAccess' |
+          translate }}</nz-form-label>
+        <nz-select nzMode="tags" [nzPlaceHolder]="'reachability.lowerBoundAccessPlaceHolder' | translate "
+          [(ngModel)]="selectedReferenceType">
+          <nz-option *ngFor="let option of referenceType" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8"
+    [ngClass]="switchBlockGraph === 'graph' ? 'block-view__switch' : 'block-view__filter-hide'">
+      <nz-form-control class="block-view__form-control">
+        <nz-form-label [nzSpan]="24" nzFor="name">{{'reachability.showDependencies' | translate}}</nz-form-label>
+        <nz-radio-group  class="block-view__dependency-filter" [(ngModel)]="dependencyFilterValue">
+          <label nz-radio nzValue="resource">{{'reachability.resourceBased' | translate}}</label>
+          <label nz-radio nzValue="control">{{'reachability.schedularBased' | translate}}</label>
+          <label nz-radio nzValue="both">{{'reachability.resourceAndSchedularBased' | translate}}</label>
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-divider nzOrientation="left" *ngIf="switchBlockGraph === 'graph'" class="block-view__dependency-filter"></nz-divider>
+      <nz-form-item class="block-view__switch-margin" nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="24" [nzXXl]="24">
+      <nz-switch [(ngModel)]="showInactiveBlocks" nzCheckedChildren="ON" nzUnCheckedChildren="OFF"
+        (ngModelChange)="onShowInactiveBlocksChange($event)"></nz-switch>
+      <span class="block-view__switch-label">{{'reachability.showInactiveBlocks' | translate}}</span>
+    </nz-form-item>
+  </div>
+</ng-template>
+<ng-template #filterModalFooter>
+  <div class="functional-analysis-component__btn-container">
+    <button [disabled]="isButtonDisabled()" (click)="onResetFilter()" nz-button nzType="default">
+      {{ 'miningTable.reset' | translate }}
+    </button>
+    <button (click)="onApplyFilter()" nz-button nzType="primary" class="functional-analysis-component__apply-btn">
+      {{ 'functionalAnalysis.apply' | translate }}
+    </button>
+  </div>
+</ng-template>

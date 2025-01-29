@@ -1,0 +1,20 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MIN636
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       PROCEDURE DIVISION.
+           PERFORM FIRSTS.
+       FIRSTS SECTION.
+           DISPLAY 'NO LABEL'.
+       LABEL2.
+           PERFORM LABEL1 THRU LABEL5
+           DISPLAY '2'.
+       LABEL1.
+           DISPLAY '1'.
+       LABEL5.
+           DISPLAY '5'.
+       ENDSEC SECTION.
+           DISPLAY 'END'
+           GOBACK.

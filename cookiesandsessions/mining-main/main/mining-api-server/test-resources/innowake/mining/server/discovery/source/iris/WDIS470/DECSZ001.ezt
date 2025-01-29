@@ -1,0 +1,32 @@
+LIST OFF                                                                00000010
+PARM LINK(DECSZ001)                                                     00000020
+FILE PRNTOUT2 PRINTER FB(80 800)                                        00000380
+JOB INPUT NULL                                                          00001990
+  AMT-1 = 0                                                             00002000
+  AMT-2 = 0                                                             00002010
+  AMT-3 = 0                                                             00002020
+  AMT-4 = 0                                                             00002030
+  AMT-5 = 0                                                             00002040
+  AMT-6 = 0                                                             00002050
+  AMT-7 = 0                                                             00002060
+  AMT-8 = 0                                                             00002070
+  AMT-9 = 0                                                             00002080
+                                                                        00002230 
+REPORT REPORT-1 PRINTER PRNTOUT1 LINESIZE 79 SPACE 2 TITLESKIP 1        00007720
+   TITLE 1 'EMPLOYER MAINTENANCE REPORT TOTALS'                         00007730
+   HEADING TITLE-1 ' '                                                  00007740
+   LINE  1 TITLE-1    'COUNTS'                                          00007750
+                                                                        00007970
+REPORT REPORT-2 PRINTER PRNTOUT2 LINESIZE 79 SPACE 2 TITLESKIP 1        00007980
+   TITLE 1 'JUANITA HERRIN MATRX NUMBERS'                               00007990
+   HEADING MATRX-LIT ' '                                                00008000
+   HEADING MATRX1-8 '  COUNTS'                                          00008010
+   LINE  1 MATRX-LIT MATRX1-8                                           00008020
+                                                                        00008030
+TERMINATION. PROC                                                       00008040
+    DISPLAY ' '                                                         00008050
+    DISPLAY '                      *****  END OF REPORT  *****'         00008060
+    DISPLAY ' '                                                         00008070
+END-PROC                                                                00008080
+  CALL DSNTIAR USING(SQLCA ERROR-MESSAGE ERROR-TEXT-LEN)                00008090
+  DISPLAY ERROR-TEXT-01                                                 00008100

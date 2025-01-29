@@ -1,0 +1,34 @@
+000010******************************************************************00001000
+000020* RPPEVTD  ADD ROUTINE FOR EVT - ONLINE                          *00002000
+000030******************************************************************00003000
+000040*ADD-EVENT-HISTORY SECTION.                                       00004000
+000050 AEH-START.                                                       00005000
+000060     INITIALIZE RPEVT-RECORD.                                     00006000
+000070     MOVE RPS-EVT-ACCT1-GRP TO RPEVT-ACCT2-GRP.                   00007000
+000080     IF RPS-EVT-INST2 IS EQUAL TO ZEROS                           00008000
+000090         AND RPS-EVT-PRODCODE2 IS EQUAL TO SPACES                 00009000
+000100         AND RPS-EVT-ACCOUNT2 IS EQUAL TO SPACES                  00010000
+000110         MOVE RPS-EVT-INST TO RPEVT-INST                          00011000
+000120         MOVE RPS-EVT-PRODCODE TO RPEVT-PRODCODE                  00012000
+000130         MOVE RPS-EVT-ACCOUNT TO RPEVT-ACCOUNT                    00013000
+000140         MOVE RPS-EVT-MODEL TO RPEVT-MODEL2                       00014000
+000150         MOVE ZEROS TO RPEVT-INST2                                00015000
+000160         MOVE SPACES TO RPEVT-PRODCODE2                           00016000
+000170         MOVE SPACES TO RPEVT-ACCOUNT2                            00017000
+000180     ELSE                                                         00018000
+000190         MOVE RPS-EVT-ACCT2-GRP TO RPEVT-ACCT1-GRP.               00019000
+000200     MOVE WS-CURDT-YYYYMMDD TO RPEVT-DATE.                        00020000
+000210     MOVE RPS-EVT-EVENT-CODE TO RPEVT-EVENT-CODE.                 00021000
+000220     MOVE RPS-EVT-IDNUMBER TO RPEVT-IDNUMBER.                     00022000
+000230     MOVE RPS-EVT-MODULE TO RPEVT-MODULE.                         00023000
+000240 AEH-ADD-EVT.                                                     00024000
+000250     PERFORM RPS-EVT-PUT-REQUEST.                                 00025000
+000260     IF WS-FUNCTION IS EQUAL TO SPACE                             00026000
+000270         GO TO AEH-EXIT.                                          00027000
+000280     IF WS-FUNCTION IS NOT EQUAL TO '='                           00028000
+000290         GO TO AEH-EXIT.                                          00029000
+000300     ADD +1 TO RPEVT-SEQ.                                         00030000
+000310     GO TO AEH-ADD-EVT.                                           00031000
+000320 AEH-EXIT.                                                        00032000
+000330     EXIT.                                                        00033000
+000340******************************************************************00034000

@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+MODULE                   CLM_KDB_SQL_01
+LANGUAGE                 COBOL
+--------------------------------------------------------------------------------
+-- Declare Cursors
+--------------------------------------------------------------------------------
+DECLARE CLMKDBEXT01_CHD10_CURSOR CURSOR FOR
+	SELECT 	
+		ALL *
+	FROM	
+		CHD10_PROCEDURES
+	WHERE
+		CHD10_CHD_CLAIM_ID		=  INPUT_CLAIM_ID
+--------------------------------------------------------------------------------
+-- Database Transaction Procedures
+--------------------------------------------------------------------------------
+PROCEDURE CLMKDBEXT01_MDE10_SRV_PROC_1
+	  SQLCA
+          INPUT_CLAIM_ID	    CHAR (13)
+	  OUT_TOTAL_SRV_COUNT	    SMALLINT;
+
+	  SELECT COUNT(*)
+	  INTO OUT_TOTAL_SRV_COUNT
+	  FROM MDE10_SERVICE_PROCEDURE
+	  WHERE MDE10_CLAIM_ID = INPUT_CLAIM_ID
+	  AND ((MDE10_PROC_CODE NOT BETWEEN '70002' AND '79999')
+	  AND (MDE10_PROC_CODE NOT BETWEEN 'E0100' AND 'E9999')
+	  AND (MDE10_PROC_CODE NOT BETWEEN 'K0000' AND 'K9999')
+	  AND (MDE10_PROC_CODE NOT BETWEEN 'L0100' AND 'L9900'));
+
+--------------------------------------------------------------------------------
+PROCEDURE CLMKDBEXT01_MED10_SRV_PROC_1
+	  SQLCA
+          INPUT_CLAIM_ID	    CHAR (13)
+	  OUT_TOTAL_SRV_COUNT	    SMALLINT;
+
+	  SELECT COUNT(*)
+	  INTO OUT_TOTAL_SRV_COUNT
+	  FROM MED10_SERVICE_PROCEDURE
+	  WHERE MED10_CLAIM_ID = INPUT_CLAIM_ID
+	  AND ((MED10_PROC_CODE NOT BETWEEN '70002' AND '79999')
+	  AND (MED10_PROC_CODE NOT BETWEEN 'E0100' AND 'E9999')
+	  AND (MED10_PROC_CODE NOT BETWEEN 'K0000' AND 'K9999')
+	  AND (MED10_PROC_CODE NOT BETWEEN 'L0100' AND 'L9900'));
+
+--------------------------------------------------------------------------------
+PROCEDURE CLMKDBEXT01_FETCH_CHD10
+	SQLCA
+	CHD10 RECORD
+		FROM 'KDB$CDD_TABLES.CHD10_PROCEDURES'
+	END RECORD;
+
+	FETCH 	CLMKDBEXT01_CHD10_CURSOR
+	INTO 	CHD10;
+--------------------------------------------------------------------------------

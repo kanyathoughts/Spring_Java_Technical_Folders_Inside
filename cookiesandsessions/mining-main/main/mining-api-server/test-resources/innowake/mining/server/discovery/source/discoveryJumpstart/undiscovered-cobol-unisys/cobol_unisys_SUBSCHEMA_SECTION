@@ -1,0 +1,96 @@
+      /
+       IDENTIFICATION DIVISION.
+
+       PROGRAM-ID.      SAMPLE2.
+
+
+       DATE-COMPILED.
+
+
+      /
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+
+UCOB08 SOURCE-COMPUTER.   UNISYS-2200.
+UCOB08 OBJECT-COMPUTER.   UNISYS-2200.
+
+
+UCOB08 SPECIAL-NAMES.
+
+UCOB08     PRINTER IS PRINTER.
+
+       INPUT-OUTPUT SECTION.
+
+       FILE-CONTROL.
+
+      /
+       DATA DIVISION.
+
+       FILE SECTION.
+
+
+      /
+       WORKING-STORAGE SECTION.
+
+       01  DIRECT-AK.
+CJB897     02  PAGE-NUM                    PIC 1(18) BINARY-1.
+CJB897     02  RECORD-NUM                  PIC 1(18) BINARY-1.
+
+VM9810 COMMON-STORAGE SECTION.
+
+       01  OVERAGE-CONTROL-REC-WS.
+CJB897     02  BEG-REPORT-DATE-WS                  PIC 9(8).
+CJB897     02  END-REPORT-DATE-WS                  PIC 9(8).
+
+      ******************************************************************
+      * WARNING : SUBSCHEMA MUST HAVE THESE OVERLAYS                 *
+      ******************************************************************
+       SUBSCHEMA SECTION.
+BBUCOB INVOKE SUBSCHEMA UURF-SS101
+            IN FILE IRSDB
+            OF SCHEMA CIRS-SCH
+            COPYING RECORDS INTO WORKING
+            COPYING DATA-NAMES INTO WORKING
+            RUN-UNIT-ID is UNIT-ID
+            PRIORITY is 1
+            RECORD DELIVERY-AREA TRDA
+                    LENGTH 25
+            OVERLAY URCF-BASE-REC       WITH   URCF-REFUND-HIST-REC,
+                    URCF-ENT-CHG-HIST-REC,      URCF-FOLLOW-UP-HIST-REC,
+                    URCF-T-APPLY-HIST-REC,        URCF-CLSD-HIST-REC
+                    URCF-DC-HIST-REC,             URCF-VOID-HIST-REC
+                    URCF-Z-AMT-CHG-HIST-REC,      URCF-N-APPLY-HIST-REC,
+                    URCF-CLSD-EXCESS-HIST-REC.    URCF-LETTER-HIST-REC,
+                    URCF-M-APPLY-HIST-REC,        XSCF-MF-DEBIT-HIST-REC,
+                    XSCF-FREEZE-HIST-REC,         XSCF-JS-CHG-HIST-REC,
+                    XSCF-SECOND-NAME-CHG-REC,     XSCF-EMP-CHG-REC,
+                    XSCF-RECVD-DT-CHG-HIST-REC,  XSCF-PAYMENT-INFO-2-REC
+            OVERLAY URCF-BASE-REC-NAME       WITH   URCF-REFUND-HIST-REC,
+                    URCF-ENT-CHG-HIST-REC,      URCF-FOLLOW-UP-HIST-REC,
+                    URCF-T-APPLY-HIST-REC,        URCF-CLSD-HIST-REC
+                    URCF-DC-HIST-REC,             URCF-VOID-HIST-REC
+            OVERLAY URCF-BASE-REC-NAME       WITH   URCF-REFUND-HIST-REC,
+                    URCF-ENT-CHG-HIST-REC,      URCF-FOLLOW-UP-HIST-REC,
+                    URCF-T-APPLY-HIST-REC,        URCF-CLSD-HIST-REC
+                    URCF-DC-HIST-REC,             URCF-VOID-HIST-REC
+            SAVE DATA INCLUDES COMMAND QUICK-BEFORE-LOOKS
+            POINTER AREA 3
+            DMCA IS COMMON
+                    NUMBER IS 20
+            ERROR T-ERR-PROC
+            ROLLBACK IS ROLLBACK-PARA.
+      /
+       PROCEDURE DIVISION.
+
+      **************************************************************
+      **** MODULE 0.0                  REVISION-DATE: 05-11-84
+      **************************************************************
+
+       BLD-TABLE-AND-EDIT-CTRL-LIST.
+
+           MOVE ZEROES TO
+                   BEG-REPORT-DATE-WS OF INVENTORY-CONTROL-REC-WS.
+
+           STOP RUN.
+

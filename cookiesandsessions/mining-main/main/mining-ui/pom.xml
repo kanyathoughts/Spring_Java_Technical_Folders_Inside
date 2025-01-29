@@ -1,0 +1,267 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>innowake.release.base</groupId>
+		<artifactId>base-skeleton1</artifactId>
+		<version>1.0.2</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<toolchains.jdk.version>17</toolchains.jdk.version>
+		<toolchains.jdk.vendor>zulu</toolchains.jdk.vendor>
+		<toolchains.jdk.id>zulu 17</toolchains.jdk.id>
+    	<frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
+		<angular.client>@innowake/mining-api-angular-client</angular.client>
+	</properties>
+
+	<prerequisites>
+		<maven>3.5.0</maven>
+	</prerequisites>
+
+	<groupId>innowake.products.mining</groupId>
+	<artifactId>mining-ui</artifactId>
+	<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<profiles>
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build_arg>run build</build_arg>
+				<test_arg>run test-headless</test_arg>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<build_arg>run dev-build</build_arg>
+				<test_arg>run test-headless</test_arg>
+			</properties>
+		</profile>
+		<profile>
+			<id>nightly</id>
+			<properties>
+				<build_arg>run build</build_arg>
+				<test_arg>run test-no-coverage</test_arg>
+			</properties>
+		</profile>
+		<profile>
+			<id>e2e</id>
+			<dependencies>
+				<dependency>
+					<groupId>innowake.products.mining</groupId>
+					<artifactId>mining-api-server-dist</artifactId>
+					<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+			<properties>
+				<build_arg>run build</build_arg>
+				<test_arg>run e2e-jenkins</test_arg>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<sourceDirectory>src/main/web/src</sourceDirectory>
+		<plugins>
+			<!-- For the maven-source-plugin we had to switch to packaging type pom. 
+				So we need to map a few Executions to phase non-existing phase'none', to 
+				prevent execution of plugins that were not in use with packagin type pom -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>default-testResources</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>default-resources</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>innowake.release.build</groupId>
+				<artifactId>maven-innowake-plugin</artifactId>
+				<version>2.0.1</version>
+				<executions>
+					<execution>
+						<!-- run pack-licenses-npm before the final artifact is created -->
+						<id>pack licenses npm</id>
+						<goals>
+							<goal>pack-licenses-npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+				<configuration>
+					<nodeVersion>v20.11.1</nodeVersion>
+          <!--Check with BE team before upgrading npm as greater version might have auth issue with our nexus repo-->
+					<npmVersion>8.19.4</npmVersion>
+					<workingDirectory>src/main/web/</workingDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install mining-api-angular-client</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install ${angular.client} --save</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>ci</arguments>
+							<environmentVariables>
+								<!-- disable automatic downloading of chromium
+								- a special build script will attempt to restore chromium from cache and download if needed -->
+								<PUPPETEER_SKIP_CHROMIUM_DOWNLOAD>true</PUPPETEER_SKIP_CHROMIUM_DOWNLOAD>
+						</environmentVariables>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run lint</id>
+						<phase>test</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run lint</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run tests</id>
+						<phase>test</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>${test_arg}</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run build</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>${build_arg}</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run check-license</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>compile</phase>
+						<!-- run executed in compile phase since the resulting npm-licenses.txt
+						must be present in prepare-packages phase -->
+						<configuration>
+							<arguments>run check-license</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly.xml</descriptor>
+							</descriptors>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

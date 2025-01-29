@@ -1,0 +1,22 @@
+-- For information on using SQL statements, see the SQL Reference.
+--
+-- For the latest information on programming, building, and running DB2 
+-- applications, visit the DB2 Information Center: 
+--     http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp
+-----------------------------------------------------------------------------
+
+    CREATE PROCEDURE update_salary
+    (IN employee_number CHAR(6), IN rating INT)
+    LANGUAGE SQL
+    BEGIN
+      DECLARE SQLSTATE CHAR(5);
+      DECLARE not_found CONDITION FOR SQLSTATE '02000';
+      DECLARE EXIT HANDLER FOR not_found
+        SIGNAL SQLSTATE '02444';
+     EXEC SQL BEGIN DECLARE SECTION;
+     char database[9];
+     char userid[9];
+     char passwd[19];
+     char stmt[200];
+     char s1[200];
+    END@

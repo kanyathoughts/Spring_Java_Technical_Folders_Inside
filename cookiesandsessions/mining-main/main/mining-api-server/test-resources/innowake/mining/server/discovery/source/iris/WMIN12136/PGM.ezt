@@ -1,0 +1,12 @@
+PARM SSID 'DP0G'
+**-------------------------------------
+DEFINE  W-SSID    W  4  A  VALUE 'DP0G'
+DEFINE  W-REGION  W  5 A  VALUE 'PROD'
+**--------------------------------------
+FILE INTPBRKG SQL            +
+(SELECT ACCT FROM AVG_PAR INTO :W-AACT-ID)
+
+*------------------------------------------------------------------*
+FILE INTPBRKG SQL            +
+(SELECT ACCT FROM SCEHMA.AVG_PAR INTO :W-AACT-ID)
+*------------------------------------------------------------------*

@@ -1,0 +1,1 @@
+CREATE INDEX SourceMetrics_id_idx IF NOT EXISTS ON SourceMetrics (id) UNIQUE;

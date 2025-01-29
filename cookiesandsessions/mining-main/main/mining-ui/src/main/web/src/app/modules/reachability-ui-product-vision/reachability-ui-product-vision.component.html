@@ -1,0 +1,18 @@
+<nz-layout>
+  <ng-container *ngIf="blockView">
+    <block-view></block-view>
+  </ng-container>
+
+  <div class="selection" *ngIf="selectionView">
+    
+    <nz-empty [nzNotFoundContent]="'No Reachability Blocks'"></nz-empty>
+
+    <p class="select-header">Select source to create reachability blocks:</p>
+
+    <nz-space class="buttons">
+      <button class="source-button" *nzSpaceItem nz-button [routerLink]="['/project-' + projectId + '/reachability/overview']"> <i aria-hidden="true" nz-icon nzType="appstore" nzTheme="outline"></i>Reachability Plugin</button>
+      <button class="source-button" *nzSpaceItem nz-button [routerLink]="['/project-' + projectId + '/reachability/overview']"> <i aria-hidden="true" nz-icon nzType="appstore" nzTheme="outline"></i>DB Cutter</button>
+      <button class="source-button" *nzSpaceItem nz-button> <i aria-hidden="true" nz-icon nzType="appstore" nzTheme="outline"></i>Mining</button>
+    </nz-space>
+  </div>
+</nz-layout>

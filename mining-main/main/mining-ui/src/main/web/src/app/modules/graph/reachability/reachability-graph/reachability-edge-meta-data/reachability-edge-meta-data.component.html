@@ -1,0 +1,64 @@
+<nz-card
+  class="mining__card-drawer shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open shared-module"
+  [nzTitle]="cardTitle" [nzExtra]="closeButton">
+
+  
+  <nz-collapse *ngFor="let module of sharedModuleDetails" class="reachability-edge-meta-data__collapse" nzExpandIconPosition="right">
+    <nz-collapse-panel [nzHeader]="module.name">
+      <nz-row nzFlex [nzJustify]="'space-between'">
+        <nz-col nz-col nzSpan="12">{{'technology' |  translate}}</nz-col>
+        <nz-col nz-col nzSpan="12">{{module.technology}}</nz-col>
+      </nz-row>
+      <nz-divider class="reachability-edge-meta-data__align-divider"></nz-divider>
+      <nz-row nzFlex [nzJustify]="'space-between'">
+        <nz-col nz-col nzSpan="12">{{'type' | translate}}</nz-col>
+        <nz-col nz-col nzSpan="12">{{module.type}}</nz-col>
+      </nz-row>
+      <nz-divider class="reachability-edge-meta-data__align-divider"></nz-divider>
+      <nz-row nzFlex [nzJustify]="'space-between'">
+        <nz-col nz-col nzSpan="12">{{'reachability.accessTypes' | translate}}</nz-col>
+        <nz-col nz-col nzSpan="12">
+          <ng-container *ngFor="let access of module.accessTypes; let last = last;">
+            <div class="reachability-edge-meta-data__access-item">
+              <span>{{access.name}}:</span>
+              <span>{{access.type}}</span>
+            </div>
+            <nz-divider class="reachability-edge-meta-data__align-divider" *ngIf="! last"></nz-divider>
+          </ng-container>
+        </nz-col>
+      </nz-row>
+      <nz-divider class="reachability-edge-meta-data__align-divider"></nz-divider>
+      <nz-row nzFlex [nzJustify]="'space-between'">
+        <nz-col nz-col nzSpan="12">{{'taxonomies' | translate}}</nz-col>
+        <nz-col nz-col nzSpan="12">
+          <nz-tag class="reachability-edge-meta-data__align-tag" *ngFor="let taxonomy of module.taxonomies">{{taxonomy}}</nz-tag>
+        </nz-col>
+      </nz-row>
+    </nz-collapse-panel>
+  </nz-collapse>
+</nz-card>
+
+<ng-template #closeButton>
+  <button nz-button nzType="text" (click)="closePanel()">
+    <em nz-icon nzType="close" nzTheme="outline"></em>
+  </button>
+</ng-template>
+
+<ng-template #cardTitle>
+  {{'reachability.sharedLowerBoundDetails' | translate}} 
+  <span class="block-view__info-modal" nz-icon nzType="info-circle" nzTheme="outline" nz-popover [nzPopoverTitle]="modalTitleTemplate"
+  [nzPopoverPlacement]="'bottom'" [nzPopoverContent]="lowerBoundInfo"></span>
+</ng-template>
+
+<ng-template #lowerBoundInfo>
+    <div class="reachability-edge-meta-data__panel-info">
+      <p>{{'reachability.commonLowerBoundContent' | translate}}</p>
+      <img class="block-view__network-illustration" src="assets/Illustration Network.png" alt="{{ 'reachability.networkIllustration' | translate }}" />
+    </div>
+</ng-template>
+
+<ng-template #modalTitleTemplate>
+  <span>
+    {{'reachability.commonLowerBound' | translate}}
+  </span>
+</ng-template>

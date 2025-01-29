@@ -1,0 +1,11 @@
+#8 ProcedureDivision
+ #9 CobolDisplayStmt '-A', FROM={TestEntryPoint}, TO={#13}
+ #12 CobolEntryStmt, FROM={TestEntryPoint}, TO={#13}
+ #13 CobolLabelStmt HORROR , FROM={#12, #22, #9}, TO={#14}
+  #14 CobolDisplayStmt '-B', FROM={#13}, TO={#18}
+  #17 CobolEntryStmt, FROM={TestEntryPoint}, TO={#18}
+  #18 CobolDisplayStmt '-C', FROM={#14, #17}, TO={#21, TestReturnPoint}
+ #21 CobolLabelStmt ENDLABEL , FROM={#18}, TO={#22}
+  #22 CobolPerformStmt HORROR, FROM={#21}, TO={#13}
+   #23 CobolFieldReference
+  #24 CobolEndStmt

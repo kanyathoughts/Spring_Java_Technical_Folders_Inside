@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN537UI2.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+      * SEND PAGE
+           EXEC CICS SEND PAGE
+           END-EXEC.
+      
+           GOBACK.

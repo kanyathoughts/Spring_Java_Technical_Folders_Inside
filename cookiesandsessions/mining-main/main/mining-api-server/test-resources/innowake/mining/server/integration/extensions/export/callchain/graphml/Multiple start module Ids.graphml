@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/ID_ROOTJOB.STEPA/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.1/graphml.xsd">
+    <key attr.name="labelV" attr.type="string" for="node" id="labelV"/>
+    <key attr.name="tax_DataDomain" attr.type="string" for="node" id="tax_DataDomain"/>
+    <key attr.name="technology" attr.type="string" for="node" id="technology"/>
+    <key attr.name="type" attr.type="string" for="node" id="type"/>
+    <key attr.name="labelE" attr.type="string" for="edge" id="labelE"/>
+    <key attr.name="FILE_ACCESS_TYPE" attr.type="string" for="edge" id="FILE_ACCESS_TYPE"/>
+    <key attr.name="DB_ACCESS_TYPE" attr.type="string" for="edge" id="DB_ACCESS_TYPE"/>
+    <graph edgedefault="directed" id="G">
+        <node id="ID_COPY1">
+            <data key="labelV">COPY1</data>
+            <data key="technology">COBOL</data>
+            <data key="type">COPYBOOK</data>
+        </node>
+        <node id="ID_COPY2">
+            <data key="labelV">COPY2</data>
+            <data key="technology">COBOL</data>
+            <data key="type">COPYBOOK</data>
+        </node>
+        <node id="ID_COPY3">
+            <data key="labelV">COPY3</data>
+            <data key="technology">COBOL</data>
+            <data key="type">COPYBOOK</data>
+        </node>
+        <node id="ID_FILEA">
+            <data key="labelV">FILEA</data>
+            <data key="technology">RESOURCE</data>
+            <data key="type">FILE</data>
+        </node>
+        <node id="ID_PROGRAMA">
+            <data key="labelV">PROGRAMA</data>
+            <data key="tax_DataDomain">[Taxonomy A]</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_PROGRAMD">
+            <data key="labelV">PROGRAMD</data>
+            <data key="tax_DataDomain">[Taxonomy A]</data>
+            <data key="technology">C</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_PROGRAME">
+            <data key="labelV">PROGRAME</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_PROGRAMF">
+            <data key="labelV">PROGRAMF</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <edge id="ID_COPY1_CALLS_ID_PROGRAMF" source="ID_COPY1" target="ID_PROGRAMF">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_COPY1_INCLUDES_ID_COPY3" source="ID_COPY1" target="ID_COPY3">
+            <data key="labelE">INCLUDES</data>
+        </edge>
+        <edge id="ID_PROGRAMA_ACCESSES_ID_FILEA" source="ID_PROGRAMA" target="ID_FILEA">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_PROGRAMD_CALLS_ID_PROGRAME" source="ID_PROGRAMD" target="ID_PROGRAME">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_PROGRAME_INCLUDES_ID_COPY1" source="ID_PROGRAME" target="ID_COPY1">
+            <data key="labelE">INCLUDES</data>
+        </edge>
+        <edge id="ID_PROGRAMF_INCLUDES_ID_COPY2" source="ID_PROGRAMF" target="ID_COPY2">
+            <data key="labelE">INCLUDES</data>
+        </edge>
+    </graph>
+</graphml>

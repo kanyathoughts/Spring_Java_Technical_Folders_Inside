@@ -1,0 +1,40 @@
+DEFINE DATA 
+LOCAL USING Z1069--A
+LOCAL USING Z1069--L
+LOCAL                                                      
+1 EMP-VIEW1 VIEW OF EMPLOYEES                                       
+  2 CITY                                                                
+  2 COUNTRY
+  2 SALARY	(1)
+  2 NAME  
+  1 EMP-VIEW2 VIEW OF EMPLOYEES                                       
+  2 CITY                                                                
+  2 COUNTRY
+  2 SALARY	(1)
+  2 NAME         
+1 #COUNT (P4) INIT<1>                                                   
+END-DEFINE
+
+INCLUDE Z1069--C
+FORMAT (1) PS=0    
+
+LIMIT 10                                                      
+*
+RD1. READ EMP-VIEW1 BY CITY                                         
+	AT BREAK OF EMP-VIEW1.CITY                                                      
+    	WRITE (1) NOTITLE '(1) CITY' EMP-VIEW1.CITY /
+    	' OLD:  (RD1)' OLD(CITY (RD1.)) OLD(RD1.CITY)
+*     	OLD(RD1.)(CITY)                               
+  	END-BREAK 	
+  	
+  	RD2. READ EMP-VIEW2 BY CITY
+  		AT BREAK OF CITY 
+  			WRITE (1) NOTITLE '  (2) CITY' EMP-VIEW2.CITY /
+  			'    OLD:  (RD1)' OLD(CITY (RD1.)) OLD(RD1.CITY)/
+  			'    OLD:  (RD2)' OLD(CITY (RD2.)) OLD(RD2.CITY) 
+  		END-BREAK
+  	END-READ    
+  	      
+END-READ                                          
+*                                                                       
+END   

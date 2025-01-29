@@ -1,0 +1,42 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+7,"","Hello External","","UNKNOWN","UNKNOWN","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+8,"","MMRS7101","src/cobol/simple-files/programs/MMRS7101.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",-1,1,42,43,44,0,0,-1,-1
+12,10,"PRGASUB","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+14,"","TEST1","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,1,-1,-1,-1,0,0,-1,-1
+15,"","TEST2","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,1,-1,-1,-1,0,0,-1,-1
+10,"","TESTPRGA","src/pl1/simple-files/programs/TESTPRGA.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",-1,0,42,43,44,0,0,-1,-1
+17,"","TeSt2","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+16,"","conditionalModule","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+9,"","hn_tree","src/c/simple-files/hn_tree.c","C","C_PROGRAM","PHYSICAL",-1,0,47,49,50,0,0,-1,-1
+11,9,"hn_treeSub","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+13,"","test1","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,1,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+9,"hn_tree",10,"TESTPRGA","PL1","PL1_MAINPROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",14,"TEST1","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",15,"TEST2","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",15,"TEST2","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",17,"TeSt2","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",0,"SQLCA","COBOL","COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+10,"TESTPRGA",16,"conditionalModule","RESOURCE","RESOURCE_FILE","Accesses","[8]","EARLY","{}",-1,-1,-1,-1
+8,"MMRS7101",13,"test1","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+8,"MMRS7101","ERROR","UNDISCOVERED_DEPENDENCY","Multiple possible candidates found: [2013, 2014]",-1,-1
+14,"TEST1","ERROR","METRICS_CALCULATION_ERROR","Second error to validate anchorTo without RESOLVE_CASE_INSENSITIVE flag",-1,-1
+15,"TEST2","ERROR","METRICS_CALCULATION_ERROR","Third error to validate anchorTo with RESOLVE_CASE_INSENSITIVE flag",-1,-1
+13,"test1","ERROR","METRICS_CALCULATION_ERROR","First error to validate anchorTo without RESOLVE_CASE_INSENSITIVE flag",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"
+8,"MMRS7101","LABEL",11,22
+10,"TESTPRGA","LABEL",11,22
+10,"TESTPRGA","ANCHOR added label",333,444
+9,"hn_tree","LABEL",11,22
+9,"hn_tree","DEFERRED ACTION added label",5555,6666

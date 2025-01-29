@@ -1,0 +1,21 @@
+//RPD210D JOB
+//*    ************************************************************     00001000
+//*    * RPD210 - RELATIONSHIP PRICING CASH REWARD UPDATE         *     00002000
+//*    ************************************************************     00003000
+//RPD210   EXEC PGM=RPD210,REGION=4096K                                 00004000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00006000
+//SYSUDUMP DD  SYSOUT=*                                                 00007000
+//SYSOUT   DD  SYSOUT=*                                                 00008000
+//RPCRWW   DD  DSN=BNKCA.IN0.RP50.RPCRWW,DISP=SHR                       00009000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00011000
+/*                                                                      00012000
+//

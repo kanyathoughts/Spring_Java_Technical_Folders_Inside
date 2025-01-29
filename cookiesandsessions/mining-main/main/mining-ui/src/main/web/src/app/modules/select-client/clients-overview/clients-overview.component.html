@@ -1,0 +1,22 @@
+<nz-page-header class="mining__fixed-content__page-header" [nzTitle]="'selectClient.pageHeaderTitle' | translate">
+  <nz-page-header-extra *ngIf="authorizationService.isAdmin()">
+    <button nz-button nzType="primary" (click)="openCreateModal()">
+      <i nz-icon nzType="plus"></i>
+      {{ 'selectClient.createBtn' | translate }}
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<nz-content class="mining__fixed-content">
+  <nz-list nzGrid [nzLoading]="loading" >
+    <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 24, xl: 24, xxl: 24 }">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6" [nzXl]="6" [nzXXl]="6" *ngFor="let item of this.clientList">
+        <nz-list-item>
+          <mn-client-card [client]="item" (clientModified)="onClientUpdate($event)"></mn-client-card>
+        </nz-list-item>
+      </div>
+      <div nz-col [nzSpan]="24" *ngIf="! clientList || clientList.length === 0">
+        <nz-list-empty></nz-list-empty>
+      </div>
+    </div>
+  </nz-list>
+</nz-content>

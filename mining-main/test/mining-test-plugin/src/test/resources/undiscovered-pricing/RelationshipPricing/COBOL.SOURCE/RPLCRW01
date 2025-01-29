@@ -1,0 +1,185 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPLCRW01.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*    RPLCRW01 - CASH REWARDS INCENTIVE PROFILE MODULE            *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 DATA DIVISION.                                                   00008000
+000090******************************************************************00009000
+000100 WORKING-STORAGE SECTION.                                         00010000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00011000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00011001
+000120 01  RPS-RLSELIT.                                                 00012000
+000000 COPY RPWRLSE.                                                    00013000
+000140 01  MIC-RLSELIT.                                                 00014000
+000000 COPY MIWRLSE.                                                    00015000
+000160 01  MIWMSTA-AREAS.                                               00016000
+000000 COPY MIWMSTA.                                                    00017000
+000180 01  SRW105-AREAS.                                                00018000
+000000 COPY SRW105.                                                     00019000
+000200*01  BICRSRB.                                                     00020000
+000000 COPY BICRSRB.                                                    00021000
+000220*01  BICRPSB.                                                     00022000
+000000 COPY BICRPSB.                                                    00023000
+000240*01  BICRVERB.                                                    00024000
+000000 COPY BICRVERB.                                                   00025000
+000260*01  BICRSTAT.                                                    00026000
+000000 COPY BICRSTAT.                                                   00027000
+000280*01  BICRDBS.                                                     00028000
+000000 COPY BICRDBS.                                                    00029000
+000300*01  BICRLOG.                                                     00030000
+000000 COPY BICRLOG.                                                    00031000
+000320 01  SRW710-AREAS.                                                00032000
+000000 COPY SRW710.                                                     00033000
+000340 01  WS-WORKAREAS.                                                00034000
+000350     03  COM-ABORT               PIC S9(04)      COMP             00035000
+000360                                                 VALUE ZEROS.     00036000
+000370     03  WS-SUB1                 PIC S9(04)      COMP             00037000
+000380                                                 VALUE ZEROS.     00038000
+000390 01  RPWCRW-AREA.                                                 00039000
+000000 COPY RPWCRWA.                                                    00040000
+000410 01  RPCRW-RECORD.                                                00041000
+000000 COPY RPSCRW.                                                     00042000
+000430 01  WS-LKLGTH                   PIC S9(04)      COMP             00043000
+000440                                                 VALUE +4088.     00044000
+000450 01  WS-LKAREA                   PIC X(4088).                     00045000
+000460 01  WS-TRACECODES.                                               00046000
+000470     03  WS-TR0001               PIC S9(04)      COMP             00047000
+000480                                                 VALUE +0001.     00048000
+000490     03  WS-TR0002               PIC S9(04)      COMP             00049000
+000500                                                 VALUE +0002.     00050000
+000510     03  WS-TR0003               PIC S9(04)      COMP             00051000
+000520                                                 VALUE +0003.     00052000
+000530 01  WS-ABORTCODES.                                               00053000
+000540     03  WS-AB2000               PIC S9(04)      COMP             00054000
+000550                                                 VALUE +2000.     00055000
+000560     03  WS-AB2033               PIC S9(04)      COMP             00056000
+000570                                                 VALUE +2033.     00057000
+000580     03  WS-AB6350               PIC S9(04)      COMP             00058000
+000590                                                 VALUE +6350.     00059000
+000600******************************************************************00060000
+000610 LINKAGE SECTION.                                                 00061000
+000620 01  DFHCOMMAREA.                                                 00062000
+000000 COPY MISCNT00      REPLACING                                     00063000
+000640             ==:MICNT:== BY ==RPCRW01==.                          00064000
+000000 COPY RPSCRW01.                                                   00065000
+000660******************************************************************00066000
+000670 PROCEDURE DIVISION.                                              00067000
+000680******************************************************************00068000
+000690 ENTRY-ROUTINE SECTION.                                           00069000
+000700 ER-START.                                                        00070000
+000710     MOVE 'RPLCRW01' TO SR-APIPROGLIT.                            00071000
+000720     PERFORM CICS-HANDLE-CONDITION.                               00072000
+000730     IF EIBCALEN IS EQUAL TO +0                                   00073000
+000740         MOVE WS-AB2000 TO RPCRW01-ABORT                          00074000
+000750         MOVE WS-TR0001 TO RPCRW01-ABTRACE                        00075000
+000760         GO TO CICS-RETURN.                                       00076000
+000770     MOVE 'RPLCRW01' TO RPCRW01-ABPROGID.                         00077000
+000780     MOVE ZERO TO RPCRW01-MSGNBR.                                 00078000
+000790     MOVE SPACE TO WS-FUNCTION.                                   00079000
+000800     MOVE RPCRW01-FILEOPTS TO WS-FILEOPTS.                        00080000
+000810     MOVE RPCRW01-OPERID TO WS-UPD-USER.                          00081000
+000000 COPY SLP094.                                                     00082000
+000830     GO TO VERIFY-KEY.                                            00083000
+000840 ER-EXIT.                                                         00084000
+000850     EXIT.                                                        00085000
+000860******************************************************************00086000
+000870 CICS-HANDLE-CONDITION SECTION.                                   00087000
+000000 COPY SLP702.                                                     00088000
+000890     MOVE WS-AB2033 TO RPCRW01-ABORT.                             00089000
+000900     MOVE WS-TR0002 TO RPCRW01-ABTRACE.                           00090000
+000910     GO TO CICS-RETURN.                                           00091000
+000920 CHC-EXIT.                                                        00092000
+000930     EXIT.                                                        00093000
+000940******************************************************************00094000
+000950 VERIFY-KEY SECTION.                                              00095000
+000960 VK-START.                                                        00096000
+000970     MOVE ZERO TO RPCRW01-ABORT.                                  00097000
+000980     MOVE ZERO TO COM-ABORT.                                      00098000
+000990 VK-CRW.                                                          00099000
+001000     INITIALIZE RPCRW01-GRP-DATA.                                 00100000
+001010     MOVE SPACES TO RPCRW01-CUST-TYPE.                            00101000
+001020     MOVE SPACES TO RPCRW01-CUST-NAME.                            00102000
+001030     MOVE 1 TO RPS-CRW-REC-ALT.                                   00103000
+001040     MOVE LOW-VALUES TO RPCRW-GRP-KEY.                            00104000
+001050     MOVE RPCRW01-KEY-INST TO RPCRW-INST2.                        00105000
+001060     MOVE RPCRW01-KEY-PRODCODE TO RPCRW-PRODCODE2.                00106000
+001070     MOVE RPCRW01-KEY-ACCOUNT TO RPCRW-ACCOUNT2.                  00107000
+001080     PERFORM RPS-CRW-GET-GE-REQUEST.                              00108000
+001090     MOVE WS-FUNCTION TO RPCRW01-FUNCTION.                        00109000
+001100     IF WS-FUNCTION IS EQUAL TO 'E'                               00110000
+001110         OR WS-FUNCTION IS EQUAL TO 'N'                           00111000
+001120         MOVE 500053 TO RPCRW01-MSGNBR                            00112000
+001130         GO TO VK-RETURN.                                         00113000
+001140     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00114000
+001150         MOVE WS-AB6350 TO RPCRW01-ABORT                          00115000
+001160         MOVE WS-TR0003 TO RPCRW01-ABTRACE                        00116000
+001170         GO TO VK-RETURN.                                         00117000
+001180     IF RPCRW01-KEY-INST IS NOT EQUAL TO RPCRW-INST2              00118000
+001190         OR RPCRW01-KEY-PRODCODE IS NOT EQUAL TO RPCRW-PRODCODE2  00119000
+001200         OR RPCRW01-KEY-ACCOUNT IS NOT EQUAL TO RPCRW-ACCOUNT2    00120000
+001210         MOVE 500053 TO RPCRW01-MSGNBR                            00121000
+001220         GO TO VK-RETURN.                                         00122000
+001230     MOVE RPCRW-RECORD TO RPCRW01-RECORD.                         00123000
+001240     GO TO CICS-RETURN.                                           00124000
+001250 VK-RETURN.                                                       00125000
+001260     MOVE 'E' TO RPCRW01-RETURN.                                  00126000
+001270     GO TO CICS-RETURN.                                           00127000
+001280 VK-EXIT.                                                         00128000
+001290     EXIT.                                                        00129000
+001300******************************************************************00130000
+001310 CICS-LINK-PROGRAM SECTION.                                       00131000
+000000 COPY SLP707.                                                     00132000
+001330******************************************************************00133000
+000000 COPY RPPCRWA.                                                    00134000
+001350******************************************************************00135000
+001360 CICS-ABORT-EXIT SECTION.                                         00136000
+001370 CAE-START.                                                       00137000
+001380     GO TO CICS-RETURN.                                           00138000
+001390 CAE-EXIT.                                                        00139000
+001400     EXIT.                                                        00140000
+001410******************************************************************00141000
+001420 CICS-RETURN SECTION.                                             00142000
+001430     IF COM-ABORT IS NOT EQUAL TO ZERO                            00143000
+001440         MOVE COM-ABORT TO RPCRW01-ABORT.                         00144000
+001450     IF RPCRW01-ABORT IS NOT EQUAL TO ZERO                        00145000
+001460         MOVE SRB-BMDB TO RPCRW01-SRBMDB                          00146000
+001470         MOVE EIBFN TO RPCRW01-ABEIBFN                            00147000
+001480         MOVE EIBRESP TO RPCRW01-ABEIBRESP                        00148000
+001490         MOVE EIBRESP2 TO RPCRW01-ABEIBRESP2                      00149000
+001500         MOVE EIBRCODE TO RPCRW01-ABEIBRCODE.                     00150000
+001510     MOVE WS-FUNCTION TO RPCRW01-FUNCTION.                        00151000
+001520     IF RPCRW01-ABTYPE IS NOT EQUAL TO 'Y'                        00152000
+001530         PERFORM GLOBAL-CLOSE.                                    00153000
+000000 COPY SLP709.                                                     00154000
+001550******************************************************************00155000
+001560 GLOBAL-CLOSE SECTION.                                            00156000
+001570 GC-START.                                                        00157000
+001580     IF RPCRW01-GLOBAL-CLOSE IS NOT EQUAL TO 'N'                  00158000
+001590         PERFORM RPS-CRW-GLOBAL-CLOSE-REQUEST.                    00159000
+001600 GC-EXIT.                                                         00160000
+001610     EXIT.                                                        00161000
+001620******************************************************************00162000

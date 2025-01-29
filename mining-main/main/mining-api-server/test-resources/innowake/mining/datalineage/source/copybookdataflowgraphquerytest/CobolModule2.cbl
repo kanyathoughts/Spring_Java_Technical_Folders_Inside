@@ -1,0 +1,14 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGMCPY01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 DUMMY-FIELD PIC X.
+
+       COPY CopybookWithMultipleReferences
+
+       PROCEDURE DIVISION.
+
+         DISPLAY B.
+         DISPLAY Test.
+
+       END PROGRAM PGMCPY01.

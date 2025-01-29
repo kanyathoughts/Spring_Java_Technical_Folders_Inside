@@ -1,0 +1,54 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=BANK CONTROL                                            00002000
+000030*    PROD=RPS WU=SAB0 AMT=BNKR                                    00003000
+000040*    LDB=BKI                                                      00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPBNK-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSBNK - RPS INSTITUTION CONTROL RECORD               -BNK- *00010000
+000110******************************************************************00011000
+000120     03  RPBNK-GRP-KEY.                                           00012000
+000130         05  RPBNK-INST          PIC 9(04).                       00013000
+000140*----------------------------------------------------------------*00014000
+000150     03  RPBNK-AUDIT-STAMP.                                       00015000
+000160         05  RPBNK-UPD-DATE      PIC S9(09)      COMP-3.          00016000
+000170         05  RPBNK-UPD-TIME      PIC S9(09)      COMP-3.          00017000
+000180         05  RPBNK-UPD-USER      PIC X(08).                       00018000
+000190         05  RPBNK-UPD-ORG       PIC X(06).                       00019000
+000200*----------------------------------------------------------------*00020000
+000210     03  RPBNK-CURDT             PIC S9(09)      COMP-3.          00021000
+000220     03  RPBNK-LPROCDT           PIC S9(09)      COMP-3.          00022000
+000230     03  RPBNK-NPROCDTS          PIC S9(09)      COMP-3.          00023000
+000240     03  RPBNK-NPROCDTA          PIC S9(09)      COMP-3.          00024000
+000250     03  RPBNK-FIRSTDOY          PIC S9(09)      COMP-3.          00025000
+000260     03  RPBNK-LASTDOY           PIC S9(09)      COMP-3.          00026000
+000270     03  RPBNK-FIRSTDOM          PIC S9(09)      COMP-3.          00027000
+000280     03  RPBNK-LASTDOM           PIC S9(09)      COMP-3.          00028000
+000290     03  RPBNK-FIRSTDOW          PIC S9(09)      COMP-3.          00029000
+000300     03  RPBNK-LASTDOW           PIC S9(09)      COMP-3.          00030000
+000310     03  RPBNK-WEEKFLAG          PIC X(01).                       00031000
+000320     03  RPBNK-MONFLAG           PIC X(01).                       00032000
+000330     03  RPBNK-PROCWK.                                            00033000
+000340         05  RPBNK-PWDAY-1       PIC X(01).                       00034000
+000350         05  RPBNK-PWDAY-2       PIC X(01).                       00035000
+000360         05  RPBNK-PWDAY-3       PIC X(01).                       00036000
+000370         05  RPBNK-PWDAY-4       PIC X(01).                       00037000
+000380         05  RPBNK-PWDAY-5       PIC X(01).                       00038000
+000390         05  RPBNK-PWDAY-6       PIC X(01).                       00039000
+000400         05  RPBNK-PWDAY-7       PIC X(01).                       00040000
+000410     03  RPBNK-PROCWKR   REDEFINES RPBNK-PROCWK.                  00041000
+000420         05  RPBNK-PWDAY         PIC X(01)       OCCURS 7.        00042000
+000430     03  RPBNK-PROCFLAG          PIC X(01).                       00043000
+000440     03  RPBNK-DAY               PIC 9(01).                       00044000
+000450     03  RPBNK-PROCOP            PIC X(01).                       00045000
+000460     03  RPBNK-INCH              PIC X(01).                       00046000
+000470     03  RPBNK-RSVFLAG           PIC X(01).                       00047000
+000480     03  RPBNK-RSVDATE           PIC S9(09)      COMP-3.          00048000
+000490     03  RPBNK-RSVDATE1          PIC S9(09)      COMP-3.          00049000
+000500*----------------------------------------------------------------*00050000
+000510     03  RPBNK-RSVUSER           PIC X(40).                       00051000
+000520*----------------------------------------------------------------*00052000
+000530*       END OF BANK CONTROL RECORD DESCRIPTION 1ST NORMAL FORM   *00053000
+000540*----------------------------------------------------------------*00054000

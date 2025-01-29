@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2021 innoWake gmbh Germany. All rights reserved.
+ */
+package innowake.mining.server.integration.authorization.graphql;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.graphql.execution.ErrorType;
+
+import innowake.mining.server.graphql.controller.StatementsGraphQlController;
+
+/**
+ * Authorization tests for {@link StatementsGraphQlController}.
+ */
+class StatementsGraphQlControllerAuthorizationTests extends GraphQlAuthorizationTests {
+	
+	/* default query to use for testing - as this test suite only checks whether the query is permitted, the actual selection of fields is not relevant */
+	private static final String QUERY = "query ($projectId: Long!) { statements(projectId: $projectId) { totalElements } }";
+	private static final String QUERY_SQL = "query ($projectId: Long!) { statements(projectId: $projectId, filterObject: {content_technology : {eq: SQL}}) { totalElements } }";
+	//		"query ($projectId: Long!) { sqlStatements(projectId: $projectId) { totalElements } }"
+
+	@Test void test0001() { test(QUERY, variables("projectId", 1), roles(admin()), expectSuccess()); }
+	@Test void test0002() { test(QUERY, variables("projectId", 5), roles(admin()), expectSuccess()); }
+	@Test void test0003() { test(QUERY, variables("projectId", 1), roles(miningViewer()), expectSuccess()); }
+	@Test void test0004() { test(QUERY, variables("projectId", 5), roles(miningViewer()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0005() { test(QUERY, variables("projectId", 1), roles(clientAdmin()), expectSuccess()); }
+	@Test void test0006() { test(QUERY, variables("projectId", 1), roles(clientAdmin(2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0007() { test(QUERY, variables("projectId", 1), roles(miningManager()), expectSuccess()); }
+	@Test void test0008() { test(QUERY, variables("projectId", 1), roles(miningManager(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0009() { test(QUERY, variables("projectId", 1), roles(miningEditor()), expectSuccess()); }
+	@Test void test0010() { test(QUERY, variables("projectId", 1), roles(miningEditor(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0011() { test(QUERY, variables("projectId", 1), roles(miningViewer(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0012() { test(QUERY, variables("projectId", 5), roles(miningViewer(1, 5)), expectSuccess()); }
+	@Test void test0013() { test(QUERY, variables("projectId", 5), roles(miningViewer(1, 4)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0014() { test(QUERY, variables("projectId", 1), roles(discoveryManager()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0015() { test(QUERY, variables("projectId", 1), roles(discoveryEditor()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0016() { test(QUERY, variables("projectId", 1), roles(discoveryViewer()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0017() { test(QUERY, variables("projectId", 1), roles(discoveryLightManager()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0018() { test(QUERY, variables("projectId", 1), roles(discoveryLightEditor()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0019() { test(QUERY, variables("projectId", 1), roles(discoveryLightViewer()), expectError(ErrorType.FORBIDDEN)); }
+
+	@Test void test0100() { test(QUERY_SQL, variables("projectId", 1), roles(admin()), expectSuccess()); }
+	@Test void test0101() { test(QUERY_SQL, variables("projectId", 5), roles(admin()), expectSuccess()); }
+	@Test void test0102() { test(QUERY_SQL, variables("projectId", 1), roles(miningViewer()), expectSuccess()); }
+	@Test void test0103() { test(QUERY_SQL, variables("projectId", 5), roles(miningViewer()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0104() { test(QUERY_SQL, variables("projectId", 1), roles(clientAdmin()), expectSuccess()); }
+	@Test void test0105() { test(QUERY_SQL, variables("projectId", 1), roles(clientAdmin(2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0106() { test(QUERY_SQL, variables("projectId", 1), roles(miningManager()), expectSuccess()); }
+	@Test void test0107() { test(QUERY_SQL, variables("projectId", 1), roles(miningManager(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0108() { test(QUERY_SQL, variables("projectId", 1), roles(miningEditor()), expectSuccess()); }
+	@Test void test0109() { test(QUERY_SQL, variables("projectId", 1), roles(miningEditor(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0110() { test(QUERY_SQL, variables("projectId", 1), roles(miningViewer(1, 2)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0111() { test(QUERY_SQL, variables("projectId", 5), roles(miningViewer(1, 5)), expectSuccess()); }
+	@Test void test0112() { test(QUERY_SQL, variables("projectId", 5), roles(miningViewer(1, 4)), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0113() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryManager()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0114() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryEditor()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0115() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryViewer()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0116() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryLightManager()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0117() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryLightEditor()), expectError(ErrorType.FORBIDDEN)); }
+	@Test void test0118() { test(QUERY_SQL, variables("projectId", 1), roles(discoveryLightViewer()), expectError(ErrorType.FORBIDDEN)); }
+
+}

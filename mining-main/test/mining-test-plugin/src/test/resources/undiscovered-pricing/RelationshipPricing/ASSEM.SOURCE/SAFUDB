@@ -1,0 +1,564 @@
+**********************************************************************  00001000
+*                                                                       00002000
+*  SAFUDB .... STATIC SQL UPDATE MODULE                                 00003000
+*                                                                       00004000
+*  CREATION DATE: 04/25/16                                              00005000
+*                                                                       00006000
+*  FUNCTIONAL DESCRIPTION: THIS PROGRAM CONTAINS THE STATIC SQL         00007000
+*  VECTORS REQUIRED TO SUPPORT I/O TO THE SAF TABLE.  IT IS LOADED      00008000
+*  BY THE DB2 I/O MANAGER (BIPDB2X).  THIS PROGRAM WILL BE USED         00009000
+*  IN BOTH A CICS AND BATCH ENVIRONMENT AND MUST BE RE-ENTRANT          00010000
+*  AND VOID OF SVC CALLS.                                               00011000
+*                                                                       00012000
+*     ***************************************************************   00013000
+*     *                                                             *   00013001
+*     *                           NOTICE                            *   00013002
+*     *                                                             *   00013003
+*     *   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00013004
+*     *   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00013005
+*     *   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00013006
+*     *   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00013007
+*     *   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00013008
+*     *   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00013009
+*     *   ALL OTHER RIGHTS RESERVED.                                *   00013010
+*     *                                                             *   00013011
+*     *   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00013012
+*     *   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00013013
+*     *   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00013014
+*     *   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00013015
+*     *   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00013016
+*     *   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00013017
+*     *                                                             *   00013018
+*     ***************************************************************   00013019
+*     *     Infopoint Relationship Pricing                          *   00013020
+*     *     RP 5.0.01                                               *   00013021
+*     ***************************************************************   00013022
+*                                                                       00014000
+**********************************************************************  00015000
+* SQI COMMUNICATION AREA DSECT ADDRESSED BY REGISTER 11                 00016000
+**********************************************************************  00017000
+*                                                                       00018000
+COM#AREA DSECT                         SQI COMMUNICATION AREA           00019000
+SQW@CAF  DS    F                       ADDRESS OF CALL ATTACH FACILITY  00020000
+SQW@RET  DS    F                       RETURN TO THIS SQI ADDRESS       00021000
+SQWSQLCA DS    XL136                   SQLCA FOR I/O MODULE USE         00022000
+         ORG   SQWSQLCA                                                 00023000
+         EXEC  SQL INCLUDE SQLCA                                        00024000
+SQWSQLDL DS    F                       LENGTH OF DYNAMIC SQLDSECT       00025000
+SQWSQLD  DS    F                       DYNAMIC SQLDSECT                 00026000
+SQW@SQRX DS    F                       SQI INTERFACE ROUTINE ADDRESS    00027000
+SQWPARM1 DS    F                       SQI PARAMETER 1 (MODULE ADDRESS) 00028000
+SQWINTHV DS    F                       INTEGER HOST VARIABLE            00029000
+SQWCSRBR DS    F                       CURSOR ROUTINE BASE REGISTER     00030000
+SQWCSRRA DS    F                       CURSOR ROUTINE RETURN ADDRESS    00031000
+SQWRSFVC DS    H                       ROWSET FETCH SQLVAR COUNT        00032000
+SQWKMRP  DS    CL1                     SQI KEY MASK / ROUTINE POINTER   00033000
+         DS    CL5                     RESERVED                         00034000
+SQWIOSI  DS    0CL24                   I/O MODULE STATE INFORMATION     00035000
+SQWSQLDA DS    F                       ROWSET SQLDA STORAGE ADDRESS     00036000
+SQWRSRMX DS    H                       ROWSET MAX NUMBER OF ROWS        00037000
+SQWRSRCT DS    H                       ROWSET RETURNED ROW COUNT        00038000
+SQWRSROC DS    H                       ROWSET ROW OCCURS COUNT          00039000
+SQWRSFCD DS    H                       ROWSET FETCH SQLCODE             00040000
+SQWCSRCA DS    F                       READ CURSOR CLOSE ROUTINE ADDR   00041000
+SQWCSUCA DS    F                       UPDATE CURSOR CLOSE ROUTINE ADDR 00042000
+SQWCSRLV DS    CL1                     CURSOR CASCADE LEVEL LIMIT       00043000
+SQWCSRCC DS    CL1                     CURSOR CASCADE COUNT             00044000
+SQWCSRSP DS    H                       CURSOR ROUTINE POINTER           00045000
+         DS    CL4                     RESERVED                         00046000
+SQWCMD   DS    CL2                     DBS COMMAND CODE                 00047000
+SQWORG   DS    CL6                     RECORD ORG CODE                  00048000
+ASMREC   DS    0F                      ASSEMBLER RECORD (ALIGNED)       00049000
+INST     DS    CL4                                                      00050000
+PRDCDE   DS    CL6                                                      00051000
+ACCTNBR  DS    CL18                                                     00052000
+MODEL    DS    CL10                                                     00053000
+AUDDATE  DS    PL5'0.'                                                  00054000
+AUDTIME  DS    PL5'0.'                                                  00055000
+AUDUSER  DS    CL8                                                      00056000
+AUDORG   DS    CL6                                                      00057000
+RELATST  DS    CL1                                                      00058000
+QLFYST   DS    CL1                                                      00059000
+LASTMNTD DS    PL5'0.'                                                  00060000
+INCQDTE  DS    PL5'0.'                                                  00061000
+VALQDATE DS    PL5'0.'                                                  00062000
+SVCNDATE DS    PL5'0.'                                                  00063000
+DATEOPEN DS    PL5'0.'                                                  00064000
+DATEEXPR DS    PL5'0.'                                                  00065000
+SVCTDYF  DS    CL1                                                      00066000
+IDNBR    DS    CL18                                                     00067000
+CMBBAL1  DS    PL8'0.00'                                                00068000
+CMBBAL2  DS    PL8'0.00'                                                00069000
+CMBBAL3  DS    PL8'0.00'                                                00070000
+CMBBAL4  DS    PL8'0.00'                                                00071000
+RSVBAL2  DS    PL8'0.00'                                                00072000
+RSVBAL3  DS    PL8'0.00'                                                00073000
+OUTFLAG  DS    CL1                                                      00074000
+VFEXPDAT DS    PL5'0.'                                                  00075000
+EXTENSN  DS    CL2                                                      00076000
+RETDAYS  DS    PL2'0.'                                                  00077000
+VFMSGNBR DS    CL4                                                      00078000
+INCMSGNR DS    CL4                                                      00079000
+CUSTNBR  DS    CL13                                                     00080000
+RAREA    DS    CL46                                                     00081000
+*                                                                       00082000
+         ORG   ASMREC+(2000-L'SQWADATA) POINT TO ADDITIONAL DATA        00083000
+SQWADATA DS    0CL400                  ADDITIONAL DATA PASSED TO MODULE 00084000
+SQWSEGF  DS    CL102                   SEGMENTED FROM KEY VALUE         00085000
+SQWSEGT  DS    CL102                   SEGMENTED TO KEY VALUE           00086000
+SQWAUDIT DS    CL99                    CALLERS AUDIT DATA               00087000
+         DS    CL97                    RESERVED                         00088000
+*                                                                       00089000
+INDVARS  DS    0H                      NULL INDICATOR VARIABLES         00090000
+INDVARX  DS    0H                                                       00091000
+INDVARL  EQU   INDVARX-INDVARS         NULL INDICATOR AREA LENGTH       00092000
+*                                                                       00093000
+*                                                                       00094000
+**********************************************************************  00095000
+* PROGRAM TABLE HEADER SECTION:                                         00096000
+*   THIS SECTION CONTAINS STATIC DESCRIPTIVE FIELDS.                    00097000
+**********************************************************************  00098000
+*                                                                       00099000
+SAFUDB   CSECT                         PROGRAM TABLE SECTION            00100000
+SAFUDB   AMODE ANY                                                      00101000
+SAFUDB   RMODE ANY                                                      00102000
+         DC    CL8'SAFUDB  '           PROGRAM ID                       00103000
+         DC    CL1' '                                                   00104000
+         DC    CL8'&SYSDATE'           ASSEMBLY DATE                    00105000
+         DC    CL1' '                                                   00106000
+         DC    CL5'&SYSTIME'           ASSEMBLY TIME                    00107000
+         DC    CL1' '                                                   00108000
+         DC    A(SQLDLEN)              SQLDSECT SIZE                    00109000
+         DC    5A(0)                   RESERVED                         00110000
+         DC    AL2(0)                  RESERVED                         00111000
+         DC    AL2(INDVARL)            NULL INDICATOR AREA LENGTH       00112000
+         DC    A(CONVTAB1)             RECORD/HOST CONVERSION TABLE     00113000
+         DC    A(0)                    SQLDA DATA TYPE/LENGTH TABLE     00114000
+         DC    A(STM#TAB)              STATEMENT TABLE ADDRESS          00115000
+         DC    CL43'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. '        00116000
+         DC    CL29'WWW.INFOR.COM                '                      00116001
+*                                                                       00117000
+**********************************************************************  00118000
+* STATEMENT TABLE SECTION:                                              00119000
+*   THIS SECTION DEFINES AN ENTRY VECTOR FOR EACH SQL STATEMENT.        00120000
+**********************************************************************  00121000
+*                                                                       00122000
+STM#TAB  CSECT                         STATEMENT TABLE SECTION          00123000
+STM#TAB  AMODE ANY                                                      00124000
+STM#TAB  RMODE ANY                                                      00125000
+         DC    4A(0)                   RDB MODULE VECTORS               00126000
+         DC    A(SELUC0)               SELECT UPDATE CURSOR (KEY 0)     00127000
+         DC    A(SELUC1)               SELECT UPDATE CURSOR (KEY 1)     00128000
+         DC    A(SELUC2)               SELECT UPDATE CURSOR (KEY 2)     00129000
+         DC    A(SELUC3)               SELECT UPDATE CURSOR (KEY 3)     00130000
+         DC    A(FETUC0)               FETCH UPDATE CURSOR (KEY 0)      00131000
+         DC    A(FETUC1)               FETCH UPDATE CURSOR (KEY 1)      00132000
+         DC    A(FETUC2)               FETCH UPDATE CURSOR (KEY 2)      00133000
+         DC    A(FETUC3)               FETCH UPDATE CURSOR (KEY 3)      00134000
+         DC    A(CLSUC0)               CLOSE UPDATE CURSOR (KEY 0)      00135000
+         DC    A(CLSUC1)               CLOSE UPDATE CURSOR (KEY 1)      00136000
+         DC    A(CLSUC2)               CLOSE UPDATE CURSOR (KEY 2)      00137000
+         DC    A(CLSUC3)               CLOSE UPDATE CURSOR (KEY 3)      00138000
+         DC    20A(0)                  RDB MODULE VECTORS               00139000
+         DC    A(INSROW)               INSERT STATEMENT                 00140000
+         DC    A(UPDUC0)               UPDATE STATEMENT (KEY 0)         00141000
+         DC    A(UPDUC1)               UPDATE STATEMENT (KEY 1)         00142000
+         DC    A(UPDUC2)               UPDATE STATEMENT (KEY 2)         00143000
+         DC    A(UPDUC3)               UPDATE STATEMENT (KEY 3)         00144000
+         DC    A(DELUC0)               DELETE STATEMENT (KEY 0)         00145000
+         DC    A(DELUC1)               DELETE STATEMENT (KEY 1)         00146000
+         DC    A(DELUC2)               DELETE STATEMENT (KEY 2)         00147000
+         DC    A(DELUC3)               DELETE STATEMENT (KEY 3)         00148000
+         DC    A(DELTBL)               DELETE ALL STATEMENT             00149000
+         DC    4X'FF'                                                   00150000
+*                                                                       00151000
+**********************************************************************  00152000
+* SQL STATEMENT SECTION:                                                00153000
+*   THIS SECTION CONTAINS ALL THE STATIC SQL STATEMENTS REQUIRED        00154000
+*     TO SUPPORT THIS TABLE.                                            00155000
+*   THE INDICATED STATEMENTS MAY BE MODIFIED, AS LONG AS THE RESULTS    00156000
+*     ARE EQUIVALENT.                                                   00157000
+**********************************************************************  00158000
+*                                                                       00159000
+SQL#STMT CSECT                         SQL STATEMENT SECTION            00160000
+SQL#STMT AMODE ANY                                                      00161000
+SQL#STMT RMODE ANY                                                      00162000
+         USING SQLDSECT,10             ADDRESS SQLDSECT                 00163000
+         USING COM#AREA,11             ADDRESS COMMAREA                 00164000
+*                                                                       00165000
+**********************************************************************  00166000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY PRIMARY KEY:       00167000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00168000
+*   THEY ARE ALSO USED AFTER A SUCCESSFUL SELECT SEQUENTIAL STATEMENT   00169000
+*     FOR THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS.                      00170000
+**********************************************************************  00171000
+*                                                                       00172000
+SELUC0   DS    0H                                                       00173000
+         USING SELUC0,12               ESTABLISH BASE REGISTER          00174000
+         MVI   SQWKMRP,X'80'           MOVE RECORD TO HOST FOR KEY 0    00175000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00176000
+         BALR  14,15                   MOVE REQUESTED DATA              00177000
+         EXEC  SQL DECLARE SAFUPD0 CURSOR                              *00178000
+               FOR SELECT                                              *00179000
+                   AUDIT_DATE,                                         *00180000
+                   AUDIT_TIME,                                         *00181000
+                   AUDIT_USER,                                         *00182000
+                   AUDIT_ORG,                                          *00183000
+                   RELATION_STATUS,                                    *00184000
+                   QLFY_STATUS,                                        *00185000
+                   LAST_MAINT_DATE,                                    *00186000
+                   INCEN_DATE,                                         *00187000
+                   VALID_DATE,                                         *00188000
+                   SVC_NEXT_DATE,                                      *00189000
+                   DATE_OPEN,                                          *00190000
+                   DATE_EXPIRE,                                        *00191000
+                   SVC_TODAY_FLAG,                                     *00192000
+                   IDENT_NBR,                                          *00193000
+                   CMB_BAL_1,                                          *00194000
+                   CMB_BAL_2,                                          *00195000
+                   CMB_BAL_3,                                          *00196000
+                   CMB_BAL_4,                                          *00197000
+                   RSV_BAL_2,                                          *00198000
+                   RSV_BAL_3,                                          *00199000
+                   OUT_FLAG,                                           *00200000
+                   VALD_FAIL_EXPR,                                     *00201000
+                   EXTENSION,                                          *00202000
+                   RETENTION_DAYS,                                     *00203000
+                   VALD_FAIL_NBR,                                      *00204000
+                   INCEN_FAIL_NBR,                                     *00205000
+                   CUST_NBR,                                           *00206000
+                   RSV_AREA                                            *00207000
+                 FROM SAF                                              *00208000
+                 WHERE                                                 *00209000
+                   INST_NBR = :INST AND                                *00210000
+                   PROD_CODE = :PRDCDE AND                             *00211000
+                   ACCT_NBR = :ACCTNBR AND                             *00212000
+                   MODEL = :MODEL                                      *00213000
+                 FOR UPDATE OF                                         *00214000
+                   AUDIT_DATE,                                         *00215000
+                   AUDIT_TIME,                                         *00216000
+                   AUDIT_USER,                                         *00217000
+                   AUDIT_ORG,                                          *00218000
+                   RELATION_STATUS,                                    *00219000
+                   QLFY_STATUS,                                        *00220000
+                   LAST_MAINT_DATE,                                    *00221000
+                   INCEN_DATE,                                         *00222000
+                   VALID_DATE,                                         *00223000
+                   SVC_NEXT_DATE,                                      *00224000
+                   DATE_OPEN,                                          *00225000
+                   DATE_EXPIRE,                                        *00226000
+                   SVC_TODAY_FLAG,                                     *00227000
+                   IDENT_NBR,                                          *00228000
+                   CMB_BAL_1,                                          *00229000
+                   CMB_BAL_2,                                          *00230000
+                   CMB_BAL_3,                                          *00231000
+                   CMB_BAL_4,                                          *00232000
+                   RSV_BAL_2,                                          *00233000
+                   RSV_BAL_3,                                          *00234000
+                   OUT_FLAG,                                           *00235000
+                   VALD_FAIL_EXPR,                                     *00236000
+                   EXTENSION,                                          *00237000
+                   RETENTION_DAYS,                                     *00238000
+                   VALD_FAIL_NBR,                                      *00239000
+                   INCEN_FAIL_NBR,                                     *00240000
+                   CUST_NBR,                                           *00241000
+                   RSV_AREA                                            *00242000
+                 FETCH FIRST 1 ROW ONLY                                 00243000
+         EXEC  SQL OPEN SAFUPD0                                         00244000
+         MVC   SQWCSUCA,=A(CLSUC0)     SET CURSOR CLOSE ROUTINE ADDRESS 00245000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00246000
+         BR    14                      RETURN TO CALLER                 00247000
+         LTORG                                                          00248000
+*                                                                       00249000
+**********************************************************************  00250000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                   00251000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00252000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00253000
+*     THE ACTUAL ROW.                                                   00254000
+**********************************************************************  00255000
+*                                                                       00256000
+FETUC0   DS    0H                                                       00257000
+         USING FETUC0,12               ESTABLISH BASE REGISTER          00258000
+         EXEC  SQL FETCH SAFUPD0                                       *00259000
+                 INTO                                                  *00260000
+                   :AUDDATE,                                           *00261000
+                   :AUDTIME,                                           *00262000
+                   :AUDUSER,                                           *00263000
+                   :AUDORG,                                            *00264000
+                   :RELATST,                                           *00265000
+                   :QLFYST,                                            *00266000
+                   :LASTMNTD,                                          *00267000
+                   :INCQDTE,                                           *00268000
+                   :VALQDATE,                                          *00269000
+                   :SVCNDATE,                                          *00270000
+                   :DATEOPEN,                                          *00271000
+                   :DATEEXPR,                                          *00272000
+                   :SVCTDYF,                                           *00273000
+                   :IDNBR,                                             *00274000
+                   :CMBBAL1,                                           *00275000
+                   :CMBBAL2,                                           *00276000
+                   :CMBBAL3,                                           *00277000
+                   :CMBBAL4,                                           *00278000
+                   :RSVBAL2,                                           *00279000
+                   :RSVBAL3,                                           *00280000
+                   :OUTFLAG,                                           *00281000
+                   :VFEXPDAT,                                          *00282000
+                   :EXTENSN,                                           *00283000
+                   :RETDAYS,                                           *00284000
+                   :VFMSGNBR,                                          *00285000
+                   :INCMSGNR,                                          *00286000
+                   :CUSTNBR,                                           *00287000
+                   :RAREA                                               00288000
+         MVI   SQWKMRP,X'03'           MOVE HOST VARIABLES TO RECORD    00289000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00290000
+         BALR  14,15                   MOVE REQUESTED DATA              00291000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00292000
+         BR    14                      RETURN TO CALLER                 00293000
+         LTORG                                                          00294000
+*                                                                       00295000
+**********************************************************************  00296000
+* INSERT STATEMENT:                                                     00297000
+*   THIS STATEMENT SUPPORTS THE PUT VERB.                               00298000
+**********************************************************************  00299000
+*                                                                       00300000
+INSROW   DS    0H                                                       00301000
+         USING INSROW,12               ESTABLISH BASE REGISTER          00302000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00303000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00304000
+         BALR  14,15                   MOVE REQUESTED DATA              00305000
+         EXEC  SQL INSERT INTO SAF                                     *00306000
+                   (                                                   *00307000
+                   INST_NBR,                                           *00308000
+                   PROD_CODE,                                          *00309000
+                   ACCT_NBR,                                           *00310000
+                   MODEL,                                              *00311000
+                   AUDIT_DATE,                                         *00312000
+                   AUDIT_TIME,                                         *00313000
+                   AUDIT_USER,                                         *00314000
+                   AUDIT_ORG,                                          *00315000
+                   RELATION_STATUS,                                    *00316000
+                   QLFY_STATUS,                                        *00317000
+                   LAST_MAINT_DATE,                                    *00318000
+                   INCEN_DATE,                                         *00319000
+                   VALID_DATE,                                         *00320000
+                   SVC_NEXT_DATE,                                      *00321000
+                   DATE_OPEN,                                          *00322000
+                   DATE_EXPIRE,                                        *00323000
+                   SVC_TODAY_FLAG,                                     *00324000
+                   IDENT_NBR,                                          *00325000
+                   CMB_BAL_1,                                          *00326000
+                   CMB_BAL_2,                                          *00327000
+                   CMB_BAL_3,                                          *00328000
+                   CMB_BAL_4,                                          *00329000
+                   RSV_BAL_2,                                          *00330000
+                   RSV_BAL_3,                                          *00331000
+                   OUT_FLAG,                                           *00332000
+                   VALD_FAIL_EXPR,                                     *00333000
+                   EXTENSION,                                          *00334000
+                   RETENTION_DAYS,                                     *00335000
+                   VALD_FAIL_NBR,                                      *00336000
+                   INCEN_FAIL_NBR,                                     *00337000
+                   CUST_NBR,                                           *00338000
+                   RSV_AREA                                            *00339000
+                   )                                                   *00340000
+                  VALUES                                               *00341000
+                   (                                                   *00342000
+                   :INST,                                              *00343000
+                   :PRDCDE,                                            *00344000
+                   :ACCTNBR,                                           *00345000
+                   :MODEL,                                             *00346000
+                   :AUDDATE,                                           *00347000
+                   :AUDTIME,                                           *00348000
+                   :AUDUSER,                                           *00349000
+                   :AUDORG,                                            *00350000
+                   :RELATST,                                           *00351000
+                   :QLFYST,                                            *00352000
+                   :LASTMNTD,                                          *00353000
+                   :INCQDTE,                                           *00354000
+                   :VALQDATE,                                          *00355000
+                   :SVCNDATE,                                          *00356000
+                   :DATEOPEN,                                          *00357000
+                   :DATEEXPR,                                          *00358000
+                   :SVCTDYF,                                           *00359000
+                   :IDNBR,                                             *00360000
+                   :CMBBAL1,                                           *00361000
+                   :CMBBAL2,                                           *00362000
+                   :CMBBAL3,                                           *00363000
+                   :CMBBAL4,                                           *00364000
+                   :RSVBAL2,                                           *00365000
+                   :RSVBAL3,                                           *00366000
+                   :OUTFLAG,                                           *00367000
+                   :VFEXPDAT,                                          *00368000
+                   :EXTENSN,                                           *00369000
+                   :RETDAYS,                                           *00370000
+                   :VFMSGNBR,                                          *00371000
+                   :INCMSGNR,                                          *00372000
+                   :CUSTNBR,                                           *00373000
+                   :RAREA                                              *00374000
+                   )                                                    00375000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00376000
+         BR    14                      RETURN TO CALLER                 00377000
+         LTORG                                                          00378000
+*                                                                       00379000
+**********************************************************************  00380000
+* UPDATE STATEMENT BY PRIMARY KEY:                                      00381000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             00382000
+**********************************************************************  00383000
+*                                                                       00384000
+UPDUC0   DS    0H                                                       00385000
+         USING UPDUC0,12               ESTABLISH BASE REGISTER          00386000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00387000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00388000
+         BALR  14,15                   MOVE REQUESTED DATA              00389000
+         EXEC  SQL UPDATE SAF                                          *00390000
+                   SET                                                 *00391000
+                     AUDIT_DATE = :AUDDATE,                            *00392000
+                     AUDIT_TIME = :AUDTIME,                            *00393000
+                     AUDIT_USER = :AUDUSER,                            *00394000
+                     AUDIT_ORG = :AUDORG,                              *00395000
+                     RELATION_STATUS = :RELATST,                       *00396000
+                     QLFY_STATUS = :QLFYST,                            *00397000
+                     LAST_MAINT_DATE = :LASTMNTD,                      *00398000
+                     INCEN_DATE = :INCQDTE,                            *00399000
+                     VALID_DATE = :VALQDATE,                           *00400000
+                     SVC_NEXT_DATE = :SVCNDATE,                        *00401000
+                     DATE_OPEN = :DATEOPEN,                            *00402000
+                     DATE_EXPIRE = :DATEEXPR,                          *00403000
+                     SVC_TODAY_FLAG = :SVCTDYF,                        *00404000
+                     IDENT_NBR = :IDNBR,                               *00405000
+                     CMB_BAL_1 = :CMBBAL1,                             *00406000
+                     CMB_BAL_2 = :CMBBAL2,                             *00407000
+                     CMB_BAL_3 = :CMBBAL3,                             *00408000
+                     CMB_BAL_4 = :CMBBAL4,                             *00409000
+                     RSV_BAL_2 = :RSVBAL2,                             *00410000
+                     RSV_BAL_3 = :RSVBAL3,                             *00411000
+                     OUT_FLAG = :OUTFLAG,                              *00412000
+                     VALD_FAIL_EXPR = :VFEXPDAT,                       *00413000
+                     EXTENSION = :EXTENSN,                             *00414000
+                     RETENTION_DAYS = :RETDAYS,                        *00415000
+                     VALD_FAIL_NBR = :VFMSGNBR,                        *00416000
+                     INCEN_FAIL_NBR = :INCMSGNR,                       *00417000
+                     CUST_NBR = :CUSTNBR,                              *00418000
+                     RSV_AREA = :RAREA                                 *00419000
+                 WHERE CURRENT OF SAFUPD0                               00420000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00421000
+         BR    14                      RETURN TO CALLER                 00422000
+         LTORG                                                          00423000
+*                                                                       00424000
+**********************************************************************  00425000
+* DELETE STATEMENT BY PRIMARY KEY:                                      00426000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            00427000
+**********************************************************************  00428000
+*                                                                       00429000
+DELUC0   DS    0H                                                       00430000
+         USING DELUC0,12               ESTABLISH BASE REGISTER          00431000
+         EXEC  SQL DELETE FROM SAF                                     *00432000
+                 WHERE CURRENT OF SAFUPD0                               00433000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00434000
+         BR    14                      RETURN TO CALLER                 00435000
+         LTORG                                                          00436000
+*                                                                       00437000
+**********************************************************************  00438000
+* DELETE ALL STATEMENT:                                                 00439000
+*   THIS STATEMENT SUPPORTS THE DELETE-FILE VERB.                       00440000
+**********************************************************************  00441000
+*                                                                       00442000
+DELTBL   DS    0H                                                       00443000
+         USING DELTBL,12               ESTABLISH BASE REGISTER          00444000
+         EXEC  SQL DELETE FROM SAF                                      00445000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00446000
+         BR    14                      RETURN TO CALLER                 00447000
+         LTORG                                                          00448000
+*                                                                       00449000
+**********************************************************************  00450000
+* CLOSE UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                        00451000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00452000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00453000
+*     TO CLOSE THE UPDATE CURSOR.                                       00454000
+**********************************************************************  00455000
+*                                                                       00456000
+CLSUC0   DS    0H                                                       00457000
+         USING CLSUC0,12               ESTABLISH BASE REGISTER          00458000
+         EXEC  SQL CLOSE SAFUPD0                                        00459000
+         XC    SQWCSUCA,SQWCSUCA       CLEAR CURSOR CLOSE ROUTINE ADDR  00460000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00461000
+         BR    14                      RETURN TO CALLER                 00462000
+         LTORG                                                          00463000
+*                                                                       00464000
+**********************************************************************  00465000
+* ALTERNATE KEY 1 NOT DEFINED                                           00466000
+**********************************************************************  00467000
+*                                                                       00468000
+SELUC1   DS    0H                                                       00469000
+FETUC1   DS    0H                                                       00470000
+UPDUC1   DS    0H                                                       00471000
+DELUC1   DS    0H                                                       00472000
+CLSUC1   DS    0H                                                       00473000
+         DC    X'00DEAD01'             FORCE S0C1 ABEND                 00474000
+*                                                                       00475000
+**********************************************************************  00476000
+* ALTERNATE KEY 2 NOT DEFINED                                           00477000
+**********************************************************************  00478000
+*                                                                       00479000
+SELUC2   DS    0H                                                       00480000
+FETUC2   DS    0H                                                       00481000
+UPDUC2   DS    0H                                                       00482000
+DELUC2   DS    0H                                                       00483000
+CLSUC2   DS    0H                                                       00484000
+         DC    X'00DEAD02'             FORCE S0C1 ABEND                 00485000
+*                                                                       00486000
+**********************************************************************  00487000
+* ALTERNATE KEY 3 NOT DEFINED                                           00488000
+**********************************************************************  00489000
+*                                                                       00490000
+SELUC3   DS    0H                                                       00491000
+FETUC3   DS    0H                                                       00492000
+UPDUC3   DS    0H                                                       00493000
+DELUC3   DS    0H                                                       00494000
+CLSUC3   DS    0H                                                       00495000
+         DC    X'00DEAD03'             FORCE S0C1 ABEND                 00496000
+*                                                                       00497000
+         DS    0H                      END OF SQL STATEMENTS            00498000
+         DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'                   00499000
+*                                                                       00500000
+**********************************************************************  00501000
+* DUMMY ENTRY POINT DSNHLI                                              00502000
+**********************************************************************  00503000
+*                                                                       00504000
+         ENTRY DSNHLI                                                   00505000
+DSNHLI   DS    0H                                                       00506000
+         L     15,SQW@CAF              LOAD ENTRY POINT TO ATTACH       00507000
+         BR    15                      BRANCH TO ATTACH FACILITY        00508000
+*                                                                       00509000
+**********************************************************************  00510000
+* CONVERSION TABLE VALUES FOR ALL FIELDS IN THIS TABLE                  00511000
+**********************************************************************  00512000
+*                                                                       00513000
+* CONVTAB1 TABLE ENTRY FORMAT IS:                                       00514000
+*        DC    H'RRRR',H'VVVV',H'LLLL',X'KK',X'DD'                      00515000
+* OR:                                                                   00516000
+*        DC    H'RRRR',H'VVVV',X'ZZPP',X'KK',X'DD'                      00517000
+* WHERE:                                                                00518000
+*   RRRR = RECORD AREA OFFSET                                           00519000
+*   VVVV = HOST VARIABLE AREA OFFSET                                    00520000
+*   LLLL = HALFWORD LENGTH TO MOVE                                      00521000
+*   ZZPP = CONVERT ZONED/PACKED LENGTHS (MINUS 1)                       00522000
+*   KK   = KEY FIELD MASK:                                              00523000
+*            80 = KEY 0 FIELD                                           00524000
+*            40 = KEY 1 FIELD                                           00525000
+*            20 = KEY 2 FIELD                                           00526000
+*            10 = KEY 3 FIELD                                           00527000
+*   DD   = DATA FIELD MASK:                                             00528000
+*            80 = RECORD FIELD IS PACKED                                00529000
+*            40 = HOST VARIABLE IS PACKED                               00530000
+*            20 = NULLABLE FIELD                                        00531000
+*            01 = DATE FIELD                                            00532000
+*            02 = TIME FIELD                                            00533000
+*                                                                       00534000
+CONVTAB1 DS    0H                      RECORD/HOST VARIABLE CONVERSIONS 00535000
+         DC    H'0000',H'0000',H'0038',X'80',X'00'                      00536000
+         DC    H'0038',H'0038',H'0200',X'00',X'00'                      00537000
+         DC    8X'FF'                                                   00538000
+*                                                                       00539000
+         LTORG                                                          00540000
+         END                                                            00541000

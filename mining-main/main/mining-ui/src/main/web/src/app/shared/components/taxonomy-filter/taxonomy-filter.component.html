@@ -1,0 +1,35 @@
+<nz-space nzSize="small" nzDirection="horizontal" *ngIf="useMetricsFilterService; else taxonomyPropagation">
+  <ng-container *nzSpaceItem>
+    <ng-container *ngTemplateOutlet = "tree"></ng-container>
+  </ng-container>
+</nz-space>
+<ng-template #treeTemplate let-node>
+  <span class="taxonomy-filter__levelZero" *ngIf="node?.level == 0">
+    {{ node.title }}
+  </span>
+  <span *ngIf="node?.level != 0" [ngClass]="{ 'taxonomy-filter__levelnotZero': node?.isMatched }">
+    {{ node.title }}
+  </span>
+</ng-template>
+
+<ng-template #taxonomyPropagation>
+  <ng-container *ngTemplateOutlet = "tree"></ng-container>
+</ng-template>
+
+<ng-template #tree>
+  <nz-tree-select [nzDisabled]="disableFilter" [ngClass]="useMetricsFilterService ? 'taxonomy-filter__content-width' : 
+    reachabilityFilter ? 'taxonomy-filter__reachability-content' : ''"
+    [nzMultiple]="true"
+    nzPlaceHolder="{{ 'taxonomyFilterLabel' | translate }}" 
+    [nzNodes]="nodes" 
+    [nzShowSearch]="true"
+    [nzHideUnMatched]="false"
+    nzDropdownClassName="taxonomy-filter__virtual-height"
+    [(ngModel)]="selectedValue" 
+    [nzTreeTemplate]="treeTemplate"
+    [nzDisplayWith]="displayTrigger" 
+    nzCheckable
+    (ngModelChange)="onTaxonomySelection($event)"
+    >
+ </nz-tree-select>
+</ng-template>

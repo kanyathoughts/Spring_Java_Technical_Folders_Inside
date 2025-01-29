@@ -1,0 +1,33 @@
+  /* Manual test file for Control flow GOTO statement  */ 
+ CTL024A: PROC OPTIONS(MAIN);
+ 
+    DECLARE I FIXED DECIMAL(1) INIT(1);
+ 
+    CALL PROC_A; /* FIRST INVOCATION OF A */
+    
+ PROC_A: PROC RECURSIVE;
+       DECLARE EV_PROC_A ENTRY VARIABLE STATIC;
+       
+       BEGIN;
+        IF I = 1
+        THEN
+           DO;
+            I = 2;
+            PUT SKIP LIST('INSIDE DO LOOP');
+            EV_PROC_A = PROC_B;
+            CALL PROC_A;
+           END;
+        ELSE
+           CALL EV_PROC_A;
+              
+       PROC_B: PROC;
+             PUT SKIP LIST('INSIDE PROC_B');
+             GO TO OUT;
+       END PROC_B;
+      
+       PUT SKIP LIST ('INSIDE PROC_A');
+       END;
+       
+ OUT: END PROC_A;
+
+ END CTL024A;

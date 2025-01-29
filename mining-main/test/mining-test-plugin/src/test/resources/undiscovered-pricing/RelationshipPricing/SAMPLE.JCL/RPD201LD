@@ -1,0 +1,53 @@
+//RPD201LD JOB
+//***************************************************************       00001000
+//*       LOAD ACCOUNT INCENTIVE RECORDS                        *       00002000
+//***************************************************************       00003000
+//*    **************************************************************   00004000
+//*    * RPD201I   BIS864B - DELETE DATA BASE RECORD ACT (RPFACT)       00005000
+//*    **************************************************************   00006000
+//*                                                                     00007000
+//RPD201I  EXEC PGM=BIS864B,REGION=1024K                                00008000
+//BNKPRT1  DD SYSOUT=*                                                  00009000
+//SYSOUT   DD SYSOUT=*                                                  00010000
+//SYSPRINT DD SYSOUT=*                                                  00011000
+//SYSUDUMP DD SYSOUT=*                                                  00012000
+//* DSNTRACE DD SYSOUT=*                                                00013000
+//SYSIN    DD   *                                                       00014000
+IPRP BNK RPDBSDEF EN          N                                         00015000
+END                                                                     00016000
+SAA                                                                     00017000
+END                                                                     00018000
+/*                                                                      00019000
+//*                                                                     00020000
+//********************************************************************  00021000
+//*                                                                  *  00022000
+//*   LOAD EXTRACTED RECORDS INTO RELATIONSHIP PRICING FILES         *  00023000
+//*                                                                  *  00024000
+//********************************************************************  00025000
+//*                                                                     00026000
+//RPD201L  EXEC PGM=BIS863B,REGION=4096K,COND=(0,LT)                    00027000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//BIPUTIL  DD  DSN=BNKCA.IN0.RP50.BLDACT,                               00029000
+//             DISP=(OLD,KEEP,KEEP),                                    00030000
+//             DCB=BUFNO=20                                             00031000
+//BIPDSK1  DD  DSN=&&BIPDSK1,DISP=(,DELETE,DELETE),                     00032000
+//             UNIT=SYSDA,SPACE=(CYL,(2,2),RLSE),                       00033000
+//             DCB=(RECFM=VB,LRECL=2015,BLKSIZE=16300)                  00034000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,2,,CONTIG)                         00035000
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,2,,CONTIG)                         00036000
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,2,,CONTIG)                         00037000
+//BNKPRT1  DD  SYSOUT=*                                                 00038000
+//SYSOUT   DD  SYSOUT=*                                                 00039000
+//SYSPRINT DD  SYSOUT=*                                                 00040000
+//* DSNTRACE DD  DUMMY                                                  00041000
+//SYSIN    DD   *                                                       00042000
+IPRP BNK INFOPNT  EN BIS863B  0 L 0                                     00043000
+END                                                                     00044000
+SAA                                                                     00045000
+/*                                                                      00046000
+//*                                                                     00047000
+//

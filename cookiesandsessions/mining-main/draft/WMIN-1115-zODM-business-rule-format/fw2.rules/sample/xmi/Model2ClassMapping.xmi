@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fw2.orm.xlsx:Mapping xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:fw2.orm.xlsx="http://fw2.orm.xlsx/1.0"
+	xsi:schemaLocation="http://fw2.orm.xlsx/1.0 file:///C:/Users/dmarhas/Documents/workspace/fw2.orm.xlsx.plugin/src/main/resources/model/fw2.orm.xlsx.ecore"
+	name="Model2ClassMapping">
+	<classMaps name="DomainAttribute">
+		<columnMaps name="name" columnName="ATTR_NAME" primaryKey="true" />
+		<columnMaps name="propertyType" columnName="PROP_TYPE" />
+		<columnMaps name="multivalued" columnName="MULTIVALUED" columnType="BOOLEAN" />
+		<columnMaps name="key" columnName="KEY" columnType="BOOLEAN" />
+		<lookupMaps name="type" relatedClassMap="//@classMaps.1">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="PROP_TYPE" keyColumnName="TYPE_NAME" />
+		</lookupMaps>
+	</classMaps>
+	<classMaps name="DomainClass">
+		<columnMaps name="name" columnName="TYPE_NAME" primaryKey="true" />
+		<columnMaps name="description" columnName="DESCRIPTION" />
+		<columnMaps name="primitive" columnName="PRIMITIVE" columnType="BOOLEAN" />
+		<lookupMaps name="platformClass">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="PLATFORM_CLASS" keyColumnName="NAME" />
+		</lookupMaps>
+		<lookupMaps name="superclass" relatedClassMap="//@classMaps.1">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="SUPER_CLASS_NAME" keyColumnName="TYPE_NAME" />
+		</lookupMaps>
+		<referenceMaps name="attributes" cardinality="MANY" relatedClassMap="//@classMaps.0">
+			<referenceKeys name="TYPE_NAME" keyColumnName="TYPE_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="Aggregation">
+		<columnMaps name="name" columnName="AGGR_NAME" primaryKey="true" />
+		<columnMaps name="cardinality" columnName="CARDINALITY" />
+		<lookupMaps name="relatedClassOrm" relatedClassMap="//@classMaps.3">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="RELATED_CLASS_MAP" keyColumnName="CLASS_NAME" />
+		</lookupMaps>
+		<referenceMaps name="component" relatedClassMap="//@classMaps.4">
+			<referenceKeys name="AGGR_NAME" keyColumnName="COMPONENT_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="ClassOrm">
+		<columnMaps name="name" columnName="CLASS_NAME" primaryKey="true" />
+		<lookupMaps name="dataSet" relatedClassMap="//@classMaps.6">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="SET_NAME" keyColumnName="SET_NAME" />
+		</lookupMaps>
+		<referenceMaps name="key" relatedClassMap="//@classMaps.14">
+			<referenceKeys name="CLASS_NAME" keyColumnName="CLASS_NAME" />
+		</referenceMaps>
+		<referenceMaps name="aggregations" cardinality="MANY" relatedClassMap="//@classMaps.2">
+			<referenceKeys name="CLASS_NAME" keyColumnName="CLASS_NAME" />
+		</referenceMaps>
+		<referenceMaps name="references" cardinality="MANY" relatedClassMap="//@classMaps.19">
+			<referenceKeys name="CLASS_NAME" keyColumnName="CLASS_NAME" />
+		</referenceMaps>
+		<referenceMaps name="primitives" cardinality="MANY" relatedClassMap="//@classMaps.18">
+			<referenceKeys name="CLASS_NAME" keyColumnName="CLASS_NAME" />
+		</referenceMaps>
+		<referenceMaps name="lookups" cardinality="MANY" relatedClassMap="//@classMaps.17">
+			<referenceKeys name="CLASS_NAME" keyColumnName="CLASS_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="Component">
+		<columnMaps name="name" columnName="COMPONENT_NAME" primaryKey="true" />
+		<referenceMaps name="primitives" cardinality="MANY" relatedClassMap="//@classMaps.18" />
+		<referenceMaps name="lookups" cardinality="MANY" relatedClassMap="//@classMaps.17" />
+	</classMaps>
+	<classMaps name="DbColumn">
+		<columnMaps name="name" columnName="COLUMN_NAME" primaryKey="true" />
+		<columnMaps name="type" columnName="COLUMN_TYPE" />
+		<columnMaps name="default" columnName="DEFAULT_VALUE" />
+		<columnMaps name="nullable" columnName="NULLS" />
+		<columnMaps name="keySeq" columnName="KEY_SEQ" columnType="INTEGER" />
+		<columnMaps name="length" columnName="LENGTH" columnType="INTEGER" />
+		<columnMaps name="scale" columnName="SCALE" columnType="INTEGER" />
+		<columnMaps name="size" columnName="SIZE" columnType="INTEGER" />
+		<columnMaps name="seq" columnName="SEQ" columnType="INTEGER" />
+	</classMaps>
+	<classMaps name="DbDataSet">
+		<columnMaps name="name" columnName="SET_NAME" primaryKey="true" />
+	</classMaps>
+	<classMaps name="DbForeignKeyColumn">
+		<columnMaps name="name" columnName="COL_NAME" primaryKey="true" />
+		<columnMaps name="keySeq" columnName="KEY_SEQ" columnType="INTEGER" />
+		<columnMaps name="seq" columnName="SEQ" columnType="INTEGER" />
+	</classMaps>
+	<classMaps name="DbJoinParameter">
+		<columnMaps name="name" columnName="PARAM_NAME" primaryKey="true" />
+		<columnMaps name="refColumn" columnName="REF_COL_NAME" />
+		<columnMaps name="refTable" columnName="REF_TABLE_NAME" />
+	</classMaps>
+	<classMaps name="DbJoinKey">
+		<columnMaps name="name" columnName="KEY_NAME" primaryKey="true" />
+		<columnMaps name="srcColumn" columnName="SRC_COL_NAME" />
+		<columnMaps name="srcTable" columnName="SRC_TABLE_NAME" />
+		<columnMaps name="refColumn" columnName="REF_COL_NAME" />
+		<columnMaps name="refTable" columnName="REF_TABLE_NAME" />
+	</classMaps>
+	<classMaps name="DbRelation">
+		<columnMaps name="name" columnName="REL_NAME" primaryKey="true" />
+		<lookupMaps name="table" relatedClassMap="//@classMaps.11">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="DEP_TABLE" keyColumnName="SET_NAME" />
+		</lookupMaps>
+		<lookupMaps name="refTable" relatedClassMap="//@classMaps.11">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="REF_TABLE" keyColumnName="SET_NAME" />
+		</lookupMaps>
+		<referenceMaps name="foreignKeyColumns" cardinality="MANY" relatedClassMap="//@classMaps.7">
+			<referenceKeys name="REL_NAME" keyColumnName="REL_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="DbTable">
+		<columnMaps name="name" columnName="SET_NAME" primaryKey="true" />
+		<referenceMaps name="columns" cardinality="MANY" relatedClassMap="//@classMaps.5">
+			<referenceKeys name="SET_NAME" keyColumnName="SET_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="DbView">
+		<columnMaps name="name" columnName="SET_NAME" primaryKey="true" />
+		<referenceMaps name="viewColumns" cardinality="MANY" relatedClassMap="//@classMaps.13">
+			<referenceKeys name="SET_NAME" keyColumnName="SET_NAME" />
+		</referenceMaps>
+		<referenceMaps name="joinParameters" cardinality="MANY" relatedClassMap="//@classMaps.8">
+			<referenceKeys name="SET_NAME" keyColumnName="SET_NAME" />
+		</referenceMaps>
+		<referenceMaps name="joinKeys" cardinality="MANY" relatedClassMap="//@classMaps.9">
+			<referenceKeys name="SET_NAME" keyColumnName="SET_NAME" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="DbViewColumn">
+		<columnMaps name="name" columnName="COL_NAME" primaryKey="true" />
+		<columnMaps name="srcColumnName" columnName="SRC_COL_NAME" />
+		<lookupMaps name="srcTable" relatedClassMap="//@classMaps.11">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="SRC_TABLE_NAME" keyColumnName="SET_NAME" />
+		</lookupMaps>
+	</classMaps>
+	<classMaps name="DiscriminatorKey">
+		<columnMaps name="name" columnName="KEY_NAME" primaryKey="true" />
+		<columnMaps name="discriminatorValue" columnName="DESC_VALUE" />
+	</classMaps>
+	<classMaps name="TypeExtension">
+		<columnMaps name="name" columnName="ID" primaryKey="true" />
+		<lookupMaps name="domainClass" relatedClassMap="//@classMaps.1">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="TYPE_NAME" keyColumnName="TYPE_NAME" />
+		</lookupMaps>
+		<referenceMaps name="properties" cardinality="MANY" relatedClassMap="//@classMaps.16">
+			<referenceKeys name="ID" keyColumnName="ID" />
+		</referenceMaps>
+	</classMaps>
+	<classMaps name="Property">
+		<columnMaps name="name" columnName="PROP_NAME" primaryKey="true" />
+		<columnMaps name="propertyValue" columnName="PROP_VALUE" />
+	</classMaps>
+	<classMaps name="Lookup">
+		<columnMaps name="name" columnName="LOOKUP_NAME" primaryKey="true" />
+		<columnMaps name="cardinality" columnName="CARDINALITY" />
+		<lookupMaps name="relation" relatedClassMap="//@classMaps.10">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="REL_NAME" keyColumnName="REL_NAME" />
+		</lookupMaps>
+		<lookupMaps name="relatedClassOrm" relatedClassMap="//@classMaps.3">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="RELATED_CLASS_MAP" keyColumnName="CLASS_NAME" />
+		</lookupMaps>
+	</classMaps>
+	<classMaps name="Primitive">
+		<columnMaps name="name" columnName="ATTR_NAME" primaryKey="true" />
+	</classMaps>
+	<classMaps name="Reference">
+		<columnMaps name="name" columnName="REFERENCE_NAME" primaryKey="true" />
+		<columnMaps name="cardinality" columnName="CARDINALITY" />
+		<lookupMaps name="relation" relatedClassMap="//@classMaps.10">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="REL_NAME" keyColumnName="REL_NAME" />
+		</lookupMaps>
+		<lookupMaps name="relatedClassOrm" relatedClassMap="//@classMaps.3">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="RELATED_CLASS_MAP" keyColumnName="CLASS_NAME" />
+		</lookupMaps>
+	</classMaps>
+	<classMaps name="PrimitiveExtension">
+		<columnMaps name="name" columnName="ATTR_NAME" primaryKey="true" />
+		<lookupMaps name="type" relatedClassMap="//@classMaps.15">
+			<referenceKeys xsi:type="fw2.orm.xlsx:LookupKey" name="EXTENSION_ID" keyColumnName="ID" />
+		</lookupMaps>
+	</classMaps>
+	<classMaps name="DbColumnMap">
+		<columnMaps name="dbColumnName" columnName="COLUMN_NAME" />
+		<columnMaps name="name" columnName="ATTR_NAME" primaryKey="true" />
+	</classMaps>
+	<classMaps name="Constant">
+		<columnMaps name="name" columnName="ATTR_NAME" primaryKey="true" />
+		<columnMaps name="value" columnName="VALUE" />
+		<columnMaps name="type" columnName="CONST_TYPE" />
+	</classMaps>
+</fw2.orm.xlsx:Mapping>

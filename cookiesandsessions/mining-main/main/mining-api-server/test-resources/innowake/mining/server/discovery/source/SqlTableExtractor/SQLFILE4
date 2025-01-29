@@ -1,0 +1,7 @@
+** Introduced error to test the regex extraction **
+SELECT Customers.CustomerName Orders.OrderID
+FROM Customers
+LEFT OUTER JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+WHERE Shippers.ShipperName = 'Speedy Express';
+In this SQL query:

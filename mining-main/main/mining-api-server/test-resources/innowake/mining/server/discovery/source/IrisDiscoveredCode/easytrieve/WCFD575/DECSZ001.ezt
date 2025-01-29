@@ -1,0 +1,810 @@
+LIST OFF                                                                00000010
+PARM LINK(DECSZ001)                                                     00000020
+FILE PENNCP                                                             00000030
+  PENNCP-CNT            1   11  A                                       00000040
+                                                                        00000050
+FILE ACTNCP                                                             00000060
+  ACTNCP-CNT            1   11  A                                       00000070
+                                                                        00000080
+FILE EMPCT1                                                             00000090
+*CDE_USE,IND_EMPR_PART,COUNT(*)                                         00000100
+  EMPCT1-USE            1    1  A                                       00000110
+  EMPCT1-PART-IND       3    1  A                                       00000120
+  EMPCT1-CNT            4   11  A                                       00000130
+                                                                        00000140
+FILE EMPCT2                                                             00000150
+*CDE_USE,COUNT(*)                                                       00000160
+  EMPCT2-USE            1    1  A                                       00000170
+  EMPCT2-CNT            3   11  A                                       00000180
+                                                                        00000190
+FILE EMPCT3                                                             00000200
+*COUNT (*)                                                              00000210
+  EMPCT3-CNT            1   11  A                                       00000220
+                                                                        00000230
+FILE MATRX1                                                             00000240
+*COUNT TOTAL UNITS                                                      00000250
+  MATRX1-CNT            1   11  A                                       00000260
+                                                                        00000270
+FILE MATRX2                                                             00000280
+*COUNT TOTAL UNITS                                                      00000290
+  EMPMATID              1    8  A                                       00000300
+  MATRX2-CNT            9   11  A                                       00000310
+                                                                        00000320
+FILE EMAIL                                                              00000330
+  EMAIL-REC             1   80  A                                       00000340
+                                                                        00000350
+FILE PRNTOUT1 PRINTER FB(80 800)                                        00000360
+                                                                        00000370
+FILE PRNTOUT2 PRINTER FB(80 800)                                        00000380
+                                                                        00000390
+  O-EMAIL        W     80   A                                           00000400
+     OTITLE   O-EMAIL    +6  34  A                                      00000410
+     OLIT     O-EMAIL    +15  38  A                                     00000420
+     OTCNT    O-EMAIL    +7   6  A                                      00000430
+     O-AMT13  O-EMAIL         13 A                                      00000440
+     O-AMT12  O-EMAIL    +1   12 A                                      00000450
+     O-AMT11  O-EMAIL    +2   11 A                                      00000460
+     O-AMT10  O-EMAIL    +3   10 A                                      00000470
+     O-AMT9   O-EMAIL    +4    9 A                                      00000480
+     O-AMT8   O-EMAIL    +5    8 A                                      00000490
+     O-AMT7   O-EMAIL    +6    7 A                                      00000500
+     O-AMT6   O-EMAIL    +7    6 A                                      00000510
+     O-AMT5   O-EMAIL    +8    5 A                                      00000520
+     O-AMT4   O-EMAIL    +9    4 A                                      00000530
+     O-AMT3   O-EMAIL    +10   3 A                                      00000540
+     O-AMT2   O-EMAIL    +11   2 A                                      00000550
+     O-AMT1   O-EMAIL    +12   1 A                                      00000560
+     O-MATRX O-EMAIL     +15  25 A                                      00000570
+                                                                        00000580
+  TITLE-1       W  38 A +                                               00000590
+     VALUE 'EMPLOYER RECORDS                      '                     00000600
+  TITLE-2       W  38 A +                                               00000610
+     VALUE '  N  USABLE RECORDS                   '                     00000620
+  TITLE-3       W  38 A +                                               00000630
+     VALUE '     USABLE RECORDS                   '                     00000640
+  TITLE-4       W  38 A +                                               00000650
+     VALUE '  Y  USABLE RECORDS                   '                     00000660
+  TITLE-5       W  38 A +                                               00000670
+     VALUE 'PARTIAL  Y  AND USABLE  Y  RECORDS    '                     00000680
+  TITLE-6       W  38 A +                                               00000690
+     VALUE 'PARTIAL  Y  AND USABLE     RECORDS    '                     00000700
+  TITLE-7       W  38 A +                                               00000710
+     VALUE 'PARTIAL  Y  AND USABLE  N  RECORDS    '                     00000720
+  TITLE-8       W  38 A +                                               00000730
+     VALUE 'ACTIVE NCP S LINKED TO NONUSABLE      '                     00000740
+  TITLE-9       W  38 A +                                               00000750
+     VALUE '                       EMPLOYERS      '                     00000760
+  TITLE-10      W  38 A +                                               00000770
+     VALUE 'EMPLOYMENT RECORDS TIED TO NONUSABLE  '                     00000780
+  TITLE-11      W  38 A +                                               00000790
+     VALUE '       NONUSABLE EMPLOYERS IN PENDING '                     00000800
+  TITLE-12      W  38 A +                                               00000810
+     VALUE '                              STATUS  '                     00000820
+  TITLE-13      W  38 A +                                               00000830
+     VALUE 'TOTAL RECORDS                         '                     00000840
+  TITLE-14      W  38 A +                                               00000850
+     VALUE '                                      '                     00000860
+  MATRX-LIT     W  25 A                                                 00000870
+  MATRX1-LIT    W  25 A +                                               00000880
+     VALUE '      TOTAL UNITS WORKED '                                  00000890
+  MATRX1-LIT1   W  25 A +                                               00000900
+     VALUE 'FOR ALL WORKERS          '                                  00000910
+  MATRX2-LIT    W  25 A +                                               00000920
+     VALUE 'FOR WORKER XXXXXXXX      '                                  00000930
+   MATRX2-EMP MATRX2-LIT     +11   8  A                                 00000940
+*****       12345678901234567890123456789012345678                      00000950
+* 'N' USABLE RECORDS                                                    00000960
+  AMT-1         W  7 N 0 MASK (A, BWZ, 'Z,ZZZ,ZZ9')                     00000970
+* ' ' USABLE RECORDS                                                    00000980
+  AMT-2         W  7 N 0 MASK A                                         00000990
+* 'Y' USABLE RECORDS                                                    00001000
+  AMT-3         W  7 N 0 MASK A                                         00001010
+*PARTIAL 'Y' AND USABLE 'Y' RECORDS                                     00001020
+  AMT-4         W  7 N 0 MASK A                                         00001030
+*PARTIAL 'Y' AND USABLE '  '  RECORD                                    00001040
+  AMT-5         W  7 N 0 MASK A                                         00001050
+*PARTIAL 'Y' AND USABLE 'N' RECORDS                                     00001060
+  AMT-6         W  7 N 0 MASK A                                         00001070
+*ACTIVE NCP'S LINKED TO NONUSABLE EMPLOYE                               00001080
+  AMT-7         W  7 N 0 MASK A                                         00001090
+*EMPLOYMENT RECORDS TIED TO NONUSABLE EMP                               00001100
+  AMT-8         W  7 N 0 MASK A                                         00001110
+*TOTAL RECORDS                                                          00001120
+  AMT-9         W  7 N 0 MASK A                                         00001130
+*MATRX AMOUNT                                                           00001140
+  MATRX1-8      W  7 N 0 MASK A                                         00001150
+* CONVERSION FIELDS.                                                    00001160
+  WORK-AMT      W  11 A                                                 00001170
+     WA1   WORK-AMT      1  A                                           00001180
+     WA2   WORK-AMT +1   1  A                                           00001190
+     WA3   WORK-AMT +2   1  A                                           00001200
+     WA4   WORK-AMT +3   1  A                                           00001210
+     WA5   WORK-AMT +4   1  A                                           00001220
+     WA6   WORK-AMT +5   1  A                                           00001230
+     WA7   WORK-AMT +6   1  A                                           00001240
+     WA8   WORK-AMT +7   1  A                                           00001250
+     WA9   WORK-AMT +8   1  A                                           00001260
+     WA10  WORK-AMT +9   1  A                                           00001270
+     WA11  WORK-AMT +10  1  A                                           00001280
+  AMT11          W 11  N 0                                              00001290
+    A1   AMT11    1 A                                                   00001300
+    A2   AMT11 +1 1 A                                                   00001310
+    A3   AMT11 +2 1 A                                                   00001320
+    A4   AMT11 +3 1 A                                                   00001330
+    A5   AMT11 +4 1 A                                                   00001340
+    A6   AMT11 +5 1 A                                                   00001350
+    A7   AMT11 +6 1 A                                                   00001360
+    A8   AMT11 +7 1 A                                                   00001370
+    A9   AMT11 +8 1 A                                                   00001380
+    A10  AMT11 +9 1 A                                                   00001390
+    A11  AMT11 +10 1 A                                                  00001400
+************************************************************************00001410
+*** ALPHA CONVERSION W FIELDS  *****************************************00001420
+************************************************************************00001430
+  ALPHA-AMT     W  10 A                                                 00001440
+     AA1   ALPHA-AMT     1  A                                           00001450
+     AA2   ALPHA-AMT +1  1  A                                           00001460
+     AA3   ALPHA-AMT +2  1  A                                           00001470
+     AA4   ALPHA-AMT +3  1  A                                           00001480
+     AA5   ALPHA-AMT +4  1  A                                           00001490
+     AA6   ALPHA-AMT +5  1  A                                           00001500
+     AA7   ALPHA-AMT +6  1  A                                           00001510
+     AA8   ALPHA-AMT +7  1  A                                           00001520
+     AA9   ALPHA-AMT +8  1  A                                           00001530
+     AA10  ALPHA-AMT +9  1  A                                           00001540
+  AMT13          W 13  A                                                00001550
+    AM1  AMT13     1 A                                                  00001560
+    AM2  AMT13  +1 1 A                                                  00001570
+    AM3  AMT13  +2 1 A                                                  00001580
+    AM4  AMT13  +3 1 A                                                  00001590
+    AM5  AMT13  +4 1 A                                                  00001600
+    AM6  AMT13  +5 1 A                                                  00001610
+    AM7  AMT13  +6 1 A                                                  00001620
+    AM8  AMT13  +7 1 A                                                  00001630
+    AM9  AMT13  +8 1 A                                                  00001640
+    AM10 AMT13  +9 1 A                                                  00001650
+    AM11 AMT13 +10 1 A                                                  00001660
+    AM12 AMT13 +11 1 A                                                  00001670
+    AM13 AMT13 +12 1 A                                                  00001680
+   NAM13 AMT13     13 A                                                 00001690
+   NAM12 AMT13     12 A                                                 00001700
+   NAM11 AMT13     11 A                                                 00001710
+   NAM10 AMT13     10 A                                                 00001720
+   NAM9  AMT13     9 A                                                  00001730
+   NAM8  AMT13     8 A                                                  00001740
+   NAM7  AMT13     7 A                                                  00001750
+   NAM6  AMT13     6 A                                                  00001760
+   NAM5  AMT13     5 A                                                  00001770
+   NAM4  AMT13     4 A                                                  00001780
+   NAM3  AMT13     3 A                                                  00001790
+   NAM2  AMT13     2 A                                                  00001800
+   NAM1  AMT13     1 A                                                  00001810
+************************************************************************00001820
+***NAM13 AMT1      13 A   1                                             00001830
+***NAM12 AMT2   +1 12 A   ,                                             00001840
+***NAM11 AMT3   +2 11 A   1                                             00001850
+***NAM10 AMT4   +3 10 A   2                                             00001860
+***NAM9  AMT5   +4 9 A    3                                             00001870
+***NAM8  AMT6   +5 8 A    ,                                             00001880
+***NAM7  AMT7   +6 7 A    1                                             00001890
+***NAM6  AMT8   +7 6 A    2                                             00001900
+***NAM5  AMT9   +8 5 A    3                                             00001910
+***NAM4  AMT10  +9 4 A    ,                                             00001920
+***NAM3  AMT11 +10 3 A    1                                             00001930
+***NAM2  AMT12 +11 2 A    2                                             00001940
+***NAM1  AMT13 +12 1 A    3                                             00001950
+************************************************************************00001960
+*****  PROCESSING  ACTIVITIES                                           00001970
+************************************************************************00001980
+JOB INPUT NULL                                                          00001990
+  AMT-1 = 0                                                             00002000
+  AMT-2 = 0                                                             00002010
+  AMT-3 = 0                                                             00002020
+  AMT-4 = 0                                                             00002030
+  AMT-5 = 0                                                             00002040
+  AMT-6 = 0                                                             00002050
+  AMT-7 = 0                                                             00002060
+  AMT-8 = 0                                                             00002070
+  AMT-9 = 0                                                             00002080
+ PERFORM READ-PENNCP                                                    00002090
+ PERFORM READ-ACTNCP                                                    00002100
+ PERFORM READ-EMPCT1                                                    00002110
+ PERFORM READ-EMPCT2                                                    00002120
+ PERFORM READ-EMPCT3                                                    00002130
+                                                                        00002140
+ PERFORM EMAIL-OUT                                                      00002150
+                                                                        00002160
+ PRINT REPORT-1                                                         00002170
+                                                                        00002180
+ PERFORM READ-MATRX1                                                    00002190
+ PERFORM READ-MATRX2                                                    00002200
+                                                                        00002210
+ STOP                                                                   00002220
+                                                                        00002230
+CONVERT-AMT. PROC                                                       00002240
+                                                                        00002250
+     AMT11 = 0                                                          00002260
+                                                                        00002270
+     IF WA11 = ' '                                                      00002280
+     ELSE                                                               00002290
+         A11 = WA11                                                     00002300
+         A10 = WA10                                                     00002310
+         A9 = WA9                                                       00002320
+         A8 = WA8                                                       00002330
+         A7 = WA7                                                       00002340
+         A6 = WA6                                                       00002350
+         A5 = WA5                                                       00002360
+         A4 = WA4                                                       00002370
+         A3 = WA3                                                       00002380
+         A2 = WA2                                                       00002390
+         A1 = WA1                                                       00002400
+         GOTO CONVERT-OUT                                               00002410
+     END-IF                                                             00002420
+                                                                        00002430
+     IF WA10 = ' '                                                      00002440
+     ELSE                                                               00002450
+         A11 = WA10                                                     00002460
+         A10 = WA9                                                      00002470
+         A9 = WA8                                                       00002480
+         A8 = WA7                                                       00002490
+         A7 = WA6                                                       00002500
+         A6 = WA5                                                       00002510
+         A5 = WA4                                                       00002520
+         A4 = WA3                                                       00002530
+         A3 = WA2                                                       00002540
+         A2 = WA1                                                       00002550
+         GOTO CONVERT-OUT                                               00002560
+     END-IF                                                             00002570
+                                                                        00002580
+     IF WA9 = ' '                                                       00002590
+     ELSE                                                               00002600
+         A11 = WA9                                                      00002610
+         A10 = WA8                                                      00002620
+         A9 = WA7                                                       00002630
+         A8 = WA6                                                       00002640
+         A7 = WA5                                                       00002650
+         A6 = WA4                                                       00002660
+         A5 = WA3                                                       00002670
+         A4 = WA2                                                       00002680
+         A3 = WA1                                                       00002690
+         GOTO CONVERT-OUT                                               00002700
+     END-IF                                                             00002710
+                                                                        00002720
+     IF WA8 = ' '                                                       00002730
+     ELSE                                                               00002740
+         A11 = WA8                                                      00002750
+         A10 = WA7                                                      00002760
+         A9 = WA6                                                       00002770
+         A8 = WA5                                                       00002780
+         A7 = WA4                                                       00002790
+         A6 = WA3                                                       00002800
+         A5 = WA2                                                       00002810
+         A4 = WA1                                                       00002820
+         GOTO CONVERT-OUT                                               00002830
+     END-IF                                                             00002840
+                                                                        00002850
+     IF WA7 = ' '                                                       00002860
+     ELSE                                                               00002870
+         A11 = WA7                                                      00002880
+         A10 = WA6                                                      00002890
+         A9 = WA5                                                       00002900
+         A8 = WA4                                                       00002910
+         A7 = WA3                                                       00002920
+         A6 = WA2                                                       00002930
+         A5 = WA1                                                       00002940
+         GOTO CONVERT-OUT                                               00002950
+     END-IF                                                             00002960
+                                                                        00002970
+     IF WA6 = ' '                                                       00002980
+     ELSE                                                               00002990
+         A11 = WA6                                                      00003000
+         A10 = WA5                                                      00003010
+         A9 = WA4                                                       00003020
+         A8 = WA3                                                       00003030
+         A7 = WA2                                                       00003040
+         A6 = WA1                                                       00003050
+         GOTO CONVERT-OUT                                               00003060
+     END-IF                                                             00003070
+                                                                        00003080
+     IF WA5 = ' '                                                       00003090
+     ELSE                                                               00003100
+         A11 = WA5                                                      00003110
+         A10 = WA4                                                      00003120
+         A9 = WA3                                                       00003130
+         A8 = WA2                                                       00003140
+         A7 = WA1                                                       00003150
+         GOTO CONVERT-OUT                                               00003160
+     END-IF                                                             00003170
+                                                                        00003180
+     IF WA4 = ' '                                                       00003190
+     ELSE                                                               00003200
+         A11 = WA4                                                      00003210
+         A10 = WA3                                                      00003220
+         A9 = WA2                                                       00003230
+         A8 = WA1                                                       00003240
+         GOTO CONVERT-OUT                                               00003250
+     END-IF                                                             00003260
+                                                                        00003270
+     IF WA3 = ' '                                                       00003280
+     ELSE                                                               00003290
+         A11 = WA3                                                      00003300
+         A10 = WA2                                                      00003310
+         A9 = WA1                                                       00003320
+         GOTO CONVERT-OUT                                               00003330
+     END-IF                                                             00003340
+                                                                        00003350
+     IF WA2 = ' '                                                       00003360
+         A11 = WA1                                                      00003370
+         A10 = WA2                                                      00003380
+     ELSE                                                               00003390
+         A11 = WA2                                                      00003400
+         A10 = WA1                                                      00003410
+     END-IF                                                             00003420
+CONVERT-OUT                                                             00003430
+END-PROC                                                                00003440
+READ-PENNCP. PROC                                                       00003450
+                                                                        00003460
+READ-PENNCP-AGAIN                                                       00003470
+                                                                        00003480
+  GET PENNCP                                                            00003490
+                                                                        00003500
+  IF EOF PENNCP                                                         00003510
+      GOTO END-PENNCP                                                   00003520
+  END-IF                                                                00003530
+                                                                        00003540
+  WORK-AMT = PENNCP-CNT                                                 00003550
+  PERFORM CONVERT-AMT                                                   00003560
+  AMT-8 = AMT11                                                         00003570
+                                                                        00003580
+  GOTO READ-PENNCP-AGAIN                                                00003590
+                                                                        00003600
+END-PENNCP                                                              00003610
+END-PROC                                                                00003620
+                                                                        00003630
+READ-ACTNCP. PROC                                                       00003640
+                                                                        00003650
+READ-ACTNCP-AGAIN                                                       00003660
+                                                                        00003670
+  GET ACTNCP                                                            00003680
+                                                                        00003690
+  IF EOF ACTNCP                                                         00003700
+      GOTO END-ACTNCP                                                   00003710
+  END-IF                                                                00003720
+                                                                        00003730
+  WORK-AMT = ACTNCP-CNT                                                 00003740
+  PERFORM CONVERT-AMT                                                   00003750
+  AMT-7 = AMT11                                                         00003760
+                                                                        00003770
+  GOTO READ-ACTNCP-AGAIN                                                00003780
+                                                                        00003790
+END-ACTNCP                                                              00003800
+END-PROC                                                                00003810
+                                                                        00003820
+READ-EMPCT1. PROC                                                       00003830
+                                                                        00003840
+READ-EMPCT1-AGAIN                                                       00003850
+                                                                        00003860
+  GET EMPCT1                                                            00003870
+                                                                        00003880
+  IF EOF EMPCT1                                                         00003890
+      GOTO END-EMPCT1                                                   00003900
+  END-IF                                                                00003910
+                                                                        00003920
+  WORK-AMT = EMPCT1-CNT                                                 00003930
+  PERFORM CONVERT-AMT                                                   00003940
+                                                                        00003950
+  IF EMPCT1-USE = ' '                                                   00003960
+      AMT-2 = AMT11                                                     00003970
+  ELSE-IF EMPCT1-USE = 'N'                                              00003980
+           AMT-1 = AMT11                                                00003990
+       ELSE-IF EMPCT1-USE = 'Y'                                         00004000
+                AMT-3 = AMT11                                           00004010
+  END-IF                                                                00004020
+                                                                        00004030
+  GOTO READ-EMPCT1-AGAIN                                                00004040
+                                                                        00004050
+END-EMPCT1                                                              00004060
+END-PROC                                                                00004070
+                                                                        00004080
+READ-EMPCT2. PROC                                                       00004090
+                                                                        00004100
+READ-EMPCT2-AGAIN                                                       00004110
+                                                                        00004120
+  GET EMPCT2                                                            00004130
+                                                                        00004140
+  IF EOF EMPCT2                                                         00004150
+      GOTO END-EMPCT2                                                   00004160
+  END-IF                                                                00004170
+                                                                        00004180
+  WORK-AMT = EMPCT2-CNT                                                 00004190
+  PERFORM CONVERT-AMT                                                   00004200
+                                                                        00004210
+  IF EMPCT2-USE = ' '                                                   00004220
+      AMT-5 = AMT11                                                     00004230
+  ELSE-IF EMPCT2-USE = 'N'                                              00004240
+           AMT-6 = AMT11                                                00004250
+       ELSE-IF EMPCT2-USE = 'Y'                                         00004260
+                AMT-4 = AMT11                                           00004270
+  END-IF                                                                00004280
+                                                                        00004290
+  GOTO READ-EMPCT2-AGAIN                                                00004300
+                                                                        00004310
+END-EMPCT2                                                              00004320
+END-PROC                                                                00004330
+                                                                        00004340
+READ-EMPCT3. PROC                                                       00004350
+                                                                        00004360
+READ-EMPCT3-AGAIN                                                       00004370
+                                                                        00004380
+  GET EMPCT3                                                            00004390
+                                                                        00004400
+  IF EOF EMPCT3                                                         00004410
+      GOTO END-EMPCT3                                                   00004420
+  END-IF                                                                00004430
+                                                                        00004440
+  WORK-AMT = EMPCT3-CNT                                                 00004450
+  PERFORM CONVERT-AMT                                                   00004460
+                                                                        00004470
+  AMT-9 = AMT11                                                         00004480
+                                                                        00004490
+  GOTO READ-EMPCT3-AGAIN                                                00004500
+                                                                        00004510
+END-EMPCT3                                                              00004520
+END-PROC                                                                00004530
+                                                                        00004540
+READ-MATRX1. PROC                                                       00004550
+                                                                        00004560
+  PERFORM MATRX-TITLE                                                   00004570
+                                                                        00004580
+READ-MATRX1-AGAIN                                                       00004590
+                                                                        00004600
+  GET MATRX1                                                            00004610
+                                                                        00004620
+  IF EOF MATRX1                                                         00004630
+      GOTO END-MATRX1                                                   00004640
+  END-IF                                                                00004650
+                                                                        00004660
+  WORK-AMT = MATRX1-CNT                                                 00004670
+  PERFORM CONVERT-AMT                                                   00004680
+  MATRX1-8 = AMT11                                                      00004690
+  MATRX-LIT = MATRX1-LIT                                                00004700
+****                                                                    00004710
+   O-EMAIL = ' '                                                        00004720
+   O-MATRX = MATRX1-LIT1                                                00004730
+   ALPHA-AMT = AMT11                                                    00004740
+   PERFORM ALPHA-AMT                                                    00004750
+   PERFORM MATRX-REPORT                                                 00004760
+****                                                                    00004770
+  PRINT REPORT-2                                                        00004780
+                                                                        00004790
+  GOTO READ-MATRX1-AGAIN                                                00004800
+                                                                        00004810
+END-MATRX1                                                              00004820
+END-PROC                                                                00004830
+*                                                                       00004840
+READ-MATRX2. PROC                                                       00004850
+                                                                        00004860
+READ-MATRX2-AGAIN                                                       00004870
+                                                                        00004880
+  GET MATRX2                                                            00004890
+                                                                        00004900
+  IF EOF MATRX2                                                         00004910
+      GOTO END-MATRX2                                                   00004920
+  END-IF                                                                00004930
+                                                                        00004940
+  WORK-AMT = MATRX2-CNT                                                 00004950
+  PERFORM CONVERT-AMT                                                   00004960
+  MATRX1-8 = AMT11                                                      00004970
+  MATRX2-EMP = EMPMATID                                                 00004980
+  MATRX-LIT = MATRX2-LIT                                                00004990
+****                                                                    00005000
+   O-EMAIL = ' '                                                        00005010
+   O-MATRX = MATRX-LIT                                                  00005020
+   ALPHA-AMT = AMT11                                                    00005030
+   PERFORM ALPHA-AMT                                                    00005040
+   PERFORM MATRX-REPORT                                                 00005050
+****                                                                    00005060
+                                                                        00005070
+  PRINT REPORT-2                                                        00005080
+                                                                        00005090
+  GOTO READ-MATRX2-AGAIN                                                00005100
+                                                                        00005110
+END-MATRX2                                                              00005120
+   EMAIL-REC = ' '                                                      00005130
+   PUT EMAIL                                                            00005140
+   EMAIL-REC = '                *** END OF REPORT ***'                  00005150
+   PUT EMAIL                                                            00005160
+   EMAIL-REC = ' '                                                      00005170
+   PUT EMAIL                                                            00005180
+END-PROC                                                                00005190
+EMAIL-OUT. PROC                                                         00005200
+   O-EMAIL = ' '                                                        00005210
+   OTITLE = 'EMPLOYER MAINTENANCE REPORT TOTALS'                        00005220
+   EMAIL-REC = O-EMAIL                                                  00005230
+   PUT EMAIL                                                            00005240
+   O-EMAIL = ' '                                                        00005250
+   EMAIL-REC = O-EMAIL                                                  00005260
+   PUT EMAIL                                                            00005270
+   O-EMAIL = ' '                                                        00005280
+   OLIT = TITLE-1                                                       00005290
+   OTCNT = 'COUNTS'                                                     00005300
+   EMAIL-REC = O-EMAIL                                                  00005310
+   O-EMAIL = ' '                                                        00005320
+   PUT EMAIL                                                            00005330
+   EMAIL-REC = O-EMAIL                                                  00005340
+   PUT EMAIL                                                            00005350
+   O-EMAIL = ' '                                                        00005360
+   OLIT = TITLE-2                                                       00005370
+   ALPHA-AMT = AMT-6                                                    00005380
+   PERFORM ALPHA-AMT                                                    00005390
+   EMAIL-REC = O-EMAIL                                                  00005400
+   PUT EMAIL                                                            00005410
+   O-EMAIL = ' '                                                        00005420
+   OLIT = TITLE-3                                                       00005430
+   ALPHA-AMT = AMT-5                                                    00005440
+   PERFORM ALPHA-AMT                                                    00005450
+   EMAIL-REC = O-EMAIL                                                  00005460
+   PUT EMAIL                                                            00005470
+   O-EMAIL = ' '                                                        00005480
+   OLIT = TITLE-4                                                       00005490
+   ALPHA-AMT = AMT-4                                                    00005500
+   PERFORM ALPHA-AMT                                                    00005510
+   EMAIL-REC = O-EMAIL                                                  00005520
+   PUT EMAIL                                                            00005530
+   EMAIL-REC = ' '                                                      00005540
+   PUT EMAIL                                                            00005550
+   O-EMAIL = ' '                                                        00005560
+   OLIT = TITLE-5                                                       00005570
+   ALPHA-AMT = AMT-3                                                    00005580
+   PERFORM ALPHA-AMT                                                    00005590
+   EMAIL-REC = O-EMAIL                                                  00005600
+   PUT EMAIL                                                            00005610
+   O-EMAIL = ' '                                                        00005620
+   OLIT = TITLE-6                                                       00005630
+   ALPHA-AMT = AMT-2                                                    00005640
+   PERFORM ALPHA-AMT                                                    00005650
+   EMAIL-REC = O-EMAIL                                                  00005660
+   PUT EMAIL                                                            00005670
+   O-EMAIL = ' '                                                        00005680
+   OLIT = TITLE-7                                                       00005690
+   ALPHA-AMT = AMT-1                                                    00005700
+   PERFORM ALPHA-AMT                                                    00005710
+   EMAIL-REC = O-EMAIL                                                  00005720
+   PUT EMAIL                                                            00005730
+   EMAIL-REC = ' '                                                      00005740
+   PUT EMAIL                                                            00005750
+   O-EMAIL = ' '                                                        00005760
+   OLIT = TITLE-8                                                       00005770
+   ALPHA-AMT = AMT-2                                                    00005780
+   PERFORM ALPHA-AMT                                                    00005790
+   EMAIL-REC = O-EMAIL                                                  00005800
+   PUT EMAIL                                                            00005810
+   O-EMAIL = ' '                                                        00005820
+   OLIT = TITLE-9                                                       00005830
+   ALPHA-AMT = AMT-7                                                    00005840
+   PERFORM ALPHA-AMT                                                    00005850
+   EMAIL-REC = O-EMAIL                                                  00005860
+   PUT EMAIL                                                            00005870
+   O-EMAIL = ' '                                                        00005880
+   OLIT = TITLE-10                                                      00005890
+   EMAIL-REC = O-EMAIL                                                  00005900
+   PUT EMAIL                                                            00005910
+   O-EMAIL = ' '                                                        00005920
+   OLIT = TITLE-11                                                      00005930
+   EMAIL-REC = O-EMAIL                                                  00005940
+   PUT EMAIL                                                            00005950
+   O-EMAIL = ' '                                                        00005960
+   OLIT = TITLE-12                                                      00005970
+   ALPHA-AMT = AMT-8                                                    00005980
+   PERFORM ALPHA-AMT                                                    00005990
+   EMAIL-REC = O-EMAIL                                                  00006000
+   PUT EMAIL                                                            00006010
+   EMAIL-REC = ' '                                                      00006020
+   PUT EMAIL                                                            00006030
+   O-EMAIL = ' '                                                        00006040
+   OLIT = TITLE-13                                                      00006050
+   ALPHA-AMT = AMT-9                                                    00006060
+   PERFORM ALPHA-AMT                                                    00006070
+   EMAIL-REC = O-EMAIL                                                  00006080
+   PUT EMAIL                                                            00006090
+   EMAIL-REC = ' '                                                      00006100
+   PUT EMAIL                                                            00006110
+   EMAIL-REC = '                *** END OF REPORT ***'                  00006120
+   PUT EMAIL                                                            00006130
+   EMAIL-REC = ' '                                                      00006140
+   PUT EMAIL                                                            00006150
+   EMAIL-REC = ' '                                                      00006160
+   PUT EMAIL                                                            00006170
+   EMAIL-REC = ' '                                                      00006180
+END-PROC                                                                00006190
+******                                                                  00006200
+MATRX-TITLE.   PROC                                                     00006210
+   O-EMAIL = ' '                                                        00006220
+   OTITLE = '  JUANITA HERRIN MATRX NUMBERS   '                         00006230
+   EMAIL-REC = O-EMAIL                                                  00006240
+   PUT EMAIL                                                            00006250
+   EMAIL-REC = ' '                                                      00006260
+   PUT EMAIL                                                            00006270
+   O-EMAIL = ' '                                                        00006280
+   EMAIL-REC = ' '                                                      00006290
+   O-MATRX = MATRX1-LIT                                                 00006300
+   OTCNT = 'COUNTS'                                                     00006310
+   EMAIL-REC = O-EMAIL                                                  00006320
+   PUT EMAIL                                                            00006330
+   EMAIL-REC = ' '                                                      00006340
+   PUT EMAIL                                                            00006350
+   O-EMAIL = ' '                                                        00006360
+   EMAIL-REC = ' '                                                      00006370
+END-PROC                                                                00006380
+MATRX-REPORT. PROC                                                      00006390
+   EMAIL-REC = O-EMAIL                                                  00006400
+   PUT EMAIL                                                            00006410
+   EMAIL-REC = ' '                                                      00006420
+   O-EMAIL = ' '                                                        00006430
+END-PROC                                                                00006440
+******                                                                  00006450
+ALPHA-AMT. PROC                                                         00006460
+                                                                        00006470
+     AMT13 = ' '                                                        00006480
+                                                                        00006490
+     IF AA1 > '0'                                                       00006500
+         GOTO MOVE-ALL                                                  00006510
+     ELSE-IF AA2 > '0'                                                  00006520
+              GOTO MOVE9                                                00006530
+          ELSE-IF AA3 > '0'                                             00006540
+                   GOTO MOVE8                                           00006550
+               ELSE-IF AA4 > '0'                                        00006560
+                        GOTO MOVE7                                      00006570
+                    ELSE-IF AA5 > '0'                                   00006580
+                             GOTO MOVE6                                 00006590
+                         ELSE-IF AA6 > '0'                              00006600
+                                  GOTO MOVE5                            00006610
+                              ELSE-IF AA7 > '0'                         00006620
+                                       GOTO MOVE4                       00006630
+                                   ELSE-IF AA8 > '0'                    00006640
+                                            GOTO MOVE3                  00006650
+                                        ELSE-IF AA9 > '0'               00006660
+                                                 GOTO MOVE2             00006670
+                                             ELSE                       00006680
+                                                 GOTO MOVE1             00006690
+     END-IF                                                             00006700
+MOVE-ALL                                                                00006710
+    AM1 = AA1                                                           00006720
+    AM2 = ','                                                           00006730
+    AM3 = AA2                                                           00006740
+    AM4 = AA3                                                           00006750
+    AM5 = AA4                                                           00006760
+    AM6 = ','                                                           00006770
+    AM7 = AA5                                                           00006780
+    AM8 = AA6                                                           00006790
+    AM9 = AA7                                                           00006800
+    AM10 = ','                                                          00006810
+    AM11 = AA8                                                          00006820
+    AM12 = AA9                                                          00006830
+    AM13 = AA10                                                         00006840
+    O-AMT13 = NAM13                                                     00006850
+    GOTO END-MOVE                                                       00006860
+MOVE9                                                                   00006870
+    AM1 = AA2                                                           00006880
+    AM2 = AA3                                                           00006890
+    AM3 = AA4                                                           00006900
+    AM4 = ','                                                           00006910
+    AM5 = AA5                                                           00006920
+    AM6 = AA6                                                           00006930
+    AM7 = AA7                                                           00006940
+    AM8 = ','                                                           00006950
+    AM9 = AA8                                                           00006960
+    AM10 = AA9                                                          00006970
+    AM11 = AA10                                                         00006980
+    O-AMT11 = NAM11                                                     00006990
+    GOTO END-MOVE                                                       00007000
+MOVE8                                                                   00007010
+    AM1 = AA3                                                           00007020
+    AM2 = AA4                                                           00007030
+    AM3 = ','                                                           00007040
+    AM4 = AA5                                                           00007050
+    AM5 = AA6                                                           00007060
+    AM6 = AA7                                                           00007070
+    AM7 = ','                                                           00007080
+    AM8 = AA8                                                           00007090
+    AM9 = AA9                                                           00007100
+    AM10 = AA10                                                         00007110
+    O-AMT10 = NAM10                                                     00007120
+    GOTO END-MOVE                                                       00007130
+MOVE7                                                                   00007140
+    AM1 = AA4                                                           00007150
+    AM2 = ','                                                           00007160
+    AM3 = AA5                                                           00007170
+    AM4 = AA6                                                           00007180
+    AM5 = AA7                                                           00007190
+    AM6 = ','                                                           00007200
+    AM7 = AA8                                                           00007210
+    AM8 = AA9                                                           00007220
+    AM9 = AA10                                                          00007230
+    O-AMT9 = NAM9                                                       00007240
+    GOTO END-MOVE                                                       00007250
+MOVE6                                                                   00007260
+    AM1 = AA5                                                           00007270
+    AM2 = AA6                                                           00007280
+    AM3 = AA7                                                           00007290
+    AM4 = ','                                                           00007300
+    AM5 = AA8                                                           00007310
+    AM6 = AA9                                                           00007320
+    AM7 = AA10                                                          00007330
+    O-AMT7 = NAM7                                                       00007340
+    GOTO END-MOVE                                                       00007350
+MOVE5                                                                   00007360
+    AM1 = AA6                                                           00007370
+    AM2 = AA7                                                           00007380
+    AM3 = ','                                                           00007390
+    AM4 = AA8                                                           00007400
+    AM5 = AA9                                                           00007410
+    AM6 = AA10                                                          00007420
+    O-AMT6 = NAM6                                                       00007430
+    GOTO END-MOVE                                                       00007440
+MOVE4                                                                   00007450
+    AM1 = AA7                                                           00007460
+    AM2 = ','                                                           00007470
+    AM3 = AA8                                                           00007480
+    AM4 = AA9                                                           00007490
+    AM5 = AA10                                                          00007500
+    O-AMT5 = NAM5                                                       00007510
+    GOTO END-MOVE                                                       00007520
+MOVE3                                                                   00007530
+    AM1 = AA8                                                           00007540
+    AM2 = AA9                                                           00007550
+    AM3 = AA10                                                          00007560
+    O-AMT3 = NAM3                                                       00007570
+    GOTO END-MOVE                                                       00007580
+MOVE2                                                                   00007590
+    AM1 = AA9                                                           00007600
+    AM2 = AA10                                                          00007610
+    O-AMT2 = NAM2                                                       00007620
+    GOTO END-MOVE                                                       00007630
+MOVE1                                                                   00007640
+    AM1 = AA10                                                          00007650
+    O-AMT1 = NAM1                                                       00007660
+END-MOVE                                                                00007670
+END-PROC                                                                00007680
+************************************************************************00007690
+*****  REPORT  PROCESSING                                               00007700
+**************************************************************          00007710
+REPORT REPORT-1 PRINTER PRNTOUT1 LINESIZE 79 SPACE 2 TITLESKIP 1        00007720
+   TITLE 1 'EMPLOYER MAINTENANCE REPORT TOTALS'                         00007730
+   HEADING TITLE-1 ' '                                                  00007740
+   LINE  1 TITLE-1    'COUNTS'                                          00007750
+   LINE  3 POS 1 TITLE-2    POS 2 AMT-6                                 00007760
+   LINE  4 POS 1 TITLE-3    POS 2 AMT-5                                 00007770
+   LINE  5 POS 1 TITLE-4    POS 2 AMT-4                                 00007780
+   LINE  6 POS 1 TITLE-14                                               00007790
+   LINE  7 POS 1 TITLE-5    POS 2 AMT-3                                 00007800
+   LINE  8 POS 1 TITLE-6    POS 2 AMT-2                                 00007810
+   LINE  9 POS 1 TITLE-7    POS 2 AMT-1                                 00007820
+   LINE 10 POS 1 TITLE-14                                               00007830
+   LINE 11 POS 1 TITLE-8                                                00007840
+   LINE 12 POS 1 TITLE-9    POS 2 AMT-7                                 00007850
+   LINE 13 POS 1 TITLE-10                                               00007860
+   LINE 14 POS 1 TITLE-11                                               00007870
+   LINE 15 POS 1 TITLE-12   POS 2 AMT-8                                 00007880
+   LINE 16 POS 1 TITLE-14                                               00007890
+   LINE 17 POS 1 TITLE-13   POS 2 AMT-9                                 00007900
+                                                                        00007910
+TERMINATION. PROC                                                       00007920
+    DISPLAY ' '                                                         00007930
+    DISPLAY '                      *****  END OF REPORT  *****'         00007940
+    DISPLAY ' '                                                         00007950
+END-PROC                                                                00007960
+                                                                        00007970
+REPORT REPORT-2 PRINTER PRNTOUT2 LINESIZE 79 SPACE 2 TITLESKIP 1        00007980
+   TITLE 1 'JUANITA HERRIN MATRX NUMBERS'                               00007990
+   HEADING MATRX-LIT ' '                                                00008000
+   HEADING MATRX1-8 '  COUNTS'                                          00008010
+   LINE  1 MATRX-LIT MATRX1-8                                           00008020
+                                                                        00008030
+TERMINATION. PROC                                                       00008040
+    DISPLAY ' '                                                         00008050
+    DISPLAY '                      *****  END OF REPORT  *****'         00008060
+    DISPLAY ' '                                                         00008070
+END-PROC                                                                00008080
+                                                                        00008090
+                                                                        00008100

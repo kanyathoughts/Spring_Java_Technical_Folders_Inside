@@ -1,0 +1,28 @@
+  /* Manual test file for Control flow GOTO statement  */ 
+ CTL023A: PROC OPTIONS(MAIN);
+    
+    DECLARE LABEL_A(2) LABEL;
+    DECLARE RESULT BIT(1) INIT(1B);
+    DECLARE X CHAR(2) INIT('AB');
+    DECLARE Z FIXED DECIMAL(1) INIT(1);
+        
+    /* Test case for GOTO and calling 
+    using LABEL constant */
+    
+    LABEL_A(1) = LABEL1;
+    GO TO LABEL_A(1);    
+    
+    LABEL1:
+       BEGIN;
+           X = '/* SUBSTR(X,LENGTH(X)+1 , Z) */';
+           X = /* This is a comment
+              */ SUBSTR(X,LENGTH(X)+1 , Z); 
+           PUT SKIP LIST(' INSIDE LABEL1', X);
+       END;
+       
+    /* NO ERROR IS RAISED EVEN IF LABEL_A(2) 
+       DOESN'T EXIST */      
+    GO TO LABEL_A(2);
+    PUT SKIP LIST('POST LABEL_A(2)');
+            
+ END CTL023A;

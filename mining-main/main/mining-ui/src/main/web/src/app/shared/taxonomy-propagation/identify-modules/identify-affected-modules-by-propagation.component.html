@@ -1,0 +1,78 @@
+<nz-content>
+  <nz-space nzDirection="vertical" nzSize="large">
+    <div nz-row [nzJustify]="'end'">
+      <button nz-button nzType="link" (click)="setChildDrawerVisibilty(true)">
+        <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+        {{'taxonomyPropagation.taxonomyPropagationInfoLink' | translate }}
+      </button>
+    </div>
+  </nz-space>
+  <nz-space nzDirection="vertical" nzSize="large">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="taxonomyPropagation">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" [innerHTML]="'taxonomyPropagation.taxonomies' | translate "></nz-form-label>
+        <nz-form-control>
+          <app-taxonomy-filter [useMetricsFilterService]="false"
+            (selectedTaxonomyDetails)="getSelectedTaxonomyDetails($event)">
+          </app-taxonomy-filter>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzFor="incomingReference"
+          [innerHTML]="'taxonomyPropagation.references' | translate: { references: 'Incoming' }"></nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-select nzMode="multiple" formControlName="incomingReference" [(ngModel)] = "selectedIncomingReferences" (ngModelChange)="handleIncomingAndOutgoingReferenceChange()"
+            nzPlaceHolder="{{ 'taxonomyPropagation.placeHolder' | translate: { placeHolderName: 'incoming' } }}"
+           >
+            <nz-option *ngFor="let option of listOfReferences" nzCustomContent [nzValue]="option.value" nzLabel="{{option.label | translate}}">
+              <span nz-tooltip nzTooltipTitle="{{option.toolTip | translate}}"  nzTooltipPlacement="left">{{ option.label }}</span>
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzFor="outgoingReference"
+          [innerHTML]="'taxonomyPropagation.references' | translate: { references: 'Outgoing' }"></nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-select nzMode="multiple" formControlName="outgoingReference" [(ngModel)] = "selectedOutgoingReferences" (ngModelChange)="handleIncomingAndOutgoingReferenceChange()"
+            nzPlaceHolder="{{ 'taxonomyPropagation.placeHolder' | translate: { placeHolderName: 'outgoing' } }}"
+            [nzOptions]="listOfReferences">
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf = "(taxonomyPropagation.get('incomingReference')?.value?.indexOf('Accesses') > -1 || taxonomyPropagation.get('outgoingReference')?.value?.indexOf('Accesses') > -1)">
+      <nz-form-label [nzSpan]="24" nzFor="readsWritesAccesses"
+      [innerHTML]="'taxonomyPropagation.readWriteAccessTypesTitle' | translate"></nz-form-label>
+    <nz-form-control [nzSpan]="24">
+      <nz-select nzMode="multiple" formControlName="readsWritesAccesses"
+        nzPlaceHolder="{{ 'taxonomyPropagation.readWriteAccessTypesPlaceHolder' | translate }}"
+        [nzOptions]="listOfReadsWritesAccesses">
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+    </form>
+  </nz-space>
+  <div class="taxonomy-propagation__visualization__footer-bottom-right">
+    <nz-space nz-row [nzJustify]="'end'">
+      <button *nzSpaceItem type="button" nz-button nzType="default" (click)="handleCancel()">
+        {{ 'btnLabel.cancel' | translate }}</button>
+      <button *nzSpaceItem nz-button [nzType]="'primary'" [disabled]="(taxonomyPropagation.get('incomingReference').value.length === 0 && taxonomyPropagation.get('outgoingReference').value.length === 0)  || taxonomyId.length === 0" (click)="startPropagation()" [nzLoading]="onLoading">
+        <em nz-icon nzType="apartment" nzTheme="outline"></em>
+        {{ 'taxonomyPropagation.propagation' | translate }}
+      </button>
+    </nz-space>
+  </div>
+</nz-content>
+<nz-drawer [nzWidth]="'26vw'" [nzClosable]="childVisible" [nzVisible]="childVisible"
+  (nzOnClose)="setChildDrawerVisibilty(false)" nzTitle="{{'taxonomyPropagation.pageTitle' | translate }}">
+  <form *nzDrawerContent>
+    <p class="taxonomy-propagation__visualization__text-font">{{ 'taxonomyPropagation.propagate' | translate }}</p>
+    <p class="taxonomy-propagation__visualization__text-font">{{ 'taxonomyPropagation.assignTaxonomies' | translate}}
+    </p>
+    <img src="assets/gifs/taxonomy-propagation.gif" width="100%"
+      alt="{{ 'taxonomyPropagation.taxonomyPropagationAltImg' | translate}}" />
+    <div nz-row [nzJustify]="'end'" class="taxonomy-propagation__visualization__footer-bottom-right">
+      <button nz-button (click)="setChildDrawerVisibilty(false)">{{ 'back' | translate }}</button>
+    </div>
+  </form>
+</nz-drawer>

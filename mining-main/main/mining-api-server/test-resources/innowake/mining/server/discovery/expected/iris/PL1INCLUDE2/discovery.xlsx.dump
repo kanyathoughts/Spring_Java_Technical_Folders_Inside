@@ -1,0 +1,43 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2123,2122,"proc1","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,11,0,-1,0,0,1,322
+2124,2122,"proc2","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,4,0,-1,0,0,387,122
+2122,"","TEST","src/pl1/PL1INCLUDE2/programs/TEST.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",2,5,17,0,24,0,0,-1,-1
+2113,"","TEST2","src/pl1/PL1INCLUDE2/programs/TEST2.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,0,2,0,4,0,0,-1,-1
+2116,2113,"TEST2proc","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,2,0,-1,0,0,1,54
+2114,"","TEST3","src/pl1/PL1INCLUDE2/programs/TEST3.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,0,2,0,4,0,0,-1,-1
+2117,2114,"TEST3proc","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,2,0,-1,0,0,1,54
+2112,"","TEST4","src/pl1/PL1INCLUDE2/programs/TEST4.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,0,2,0,4,0,0,-1,-1
+2119,2112,"TEST4proc","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,2,0,-1,0,0,1,54
+2115,"","TESTCPY","src/pl1/PL1INCLUDE2/copies/TESTCPY.pcpy","PL1","PL1_COPYBOOK","PHYSICAL",-1,0,2,0,5,0,0,-1,-1
+2118,"","TESTCPY2","src/pl1/PL1INCLUDE2/copies/TESTCPY2.pcpy","PL1","PL1_COPYBOOK","PHYSICAL",-1,0,1,0,2,0,0,-1,-1
+2121,"","TESTCPY3","src/pl1/PL1INCLUDE2/copies/TESTCPY3.pcpy","PL1","PL1_COPYBOOK","PHYSICAL",-1,0,1,0,2,0,0,-1,-1
+2120,"","TESTCPY4","src/pl1/PL1INCLUDE2/copies/TESTCPY4.pcpy","PL1","PL1_COPYBOOK","PHYSICAL",-1,0,1,0,1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2122,"TEST",2115,"TESTCPY","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",230,17,-1,-1
+2122,"TEST",2118,"TESTCPY2","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",330,18,-1,-1
+2122,"TEST",2121,"TESTCPY3","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",356,18,-1,-1
+2122,"TEST",2120,"TESTCPY4","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",474,18,-1,-1
+2115,"TESTCPY",2113,"TEST2","PL1","PL1_MAINPROGRAM","Calls","","LATE","{}",45,15,-1,-1
+2115,"TESTCPY",2113,"TEST2","PL1","PL1_MAINPROGRAM","Calls","","LATE","{}",8,25,-1,-1
+2115,"TESTCPY",2116,"TEST2proc","PL1","PL1_SUBROUTINE","Calls","","LATE","{}",8,25,-1,-1
+2115,"TESTCPY",2116,"TEST2proc","PL1","PL1_SUBROUTINE","Calls","","LATE","{}",45,15,-1,-1
+2120,"TESTCPY4",0,"IEBGENER","UNKNOWN","UTILITY","Calls","","LATE","{}",2,14,-1,-1
+2123,"proc1",2115,"TESTCPY","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",230,17,-1,-1
+2124,"proc2",2120,"TESTCPY4","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",474,18,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2122,"TEST","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file fileMain3 to actual data set.",-1,-1
+2122,"TEST","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file file2 to actual data set.",-1,-1
+2122,"TEST","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file file1 to actual data set.",-1,-1
+2122,"TEST","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file fileMain2 to actual data set.",-1,-1
+2122,"TEST","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file fileMain1 to actual data set.",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

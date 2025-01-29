@@ -1,0 +1,97 @@
+//MMRS711V JOB 'MMRS00C',CLASS=A,TIME=(1),LINES=1,REGION=0M,
+//            MSGLEVEL=(2,1),MSGCLASS=A
+//* +++CHECK RESTART=STEPLIST AS RESTARTPOINT IS IGNORED
+//*************************************************************************
+//***** MMRS-M01  MAINFRAME MODERNIZATION REFERENCE SYSTEM
+//*************************************************************************
+//***** VSAM      DELETE AND DEFINE CLUSTER KSDS, RRDS, ESDS
+//***** VSAM      LISTCAT
+//***** VSAM      PRINT DATA OF VSAM CLUSTER
+//*************************************************************************
+//    SET VSAMK=MMRS00C.AWA.VSAMK
+//    SET VSAMR=MMRS00C.AWA.VSAMR
+//    SET VSAME=MMRS00C.AWA.VSAME
+//*
+//STEPDEL  EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+   DEL MMRS00C.AWA.VSAMK CLUSTER
+   DEL MMRS00C.AWA.VSAMR CLUSTER
+   DEL MMRS00C.AWA.VSAME CLUSTER
+//* +++CHECK: DEL MMRS00C_MMRS7111_VSAMK CL  -> OPTION CL UNSUPPORTED
+//*
+//STEPDEF EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+     DEFINE                                                -
+     CLUSTER (                                             -
+              NAME (MMRS00C.AWA.VSAMK)                     -
+              INDEXED                                      -
+              NOREUSE                                      -
+             )                                             -
+     DATA    (                                             -
+              NAME (MMRS00C.AWA.VSAMK-DD)                  -
+              CISZ (8192)                                  -
+              CYL(1  1 )                                   -
+              RECORDSIZE (80 80)                           -
+              KEYS (10 4)                                  -
+              FREESPACE (10 10)                            -
+              SHAREOPTIONS (2 3)                           -
+             )                                             -
+     INDEX   (NAME (MMRS00C.AWA.VSAMK-II)                  -
+              CYL (1 1)                                    -
+              SHAREOPTIONS (2 3)                           -
+              NOREPLICATE                                  -
+             )                                             -
+     CATALOG (CATALOG.USERAA)
+     DEFINE                                                -
+     CLUSTER (                                             -
+              NAME (MMRS00C.AWA.VSAMR)                     -
+              NUMBERED                                     -
+              NOREUSE                                      -
+             )                                             -
+     DATA    (                                             -
+              NAME (MMRS00C.AWA.VSAMR-D)                   -
+              CISZ (8192)                                  -
+              CYL(1  1 )                                   -
+              RECORDSIZE (80 80)                           -
+              KEYS (10 4)                                  -
+              FREESPACE (10 10)                            -
+              SHAREOPTIONS (2 3)                           -
+             )                                             -
+     CATALOG (CATALOG.USERAA)
+     DEFINE                                                -
+     CLUSTER (                                             -
+              NAME (MMRS00C.AWA.VSAME)                     -
+              NONINDEXED                                   -
+              NOREUSE                                      -
+             )                                             -
+     DATA    (                                             -
+              NAME (MMRS00C.AWA.VSAME-D)                   -
+              CISZ (8192)                                  -
+              CYL(1  1 )                                   -
+              RECORDSIZE (80 80)                           -
+              SHAREOPTIONS (2 3)                           -
+             )                                             -
+     CATALOG (CATALOG.USERAA)
+//*
+//STEPLST1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//* //SYSPRINT DD DISP=(NEW,CATLG,DELETE),SPACE=(CYL,(1,5),
+//* //         DSN=MMRS00C.LISTCAT
+//* ++CHECK   LISTCAT ENTRIES(MMRS00C.AWA.MMRS7111.*) ALL
+//SYSIN    DD *
+   LISTCAT ENTRIES(MMRS00C.AWA.VSAMK) ALL
+//*
+//*
+//STEPLST1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+   LISTCAT ENTRIES(MMRS00C.AWA.VSAMR) ALL
+//*
+//*
+//STEPLST1 EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+   LISTCAT ENTRIES(MMRS00C.AWA.VSAME) ALL
+//*

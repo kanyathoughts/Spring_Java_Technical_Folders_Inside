@@ -1,0 +1,8 @@
+       IDENTIFICATION DIVISION. 
+       PROGRAM-ID. A. 
+       ENVIRONMENT DIVISION. 
+       DATA DIVISION.
+       PROCEDURE DIVISION.
+           DISPLAY '1'
+           GOBACK.
+       END PROGRAM A.

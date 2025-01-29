@@ -1,0 +1,230 @@
+//**********************************************************************
+//** COBOL BATCH COMPILE                                   MVS BCOBBAT**
+//**********************************************************************
+//** Infopoint Product: RF  Release: 21  Putlevel: 05                 **
+//** Description: RELATIONSHIP CIF                                    **
+//**********************************************************************
+//** BEFORE EXECUTING THIS PROCEDURE:                                 **
+//**                                                                  **
+//**   This procedure will require access to other Infopoint          **
+//**   product libraries as indicated below.  Change these            **
+//**   libraries in this procedure as appropriate to your site.       **
+//**                                                                  **
+//**     Library  Infopoint Product Name                              **
+//**     -------- --------------------------------------------        **
+//**     COPYLIB  BI 15 RUNTIME COMPONENTS                            **
+//**     COPYLIB  MI 51 MICM                                          **
+//**                                                                  **
+//** 1. Check all symbolics and JCL for your site assignments.        **
+//**    Be sure to change the CLASS and TIME JOB CARD parameters      **
+//**    for a long running job.                                       **
+//**                                                                  **
+//** 2. Verify the $COMPPGM PARM statement:                           **
+//**                                                                  **
+//**     - verify that the 'DATA(31)' option is present unless        **
+//**       instructed differently in the installation guide.          **
+//**     - if using NODYNAM, change the 'DYN' option to 'NODYN'.      **
+//**     - the options 'NOOFF NOLIST NOS NOX' are included to limit   **
+//**       compiler output; change these as appropriate to your site. **
+//**                                                                  **
+//** 3. If the compiler system libraries are not included in the      **
+//**    system LINK-LIST, uncomment and assign the correct library    **
+//**    to the SYSCOMP symbolic, and uncomment the STEPLIB line in    **
+//**    the COB step.                                                 **
+//**                                                                  **
+//** 4. Change all the system and product library names and add       **
+//**    additional libraries as appropriate to your site.             **
+//**                                                                  **
+//** 5. Review the submission and execution instructions for these    **
+//**    nested procedures at the end of this member.                  **
+//**                                                                  **
+//** 6. After all the mass compiles/assemblies are completed:         **
+//**                                                                  **
+//**     - execute the BNKLKEDD procedure to relink the system if     **
+//**       using the COBOL DYNAM compile option, or                   **
+//**                                                                  **
+//**     - execute the BNKLKED procedure to relink the system if      **
+//**       using the COBOL NODYNAM compile option.                    **
+//**                                                                  **
+//** NOTE:  This procedure link-edits the program object to the       **
+//**        product library in LKED1.  Change as required.            **
+//**                                                                  **
+//**********************************************************************
+//**********************************************************************
+//BCOBBAT PROC M=XXXXXX,
+//        COMPPGM='IGYCRCTL',                     COMPILER
+//*       SYSCOMP='your.system.compiler.lib',     SYSTEM COBOL LIBRARY
+//        SRCLIN1='BNKCA.RF21.COBOL.SOURCE',      SOURCE LIBRARY
+//        CPYLIN1='BNKCA.RF21.COBOL.COPYLIB',     COPYBOOK LIBRARY
+//        CPYLIN2='BNKCA.BI15.COBOL.COPYLIB',     COPYBOOK LIBRARY
+//        CPYLIN3='BNKCA.MI51.COBOL.COPYLIB',     COPYBOOK LIBRARY
+//**********************************************************************
+//        OBJLOUT='BNKCA.RF21.OBJLIB'             OUTPUT OBJECT LIBRARY
+//**********************************************************************
+//*
+//COB     EXEC PGM=&COMPPGM,
+//             PARM=('OPT,TRUNC(OPT),NOADV,APOST',
+//             LIB,OBJ,NOSEQ,DATA(31),DYN,RENT,NUMPROC(NOPFD))
+//*STEPLIB  DD  DSN=&SYSCOMP,DISP=SHR
+//SYSLIB   DD  DSN=&CPYLIN1,DISP=SHR
+//         DD  DSN=&CPYLIN2,DISP=SHR
+//         DD  DSN=&CPYLIN3,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSPUNCH DD  SYSOUT=*
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT2   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT3   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT4   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT5   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT6   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT7   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(,PASS),UNIT=SYSDA,SPACE=(CYL,(5,1)),
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=3120)
+//SYSIN    DD  DSN=&SRCLIN1(&M),DISP=SHR
+//*
+//LKED1   EXEC PGM=IEWL,PARM='REUS,LIST,XREF,MAP,NCAL',
+//             COND=(5,LT,COB)
+//SYSUDUMP DD  SYSOUT=*
+//SYSPRINT DD  SYSOUT=*
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSLIB   DD  DSN=&OBJLOUT,DISP=SHR
+//SYSLMOD  DD  DSN=&OBJLOUT(&M),DISP=SHR
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(OLD,DELETE)
+//*
+//**********************************************************************
+//** DELETE LOADSET IF COB FAILS                                      **
+//**********************************************************************
+//DELETE  EXEC PGM=IEFBR14,COND=(5,GT,COB)
+//LOADSET  DD  DSN=&&LOADSET,DISP=(OLD,DELETE)
+//*
+//        PEND
+//*
+//********************************************************************
+//* PART 1
+//********************************************************************
+//PART1   PROC
+//RFB001T  EXEC BCOBBAT,M=RFB001T  *Test Program for RFB001
+//RFB021T  EXEC BCOBBAT,M=RFB021T  *Test Program for RFB021
+//RFB121T  EXEC BCOBBAT,M=RFB121T  *Test Program for RFB121
+//RFB600T  EXEC BCOBBAT,M=RFB600T  *Test Program for RFB600
+//RFB601T  EXEC BCOBBAT,M=RFB601T  *Test Program for RFB601
+//RFC800   EXEC BCOBBAT,M=RFC800   *Canadian Province Code Conversion
+//RFC801   EXEC BCOBBAT,M=RFC801   *CIP Tracking Conversion
+//RFD015   EXEC BCOBBAT,M=RFD015   *Initialize RCIF Reports File
+//RFD300   EXEC BCOBBAT,M=RFD300   *LOG File Extract
+//RFD301   EXEC BCOBBAT,M=RFD301   *Sort Log File Keys
+//RFD305   EXEC BCOBBAT,M=RFD305   *Assign Activity Ctrl to Log
+//RFD310   EXEC BCOBBAT,M=RFD310   *Attach Related Cust to Log
+//RFD315   EXEC BCOBBAT,M=RFD315   *Create Daily Activity/WU File
+//RFD316   EXEC BCOBBAT,M=RFD316   *Analyze Customer Inventory Changes
+//RFD317   EXEC BCOBBAT,M=RFD317   *Sort Customer Inventory Changes
+//RFD320   EXEC BCOBBAT,M=RFD320   *Daily Report File Create
+//RFD340   EXEC BCOBBAT,M=RFD340   *Stock Form Report Sort
+//RFD350   EXEC BCOBBAT,M=RFD350   *Stock Form Report Driver
+//RFD360   EXEC BCOBBAT,M=RFD360   *External Application Maint Select
+//RFD365   EXEC BCOBBAT,M=RFD365   *RCIF Daily Events
+//RFR160   EXEC BCOBBAT,M=RFR160   *Logical Record Dump
+//RFR300   EXEC BCOBBAT,M=RFR300   *Create Acct Relations Extract File
+//RFR305   EXEC BCOBBAT,M=RFR305   *Sort Acct Relations Extract File
+//RFR400   EXEC BCOBBAT,M=RFR400   *Retail Customer Relationships
+//RFR401   EXEC BCOBBAT,M=RFR401   *Commercial Customer Relationships
+//RFR402   EXEC BCOBBAT,M=RFR402   *Sort Customer Totals File
+//RFR403   EXEC BCOBBAT,M=RFR403   *Customer Totals Report
+//RFR405   EXEC BCOBBAT,M=RFR405   *Cross Reference Listing
+//RFR410   EXEC BCOBBAT,M=RFR410   *Mailing Label Listing
+//RFR415   EXEC BCOBBAT,M=RFR415   *Regenerate XAL Table
+//RFR430   EXEC BCOBBAT,M=RFR430   *Customer Erase Program
+//RFR434   EXEC BCOBBAT,M=RFR434   *Convert TRN file to RF 2.1.5 TRN f
+//RFR435   EXEC BCOBBAT,M=RFR435   *Acct Logical Processor
+//RFR436   EXEC BCOBBAT,M=RFR436   *Application Update Errors Report
+//RFR445   EXEC BCOBBAT,M=RFR445   *Customer Key Corr/Verification
+//RFR455   EXEC BCOBBAT,M=RFR455   *Account Purge Module
+//RFR460   EXEC BCOBBAT,M=RFR460   *Account Prior Address Purge Module
+//RFR475   EXEC BCOBBAT,M=RFR475   *Alt Address Purge Module
+//RFR485   EXEC BCOBBAT,M=RFR485   *Create MICM 2008 Delete Forms
+//RFR486   EXEC BCOBBAT,M=RFR486   *Create MICM 2009 Delete Forms
+//RFR500   EXEC BCOBBAT,M=RFR500   *Dynamic Comment Erase Module
+//RFR505   EXEC BCOBBAT,M=RFR505   *MICM 2008 Zipcode/City Update
+//RFR510   EXEC BCOBBAT,M=RFR510   *Regenerate TIN Xref from BIS backu
+//RFR515   EXEC BCOBBAT,M=RFR515   *Customer Cross-Reference Listing
+//RFR520   EXEC BCOBBAT,M=RFR520   *Area Code-Exchange Mass Update
+//RFR525   EXEC BCOBBAT,M=RFR525   *Build PKY Permanent Customer Keys
+//RFR530   EXEC BCOBBAT,M=RFR530   *Customer Obligations Extract
+//RFR531   EXEC BCOBBAT,M=RFR531   *Customer Ranking (Loan Balances)
+//RFR532   EXEC BCOBBAT,M=RFR532   *Customer Ranking (Obligation Amoun
+//RFR533   EXEC BCOBBAT,M=RFR533   *Select Ranking Criteria
+//RFR534   EXEC BCOBBAT,M=RFR534   *Create Customer Ranking File
+//RFR540   EXEC BCOBBAT,M=RFR540   *Aged Customer CIP Exception Report
+//RFR570   EXEC BCOBBAT,M=RFR570   *Gender Determination Extract Modul
+//RFR571   EXEC BCOBBAT,M=RFR571   *Sort Name-Sex Table
+//RFR572   EXEC BCOBBAT,M=RFR572   *Sort Customer Extract File by Name
+//RFR573   EXEC BCOBBAT,M=RFR573   *Apply Sex-Codes to Extracted Recor
+//RFR574   EXEC BCOBBAT,M=RFR574   *Sort Customer Update Transactions
+//RFR575   EXEC BCOBBAT,M=RFR575   *Update Sex Code in System
+//RFR580   EXEC BCOBBAT,M=RFR580   *Create Appl Sys Conversion Aid
+//RFR581   EXEC BCOBBAT,M=RFR581   *Sort Appl Sys Conversion Aid
+//RFR701   EXEC BCOBBAT,M=RFR701   *Analyze CAC Records 1 (Primary Pat
+//RFR702   EXEC BCOBBAT,M=RFR702   *Analyze CAC Records 2 (Alternate P
+//RFR703   EXEC BCOBBAT,M=RFR703   *Analyze CXL Records
+//RFR704   EXEC BCOBBAT,M=RFR704   *Analyze ATA Records
+//RFR705   EXEC BCOBBAT,M=RFR705   *Analyze CAC Records (Missing Accou
+//RFR706   EXEC BCOBBAT,M=RFR706   *Multiple Primary Customer Report
+//RFR709   EXEC BCOBBAT,M=RFR709   *Database Correction Module
+//RFR710   EXEC BCOBBAT,M=RFR710   *Analyze and Correct XFM Records
+//RFR711   EXEC BCOBBAT,M=RFR711   *Analyze and Correct ALS Records
+//RFR825   EXEC BCOBBAT,M=RFR825   *API Recovery Program
+//RFR830   EXEC BCOBBAT,M=RFR830   *RFR435 Restart/Recovery Program
+//RFR855   EXEC BCOBBAT,M=RFR855   *Comment Flag Correction Program
+//RFR856   EXEC BCOBBAT,M=RFR856   *Rebuild Alias Name Keys Program
+//RFR950   EXEC BCOBBAT,M=RFR950   *FDIC EXTRACT ACCOUNT INFORMATION
+//RFR960   EXEC BCOBBAT,M=RFR960   *FDIC EXTRACT CUSTOMER INFORMATION
+//RFR965   EXEC BCOBBAT,M=RFR965   *FDIC EXTRACT EMAIL ADDRESS CUSTOME
+//RFR970   EXEC BCOBBAT,M=RFR970   *FDIC CUSTOMER EXTRACT FILE CREATE
+//RFX120   EXEC BCOBBAT,M=RFX120   *RCIF 2.1.2 Unload
+//RFX121   EXEC BCOBBAT,M=RFX121   *RCIF 2.1.3 load
+//RFX130   EXEC BCOBBAT,M=RFX130   *RCIF 2.1.4 Unload ALS
+//RFX131   EXEC BCOBBAT,M=RFX131   *RCIF 2.1.5 Load ALS
+//RFX911   EXEC BCOBBAT,M=RFX911   *Load 2.1 NON records from 1.1 file
+//RFX912   EXEC BCOBBAT,M=RFX912   *Load 2.1 CDM records from 1.1 file
+//        PEND
+//*
+//********************************************************************
+//* PART 2
+//********************************************************************
+//PART2   PROC
+//RFX913   EXEC BCOBBAT,M=RFX913   *Format 2.1 CXL records from 1.1 fi
+//RFX914   EXEC BCOBBAT,M=RFX914   *Load 2.1 CXL records from 1.1 file
+//RFX915   EXEC BCOBBAT,M=RFX915   *Load 2.1 CAC records from 1.1 file
+//RFX916   EXEC BCOBBAT,M=RFX916   *Load 2.1 ACC records from 1.1 file
+//RFX917   EXEC BCOBBAT,M=RFX917   *Sort Primary Customers by Old Acct
+//RFX918   EXEC BCOBBAT,M=RFX918   *Load 2.1 ACT records from 1.1 file
+//RFX919   EXEC BCOBBAT,M=RFX919   *Load 2.1 XFM records from 1.1 file
+//RFX920   EXEC BCOBBAT,M=RFX920   *Load 2.1 ATA records from 1.1 file
+//RFX921   EXEC BCOBBAT,M=RFX921   *Load implied 2.1 XFM records
+//RFX922   EXEC BCOBBAT,M=RFX922   *Load 2.1 ADC records from 1.1 file
+//RFX923   EXEC BCOBBAT,M=RFX923   *Load 2.1 CDC records from 1.1 file
+//RFX924   EXEC BCOBBAT,M=RFX924   *Load 2.1 GTY records from 1.1 file
+//RFX931   EXEC BCOBBAT,M=RFX931   *Convert RCIF 1.1 ACT keys
+//RFX932   EXEC BCOBBAT,M=RFX932   *Convert RCIF 1.1 ADC keys
+//RFX933   EXEC BCOBBAT,M=RFX933   *Convert RCIF 1.1 AMR keys
+//RFX934   EXEC BCOBBAT,M=RFX934   *Convert RCIF 1.1 ATA keys
+//RFX935   EXEC BCOBBAT,M=RFX935   *Convert RCIF 1.1 CAC keys
+//RFX936   EXEC BCOBBAT,M=RFX936   *Convert RCIF 1.1 XFM keys
+//RFX937   EXEC BCOBBAT,M=RFX937   *Convert RCIF 1.1 GTY keys
+//RFX938   EXEC BCOBBAT,M=RFX938   *Update new fields on ACT record
+//RFX939   EXEC BCOBBAT,M=RFX939   *Offload ACT Records
+//RFX940   EXEC BCOBBAT,M=RFX940   *Reload ACT Records in SP5 format
+//SRB106   EXEC BCOBBAT,M=SRB106   *Batch N/A Interface (Old)
+//SRB106T  EXEC BCOBBAT,M=SRB106T  *Batch N/A Interface Test (Old)
+//        PEND
+//*
+//********************************************************************
+//** Separately uncomment each one of the following execute
+//** procedure statements, and submit this job for execution.
+//** The separate execution of each nested procedure will avoid
+//** the EXCESSIVE NUMBER OF EXECUTE STATEMENTS error.
+//********************************************************************
+//*        EXEC PROC=PART1
+//*        EXEC PROC=PART2
+//*
+//

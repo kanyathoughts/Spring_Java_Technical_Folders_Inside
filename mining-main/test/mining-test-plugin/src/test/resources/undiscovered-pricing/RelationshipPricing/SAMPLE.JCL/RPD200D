@@ -1,0 +1,48 @@
+//RPD200D JOB
+//*    *************************************************                00001000
+//*    * RPD200 - RELATIONSHIP PRICING BALANCE POSTING *                00002000
+//*    *************************************************                00003000
+//SCRATCH  EXEC PGM=IEFBR14                                             00004000
+//RPACTW   DD  DSN=BNKCA.IN0.RP50.RPACTW,                               00005000
+//             DISP=(MOD,DELETE,DELETE),                                00006000
+//             UNIT=SYSDA,                                              00007000
+//             SPACE=(TRK,(1,1),RLSE)                                   00008000
+//RPPODX   DD  DSN=BNKCA.IN0.RP50.RPPODX,                               00009000
+//             DISP=(MOD,DELETE,DELETE),                                00010000
+//             UNIT=SYSDA,                                              00011000
+//             SPACE=(TRK,(1,1),RLSE)                                   00012000
+//RPCRWW   DD  DSN=BNKCA.IN0.RP50.RPCRWW,                               00013000
+//             DISP=(MOD,DELETE,DELETE),                                00014000
+//             UNIT=SYSDA,                                              00015000
+//             SPACE=(TRK,(1,1),RLSE)                                   00016000
+//*                                                                     00017000
+//RPD200   EXEC PGM=RPD200,REGION=1024K                                 00018000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00020000
+//SYSUDUMP DD  SYSOUT=*                                                 00021000
+//SYSOUT   DD  SYSOUT=*                                                 00022000
+//RPACTW   DD  DSN=BNKCA.IN0.RP50.RPACTW,                               00023000
+//             DISP=(NEW,CATLG,DELETE),                                 00024000
+//             UNIT=SYSDA,                                              00025000
+//             DCB=(RECFM=FB,LRECL=0439,BLKSIZE=27657),                 00026000
+//             SPACE=(CYL,(2,1),RLSE)                                   00027000
+//RPPODX   DD  DSN=BNKCA.IN0.RP50.RPPODX,                               00028000
+//             DISP=(NEW,CATLG,DELETE),                                 00029000
+//             UNIT=SYSDA,                                              00030000
+//             DCB=(RECFM=FB,LRECL=0107,BLKSIZE=27927),                 00031000
+//             SPACE=(CYL,(2,1),RLSE)                                   00032000
+//RPCRWW   DD  DSN=BNKCA.IN0.RP50.RPCRWW,                               00033000
+//             DISP=(NEW,CATLG,DELETE),                                 00034000
+//             UNIT=SYSDA,                                              00035000
+//             DCB=(RECFM=FB,LRECL=0226,BLKSIZE=27798),                 00036000
+//             SPACE=(CYL,(2,1),RLSE)                                   00037000
+//RPRPTS   DD  DSN=BNKCAV.IN0.RP50.RPRPTS,DISP=SHR                      00038000
+//*                                                                     00039000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD200),DISP=SHR              00040000
+//*                                                                     00041000
+/*                                                                      00042000
+//

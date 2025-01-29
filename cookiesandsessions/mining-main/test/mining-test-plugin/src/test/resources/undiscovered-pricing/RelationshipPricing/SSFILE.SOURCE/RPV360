@@ -1,0 +1,69 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . RPCASHRW                                          *
+*   Description  . . Cash Rewards                                      *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ RPCASHRW  ________              Cash Rewards                  ____  __________
+                                                                Delete . . _
+
+ Product Code  : ______   Account Number : __________________
+ Customer Name : ________________________________________
+ Model . . . . : __________  ____________________
+ ID Number . . : __________________   Status . . . : ________
+
+ Inst . . ____   Product Code . . ______  Account Number . . __________________
+
+ Frequency  . . . . _                 Daily Calc Amount: ________________
+ Term . . . . . . . ___               Last Amount  . . : ________________
+ Day  . . . . . . . __                Percentage Used  : __________
+ Date Next  . . . . __ __ ____        Combined Bal Used: ____________________
+ Date Last  . . . : __ __ ____        Amount Paid YTD  : ____________________
+ Date Opened  . . : __ __ ____
+
+
+
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M
+FIELD=SYSDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=DELETE,   PIC='X(01)', ATTR=(INPUT,OPTIONAL), HELP=HXXX005M
+FIELD=PRODCD,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HCRW005S
+FIELD=ACCOUNT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HCRW006S
+FIELD=CUSTNA,   PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001S
+FIELD=MODEL,    PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST006S
+FIELD=MODDESC,  PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HM01051S
+FIELD=IDNBR,    PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST024S
+FIELD=STATUS,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HMST014S
+FIELD=CRWINST,  PIC='X(04)', ATTR=(INPUT,OPTIONAL), HELP=HCRW010S
+FIELD=CRWPROD,  PIC='X(06)', ATTR=(INPUT,OPTIONAL), HELP=HCRW011S
+FIELD=CRWACCT,  PIC='X(18)', ATTR=(INPUT,OPTIONAL), HELP=HCRW012S
+FIELD=FREQ,     PIC='X(01)', ATTR=(INPUT,OPTIONAL), HELP=HCRW023S
+FIELD=CALCAMT,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HCRW028S
+FIELD=TERM,     PIC='X(03)', ATTR=(INPUT,OPTIONAL), HELP=HCRW024S
+FIELD=LASTAMT,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HCRW029S
+FIELD=DAY,      PIC='X(02)', ATTR=(INPUT,OPTIONAL), HELP=HCRW025S
+FIELD=PERCENT,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HCRW021S
+FIELD=DTENXTMM, PIC='X(02)', ATTR=(INPUT,OPTIONAL), HELP=HCRW026S
+FIELD=DTENXTDD, PIC='X(02)', ATTR=(INPUT,OPTIONAL), HELP=HCRW026S
+FIELD=DTENXTYY, PIC='X(04)', ATTR=(INPUT,OPTIONAL), HELP=HCRW026S
+FIELD=CMBUSED,  PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HCRW022S
+FIELD=DTELSTMM, PIC='X(02)', ATTR=(DISPLAY,NORMAL), HELP=HCRW027S
+FIELD=DTELSTDD, PIC='X(02)', ATTR=(DISPLAY,NORMAL), HELP=HCRW027S
+FIELD=DTELSTYY, PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HCRW027S
+FIELD=PAIDYTD,  PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HCRW030S
+FIELD=DTEOPNMM, PIC='X(02)', ATTR=(DISPLAY,NORMAL), HELP=HCRW044S
+FIELD=DTEOPNDD, PIC='X(02)', ATTR=(DISPLAY,NORMAL), HELP=HCRW044S
+FIELD=DTEOPNYY, PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HCRW044S
+FIELD=MSGLINE,  PIC='X(78)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

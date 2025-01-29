@@ -1,0 +1,13 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MEE3131B.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+           DISPLAY 'BEFORE GOTO'.
+           GO TO LABEL2.
+           DISPLAY 'AFTER GOTO'.
+       LABEL1.
+           DISPLAY 'LABEL1.'.
+       LABEL2.
+           DISPLAY 'LABEL2.'.
+           GOBACK.

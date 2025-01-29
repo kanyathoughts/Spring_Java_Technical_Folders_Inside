@@ -1,0 +1,20 @@
+  /* test file for LOOP TYPE2 statement  */ 
+ TYPE2: PROCEDURE OPTIONS(MAIN);
+    DECLARE FXD_1 FIXED DECIMAL(1) INIT(1);
+    DECLARE FXD_2 FIXED DECIMAL(3) INIT(123); 
+    LABEL: DO UNTIL (FXD_1 < 1) ;
+                      FXD_1 = FXD_2;
+                     END; 
+    DO UNTIL ( FXD_1 > 1);  
+     PUT SKIP LIST('INSIDE DO WHILE LOOP'); 
+     PUT SKIP LIST('FXD_1 VALUE IS ', FXD_1);  
+     FXD_1 = FXD_1 + 1;
+    END;
+    
+    DO  WHILE (FXD_1 < FXD_2)  UNTIL (FXD_1 < 1) ;  
+     PUT SKIP LIST('INSIDE DO WHILE LOOP'); 
+     PUT SKIP LIST('FXD_1 VALUE=' , FXD_1);
+     PUT SKIP LIST('FXD_2 VALUE=' , FXD_2);  
+     FXD_2 = FXD_2 - 1;
+    END;
+ END TYPE2;

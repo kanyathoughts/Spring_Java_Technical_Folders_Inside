@@ -1,0 +1,13 @@
+DECIDE FOR FIRST CONDITION                                              
+  WHEN #FUNCTION = 'A' AND #PARM = 'X'                                  
+    WRITE 'Function A with parameter X selected.'                       
+  WHEN #FUNCTION = 'B' AND #PARM = 'X'                                  
+    WRITE 'Function B with parameter X selected.'                       
+  WHEN #FUNCTION = 'C' THRU 'D'                                         
+    WRITE 'Function C or D selected.'                                   
+  WHEN NONE                                                             
+    REINPUT 'Please enter a valid function.'                            
+            MARK *#FUNCTION 
+END-DECIDE
+*         
+END

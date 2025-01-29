@@ -1,0 +1,31 @@
+<nz-empty *ngIf=" ! taxonomyList.length else description"
+  nzNotFoundContent="{{'module.taxonomiesNotFound' | translate}}" [nzNotFoundFooter]="footerEmpty">
+  <ng-template #footerEmpty>
+    <p>
+      <button *ngIf="isEditor" nz-button nzType="primary" (click)="assignTaxonomies()">
+        {{'assignTaxonomies.buttonLabel' | translate}}
+      </button>
+    </p>
+    <p>
+      {{'module.taxonomiesTooltip' | translate}}
+    </p>
+  </ng-template>
+</nz-empty>
+
+<ng-template #description>
+  <nz-space nzDirection="vertical" nzSize="large">
+    <ng-container *ngFor="let taxonomyCategory of taxonomyList">
+      <nz-descriptions *nzSpaceItem nzBordered nzSize="small" [nzColumn]="1" [nzTitle]="taxonomyCategory.name"
+        class="module-overview-taxonomy__title">
+        <nz-descriptions-item class="ant-descriptions-item-label" *ngFor="let taxonomyType of taxonomyCategory.type"
+          [nzTitle]="taxonomyType.name">
+          <ul class="reset-list-decorator">
+            <nz-tag class="module-overview-taxonomy__ant-tag-item" *ngFor="let taxonomy of taxonomyType.taxonomies">
+              <li>{{ taxonomy.name }}</li>
+            </nz-tag>
+          </ul>
+        </nz-descriptions-item>
+      </nz-descriptions>
+    </ng-container>
+  </nz-space>
+</ng-template>

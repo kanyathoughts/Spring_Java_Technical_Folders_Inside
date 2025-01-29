@@ -1,0 +1,362 @@
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+-------------------------------------------------------------------------------!
+MODULE                   CAP_UTL_SQL_23
+LANGUAGE                 COBOL
+AUTHORIZATION            RDB$DBHANDLE
+
+DECLARE ALIAS FOR FILENAME 'CAP_DB'
+
+--------------------------------------------------------------------------------
+-- Declare Cursors
+--------------------------------------------------------------------------------
+DECLARE CAP_UTL_SQL_23_CURSOR CURSOR FOR
+	SELECT 
+
+        CAP22_REGN_CODE,
+        CAP22_PRODUCT_LINE,
+        CAP22_CAP_TYPE,
+        CAP22_SUBS_SSN,
+        CAP22_MBR_TYPE,
+        CAP22_EXP_DATE,
+        CAP22_PAY_TO_PRV_TYPE,
+        CAP22_PAY_TO_PRV_ID,
+        CAP22_PLAN_CODE,
+        CAP22_BENEFIT_ID,
+        CAP22_CARE_TYPE,
+        CAP22_REMIT_CAT,
+        CAP22_LOC,
+        CAP22_GRP_EXCEPTION,
+        CAP22_EFF_DATE,
+        CAP22_CAP_PERIOD_DATE,
+        CAP22_RUN_DATE,
+        CAP22_RATEABLE_GRP_FLAG,
+        CAP22_RATEABLE_PRV_FLAG,
+        CAP22_ELIG_STATUS,
+        CAP22_SLIVER_CODE,
+        CAP22_ACTIVITY_CODE,
+        CAP22_CAP_RETRACTED_FLAG,
+        CAP22_MED_PRV_TYPE,
+        CAP22_MED_PRV_ID,
+        CAP22_PHY_ID,
+        CAP22_GRP_ID,
+        CAP22_FNDG_TYPE,
+        CAP22_GRP_RMC,
+        CAP22_GRP_RMC_PROD,
+        CAP22_COV_CODE,
+        CAP22_MBR_GENDER,
+        CAP22_MBR_CONTR_TYPE,
+        CAP22_MBR_DOB,
+        CAP22_AGE,
+        CAP22_AGE_SEX_PROF_FACTOR,
+        CAP22_AGE_SEX_HOSP_FACTOR,
+        CAP22_AGE_SEX_OVERRIDE_FLAG,
+        CAP22_AGE_SEX_OVERRIDE_ID,
+        CAP22_BASE_RATE,
+        CAP22_MBR_LEVEL_PREMIUM,
+        CAP22_CALC_METH_CODE,
+        CAP22_PRV_REMIT_RULE_RATE,
+        CAP22_PRV_REMIT_RULE_TYPE,
+        CAP22_MONTHLY_RATE,
+        CAP22_DAYS_CAPPED,
+        CAP22_PRORATED_PCT,
+        CAP22_PRORATED_CAP,
+-- Mod #02 Start
+        CAP22_AID_CODE,
+        CAP22_AID_CAT,
+        CAP22_MEDICARE_CODES
+-- MOd #02 End
+    FROM	
+        CAP22_MBR_TIMELINE
+    WHERE
+        CAP22_CAP_PERIOD_DATE > IN_DATE
+--------------------------------------------------------------------------------
+
+DECLARE CAP_23_ASC22_CURSOR CURSOR FOR
+	SELECT 
+
+        ASC22_REGN_CODE,
+        ASC22_PRODUCT_LINE,
+        ASC22_CAP_TYPE,
+        ASC22_SUBS_SSN,
+        ASC22_MBR_TYPE,
+        ASC22_PAY_TO_PRV_TYPE,
+        ASC22_PAY_TO_PRV_ID,
+        ASC22_EXP_DATE,
+        ASC22_EFF_DATE,
+        ASC22_CAP_PERIOD_DATE,
+        ASC22_RUN_DATE,
+        ASC22_RATEABLE_FLAG,
+        ASC22_ELIG_STATUS,
+        ASC22_SLIVER_CODE,
+        ASC22_ACTIVITY_CODE,
+        ASC22_CAP_RETRACTED_FLAG,
+        ASC22_MED_PRV_TYPE,
+        ASC22_MED_PRV_ID,
+        ASC22_PHY_ID,
+        ASC22_GRP_ID,
+        ASC22_GRP_RMC,
+        ASC22_PRV_CAT,
+        ASC22_QUAL_TYPE,
+        ASC22_MBR_DOB,
+        ASC22_AGE,
+        ASC22_MONTHLY_RATE,
+        ASC22_DAYS_CAPPED,
+        ASC22_PRORATED_PCT,
+        ASC22_PRORATED_CAP
+
+    FROM	
+        ASC22_MBR_TIMELINE
+    WHERE
+        ASC22_CAP_PERIOD_DATE > IN_DATE
+--------------------------------------------------------------------------------
+--
+
+PROCEDURE SET_TRANS_CAP22
+        SQLCA;
+        SET TRANSACTION READ ONLY WAIT 60;
+
+--------------------------------------------------------------------------------
+PROCEDURE CAP_UTL_SQL_23_CURSOR_OPEN
+	SQLCA
+    IN_DATE    DATE;
+
+	OPEN CAP_UTL_SQL_23_CURSOR;
+
+
+PROCEDURE CAP_UTL_SQL_23_FET
+	SQLCA 
+
+     XCAP22_REGN_CODE                 CHAR(2),
+     XCAP22_PRODUCT_LINE              CHAR(2),
+     XCAP22_CAP_TYPE                  CHAR(1),
+     XCAP22_SUBS_SSN                  CHAR(9),
+     XCAP22_MBR_TYPE                  CHAR(4),
+     XCAP22_EXP_DATE                  DATE VMS,
+     XCAP22_PAY_TO_PRV_TYPE           CHAR(1),
+     XCAP22_PAY_TO_PRV_ID             CHAR(4),
+     XCAP22_PLAN_CODE                 CHAR(6),
+     XCAP22_BENEFIT_ID                CHAR(10),
+     XCAP22_CARE_TYPE                 CHAR(4),
+     XCAP22_REMIT_CAT                 CHAR(3),
+     XCAP22_LOC                       CHAR(3),
+     XCAP22_GRP_EXCEPTION             CHAR(1),
+     XCAP22_EFF_DATE                  DATE VMS,
+     XCAP22_CAP_PERIOD_DATE           DATE VMS,
+     XCAP22_RUN_DATE                  DATE VMS,
+     XCAP22_RATEABLE_GRP_FLAG         CHAR(1),
+     XCAP22_RATEABLE_PRV_FLAG         CHAR(1),
+     XCAP22_ELIG_STATUS               CHAR(1),
+     XCAP22_SLIVER_CODE               CHAR(2),
+     XCAP22_ACTIVITY_CODE             CHAR(2),
+     XCAP22_CAP_RETRACTED_FLAG        CHAR(1),
+     XCAP22_MED_PRV_TYPE              CHAR(1),
+     XCAP22_MED_PRV_ID                CHAR(4),
+     XCAP22_PHY_ID                    CHAR(6),
+     XCAP22_GRP_ID                    CHAR(8),
+     XCAP22_FNDG_TYPE                 CHAR(1),
+     XCAP22_GRP_RMC                   CHAR(2),
+     XCAP22_GRP_RMC_PROD              CHAR(4),
+     XCAP22_COV_CODE                  CHAR(4),
+     XCAP22_MBR_GENDER                CHAR(1),
+     XCAP22_MBR_CONTR_TYPE            CHAR(1),
+     XCAP22_MBR_DOB                   DATE VMS,
+     XCAP22_AGE                       SMALLINT,
+     XCAP22_AGE_SEX_PROF_FACTOR       INTEGER(5),
+     XCAP22_AGE_SEX_HOSP_FACTOR       INTEGER(5),
+     XCAP22_AGE_SEX_OVERRIDE_FLAG     CHAR(1),
+     XCAP22_AGE_SEX_OVERRIDE_ID       CHAR(4),
+     XCAP22_BASE_RATE                 INTEGER(4),
+     XCAP22_MBR_LEVEL_PREMIUM         INTEGER(2),
+     XCAP22_CALC_METH_CODE            CHAR(3),
+     XCAP22_PRV_REMIT_RULE_RATE       INTEGER(4),
+     XCAP22_PRV_REMIT_RULE_TYPE       CHAR(1),
+     XCAP22_MONTHLY_RATE              INTEGER(2),
+     XCAP22_DAYS_CAPPED               SMALLINT,
+     XCAP22_PRORATED_PCT              INTEGER(5),
+     XCAP22_PRORATED_CAP              INTEGER(2),
+-- MOd #02 Start
+     XCAP22_AID_CODE                  CHAR(2),
+     XCAP22_AID_CAT                   CHAR(3),
+     XCAP22_MEDICARE_CODES            CHAR(4); 
+-- Mod #02 End
+
+	FETCH 	CAP_UTL_SQL_23_CURSOR
+	INTO
+
+     XCAP22_REGN_CODE,
+     XCAP22_PRODUCT_LINE,
+     XCAP22_CAP_TYPE,
+     XCAP22_SUBS_SSN,
+     XCAP22_MBR_TYPE,
+     XCAP22_EXP_DATE,
+     XCAP22_PAY_TO_PRV_TYPE,
+     XCAP22_PAY_TO_PRV_ID,
+     XCAP22_PLAN_CODE,
+     XCAP22_BENEFIT_ID,
+     XCAP22_CARE_TYPE,
+     XCAP22_REMIT_CAT,
+     XCAP22_LOC,
+     XCAP22_GRP_EXCEPTION,
+     XCAP22_EFF_DATE,
+     XCAP22_CAP_PERIOD_DATE,
+     XCAP22_RUN_DATE,
+     XCAP22_RATEABLE_GRP_FLAG,
+     XCAP22_RATEABLE_PRV_FLAG,
+     XCAP22_ELIG_STATUS,
+     XCAP22_SLIVER_CODE,
+     XCAP22_ACTIVITY_CODE,
+     XCAP22_CAP_RETRACTED_FLAG,
+     XCAP22_MED_PRV_TYPE,
+     XCAP22_MED_PRV_ID,
+     XCAP22_PHY_ID,
+     XCAP22_GRP_ID,
+     XCAP22_FNDG_TYPE,
+     XCAP22_GRP_RMC,
+     XCAP22_GRP_RMC_PROD,
+     XCAP22_COV_CODE,
+     XCAP22_MBR_GENDER,
+     XCAP22_MBR_CONTR_TYPE,
+     XCAP22_MBR_DOB,
+     XCAP22_AGE,
+     XCAP22_AGE_SEX_PROF_FACTOR,
+     XCAP22_AGE_SEX_HOSP_FACTOR,
+     XCAP22_AGE_SEX_OVERRIDE_FLAG,
+     XCAP22_AGE_SEX_OVERRIDE_ID,
+     XCAP22_BASE_RATE,
+     XCAP22_MBR_LEVEL_PREMIUM,
+     XCAP22_CALC_METH_CODE,
+     XCAP22_PRV_REMIT_RULE_RATE,
+     XCAP22_PRV_REMIT_RULE_TYPE,
+     XCAP22_MONTHLY_RATE,
+     XCAP22_DAYS_CAPPED,
+     XCAP22_PRORATED_PCT,
+     XCAP22_PRORATED_CAP,
+-- MOd #02 Start
+     XCAP22_AID_CODE,     
+     XCAP22_AID_CAT,
+     XCAP22_MEDICARE_CODES; 
+-- MOd #02 ENd
+
+PROCEDURE CAP_UTL_SQL_23_CURSOR_CLOSE
+	SQLCA;
+
+	CLOSE CAP_UTL_SQL_23_CURSOR;
+
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
+PROCEDURE CAP_23_ASC22_CURSOR_OPEN
+	SQLCA
+    IN_DATE    DATE;
+
+	OPEN CAP_23_ASC22_CURSOR;
+
+
+PROCEDURE CAP_23_ASC22_FET
+	SQLCA 
+
+     XASC22_REGN_CODE                 CHAR(2),
+     XASC22_PRODUCT_LINE              CHAR(2),
+     XASC22_CAP_TYPE                  CHAR(1),
+     XASC22_SUBS_SSN                  CHAR(9),
+     XASC22_MBR_TYPE                  CHAR(4),
+     XASC22_PAY_TO_PRV_TYPE           CHAR(1),
+     XASC22_PAY_TO_PRV_ID             CHAR(4),
+     XASC22_EXP_DATE                  DATE VMS,
+     XASC22_EFF_DATE                  DATE VMS,
+     XASC22_CAP_PERIOD_DATE           DATE VMS,
+     XASC22_RUN_DATE                  DATE VMS,
+     XASC22_RATEABLE_FLAG             CHAR(1),
+     XASC22_ELIG_STATUS               CHAR(1),
+     XASC22_SLIVER_CODE               CHAR(2),
+     XASC22_ACTIVITY_CODE             CHAR(2),
+     XASC22_CAP_RETRACTED_FLAG        CHAR(1),
+     XASC22_MED_PRV_TYPE              CHAR(1),
+     XASC22_MED_PRV_ID                CHAR(4),
+     XASC22_PHY_ID                    CHAR(6),
+     XASC22_GRP_ID                    CHAR(8),
+     XASC22_GRP_RMC                   CHAR(2),
+     XASC22_PRV_CAT                   CHAR(1),
+     XASC22_QUAL_TYPE                 CHAR(1),
+     XASC22_MBR_DOB                   DATE VMS,
+     XASC22_AGE                       SMALLINT,
+     XASC22_MONTHLY_RATE              INTEGER(2),
+     XASC22_DAYS_CAPPED               SMALLINT,
+     XASC22_PRORATED_PCT              INTEGER(5),
+     XASC22_PRORATED_CAP              INTEGER(2);
+
+	FETCH 	CAP_23_ASC22_CURSOR
+	INTO
+
+     XASC22_REGN_CODE,
+     XASC22_PRODUCT_LINE,
+     XASC22_CAP_TYPE,
+     XASC22_SUBS_SSN,
+     XASC22_MBR_TYPE,
+     XASC22_PAY_TO_PRV_TYPE,
+     XASC22_PAY_TO_PRV_ID,
+     XASC22_EXP_DATE,
+     XASC22_EFF_DATE,
+     XASC22_CAP_PERIOD_DATE,
+     XASC22_RUN_DATE,
+     XASC22_RATEABLE_FLAG,
+     XASC22_ELIG_STATUS,
+     XASC22_SLIVER_CODE,
+     XASC22_ACTIVITY_CODE,
+     XASC22_CAP_RETRACTED_FLAG,
+     XASC22_MED_PRV_TYPE,
+     XASC22_MED_PRV_ID,
+     XASC22_PHY_ID,
+     XASC22_GRP_ID,
+     XASC22_GRP_RMC,
+     XASC22_PRV_CAT,
+     XASC22_QUAL_TYPE,
+     XASC22_MBR_DOB,
+     XASC22_AGE,
+     XASC22_MONTHLY_RATE,
+     XASC22_DAYS_CAPPED,
+     XASC22_PRORATED_PCT,
+     XASC22_PRORATED_CAP;
+
+PROCEDURE CAP_23_ASC22_CURSOR_CLOSE
+	SQLCA;
+
+	CLOSE CAP_23_ASC22_CURSOR;
+
+--------------------------------------------------------------------------------
+

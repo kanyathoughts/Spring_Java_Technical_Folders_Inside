@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+        <Appenders>
+                <Null name="NullAppender" />
+                <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%X{traceId},%X{spanId},%X{parentId}] [%t] %-5level %logger{36} - %msg%n" />
+                </Console>
+
+                <Routing name="RollingFile">
+                        <Routes pattern="$${sys:job-api.log.logFolder}">
+                                <!-- Set this to any appender that should receive logs as long as the logFolder property has not been populated yet.
+                                         Using NullAppender here on purpose instead of the Console appender. Otherwise logs would be duplicated, since the
+                                         Console appender is already present in the root logger. -->
+                                <Route key="$${sys:job-api.log.logFolder}" ref="NullAppender" />
+                                <Route>
+                                        <RollingFile name="RollingFile-${sys:job-api.cluster.nodeName}" fileName="${sys:job-api.log.logFolder}/mining-api-server.log"
+                                                filePattern="${sys:job-api.log.logFolder}/mining-api-server-%i.log.gz">
+                                                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%X{traceId},%X{spanId},%X{parentId}] [%t] %-5level %logger{36} - %msg%n" />
+                                                <Policies>
+                                                        <SizeBasedTriggeringPolicy size="250 MB"/>
+                                                </Policies>
+                                        </RollingFile>
+                                </Route>
+                        </Routes>
+                </Routing>
+
+                <Routing name="job">
+                        <Routes pattern="$${ctx:job-id}">
+                                <!-- Log to console when the job-id is not set -->
+                                <Route key="$${ctx:job-id}" ref="Console" />
+                                <Route>
+                                        <File name="jobAppender-${ctx:job-id}"
+                                                fileName="${sys:job-api.log.logFolder}/${sys:job-api.log.logFilePrefix}${ctx:job-id}.log">
+                                                <Filters>
+                                                        <ThresholdFilter level="trace" onMatch="accept" />
+                                                </Filters>
+                                                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+                                        </File>
+                                </Route>
+                        </Routes>
+                </Routing>
+
+                <Routing name="jobStoreModel">
+                        <Routes pattern="$${ctx:job-id}">
+                                <!-- Log to console when the job-id is not set -->
+                                <Route key="$${ctx:job-id}" ref="Console" />
+                                <Route>
+                                        <File name="jobAppender-${ctx:job-id}"
+                                                fileName="${sys:job-api.log.logFolder}/${sys:job-api.log.logFilePrefix}${ctx:job-id}-StoreModel.log">
+                                                <Filters>
+                                                        <ThresholdFilter level="trace" onMatch="accept" />
+                                                </Filters>
+                                                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+                                        </File>
+                                </Route>
+                        </Routes>
+                </Routing>
+        </Appenders>
+
+        <Loggers>
+                <Root level="info">
+                        <AppenderRef ref="Console" />
+                        <AppenderRef ref="RollingFile" />
+                </Root>
+
+                <Logger name="innowake.ndt.cobol.parser.ast.CobolParserAst" level="error">
+                        <AppenderRef ref="job"/>
+                </Logger>
+
+                <Logger name="innowake.ndt.naturalparser" level="off">
+                        <AppenderRef ref="job"/>
+                </Logger>
+
+                <Logger name="innowake.mining.server.discovery" level="info">
+                        <AppenderRef ref="job"/>
+                </Logger>
+
+                <Logger name="innowake.mining.server.discovery.objectResolving" level="error">
+                        <AppenderRef ref="job"/>
+                </Logger>
+
+                <Logger name="innowake.mining.data.io" level="info">
+                        <AppenderRef ref="job"/>
+                </Logger>
+
+                <Logger name="innowake.mining.server.discovery.storeModel" level="debug">
+                        <AppenderRef ref="jobStoreModel"/>
+                </Logger>
+
+                <Logger name="innowake.mining.server.discovery.parser.csd" level="off">
+                        <AppenderRef ref="job" />
+                </Logger>
+
+<!-- PROFILING STARTS HERE -->
+
+                <Logger name="prof.innowake.mining" level="debug">
+                        <AppenderRef ref="Console"/>
+                </Logger>
+
+                <Logger name="prof.innowake.lib.job" level="debug">
+                        <AppenderRef ref="Console"/>
+                </Logger>
+
+        </Loggers>
+
+</Configuration>

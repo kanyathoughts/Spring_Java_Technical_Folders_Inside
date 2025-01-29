@@ -1,0 +1,187 @@
+
+<nz-page-header *ngIf=" ! currentModuleDetails" class="mining__content-page-header" [nzTitle]="'dependency.callChain.menuItem' | translate">
+  <nz-page-header-subtitle  *ngIf="showErrorCount || showMissingDependencyCount">Modules with:</nz-page-header-subtitle>
+      <nz-page-header-tags *ngIf="showErrorCount">
+        <nz-tag  class="call-chain-container__badge-title" nzColor="error" (click)="redirectToModule('Error')">Error<span> <nz-badge class="call-chain-container__badge-margin" nzSize="small" nzStandalone [nzCount]="errCount" nzShowZero ></nz-badge></span></nz-tag>
+      </nz-page-header-tags>
+      <nz-page-header-tags *ngIf="showMissingDependencyCount">
+        <nz-tag class="call-chain-container__badge-title" nzColor="warning" (click)="redirectToModule('Missing')">Missing Dependencies<span> <nz-badge class="call-chain-container__warning-badge" nzSize="small" [nzCount]="errMissingDependency" nzStandalone nzShowZero></nz-badge></span></nz-tag>
+      </nz-page-header-tags>
+</nz-page-header>
+
+<div
+  [ngClass]="{'call-chain-container__central-call-chain':  ! currentModuleDetails, 'call-chain-container__module-detais': currentModuleDetails }"
+  class="call-chain-container call-chain-container-overflow">
+  <nz-collapse class="call-chain__module call-chain-container__options">
+    <nz-collapse-panel [nzHeader]="'Call Chain Options'" [nzActive]=" ! dependencyGraph">
+      <form nz-form [formGroup]="exportForm">
+        <div nz-row [nzGutter]="24">
+        <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="18" [nzXXl]="18">
+          <nz-content>
+            <div nz-row [nzGutter]="8">
+              <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+                <module-selection [callChainModuleLabel]="'start'" [listModuleTypeOptions]="listModuleTypeOptions"
+                  [formModule]="'startModule'" [currentModuleDetails]="currentModuleDetails" [projectId]="projectId"
+                  (moduleChange)="moduleChange($event)">
+                </module-selection>
+              </div>
+              <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="5" [nzXXl]="5">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24" nzFor="direction">{{'dependencies.direction' | translate}}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-select formControlName="direction" [nzCustomTemplate]="defaultTemplate"
+                      (ngModelChange)="getStartLabel()">
+                      <nz-option nzCustomContent *ngFor="let option of direction" [nzLabel]="option.showText"
+                        [nzValue]="option.directionValue">
+                        <em nz-icon [nzType]="option.imageText" nzTheme="outline"></em>
+                        {{option.showText}}
+                      </nz-option>
+                      <nz-option nzCustomContent nzLabel="{{'inAndOut' | translate}}" [nzValue]="['OUT','IN']">
+                        <em nz-icon nzType="mining-icons:arrows-bidirectional"></em>
+                        {{'inAndOut' | translate}}
+                      </nz-option>
+                    </nz-select>
+                    <ng-template #defaultTemplate let-selected>
+                      <ng-container [ngSwitch]="getSelectedDirection(selected.nzValue)">
+                        <ng-container *ngSwitchCase="'IN'"><em nz-icon nzType="arrow-left"></em>
+                          {{'inbound' | translate}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'OUT'"><em nz-icon nzType="arrow-right"></em>
+                          {{'outbound' | translate}}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'OUT,IN'"><em nz-icon
+                            nzType="mining-icons:arrows-bidirectional"></em>
+                          {{'inAndOut' | translate}}
+                        </ng-container>
+                        <ng-container *ngSwitchDefault><em nz-icon nzType="arrow-right"></em>
+                          {{'inbound' | translate}}
+                        </ng-container>
+                      </ng-container>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="8" [nzXXl]="8">
+                <module-selection [callChainModuleLabel]="'end'" [listModuleTypeOptions]="listModuleTypeOptions"
+                  [formModule]="'endModule'" [currentModuleDetails]="currentModuleDetails" [projectId]="projectId"
+                  (moduleChange)="moduleChange($event)">
+                </module-selection>
+              </div>
+              <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="3" [nzXXl]="3">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24" nzRequired nzFor="depth">
+                    {{'callChain.depth' | translate}}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-select formControlName="depth" (ngModelChange)="onDepthChange($event)">
+                      <nz-option *ngFor="let depthOpt of listDepthOptions" [nzLabel]="depthOpt.label"
+                        [nzValue]="depthOpt.value"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24" nzFor="filters">{{'callChain.hideFromCallChain' | translate}}
+                    <i class="call-chain__module__info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                      [nzTooltipTitle]="'callChain.hideToolTip' | translate"></i>
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24" [nzValidateStatus]="hiddenFromCallChainLoading ? 'validating' : ''"
+                    [nzHasFeedback]="hiddenFromCallChainLoading" class="call-chain-container">
+                    <nz-select nzMode="multiple" formControlName="filters" [nzOptions]="listModuleTypeOptions"
+                      [nzCustomTemplate]="multipleTemplate" [nzDisabled]="! listModuleTypeOptions.length">
+                    </nz-select>
+                    <ng-template #multipleTemplate let-selected>
+                      <div class="ant-select-selection-item-content"><i nz-icon nzType="eye-invisible"
+                          nzTheme="outline"></i>
+                        {{ selected.nzLabel }}
+                      </div>
+                    </ng-template>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-content>
+          <div nz-row>
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="24" nzFor="filters">
+                  {{ 'taxonomyReportingComponent.ignoreModulesTaxonomy' | translate }}
+                  <i class="call-chain__module__info-icon" nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                    [nzTooltipTitle]="'callChain.ignoreToolTip' | translate"></i>
+                </nz-form-label>
+                <nz-form-control [nzSpan]="24">
+                  <app-taxonomy-filter [useMetricsFilterService]="false" (taxonomyId)="updateTaxonomySelection($event)">
+                  </app-taxonomy-filter>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+        <div class="call-chain__module-buttons call-chain__action-button-column__right-align" nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="6" [nzXXl]="6">
+          <nz-space class="call-chain__action-button-column__stack">
+            <nz-button-group *nzSpaceItem>
+              <button nz-button nzType="primary" (click)="startCallChainJob('DEPENDENCY_GRAPH')"
+                [disabled]="disableBtn" [nzLoading]="loadingBtn">Render Graph
+              </button>
+              <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight"
+                [nzLoading]="disableBtn" [disabled]="loadingBtn">
+                <i nz-icon nzType="ellipsis" aria-hidden="true"></i>
+              </button>
+            </nz-button-group>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item *ngFor="let additionalExportFormat of additionalExportFormats"
+                  (click)="startCallChainJob(additionalExportFormat[0])">
+                  {{additionalExportFormat[1]}}
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+            <button class="call-chain__cancel-button__margin" *nzSpaceItem type="button" nz-button nzType="primary" (click)="cancelCallChainJob()"
+              [disabled]="isJobCancelDisabled" [nzLoading]="onCancelLoading">
+              {{ 'btnLabel.cancel' | translate }}
+            </button>
+          </nz-space>
+          <nz-form-item class="call-chain__module-data-access" *ngIf="considerDataFlowActive">
+            <nz-form-control [nzSpan]="2">
+              <label nz-checkbox formControlName="dataAccessBased"></label>
+            </nz-form-control>
+            <nz-form-label class="call-chain__data-flow-dependencies" nzFor="dataAccessBased" [nzNoColon]="true">{{ 'callChain.dataFlow' | translate }}
+              <i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                [nzTooltipTitle]="'callChain.dataFlowToolTip' | translate"
+                class="call-chain__module__info-icon"></i>
+            </nz-form-label>
+          </nz-form-item>
+          <nz-form-item class="call-chain__module-conditional-dependencies" *ngIf="considerConditionalDependenciesActive">
+            <nz-form-control [nzSpan]="2">
+              <label nz-checkbox formControlName="conditionalDependencies"></label>
+            </nz-form-control>
+            <nz-form-label class="call-chain__data-flow-dependencies" nzFor="conditionalDependencies" [nzNoColon]="true">
+              <span class="call-chain__dependencies-label__truncate" nz-tooltip [nzTooltipTitle]="'callChain.conditionalDependencies' | translate">
+                {{ 'callChain.conditionalDependencies' | translate }}</span>
+              <i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="titleTemplate"
+                class="call-chain__module__info-icon" aria-hidden="true"></i>
+            </nz-form-label>
+            <ng-template #titleTemplate>
+              <div [innerHTML]="'callChain.conditionalDependenciesToolTip' | translate"></div>
+            </ng-template>
+          </nz-form-item>
+        </div>
+      </div>
+      </form>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <nz-card class="explorer call-chain__module call-chain-container__graph"
+    *ngIf = "dependencyGraph ||  emptyDependencyGraph || loadingBtn" [nzBodyStyle]="{ padding: '0px', height: '100%' }">
+    <dependency-explorer *ngIf="!! dependencyGraph &&  ! emptyDependencyGraph" [showDepthControl]="false"
+      [showGraphFilters]="false" [showBreadCrumb]="false" [showExports]="false" [callChainGraph]="true"
+      [layout]="'HIERARCHIC_LAYOUT_LEFT_TO_RIGHT'" [dependencyGraph]="dependencyGraph" [projectId]="projectId" [depth]="selectedDepth">
+    </dependency-explorer>
+    <nz-empty *ngIf="emptyDependencyGraph" [nzNotFoundContent]="'callChain.empty' | translate"
+      class="call-chain__module__empty-graph"></nz-empty>
+    <mn-loader *ngIf="loadingBtn" class="call-chain__module__message" [loadingMessage]="graphLoadingMessage"></mn-loader>
+  </nz-card>
+</div>

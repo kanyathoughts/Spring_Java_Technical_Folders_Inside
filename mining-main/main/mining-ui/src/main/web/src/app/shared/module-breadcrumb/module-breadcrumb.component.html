@@ -1,0 +1,8 @@
+<nz-breadcrumb nz-page-header-breadcrumb>
+  <nz-breadcrumb-item *ngFor="let items of breadcrumbItems; let isLast=last">
+    <span *ngIf="isLast; else breadcrumbLink">{{items}}</span>
+    <ng-template #breadcrumbLink>
+      <a [routerLink]="navigate(items)">{{items}}</a>
+    </ng-template>
+  </nz-breadcrumb-item>
+</nz-breadcrumb>

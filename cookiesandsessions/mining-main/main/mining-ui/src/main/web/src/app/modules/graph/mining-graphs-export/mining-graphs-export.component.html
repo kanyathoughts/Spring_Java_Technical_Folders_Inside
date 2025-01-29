@@ -1,0 +1,18 @@
+<nz-button-group>
+  <button nz-button (click)="download('PNG')">{{'module.graphs.png' | translate}}</button>
+  <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
+    <i nz-icon nzType="ellipsis"></i>
+  </button>
+</nz-button-group>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item *ngFor="let downloadMenu of dropdownList" (click)="download(downloadMenu)">{{ downloadMenu }}</li>
+  </ul>
+</nz-dropdown-menu>
+<nz-modal [(nzVisible)]="modalVisible" (nzOnCancel) = "handleModalCancel()" (nzOnOk)="handleModalConfirm()"
+  nzOkText = "{{ 'btnLabel.confirm' | translate }}">
+  <ng-container *nzModalContent>
+    <p> {{ 'controlFlowGraph.exportPromptMsg' | translate }} </p>
+  </ng-container>
+</nz-modal>

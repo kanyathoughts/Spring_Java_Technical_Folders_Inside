@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>innowake.products.mining</groupId>
+	<artifactId>mining-api-angular-client</artifactId>
+	<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>6.6.0</version>
+				<executions>
+					<execution>
+						<id>generate app client</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/swagger-config.json</inputSpec>
+							<!-- for mining-ui -->
+							<generatorName>typescript-angular</generatorName>
+							<!-- for mining-cli -->
+							<!-- <generatorName>typescript-axios</generatorName> -->
+							<skipValidateSpec>true</skipValidateSpec>
+							<configOptions>
+								<npmName>@innowake/mining-api-angular-client</npmName>
+								<npmRepository>https://pd-nexus.deloitte.com/repository/npm-hosted</npmRepository>
+								<npmVersion>${project.version}</npmVersion>
+								<ngVersion>12.2.15</ngVersion>
+								<snapshot>${mining-api-angular-client-snapshot}</snapshot>
+								<enumPropertyNaming>original</enumPropertyNaming>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<!-- newer versions require maven 3.6 -->
+				<version>1.11.3</version>
+				<configuration>
+					<nodeVersion>v14.15.0</nodeVersion>
+					<npmVersion>7.16.0</npmVersion>
+					<workingDirectory>target/generated-sources/openapi/</workingDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install package dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install --verbose --registry=https://registry.npmjs.org/</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>create tgz</id>
+						<phase>package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>pack ./dist</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm publish</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>publish ./dist</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>default-install</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

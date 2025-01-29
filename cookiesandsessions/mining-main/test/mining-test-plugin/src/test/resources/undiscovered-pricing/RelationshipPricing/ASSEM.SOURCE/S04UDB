@@ -1,0 +1,765 @@
+**********************************************************************  00001000
+*                                                                       00002000
+*  S04UDB .... STATIC SQL UPDATE MODULE                                 00003000
+*                                                                       00004000
+*  CREATION DATE: 04/25/16                                              00005000
+*                                                                       00006000
+*  FUNCTIONAL DESCRIPTION: THIS PROGRAM CONTAINS THE STATIC SQL         00007000
+*  VECTORS REQUIRED TO SUPPORT I/O TO THE S04 TABLE.  IT IS LOADED      00008000
+*  BY THE DB2 I/O MANAGER (BIPDB2X).  THIS PROGRAM WILL BE USED         00009000
+*  IN BOTH A CICS AND BATCH ENVIRONMENT AND MUST BE RE-ENTRANT          00010000
+*  AND VOID OF SVC CALLS.                                               00011000
+*                                                                       00012000
+*     ***************************************************************   00013000
+*     *                                                             *   00013001
+*     *                           NOTICE                            *   00013002
+*     *                                                             *   00013003
+*     *   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00013004
+*     *   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00013005
+*     *   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00013006
+*     *   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00013007
+*     *   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00013008
+*     *   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00013009
+*     *   ALL OTHER RIGHTS RESERVED.                                *   00013010
+*     *                                                             *   00013011
+*     *   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00013012
+*     *   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00013013
+*     *   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00013014
+*     *   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00013015
+*     *   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00013016
+*     *   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00013017
+*     *                                                             *   00013018
+*     ***************************************************************   00013019
+*     *     Infopoint Relationship Pricing                          *   00013020
+*     *     RP 5.0.01                                               *   00013021
+*     ***************************************************************   00013022
+*                                                                       00014000
+**********************************************************************  00015000
+* SQI COMMUNICATION AREA DSECT ADDRESSED BY REGISTER 11                 00016000
+**********************************************************************  00017000
+*                                                                       00018000
+COM#AREA DSECT                         SQI COMMUNICATION AREA           00019000
+SQW@CAF  DS    F                       ADDRESS OF CALL ATTACH FACILITY  00020000
+SQW@RET  DS    F                       RETURN TO THIS SQI ADDRESS       00021000
+SQWSQLCA DS    XL136                   SQLCA FOR I/O MODULE USE         00022000
+         ORG   SQWSQLCA                                                 00023000
+         EXEC  SQL INCLUDE SQLCA                                        00024000
+SQWSQLDL DS    F                       LENGTH OF DYNAMIC SQLDSECT       00025000
+SQWSQLD  DS    F                       DYNAMIC SQLDSECT                 00026000
+SQW@SQRX DS    F                       SQI INTERFACE ROUTINE ADDRESS    00027000
+SQWPARM1 DS    F                       SQI PARAMETER 1 (MODULE ADDRESS) 00028000
+SQWINTHV DS    F                       INTEGER HOST VARIABLE            00029000
+SQWCSRBR DS    F                       CURSOR ROUTINE BASE REGISTER     00030000
+SQWCSRRA DS    F                       CURSOR ROUTINE RETURN ADDRESS    00031000
+SQWRSFVC DS    H                       ROWSET FETCH SQLVAR COUNT        00032000
+SQWKMRP  DS    CL1                     SQI KEY MASK / ROUTINE POINTER   00033000
+         DS    CL5                     RESERVED                         00034000
+SQWIOSI  DS    0CL24                   I/O MODULE STATE INFORMATION     00035000
+SQWSQLDA DS    F                       ROWSET SQLDA STORAGE ADDRESS     00036000
+SQWRSRMX DS    H                       ROWSET MAX NUMBER OF ROWS        00037000
+SQWRSRCT DS    H                       ROWSET RETURNED ROW COUNT        00038000
+SQWRSROC DS    H                       ROWSET ROW OCCURS COUNT          00039000
+SQWRSFCD DS    H                       ROWSET FETCH SQLCODE             00040000
+SQWCSRCA DS    F                       READ CURSOR CLOSE ROUTINE ADDR   00041000
+SQWCSUCA DS    F                       UPDATE CURSOR CLOSE ROUTINE ADDR 00042000
+SQWCSRLV DS    CL1                     CURSOR CASCADE LEVEL LIMIT       00043000
+SQWCSRCC DS    CL1                     CURSOR CASCADE COUNT             00044000
+SQWCSRSP DS    H                       CURSOR ROUTINE POINTER           00045000
+         DS    CL4                     RESERVED                         00046000
+SQWCMD   DS    CL2                     DBS COMMAND CODE                 00047000
+SQWORG   DS    CL6                     RECORD ORG CODE                  00048000
+ASMREC   DS    0F                      ASSEMBLER RECORD (ALIGNED)       00049000
+INST     DS    CL4                                                      00050000
+RECNBR   DS    CL4                                                      00051000
+RELCODE  DS    CL6                                                      00052000
+AUDDATE  DS    PL5'0.'                                                  00053000
+AUDTIME  DS    PL5'0.'                                                  00054000
+AUDUSER  DS    CL8                                                      00055000
+AUDORG   DS    CL6                                                      00056000
+INCLEXCL DS    CL1                                                      00057000
+RELAT1   DS    CL2                                                      00058000
+RELAT2   DS    CL2                                                      00059000
+RELAT3   DS    CL2                                                      00060000
+RELAT4   DS    CL2                                                      00061000
+RELAT5   DS    CL2                                                      00062000
+RELAT6   DS    CL2                                                      00063000
+RELAT7   DS    CL2                                                      00064000
+RELAT8   DS    CL2                                                      00065000
+RELAT9   DS    CL2                                                      00066000
+RELAT10  DS    CL2                                                      00067000
+RELAT11  DS    CL2                                                      00068000
+RELAT12  DS    CL2                                                      00069000
+RELAT13  DS    CL2                                                      00070000
+RELAT14  DS    CL2                                                      00071000
+RELAT15  DS    CL2                                                      00072000
+RELAT16  DS    CL2                                                      00073000
+RELAT17  DS    CL2                                                      00074000
+RELAT18  DS    CL2                                                      00075000
+RELAT19  DS    CL2                                                      00076000
+RELAT20  DS    CL2                                                      00077000
+RELAT21  DS    CL2                                                      00078000
+RELAT22  DS    CL2                                                      00079000
+RELAT23  DS    CL2                                                      00080000
+RELAT24  DS    CL2                                                      00081000
+RELAT25  DS    CL2                                                      00082000
+RELAT26  DS    CL2                                                      00083000
+RELAT27  DS    CL2                                                      00084000
+RELAT28  DS    CL2                                                      00085000
+RELAT29  DS    CL2                                                      00086000
+RELAT30  DS    CL2                                                      00087000
+RELAT31  DS    CL2                                                      00088000
+RELAT32  DS    CL2                                                      00089000
+RELAT33  DS    CL2                                                      00090000
+RELAT34  DS    CL2                                                      00091000
+RELAT35  DS    CL2                                                      00092000
+RELAT36  DS    CL2                                                      00093000
+RELAT37  DS    CL2                                                      00094000
+RELAT38  DS    CL2                                                      00095000
+RELAT39  DS    CL2                                                      00096000
+RELAT40  DS    CL2                                                      00097000
+RELAT41  DS    CL2                                                      00098000
+RELAT42  DS    CL2                                                      00099000
+RELAT43  DS    CL2                                                      00100000
+RELAT44  DS    CL2                                                      00101000
+RELAT45  DS    CL2                                                      00102000
+RELAT46  DS    CL2                                                      00103000
+RELAT47  DS    CL2                                                      00104000
+RELAT48  DS    CL2                                                      00105000
+RELAT49  DS    CL2                                                      00106000
+RELAT50  DS    CL2                                                      00107000
+*                                                                       00108000
+         ORG   ASMREC+(2000-L'SQWADATA) POINT TO ADDITIONAL DATA        00109000
+SQWADATA DS    0CL400                  ADDITIONAL DATA PASSED TO MODULE 00110000
+SQWSEGF  DS    CL102                   SEGMENTED FROM KEY VALUE         00111000
+SQWSEGT  DS    CL102                   SEGMENTED TO KEY VALUE           00112000
+SQWAUDIT DS    CL99                    CALLERS AUDIT DATA               00113000
+         DS    CL97                    RESERVED                         00114000
+*                                                                       00115000
+INDVARS  DS    0H                      NULL INDICATOR VARIABLES         00116000
+INDVARX  DS    0H                                                       00117000
+INDVARL  EQU   INDVARX-INDVARS         NULL INDICATOR AREA LENGTH       00118000
+*                                                                       00119000
+*                                                                       00120000
+**********************************************************************  00121000
+* PROGRAM TABLE HEADER SECTION:                                         00122000
+*   THIS SECTION CONTAINS STATIC DESCRIPTIVE FIELDS.                    00123000
+**********************************************************************  00124000
+*                                                                       00125000
+S04UDB   CSECT                         PROGRAM TABLE SECTION            00126000
+S04UDB   AMODE ANY                                                      00127000
+S04UDB   RMODE ANY                                                      00128000
+         DC    CL8'S04UDB  '           PROGRAM ID                       00129000
+         DC    CL1' '                                                   00130000
+         DC    CL8'&SYSDATE'           ASSEMBLY DATE                    00131000
+         DC    CL1' '                                                   00132000
+         DC    CL5'&SYSTIME'           ASSEMBLY TIME                    00133000
+         DC    CL1' '                                                   00134000
+         DC    A(SQLDLEN)              SQLDSECT SIZE                    00135000
+         DC    5A(0)                   RESERVED                         00136000
+         DC    AL2(0)                  RESERVED                         00137000
+         DC    AL2(INDVARL)            NULL INDICATOR AREA LENGTH       00138000
+         DC    A(CONVTAB1)             RECORD/HOST CONVERSION TABLE     00139000
+         DC    A(0)                    SQLDA DATA TYPE/LENGTH TABLE     00140000
+         DC    A(STM#TAB)              STATEMENT TABLE ADDRESS          00141000
+         DC    CL43'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. '        00142000
+         DC    CL29'WWW.INFOR.COM                '                      00142001
+*                                                                       00143000
+**********************************************************************  00144000
+* STATEMENT TABLE SECTION:                                              00145000
+*   THIS SECTION DEFINES AN ENTRY VECTOR FOR EACH SQL STATEMENT.        00146000
+**********************************************************************  00147000
+*                                                                       00148000
+STM#TAB  CSECT                         STATEMENT TABLE SECTION          00149000
+STM#TAB  AMODE ANY                                                      00150000
+STM#TAB  RMODE ANY                                                      00151000
+         DC    4A(0)                   RDB MODULE VECTORS               00152000
+         DC    A(SELUC0)               SELECT UPDATE CURSOR (KEY 0)     00153000
+         DC    A(SELUC1)               SELECT UPDATE CURSOR (KEY 1)     00154000
+         DC    A(SELUC2)               SELECT UPDATE CURSOR (KEY 2)     00155000
+         DC    A(SELUC3)               SELECT UPDATE CURSOR (KEY 3)     00156000
+         DC    A(FETUC0)               FETCH UPDATE CURSOR (KEY 0)      00157000
+         DC    A(FETUC1)               FETCH UPDATE CURSOR (KEY 1)      00158000
+         DC    A(FETUC2)               FETCH UPDATE CURSOR (KEY 2)      00159000
+         DC    A(FETUC3)               FETCH UPDATE CURSOR (KEY 3)      00160000
+         DC    A(CLSUC0)               CLOSE UPDATE CURSOR (KEY 0)      00161000
+         DC    A(CLSUC1)               CLOSE UPDATE CURSOR (KEY 1)      00162000
+         DC    A(CLSUC2)               CLOSE UPDATE CURSOR (KEY 2)      00163000
+         DC    A(CLSUC3)               CLOSE UPDATE CURSOR (KEY 3)      00164000
+         DC    20A(0)                  RDB MODULE VECTORS               00165000
+         DC    A(INSROW)               INSERT STATEMENT                 00166000
+         DC    A(UPDUC0)               UPDATE STATEMENT (KEY 0)         00167000
+         DC    A(UPDUC1)               UPDATE STATEMENT (KEY 1)         00168000
+         DC    A(UPDUC2)               UPDATE STATEMENT (KEY 2)         00169000
+         DC    A(UPDUC3)               UPDATE STATEMENT (KEY 3)         00170000
+         DC    A(DELUC0)               DELETE STATEMENT (KEY 0)         00171000
+         DC    A(DELUC1)               DELETE STATEMENT (KEY 1)         00172000
+         DC    A(DELUC2)               DELETE STATEMENT (KEY 2)         00173000
+         DC    A(DELUC3)               DELETE STATEMENT (KEY 3)         00174000
+         DC    A(DELTBL)               DELETE ALL STATEMENT             00175000
+         DC    4X'FF'                                                   00176000
+*                                                                       00177000
+**********************************************************************  00178000
+* SQL STATEMENT SECTION:                                                00179000
+*   THIS SECTION CONTAINS ALL THE STATIC SQL STATEMENTS REQUIRED        00180000
+*     TO SUPPORT THIS TABLE.                                            00181000
+*   THE INDICATED STATEMENTS MAY BE MODIFIED, AS LONG AS THE RESULTS    00182000
+*     ARE EQUIVALENT.                                                   00183000
+**********************************************************************  00184000
+*                                                                       00185000
+SQL#STMT CSECT                         SQL STATEMENT SECTION            00186000
+SQL#STMT AMODE ANY                                                      00187000
+SQL#STMT RMODE ANY                                                      00188000
+         USING SQLDSECT,10,3           ADDRESS SQLDSECT                 00189000
+         USING COM#AREA,11             ADDRESS COMMAREA                 00190000
+*                                                                       00191000
+**********************************************************************  00192000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY PRIMARY KEY:       00193000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00194000
+*   THEY ARE ALSO USED AFTER A SUCCESSFUL SELECT SEQUENTIAL STATEMENT   00195000
+*     FOR THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS.                      00196000
+**********************************************************************  00197000
+*                                                                       00198000
+SELUC0   DS    0H                                                       00199000
+         USING SELUC0,12               ESTABLISH BASE REGISTER          00200000
+         MVI   SQWKMRP,X'80'           MOVE RECORD TO HOST FOR KEY 0    00201000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00202000
+         BALR  14,15                   MOVE REQUESTED DATA              00203000
+         B     *+6                     BRANCH AROUND ADCON              00204000
+BASSEL0  DC    AL2(4096)                                                00205000
+         LR    3,10                    LOAD SECOND BASE FOR SQLDSECT    00206000
+         AH    3,BASSEL0               ADD 4K                           00207000
+         EXEC  SQL DECLARE S04UPD0 CURSOR                              *00208000
+               FOR SELECT                                              *00209000
+                   AUDIT_DATE,                                         *00210000
+                   AUDIT_TIME,                                         *00211000
+                   AUDIT_USER,                                         *00212000
+                   AUDIT_ORG,                                          *00213000
+                   INCL_EXCL,                                          *00214000
+                   REL_CODE_01,                                        *00215000
+                   REL_CODE_02,                                        *00216000
+                   REL_CODE_03,                                        *00217000
+                   REL_CODE_04,                                        *00218000
+                   REL_CODE_05,                                        *00219000
+                   REL_CODE_06,                                        *00220000
+                   REL_CODE_07,                                        *00221000
+                   REL_CODE_08,                                        *00222000
+                   REL_CODE_09,                                        *00223000
+                   REL_CODE_10,                                        *00224000
+                   REL_CODE_11,                                        *00225000
+                   REL_CODE_12,                                        *00226000
+                   REL_CODE_13,                                        *00227000
+                   REL_CODE_14,                                        *00228000
+                   REL_CODE_15,                                        *00229000
+                   REL_CODE_16,                                        *00230000
+                   REL_CODE_17,                                        *00231000
+                   REL_CODE_18,                                        *00232000
+                   REL_CODE_19,                                        *00233000
+                   REL_CODE_20,                                        *00234000
+                   REL_CODE_21,                                        *00235000
+                   REL_CODE_22,                                        *00236000
+                   REL_CODE_23,                                        *00237000
+                   REL_CODE_24,                                        *00238000
+                   REL_CODE_25,                                        *00239000
+                   REL_CODE_26,                                        *00240000
+                   REL_CODE_27,                                        *00241000
+                   REL_CODE_28,                                        *00242000
+                   REL_CODE_29,                                        *00243000
+                   REL_CODE_30,                                        *00244000
+                   REL_CODE_31,                                        *00245000
+                   REL_CODE_32,                                        *00246000
+                   REL_CODE_33,                                        *00247000
+                   REL_CODE_34,                                        *00248000
+                   REL_CODE_35,                                        *00249000
+                   REL_CODE_36,                                        *00250000
+                   REL_CODE_37,                                        *00251000
+                   REL_CODE_38,                                        *00252000
+                   REL_CODE_39,                                        *00253000
+                   REL_CODE_40,                                        *00254000
+                   REL_CODE_41,                                        *00255000
+                   REL_CODE_42,                                        *00256000
+                   REL_CODE_43,                                        *00257000
+                   REL_CODE_44,                                        *00258000
+                   REL_CODE_45,                                        *00259000
+                   REL_CODE_46,                                        *00260000
+                   REL_CODE_47,                                        *00261000
+                   REL_CODE_48,                                        *00262000
+                   REL_CODE_49,                                        *00263000
+                   REL_CODE_50                                         *00264000
+                 FROM S04                                              *00265000
+                 WHERE                                                 *00266000
+                   INST_NBR = :INST AND                                *00267000
+                   RECORD_NBR = :RECNBR AND                            *00268000
+                   RELATE_CODE = :RELCODE                              *00269000
+                 FOR UPDATE OF                                         *00270000
+                   AUDIT_DATE,                                         *00271000
+                   AUDIT_TIME,                                         *00272000
+                   AUDIT_USER,                                         *00273000
+                   AUDIT_ORG,                                          *00274000
+                   INCL_EXCL,                                          *00275000
+                   REL_CODE_01,                                        *00276000
+                   REL_CODE_02,                                        *00277000
+                   REL_CODE_03,                                        *00278000
+                   REL_CODE_04,                                        *00279000
+                   REL_CODE_05,                                        *00280000
+                   REL_CODE_06,                                        *00281000
+                   REL_CODE_07,                                        *00282000
+                   REL_CODE_08,                                        *00283000
+                   REL_CODE_09,                                        *00284000
+                   REL_CODE_10,                                        *00285000
+                   REL_CODE_11,                                        *00286000
+                   REL_CODE_12,                                        *00287000
+                   REL_CODE_13,                                        *00288000
+                   REL_CODE_14,                                        *00289000
+                   REL_CODE_15,                                        *00290000
+                   REL_CODE_16,                                        *00291000
+                   REL_CODE_17,                                        *00292000
+                   REL_CODE_18,                                        *00293000
+                   REL_CODE_19,                                        *00294000
+                   REL_CODE_20,                                        *00295000
+                   REL_CODE_21,                                        *00296000
+                   REL_CODE_22,                                        *00297000
+                   REL_CODE_23,                                        *00298000
+                   REL_CODE_24,                                        *00299000
+                   REL_CODE_25,                                        *00300000
+                   REL_CODE_26,                                        *00301000
+                   REL_CODE_27,                                        *00302000
+                   REL_CODE_28,                                        *00303000
+                   REL_CODE_29,                                        *00304000
+                   REL_CODE_30,                                        *00305000
+                   REL_CODE_31,                                        *00306000
+                   REL_CODE_32,                                        *00307000
+                   REL_CODE_33,                                        *00308000
+                   REL_CODE_34,                                        *00309000
+                   REL_CODE_35,                                        *00310000
+                   REL_CODE_36,                                        *00311000
+                   REL_CODE_37,                                        *00312000
+                   REL_CODE_38,                                        *00313000
+                   REL_CODE_39,                                        *00314000
+                   REL_CODE_40,                                        *00315000
+                   REL_CODE_41,                                        *00316000
+                   REL_CODE_42,                                        *00317000
+                   REL_CODE_43,                                        *00318000
+                   REL_CODE_44,                                        *00319000
+                   REL_CODE_45,                                        *00320000
+                   REL_CODE_46,                                        *00321000
+                   REL_CODE_47,                                        *00322000
+                   REL_CODE_48,                                        *00323000
+                   REL_CODE_49,                                        *00324000
+                   REL_CODE_50                                         *00325000
+                 FETCH FIRST 1 ROW ONLY                                 00326000
+         EXEC  SQL OPEN S04UPD0                                         00327000
+         MVC   SQWCSUCA,=A(CLSUC0)     SET CURSOR CLOSE ROUTINE ADDRESS 00328000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00329000
+         BR    14                      RETURN TO CALLER                 00330000
+         LTORG                                                          00331000
+*                                                                       00332000
+**********************************************************************  00333000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                   00334000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00335000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00336000
+*     THE ACTUAL ROW.                                                   00337000
+**********************************************************************  00338000
+*                                                                       00339000
+FETUC0   DS    0H                                                       00340000
+         USING FETUC0,12               ESTABLISH BASE REGISTER          00341000
+         B     *+6                     BRANCH AROUND ADCON              00342000
+BASFET0  DC    AL2(4096)                                                00343000
+         LR    3,10                    LOAD SECOND BASE FOR SQLDSECT    00344000
+         AH    3,BASFET0               ADD 4K                           00345000
+         EXEC  SQL FETCH S04UPD0                                       *00346000
+                 INTO                                                  *00347000
+                   :AUDDATE,                                           *00348000
+                   :AUDTIME,                                           *00349000
+                   :AUDUSER,                                           *00350000
+                   :AUDORG,                                            *00351000
+                   :INCLEXCL,                                          *00352000
+                   :RELAT1,                                            *00353000
+                   :RELAT2,                                            *00354000
+                   :RELAT3,                                            *00355000
+                   :RELAT4,                                            *00356000
+                   :RELAT5,                                            *00357000
+                   :RELAT6,                                            *00358000
+                   :RELAT7,                                            *00359000
+                   :RELAT8,                                            *00360000
+                   :RELAT9,                                            *00361000
+                   :RELAT10,                                           *00362000
+                   :RELAT11,                                           *00363000
+                   :RELAT12,                                           *00364000
+                   :RELAT13,                                           *00365000
+                   :RELAT14,                                           *00366000
+                   :RELAT15,                                           *00367000
+                   :RELAT16,                                           *00368000
+                   :RELAT17,                                           *00369000
+                   :RELAT18,                                           *00370000
+                   :RELAT19,                                           *00371000
+                   :RELAT20,                                           *00372000
+                   :RELAT21,                                           *00373000
+                   :RELAT22,                                           *00374000
+                   :RELAT23,                                           *00375000
+                   :RELAT24,                                           *00376000
+                   :RELAT25,                                           *00377000
+                   :RELAT26,                                           *00378000
+                   :RELAT27,                                           *00379000
+                   :RELAT28,                                           *00380000
+                   :RELAT29,                                           *00381000
+                   :RELAT30,                                           *00382000
+                   :RELAT31,                                           *00383000
+                   :RELAT32,                                           *00384000
+                   :RELAT33,                                           *00385000
+                   :RELAT34,                                           *00386000
+                   :RELAT35,                                           *00387000
+                   :RELAT36,                                           *00388000
+                   :RELAT37,                                           *00389000
+                   :RELAT38,                                           *00390000
+                   :RELAT39,                                           *00391000
+                   :RELAT40,                                           *00392000
+                   :RELAT41,                                           *00393000
+                   :RELAT42,                                           *00394000
+                   :RELAT43,                                           *00395000
+                   :RELAT44,                                           *00396000
+                   :RELAT45,                                           *00397000
+                   :RELAT46,                                           *00398000
+                   :RELAT47,                                           *00399000
+                   :RELAT48,                                           *00400000
+                   :RELAT49,                                           *00401000
+                   :RELAT50                                             00402000
+         MVI   SQWKMRP,X'03'           MOVE HOST VARIABLES TO RECORD    00403000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00404000
+         BALR  14,15                   MOVE REQUESTED DATA              00405000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00406000
+         BR    14                      RETURN TO CALLER                 00407000
+         LTORG                                                          00408000
+*                                                                       00409000
+**********************************************************************  00410000
+* INSERT STATEMENT:                                                     00411000
+*   THIS STATEMENT SUPPORTS THE PUT VERB.                               00412000
+**********************************************************************  00413000
+*                                                                       00414000
+INSROW   DS    0H                                                       00415000
+         USING INSROW,12               ESTABLISH BASE REGISTER          00416000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00417000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00418000
+         BALR  14,15                   MOVE REQUESTED DATA              00419000
+         B     *+6                     BRANCH AROUND ADCON              00420000
+BASINS0  DC    AL2(4096)                                                00421000
+         LR    3,10                    LOAD SECOND BASE FOR SQLDSECT    00422000
+         AH    3,BASINS0               ADD 4K                           00423000
+         EXEC  SQL INSERT INTO S04                                     *00424000
+                   (                                                   *00425000
+                   INST_NBR,                                           *00426000
+                   RECORD_NBR,                                         *00427000
+                   RELATE_CODE,                                        *00428000
+                   AUDIT_DATE,                                         *00429000
+                   AUDIT_TIME,                                         *00430000
+                   AUDIT_USER,                                         *00431000
+                   AUDIT_ORG,                                          *00432000
+                   INCL_EXCL,                                          *00433000
+                   REL_CODE_01,                                        *00434000
+                   REL_CODE_02,                                        *00435000
+                   REL_CODE_03,                                        *00436000
+                   REL_CODE_04,                                        *00437000
+                   REL_CODE_05,                                        *00438000
+                   REL_CODE_06,                                        *00439000
+                   REL_CODE_07,                                        *00440000
+                   REL_CODE_08,                                        *00441000
+                   REL_CODE_09,                                        *00442000
+                   REL_CODE_10,                                        *00443000
+                   REL_CODE_11,                                        *00444000
+                   REL_CODE_12,                                        *00445000
+                   REL_CODE_13,                                        *00446000
+                   REL_CODE_14,                                        *00447000
+                   REL_CODE_15,                                        *00448000
+                   REL_CODE_16,                                        *00449000
+                   REL_CODE_17,                                        *00450000
+                   REL_CODE_18,                                        *00451000
+                   REL_CODE_19,                                        *00452000
+                   REL_CODE_20,                                        *00453000
+                   REL_CODE_21,                                        *00454000
+                   REL_CODE_22,                                        *00455000
+                   REL_CODE_23,                                        *00456000
+                   REL_CODE_24,                                        *00457000
+                   REL_CODE_25,                                        *00458000
+                   REL_CODE_26,                                        *00459000
+                   REL_CODE_27,                                        *00460000
+                   REL_CODE_28,                                        *00461000
+                   REL_CODE_29,                                        *00462000
+                   REL_CODE_30,                                        *00463000
+                   REL_CODE_31,                                        *00464000
+                   REL_CODE_32,                                        *00465000
+                   REL_CODE_33,                                        *00466000
+                   REL_CODE_34,                                        *00467000
+                   REL_CODE_35,                                        *00468000
+                   REL_CODE_36,                                        *00469000
+                   REL_CODE_37,                                        *00470000
+                   REL_CODE_38,                                        *00471000
+                   REL_CODE_39,                                        *00472000
+                   REL_CODE_40,                                        *00473000
+                   REL_CODE_41,                                        *00474000
+                   REL_CODE_42,                                        *00475000
+                   REL_CODE_43,                                        *00476000
+                   REL_CODE_44,                                        *00477000
+                   REL_CODE_45,                                        *00478000
+                   REL_CODE_46,                                        *00479000
+                   REL_CODE_47,                                        *00480000
+                   REL_CODE_48,                                        *00481000
+                   REL_CODE_49,                                        *00482000
+                   REL_CODE_50                                         *00483000
+                   )                                                   *00484000
+                  VALUES                                               *00485000
+                   (                                                   *00486000
+                   :INST,                                              *00487000
+                   :RECNBR,                                            *00488000
+                   :RELCODE,                                           *00489000
+                   :AUDDATE,                                           *00490000
+                   :AUDTIME,                                           *00491000
+                   :AUDUSER,                                           *00492000
+                   :AUDORG,                                            *00493000
+                   :INCLEXCL,                                          *00494000
+                   :RELAT1,                                            *00495000
+                   :RELAT2,                                            *00496000
+                   :RELAT3,                                            *00497000
+                   :RELAT4,                                            *00498000
+                   :RELAT5,                                            *00499000
+                   :RELAT6,                                            *00500000
+                   :RELAT7,                                            *00501000
+                   :RELAT8,                                            *00502000
+                   :RELAT9,                                            *00503000
+                   :RELAT10,                                           *00504000
+                   :RELAT11,                                           *00505000
+                   :RELAT12,                                           *00506000
+                   :RELAT13,                                           *00507000
+                   :RELAT14,                                           *00508000
+                   :RELAT15,                                           *00509000
+                   :RELAT16,                                           *00510000
+                   :RELAT17,                                           *00511000
+                   :RELAT18,                                           *00512000
+                   :RELAT19,                                           *00513000
+                   :RELAT20,                                           *00514000
+                   :RELAT21,                                           *00515000
+                   :RELAT22,                                           *00516000
+                   :RELAT23,                                           *00517000
+                   :RELAT24,                                           *00518000
+                   :RELAT25,                                           *00519000
+                   :RELAT26,                                           *00520000
+                   :RELAT27,                                           *00521000
+                   :RELAT28,                                           *00522000
+                   :RELAT29,                                           *00523000
+                   :RELAT30,                                           *00524000
+                   :RELAT31,                                           *00525000
+                   :RELAT32,                                           *00526000
+                   :RELAT33,                                           *00527000
+                   :RELAT34,                                           *00528000
+                   :RELAT35,                                           *00529000
+                   :RELAT36,                                           *00530000
+                   :RELAT37,                                           *00531000
+                   :RELAT38,                                           *00532000
+                   :RELAT39,                                           *00533000
+                   :RELAT40,                                           *00534000
+                   :RELAT41,                                           *00535000
+                   :RELAT42,                                           *00536000
+                   :RELAT43,                                           *00537000
+                   :RELAT44,                                           *00538000
+                   :RELAT45,                                           *00539000
+                   :RELAT46,                                           *00540000
+                   :RELAT47,                                           *00541000
+                   :RELAT48,                                           *00542000
+                   :RELAT49,                                           *00543000
+                   :RELAT50                                            *00544000
+                   )                                                    00545000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00546000
+         BR    14                      RETURN TO CALLER                 00547000
+         LTORG                                                          00548000
+*                                                                       00549000
+**********************************************************************  00550000
+* UPDATE STATEMENT BY PRIMARY KEY:                                      00551000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             00552000
+**********************************************************************  00553000
+*                                                                       00554000
+UPDUC0   DS    0H                                                       00555000
+         USING UPDUC0,12               ESTABLISH BASE REGISTER          00556000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00557000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00558000
+         BALR  14,15                   MOVE REQUESTED DATA              00559000
+         B     *+6                     BRANCH AROUND ADCON              00560000
+BASUPD0  DC    AL2(4096)                                                00561000
+         LR    3,10                    LOAD SECOND BASE FOR SQLDSECT    00562000
+         AH    3,BASUPD0               ADD 4K                           00563000
+         EXEC  SQL UPDATE S04                                          *00564000
+                   SET                                                 *00565000
+                     AUDIT_DATE = :AUDDATE,                            *00566000
+                     AUDIT_TIME = :AUDTIME,                            *00567000
+                     AUDIT_USER = :AUDUSER,                            *00568000
+                     AUDIT_ORG = :AUDORG,                              *00569000
+                     INCL_EXCL = :INCLEXCL,                            *00570000
+                     REL_CODE_01 = :RELAT1,                            *00571000
+                     REL_CODE_02 = :RELAT2,                            *00572000
+                     REL_CODE_03 = :RELAT3,                            *00573000
+                     REL_CODE_04 = :RELAT4,                            *00574000
+                     REL_CODE_05 = :RELAT5,                            *00575000
+                     REL_CODE_06 = :RELAT6,                            *00576000
+                     REL_CODE_07 = :RELAT7,                            *00577000
+                     REL_CODE_08 = :RELAT8,                            *00578000
+                     REL_CODE_09 = :RELAT9,                            *00579000
+                     REL_CODE_10 = :RELAT10,                           *00580000
+                     REL_CODE_11 = :RELAT11,                           *00581000
+                     REL_CODE_12 = :RELAT12,                           *00582000
+                     REL_CODE_13 = :RELAT13,                           *00583000
+                     REL_CODE_14 = :RELAT14,                           *00584000
+                     REL_CODE_15 = :RELAT15,                           *00585000
+                     REL_CODE_16 = :RELAT16,                           *00586000
+                     REL_CODE_17 = :RELAT17,                           *00587000
+                     REL_CODE_18 = :RELAT18,                           *00588000
+                     REL_CODE_19 = :RELAT19,                           *00589000
+                     REL_CODE_20 = :RELAT20,                           *00590000
+                     REL_CODE_21 = :RELAT21,                           *00591000
+                     REL_CODE_22 = :RELAT22,                           *00592000
+                     REL_CODE_23 = :RELAT23,                           *00593000
+                     REL_CODE_24 = :RELAT24,                           *00594000
+                     REL_CODE_25 = :RELAT25,                           *00595000
+                     REL_CODE_26 = :RELAT26,                           *00596000
+                     REL_CODE_27 = :RELAT27,                           *00597000
+                     REL_CODE_28 = :RELAT28,                           *00598000
+                     REL_CODE_29 = :RELAT29,                           *00599000
+                     REL_CODE_30 = :RELAT30,                           *00600000
+                     REL_CODE_31 = :RELAT31,                           *00601000
+                     REL_CODE_32 = :RELAT32,                           *00602000
+                     REL_CODE_33 = :RELAT33,                           *00603000
+                     REL_CODE_34 = :RELAT34,                           *00604000
+                     REL_CODE_35 = :RELAT35,                           *00605000
+                     REL_CODE_36 = :RELAT36,                           *00606000
+                     REL_CODE_37 = :RELAT37,                           *00607000
+                     REL_CODE_38 = :RELAT38,                           *00608000
+                     REL_CODE_39 = :RELAT39,                           *00609000
+                     REL_CODE_40 = :RELAT40,                           *00610000
+                     REL_CODE_41 = :RELAT41,                           *00611000
+                     REL_CODE_42 = :RELAT42,                           *00612000
+                     REL_CODE_43 = :RELAT43,                           *00613000
+                     REL_CODE_44 = :RELAT44,                           *00614000
+                     REL_CODE_45 = :RELAT45,                           *00615000
+                     REL_CODE_46 = :RELAT46,                           *00616000
+                     REL_CODE_47 = :RELAT47,                           *00617000
+                     REL_CODE_48 = :RELAT48,                           *00618000
+                     REL_CODE_49 = :RELAT49,                           *00619000
+                     REL_CODE_50 = :RELAT50                            *00620000
+                 WHERE CURRENT OF S04UPD0                               00621000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00622000
+         BR    14                      RETURN TO CALLER                 00623000
+         LTORG                                                          00624000
+*                                                                       00625000
+**********************************************************************  00626000
+* DELETE STATEMENT BY PRIMARY KEY:                                      00627000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            00628000
+**********************************************************************  00629000
+*                                                                       00630000
+DELUC0   DS    0H                                                       00631000
+         USING DELUC0,12               ESTABLISH BASE REGISTER          00632000
+         EXEC  SQL DELETE FROM S04                                     *00633000
+                 WHERE CURRENT OF S04UPD0                               00634000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00635000
+         BR    14                      RETURN TO CALLER                 00636000
+         LTORG                                                          00637000
+*                                                                       00638000
+**********************************************************************  00639000
+* DELETE ALL STATEMENT:                                                 00640000
+*   THIS STATEMENT SUPPORTS THE DELETE-FILE VERB.                       00641000
+**********************************************************************  00642000
+*                                                                       00643000
+DELTBL   DS    0H                                                       00644000
+         USING DELTBL,12               ESTABLISH BASE REGISTER          00645000
+         EXEC  SQL DELETE FROM S04                                      00646000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00647000
+         BR    14                      RETURN TO CALLER                 00648000
+         LTORG                                                          00649000
+*                                                                       00650000
+**********************************************************************  00651000
+* CLOSE UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                        00652000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00653000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00654000
+*     TO CLOSE THE UPDATE CURSOR.                                       00655000
+**********************************************************************  00656000
+*                                                                       00657000
+CLSUC0   DS    0H                                                       00658000
+         USING CLSUC0,12               ESTABLISH BASE REGISTER          00659000
+         EXEC  SQL CLOSE S04UPD0                                        00660000
+         XC    SQWCSUCA,SQWCSUCA       CLEAR CURSOR CLOSE ROUTINE ADDR  00661000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00662000
+         BR    14                      RETURN TO CALLER                 00663000
+         LTORG                                                          00664000
+*                                                                       00665000
+**********************************************************************  00666000
+* ALTERNATE KEY 1 NOT DEFINED                                           00667000
+**********************************************************************  00668000
+*                                                                       00669000
+SELUC1   DS    0H                                                       00670000
+FETUC1   DS    0H                                                       00671000
+UPDUC1   DS    0H                                                       00672000
+DELUC1   DS    0H                                                       00673000
+CLSUC1   DS    0H                                                       00674000
+         DC    X'00DEAD01'             FORCE S0C1 ABEND                 00675000
+*                                                                       00676000
+**********************************************************************  00677000
+* ALTERNATE KEY 2 NOT DEFINED                                           00678000
+**********************************************************************  00679000
+*                                                                       00680000
+SELUC2   DS    0H                                                       00681000
+FETUC2   DS    0H                                                       00682000
+UPDUC2   DS    0H                                                       00683000
+DELUC2   DS    0H                                                       00684000
+CLSUC2   DS    0H                                                       00685000
+         DC    X'00DEAD02'             FORCE S0C1 ABEND                 00686000
+*                                                                       00687000
+**********************************************************************  00688000
+* ALTERNATE KEY 3 NOT DEFINED                                           00689000
+**********************************************************************  00690000
+*                                                                       00691000
+SELUC3   DS    0H                                                       00692000
+FETUC3   DS    0H                                                       00693000
+UPDUC3   DS    0H                                                       00694000
+DELUC3   DS    0H                                                       00695000
+CLSUC3   DS    0H                                                       00696000
+         DC    X'00DEAD03'             FORCE S0C1 ABEND                 00697000
+*                                                                       00698000
+         DS    0H                      END OF SQL STATEMENTS            00699000
+         DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'                   00700000
+*                                                                       00701000
+**********************************************************************  00702000
+* DUMMY ENTRY POINT DSNHLI                                              00703000
+**********************************************************************  00704000
+*                                                                       00705000
+         ENTRY DSNHLI                                                   00706000
+DSNHLI   DS    0H                                                       00707000
+         L     15,SQW@CAF              LOAD ENTRY POINT TO ATTACH       00708000
+         BR    15                      BRANCH TO ATTACH FACILITY        00709000
+*                                                                       00710000
+**********************************************************************  00711000
+* CONVERSION TABLE VALUES FOR ALL FIELDS IN THIS TABLE                  00712000
+**********************************************************************  00713000
+*                                                                       00714000
+* CONVTAB1 TABLE ENTRY FORMAT IS:                                       00715000
+*        DC    H'RRRR',H'VVVV',H'LLLL',X'KK',X'DD'                      00716000
+* OR:                                                                   00717000
+*        DC    H'RRRR',H'VVVV',X'ZZPP',X'KK',X'DD'                      00718000
+* WHERE:                                                                00719000
+*   RRRR = RECORD AREA OFFSET                                           00720000
+*   VVVV = HOST VARIABLE AREA OFFSET                                    00721000
+*   LLLL = HALFWORD LENGTH TO MOVE                                      00722000
+*   ZZPP = CONVERT ZONED/PACKED LENGTHS (MINUS 1)                       00723000
+*   KK   = KEY FIELD MASK:                                              00724000
+*            80 = KEY 0 FIELD                                           00725000
+*            40 = KEY 1 FIELD                                           00726000
+*            20 = KEY 2 FIELD                                           00727000
+*            10 = KEY 3 FIELD                                           00728000
+*   DD   = DATA FIELD MASK:                                             00729000
+*            80 = RECORD FIELD IS PACKED                                00730000
+*            40 = HOST VARIABLE IS PACKED                               00731000
+*            20 = NULLABLE FIELD                                        00732000
+*            01 = DATE FIELD                                            00733000
+*            02 = TIME FIELD                                            00734000
+*                                                                       00735000
+CONVTAB1 DS    0H                      RECORD/HOST VARIABLE CONVERSIONS 00736000
+         DC    H'0000',H'0000',H'0014',X'80',X'00'                      00737000
+         DC    H'0014',H'0014',H'0125',X'00',X'00'                      00738000
+         DC    8X'FF'                                                   00739000
+*                                                                       00740000
+         LTORG                                                          00741000
+         END                                                            00742000

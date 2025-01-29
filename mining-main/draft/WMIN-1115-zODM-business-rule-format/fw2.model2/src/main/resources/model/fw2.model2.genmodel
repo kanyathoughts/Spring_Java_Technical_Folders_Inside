@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/fw2.model2.plugin/src/main/java" editDirectory="/fw2.model2.plugin.edit/src/main/java"
+    editorDirectory="/fw2.model2.plugin.editor/src/main/java" modelPluginID="fw2.model2"
+    modelName="Fw2" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    testsDirectory="/fw2.model2.plugin.tests/src/main/java" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="7.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+  <foreignModel>fw2.model2.ecore</foreignModel>
+  <genPackages prefix="Model2" basePackage="fw2" resource="XML" disposableProviderFactory="true"
+      ecorePackage="fw2.model2.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="fw2.model2.ecore#//CardinalityTypeEnum">
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//CardinalityTypeEnum/ONE"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//CardinalityTypeEnum/MANY"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="fw2.model2.ecore#//DbColumnTypeEnum">
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/BIGINT"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/BLOB"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/CHAR"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/CHARACTER"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/DATE"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/INTEGER"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/SHORT"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/SMALLINT"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/TIME"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/TIMESTAMP"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/VARCHAR"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//DbColumnTypeEnum/DECIMAL"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="fw2.model2.ecore#//FieldTypeEnum">
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Selectable"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Date"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Text"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Map"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/TextDecimal"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Zip"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/TextInteger"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/LinkedObject"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Label"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/Month"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/ZipExtension"/>
+      <genEnumLiterals ecoreEnumLiteral="fw2.model2.ecore#//FieldTypeEnum/RowText"/>
+    </genEnums>
+    <genClasses ecoreClass="fw2.model2.ecore#//Action">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Action/accessKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Action/url"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Aggregation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Aggregation/component"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Annotation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Annotation/tags"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Application">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Application/baps"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//Association">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Association/cardinality"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Association/relatedClassOrm"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//Attribute"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//Bap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Bap/componentMapping"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//ClassOrm">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//ClassOrm/aggregations"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//ClassOrm/dataSet"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//ClassOrm/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//ClassOrm/references"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Component">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Component/lookups"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Component/primitives"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Constant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Constant/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Constant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbColumn">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/default"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/keySeq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/length"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/nullable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/scale"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/seq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumn/type"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbColumn/table"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbColumnMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbColumnMap/dbColumnName"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//DbDataSet"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbForeignKeyColumn">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbForeignKeyColumn/keySeq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DbForeignKeyColumn/seq"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbJoinKey"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbJoinParameter"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbRelation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbRelation/foreignKeyColumns"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbRelation/refTable"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbRelation/table"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbTable/columns"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbView">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbView/joinKeys"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbView/joinParameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DbView/viewColumns"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DbViewColumn"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//DiscriminatorKey">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DiscriminatorKey/discriminatorValue"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DomainAttribute">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DomainAttribute/dataType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DomainAttribute/multivalued"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DomainAttribute/reference"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//DomainClass">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DomainClass/superclass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DomainClass/platformClass"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//DomainClass/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DomainClass/abstract"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//DomainClass/primitive"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Editor">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Editor/editors"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Editor/fieldGroups"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Editor/summaryTables"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Editor/presentInStaging"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Field">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/mandatory"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/maxLength"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/referenceListName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/rowIndex"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/selectDisabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/selectHeaderValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/presentInStaging"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/comments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Field/mapping"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//FieldExtension">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//FieldExtension/extension"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//FieldGroup">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//FieldGroup/actions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//FieldGroup/fields"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//FieldGroup/displayOrder"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//FieldGroup/presentInStaging"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//FieldGroupExtension">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//FieldGroupExtension/extension"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Lookup"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Model/elements"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//ModelElement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//ModelElement/annotations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ModelElement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Primitive"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//PrimitiveExtension">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//PrimitiveExtension/extension"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Property">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Property/value"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Reference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//Reference/relation"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//SummaryTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//SummaryTable/columns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//SummaryTable/domainWrapper"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//SummaryTable/bapName"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//TableColumn">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/headerValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/index"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/property"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/referenceListName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/selectDisabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/comments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//TableColumn/mapping"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//Tag">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Tag/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//Tag/value"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//TypeExtension">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//TypeExtension/domainClass"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//TypeExtension/properties"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//ViewComponent">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ViewComponent/componentId"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//ViewElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ViewElement/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ViewElement/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ViewElement/type"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="fw2.model2.ecore#//ViewPrimitive"/>
+    <genClasses ecoreClass="fw2.model2.ecore#//UiFieldType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldType/dataType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldType/htmlType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldType/onScreenValidationMethod"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference fw2.model2.ecore#//UiFieldType/properties"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//UiFieldTypeProperty">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldTypeProperty/propertyName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldTypeProperty/propertyType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//UiFieldTypeProperty/typeName"/>
+    </genClasses>
+    <genClasses ecoreClass="fw2.model2.ecore#//ComponentMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ComponentMapping/className"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ComponentMapping/componentId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ComponentMapping/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute fw2.model2.ecore#//ComponentMapping/typeCode"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

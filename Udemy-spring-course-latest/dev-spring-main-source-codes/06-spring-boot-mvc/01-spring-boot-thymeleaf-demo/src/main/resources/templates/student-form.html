@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Student Form</title>
+</head>
+
+<body>
+    <h3>Student Registration Form</h3>
+    <!-- Here th:object="${student}" student is model attribute which we added in showForm method in StudentController-->
+    <form th:action="@{processStudentForm}" th:object="${student}" method="post">
+        <!-- *{firstName} is actually short cut for ${student.firstName} -->
+        First Name: <input type="text" th:field="*{firstName}">
+
+        <br><br>
+
+        Last Name: <input type="text" th:field="*{lastName}">
+
+        <br><br>
+
+        Country:
+
+
+        <select th:field="*{country}">
+            <!--<option th:value="India">India</option>
+            <option th:value="America">America</option>
+            <option th:value="Brazil">Brazil</option>
+            <option th:value="UK">UK</option>
+            <option th:value="Australia">Australia</option> -->
+
+            <!-- To loop over to the countries -->
+            <option th:each="tempCounty : ${countries}" th:value="${tempCounty}" th:text="${tempCounty}" />
+
+        </select>
+
+        <br><br>
+
+        Favourite Programming Language:
+        <!-- here field is binding property on Student class and value is value which will be submitted during form submission-->
+        <!--<input type="radio" th:field="*{favouriteLanguage}" th:value="Go">Go
+        <input type="radio" th:field="*{favouriteLanguage}" th:value="Java">Java
+        <input type="radio" th:field="*{favouriteLanguage}" th:value="Python">Python -->
+
+        <input type="radio" th:field="*{favouriteLanguage}" th:each="tempLanguage : ${favouriteLanguages}"
+            th:value="${tempLanguage}" th:text="${tempLanguage}" />
+        <br><br>
+
+        Favourite Operating System:
+
+        <!--<input type="checkbox" th:field="*{favouriteSystems}" th:value="Unix">Unix
+        <input type="checkbox" th:field="*{favouriteSystems}" th:value="Windows">Windows
+        <input type="checkbox" th:field="*{favouriteSystems}" th:value="Mac">Mac -->
+
+        <input type="checkbox" th:field="*{favouriteSystems}" th:each="tempSystem : ${favouriteSystems}"
+            th:value="${tempSystem}" th:text="${tempSystem}" />
+
+        <br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+
+</html>

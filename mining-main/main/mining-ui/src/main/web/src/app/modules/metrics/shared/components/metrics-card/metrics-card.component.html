@@ -1,0 +1,27 @@
+<nz-card [nzHoverable]="chartFilterData?.showChartDetails" [nzTitle]="title ? title : ''" class="metrics-card__card-container" 
+  [nzExtra]= "exportChartTemplate" (click)="clickService.clickOnCard($event, title)">
+  <ng-template #exportChartTemplate>
+    <a nz-button nzType="link" (click)="exportChart('.png', $event)" nzSize="small" >{{"module.graphs.png" | translate}}</a>
+  </ng-template>
+  <nz-row [nzGutter]="16" *ngIf="kpiList">
+    <nz-col [nzSpan]="8" *ngFor="let kpi of kpiList">
+      <nz-statistic
+        [nzValue]="formateNumber.transform(kpi.value)"
+        [nzTitle]="kpi.tooltipTitle ? titleTemplate : kpi.title"
+      ></nz-statistic>
+      <ng-template #titleTemplate>{{kpi.title}}<i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+        class="basic-fact__icon-info"
+        nzTooltipTitle="{{kpi.tooltipTitle}}"></i></ng-template>
+    </nz-col>
+  </nz-row>
+  <div *ngIf="description && descriptionPosition === 'top'" class="kpi-metrics__description">
+    <p>{{ description }}</p>
+  </div>
+  <div *ngIf="showEclipseHint">
+    <img src="assets/processing.svg" alt="no record" class="kpi-metrics__no-record" />
+  </div>
+  <div #metricChart class="kpi-metrics__chart" *ngIf="!showEclipseHint"></div>
+  <div *ngIf="description && descriptionPosition === 'bottom'" class="kpi-metrics__description">
+    <p>{{ description }}</p>
+  </div>
+</nz-card>

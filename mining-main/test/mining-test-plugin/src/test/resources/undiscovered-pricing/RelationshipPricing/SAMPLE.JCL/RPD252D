@@ -1,0 +1,35 @@
+//RPD252D JOB
+//SCRATCH  EXEC PGM=IEFBR14,COND=(0,LT)                                 00001000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00002000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00003000
+//*                                                                     00004000
+//RPD252   EXEC PGM=RPD252,REGION=1024K,COND=(0,LT)                     00005000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00007000
+//SYSUDUMP DD  SYSOUT=*                                                 00008000
+//SYSOUT   DD  SYSOUT=*                                                 00009000
+//PRINTR   DD  SYSOUT=*                                                 00010000
+//PRFICH   DD  SYSOUT=*                                                 00011000
+//PRINTA   DD  SYSOUT=*                                                 00012000
+//PRINTB   DD  SYSOUT=*                                                 00013000
+//PRINTC   DD  SYSOUT=*                                                 00014000
+//PRINTD   DD  SYSOUT=*                                                 00015000
+//PRINTE   DD  SYSOUT=*                                                 00016000
+//PRINTF   DD  SYSOUT=*                                                 00017000
+//PRINTG   DD  SYSOUT=*                                                 00018000
+//PRINTH   DD  SYSOUT=*                                                 00019000
+//PRINTI   DD  SYSOUT=*                                                 00020000
+//PRINTJ   DD  SYSOUT=*                                                 00021000
+//PRNTR01  DD  SYSOUT=*                                                 00022000
+//RPTRNW2  DD  DSN=BNKCA.IN0.RP50.RPTRNW2,DISP=(OLD,KEEP,KEEP)          00023000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00024000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=23408),      00025000
+//             SPACE=(CYL,(1,1),RLSE)                                   00026000
+//*                                                                     00027000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD252),DISP=SHR              00028000
+//*                                                                     00029000
+//

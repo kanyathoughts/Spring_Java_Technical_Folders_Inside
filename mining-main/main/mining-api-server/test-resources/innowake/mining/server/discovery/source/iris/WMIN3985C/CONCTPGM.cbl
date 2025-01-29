@@ -1,0 +1,32 @@
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.    concatenated.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT MYFXOUT      ASSIGN MYFXOUT
+                               FILE STATUS  IS MYFXOUT-STATUS.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  MYFXOUT                RECORDING MODE IS F
+                                  LABEL RECORDS ARE OMITTED
+                                  RECORD   80 CHARACTERS.
+       WORKING-STORAGE SECTION.
+       01  MY-PROGRAM-NAME PIC X(10) VALUE 'CONCATPGM'.
+       01 WS-VSAM-TABLE.
+          02 WS-VSAM-TABLE-KEY.
+             03 WS-TABLE-NAME PIC X(8).
+             03 WS-TABLE-TYPE PIC X(1).
+             03 WS-ENCODE-VALUE PIC X(30).
+          02 WS-DECODE-VALUE PIC X(80).
+          02 FILLER          PIC X(14).
+       LINKAGE SECTION.
+       PROCEDURE DIVISION.
+       DO-ALL-OPEN-OUTPUT SECTION.
+           IF MYSYSIN-COMMAND-ALL OR MYSYSIN-COMMAND-F
+             OPEN OUTPUT MYFXOUT
+           END-IF
+           .

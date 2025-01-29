@@ -1,0 +1,144 @@
+<nz-card nzSize="small" class="block-card__card-height"
+  [ngClass]="{'block-card__card-height-outdated': reachabilityBlockData.outdatedModule && ! reachabilityBlockData.status, 'block-card__card-height-deleted-block': reachabilityBlockData?.deletedModule}"
+  [nzTitle]="titleTemplate" [nzExtra]="quickActions" [nzHoverable]=" ! reachabilityBlockData?.deletedModule"  (click)="! reachabilityBlockData?.deletedModule && openSidePanel()">
+  <p class="block-card__element-margin" nz-typography nzEllipsis [nzEllipsisRows]="3" nz-tooltip [nzTooltipTitle]="reachabilityBlockData.description">
+    {{reachabilityBlockData.description || 'reachability.noDescription' | translate}}</p>
+  <div class="block-card__element-margin" *ngIf="uniqueReferencedTaxonomies?.length">
+    <ng-container *ngFor="let taxonomy of displayedTaxonomies; let i = index">
+      <nz-tag [ngClass]="{'block-card__taxonomy-margin': i === 1}" *ngIf="i < 2">{{ taxonomy }}</nz-tag>
+      <span *ngIf="i === 1 && uniqueReferencedTaxonomies?.length > 2" class="block-card__truncate" nz-tooltip
+        [nzTooltipTitle]="tooltipTaxonomies">
+        {{'+' + (uniqueReferencedTaxonomies?.length - 2) + ' more'}}
+      </span>
+    </ng-container>
+  </div>
+  <p class="block-card__boundary-margin" nz-typography><strong>{{'reachability.upperBound' | translate}}</strong></p>
+  <nz-space class="block-card__element-margin" *ngIf=" ! checkUpperBoundLength() && reachabilityBlockData?.upperBound.length; else noUpperBound">
+    <a [routerLink]="['/project-' + projectId + '/module-' + reachabilityBlockData.upperBound[0]?.linkHash + '/details/overview']"
+      target="_blank" *nzSpaceItem (click)="stopBubbling($event)">
+      {{upperBoundCharacterWrap(reachabilityBlockData.upperBound[0]?.name)}}
+    </a>
+    <div *nzSpaceItem>
+      {{reachabilityBlockData.upperBound[0]?.technology}} {{reachabilityBlockData.upperBound[0]?.type}}
+      <span *ngIf="reachabilityBlockData.upperBound?.length > 1" class="block-card__truncate" nz-tooltip
+        [nzTooltipTitle]="upperBoundInfo">
+        {{'+' + (reachabilityBlockData.upperBound.length - 1)}}
+      </span>
+      <span *ngIf="showDeletedTooltip" class="block-card__truncate">
+        {{'+' + showDeletedTooltip}}
+        <span nz-tooltip nzTooltipTitle="{{'reachability.mergedUpperBoundRemoved' | translate}}"><i class="block-card__outdated-rb" nz-icon nzType="exclamation-circle" nzTheme="fill"></i>
+        </span>
+      </span>
+    </div>
+  </nz-space>
+  <ng-template #noUpperBound>
+    <span class="block-card__truncate">{{'reachability.noUpperBound' | translate}}<i class="block-card__outdated-rb" nz-icon nzType="exclamation-circle" nzTheme="fill"></i></span>
+  </ng-template>
+  <p class="block-card__boundary-margin" nz-typography><strong>{{'reachability.lowerBound' | translate}}</strong></p>
+  <ng-container *ngFor="let boundary of reachabilityBlockData?.lowerBound">
+    <ng-container *ngIf="boundary.aggregations.length; else noLowerBound">
+      <nz-space>
+        <div *nzSpaceItem>{{lowerBoundLabelMapping(boundary?.aggregations[0])}}</div>
+        <nz-badge *nzSpaceItem nzStandalone [nzOverflowCount]="9999" [nzCount]="boundary?.aggregations[0].fields.UID.COUNT" class="card-badge"
+          nzShowZero></nz-badge>
+        <div *nzSpaceItem>
+          <span *ngIf="boundary?.aggregations?.length > 1" nz-tooltip class="block-card__truncate"
+            [nzTooltipTitle]="lowerBoundInfo" [nzTooltipTitleContext]="{$implicit: boundary}">
+            {{'+' + (boundary?.aggregations.length - 1)}}
+          </span>
+        </div>
+      </nz-space>
+    </ng-container>
+    <ng-template #noLowerBound>
+      <span class="block-card__truncate">{{'reachability.noLowerbound' | translate}}</span>
+    </ng-template>
+  </ng-container>
+</nz-card>
+
+<ng-template #lowerBoundInfo let-data>
+  <nz-space *ngFor="let aggregation of data?.aggregations.slice(1)">
+    <div *nzSpaceItem>{{lowerBoundLabelMapping(aggregation)}}</div>
+    <nz-badge *nzSpaceItem nzStandalone [nzOverflowCount]="9999" [nzCount]="aggregation.fields.UID.COUNT" class="card-badge"
+      nzShowZero></nz-badge>
+  </nz-space>
+</ng-template>
+
+<ng-template #upperBoundInfo>
+  <nz-space *ngFor="let upper of reachabilityBlockData?.upperBound.slice(1)">
+      <a [routerLink]="['/project-' + projectId + '/module-' + upper.linkHash + '/details/overview']" target="_blank"
+        *nzSpaceItem (click)="stopBubbling($event)">
+        {{upper?.name}}
+      </a>
+      <div *nzSpaceItem>{{upper?.technology}} {{upper?.type}}</div>
+  </nz-space>
+</ng-template>
+
+<ng-template #titleTemplate>
+  <label nz-checkbox *ngIf="enableCardIcon('checkbox')" [(ngModel)]="reachabilityBlockData.isSelected"
+    (ngModelChange)="sendToParent()" class="block-card__label-margin">
+  </label>
+  <span class="block-card__outdated-rb" nz-tooltip nzTooltipTitle="{{'reachability.outdatedTooltip' | translate}}"
+    *ngIf="enableCardIcon('outdated')" nz-icon nzType="redo" nzTheme="outline"></span>
+  <span class="block-card__outdated-rb" *ngIf="enableCardIcon('deleted')" nz-tooltip
+    nzTooltipTitle="Removed reachability block" nz-icon nzType="delete" nzTheme="fill"></span>
+  <span class="block-card__invisible-icon" *ngIf="enableCardIcon('inactive')" nz-icon nzType="eye-invisible"
+    nzTheme="outline"></span>
+  <span class="block-card__error-module" *ngIf="enableCardIcon('error')" nz-icon nzType="close-circle"
+    nzTheme="fill"></span>
+  <span class="block-card__missing_dependencies" *ngIf="enableCardIcon('warning')" nz-icon nzType="exclamation-circle"
+    nzTheme="fill"></span>
+  <label nz-typography
+    [ngClass]="{'block-card__label-margin': canEditRB, 'block-card__label-margin block-card__title-pointer': ! reachabilityBlockData.deletedModule }"><strong>{{reachabilityBlockData.name}}</strong></label>
+  <nz-tag *ngIf="reachabilityBlockData.status" nzColor="error">{{'reachability.inactive' | translate}}</nz-tag>
+  <a *ngIf="reachabilityBlockData.totalCount  && ! reachabilityBlockData.status" (click)="stopBubbling($event)"
+    [routerLink]="['/project-' + projectId + '/functional-analysis']"
+    [queryParams]="{ filterApplied: stringifyData({ reachabilityIds: reachabilityBlockData.uid }) }">
+    <nz-badge nzStandalone [nzOverflowCount]="9999" [nzCount]="iconTemplate" nz-tooltip nzTooltipTitle="{{'reachability.referencedBlockBadgeTooltip' | translate}}">
+      <ng-template #iconTemplate>
+        <span class="block-card__badge">
+          <i aria-hidden="true" nz-icon nzType="mining-icons:functional-analysis"></i>
+          {{reachabilityBlockData.totalCount}}
+        </span>
+      </ng-template>
+    </nz-badge>
+  </a>
+</ng-template>
+
+<ng-template #quickActions>
+  <button id="reachability-block-actions-button" [disabled]="reachabilityBlockData?.deletedModule" nzSize="small"
+    nz-button nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" (click)="stopBubbling($event)" nz-tooltip
+    [nzTooltipTitle]="reachabilityBlockData?.deletedModule ? ('reachability.upperBoundRemovedTooltip' | translate) : ''"><i
+      aria-hidden="true" nz-icon nzType="more" nzTheme="outline"></i></button>
+</ng-template>
+
+<nz-dropdown-menu #menu="nzDropdownMenu" >
+  <ul nz-menu>
+    <li nz-menu-item (click)="openEditModal()" *ngIf="canEditRB">{{'reachability.editNameAndDescriptionLabel' |
+      translate}}</li>
+    <li nz-menu-item (click)="openTableView()">{{'reachability.tableView' | translate}}</li>
+    <li nz-menu-item (click)="openGraphView()">{{'reachability.graphView' | translate}}</li>
+    <li nz-menu-item (click)="recalculateReachabilityAnalysisOnSelectedBlocks()" [nzDisabled]=" ! canEditRB || reachabilityBlockData?.outdatedModule">
+      {{'reachability.recalculate' | translate}}</li>
+  </ul>
+</nz-dropdown-menu>
+
+<ng-template #drawerTitleTemplate>
+  <strong>{{ reachabilityBlockData?.name }} <nz-tag *ngIf="reachabilityBlockData?.status"
+      nzColor="error">{{'reachability.inactive' | translate}}</nz-tag>
+      <nz-page-header-subtitle  *ngIf="reachabilityBlockData.blockState.errorCount || reachabilityBlockData.blockState.warningsCount">{{'reachability.moduleswith' | translate}}</nz-page-header-subtitle>  
+    <nz-tag *ngIf="reachabilityBlockData.blockState.errorCount" nzColor="error" class="block-card__title-pointer"
+      (click)="openModulesTable('errors')">{{'reachability.errors' | translate}}<nz-badge class="block-card__badge-margin"
+      [nzOverflowCount]="9999" [nzCount]="reachabilityBlockData.blockState.errorCount" nzSize="small"></nz-badge></nz-tag>
+    <nz-tag *ngIf="reachabilityBlockData.blockState.warningsCount" nzColor="warning" class="block-card__title-pointer"
+      (click)="openModulesTable('warnings')">{{'reachability.warnings' | translate}} <nz-badge
+        class="block-card__badge-margin block-card__warning-badge" [nzOverflowCount]="9999" [nzCount]="reachabilityBlockData.blockState.warningsCount" nzSize="small"></nz-badge></nz-tag>
+  </strong>
+  <button *ngIf="reachabilityBlockData?.status && canEditRB" (click)="updateBlock('ACTIVE')" nz-tooltip
+    nzTooltipTitle="{{'reachability.activeButtonTooltip' | translate}}" nz-button>
+    <span nz-icon nzType="eye" nzTheme="outline"></span>{{'reachability.activateBlock' | translate}}
+  </button>
+  <button *ngIf="! reachabilityBlockData?.status && canEditRB" (click)="updateBlock('INACTIVE')" nz-tooltip
+    nzTooltipTitle="{{'reachability.inactiveButtonTooltip' | translate}}" nz-button>
+    <span nz-icon nzType="eye-invisible" nzTheme="outline"></span>{{'reachability.inactivateBlock' | translate}}
+  </button>
+</ng-template>

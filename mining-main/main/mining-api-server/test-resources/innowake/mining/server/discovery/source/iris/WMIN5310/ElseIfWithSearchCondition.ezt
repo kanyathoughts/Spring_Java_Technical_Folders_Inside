@@ -1,0 +1,51 @@
+FILE PERSNL FB(150 1800)                                                
+  EMP#             9    5  N                                            
+  EMPNAME         17   20  A                                            
+    NAME-LAST  EMPNAME     8  A                                         
+    NAME-FIRST EMPNAME +8 12  A                                         
+  PAY-NET         90    4  P 2                                          
+  PAY-GROSS       94    4  P 2                                          
+  AMT            127    1  N                                            
+TOTAL-EMP#         W    3  N VALUE 0                                    
+TOTAL-PAY          W    3  N VALUE 0                                    
+TOTAL-FIRST-NAME   W    3  N VALUE 0                                    
+MALE               W    1  N VALUE 1                                    
+JOB INPUT PERSNL NAME MYPROG FINISH FINISH-PROC                         
+ IF EMP#
+
+     TOTAL-EMP# = TOTAL-EMP# + 3                                        
+ ELSE-IF NOT EMP#
+
+     TOTAL-EMP# = TOTAL-EMP# + 2                                        
+ ELSE-IF NOT SECONDARY
+
+     TOTAL-EMP# = TOTAL-EMP# + 2                                        
+ ELSE-IF NOT EOF TOTAL-EMP#
+
+     TOTAL-EMP# = TOTAL-EMP# + 1                                        
+ ELSE-IF NOT EOF PRIMARY
+
+     TOTAL-AMT = TOTAL-AMT + 1                                          
+ ELSE-IF EOF PRIMARY
+
+     TOTAL-PAY = TOTAL-PAY + 1                                          
+ ELSE-IF EOF SECONDARY 
+
+     TOTAL-FIRST-NAME = TOTAL-FIRST-NAME + 1                            
+ ELSE-IF NOT EMP:ID 
+
+     TOTAL-EMP# = TOTAL-EMP# + 3                                        
+ ELSE-IF EOF EMP(3)
+
+     TOTAL-EMP# = TOTAL-EMP# + 2                                        
+ ELSE-IF EOF PATHID
+
+     TOTAL-EMP# = TOTAL-EMP# + 2                                        
+ ELSE-IF NOT PATHID
+
+     TOTAL-PAY = TOTAL-PAY + 1                                          
+ ELSE-IF NOT PRIMARY
+
+     TOTAL-EMP# = TOTAL-EMP# + 1                                        
+   END-IF                                                               
+

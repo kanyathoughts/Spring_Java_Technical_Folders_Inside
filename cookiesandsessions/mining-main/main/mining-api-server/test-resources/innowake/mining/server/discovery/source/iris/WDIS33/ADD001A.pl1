@@ -1,0 +1,24 @@
+ ADD001A: PROCEDURE OPTIONS(MAIN);
+   %INCLUDE BAS001B;
+      
+   DCL 1 GR_1,
+    2 FLD_1 FLOAT DECIMAL(3) INIT(123),
+    2 FLD_2 FLOAT DECIMAL(3),
+    2 FXD_1 FIXED DECIMAL(3) INIT(456);
+
+    FLD_2 = ADD ( FLD_1 , FXD_1 , 3 );
+    
+    PUT SKIP LIST('');
+    PUT SKIP LIST('');
+    PUT SKIP LIST('GR_1');
+    PUT SKIP LIST('Test Case : ADD001_1    ******');
+    PUT SKIP LIST('');
+ /* this is a comment spanning two
+  lines */ FLD_2 = 0; /* this is also a
+ comment spanning two lines */
+ /*******Test case: ADD006_1   *****
+  */ FD_10 = FD_11 + FD_12 ; /*
+ A =  '    This is  a MultiLine Comment     '*/
+ CALL HEXDUMP32(ADDR(GR_1) , SIZE(GR_1));
+   
+ END ADD001A;

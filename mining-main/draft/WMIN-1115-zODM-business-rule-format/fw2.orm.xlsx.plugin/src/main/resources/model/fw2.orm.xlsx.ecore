@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="xlsx" nsURI="http://fw2.orm.xlsx/1.0" nsPrefix="fw2.orm.xlsx">
+  <eClassifiers xsi:type="ecore:EClass" name="MapElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="CardinalityEnum">
+    <eLiterals name="ONE"/>
+    <eLiterals name="MANY" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AssociationMap" abstract="true" eSuperTypes="#//MapElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinality" eType="#//CardinalityEnum"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relatedClassMap" eType="#//ClassMap"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentMap" eSuperTypes="#//MapElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="columnMaps" upperBound="-1"
+        eType="#//ColumnMap" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lookupMaps" upperBound="-1"
+        eType="#//LookupMap" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ClassMap" eSuperTypes="#//ComponentMap">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aggregationMaps" upperBound="-1"
+        eType="#//AggregationMap" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceMaps" upperBound="-1"
+        eType="#//ReferenceMap" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ColumnMap" eSuperTypes="#//MapElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnType" eType="#//ColumnTypeEnum"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nullable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="primaryKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceMap" eSuperTypes="#//AssociationMap">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceKeys" upperBound="-1"
+        eType="#//ReferenceKey" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LookupMap" eSuperTypes="#//ReferenceMap"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AggregationMap" eSuperTypes="#//AssociationMap">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="componentMap" eType="#//ComponentMap"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceKey" eSuperTypes="#//MapElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyColumnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ColumnTypeEnum">
+    <eLiterals name="TEXT"/>
+    <eLiterals name="TIMESTAMP" value="1"/>
+    <eLiterals name="DATE" value="2"/>
+    <eLiterals name="INTEGER" value="3"/>
+    <eLiterals name="TIME" value="4"/>
+    <eLiterals name="DECIMAL" value="5"/>
+    <eLiterals name="LONG" value="6"/>
+    <eLiterals name="BOOLEAN" value="7"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Mapping" eSuperTypes="#//MapElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="classMaps" upperBound="-1"
+        eType="#//ClassMap" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LookupKey" eSuperTypes="#//ReferenceKey"/>
+</ecore:EPackage>

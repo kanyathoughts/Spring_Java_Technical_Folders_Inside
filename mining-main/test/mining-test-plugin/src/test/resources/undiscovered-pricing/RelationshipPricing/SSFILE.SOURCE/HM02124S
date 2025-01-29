@@ -1,0 +1,35 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7102                                             *
+*   Description  . . Combined Balance Code 4                           *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(22,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                 Combined Balance Code 4 - Help
+
+    This overrides the default balance in the combined balance
+    calculation.  Valid entries are:
+
+      00    Do not include this balance in the calculation.
+      01    Current balance.
+      02    Current customer collected.
+      03    Current institution collected.
+      04    Low balance.
+      05    Average balance.
+      06    Average collected balance.
+      07    Commitment amount.
+      08    Credit limit.
+      09-15 Reserved.
+      16-20 User-defined.  Interfaces must be modified to input
+            user-defined balances.
+                                                                _
+    F12=Cancel                                            M02124S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

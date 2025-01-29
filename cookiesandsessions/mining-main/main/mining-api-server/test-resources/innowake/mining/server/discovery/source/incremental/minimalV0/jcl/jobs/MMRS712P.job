@@ -1,0 +1,30 @@
+//MMRS712P JOB 'MMRS00C',CLASS=A,TIME=(1),LINES=1,REGION=0M,
+//            MSGLEVEL=(2,1),MSGCLASS=A
+//*************************************************************************
+//***** MMRS-M01  mainframe modernization reference system
+//*************************************************************************
+//***** MMRS712P  IDCAMS to unload with UTF-8 for print
+//*************************************************************************
+//    SET VSAMK=MMRS00C.AWA.VSAMK
+//    SET VSAMR=MMRS00C.AWA.VSAMR
+//    SET VSAME=MMRS00C.AWA.VSAME
+//    SET VSAMPRT=MMRS00C.AWA.VSAM.PRINT
+//*
+//    SET UNLDCB=(FILETYPE=UTF8)
+//    SET UNLSPAC=(CYL,(1,5))
+//*
+//STEPDEL  EXEC PGM=IEFBR14
+//MYUNLK DD DISP=(MOD,DELETE),SPACE=(TRK,(1,5)),DSN=&VSAMPRT
+//*
+//*************************************************************************
+//***** MMRS712U  IDCAMS unload data from KSDS, ESDS and RRDS
+//*************************************************************************
+//STEPVSK  EXEC PGM=IDCAMS
+//SYSPRINT DD  SYSOUT=*
+//IN       DD  DISP=MOD,DSN=&VSAMK
+//OUT      DD  DISP=(,CATLG),DSN=&VSAMPRT,
+//             SPACE=&UNLSPAC,
+//             DCB=&UNLDCB
+//SYSIN    DD  *
+  REPRO INFILE(IN) OUTFILE(OUT)
+/*

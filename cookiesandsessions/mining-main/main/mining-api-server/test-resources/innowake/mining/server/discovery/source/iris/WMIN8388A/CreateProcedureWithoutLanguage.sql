@@ -1,0 +1,2 @@
+CREATE PROCEDURE test_procedure
+    EXTERNAL NAME jcl1;

@@ -1,0 +1,3 @@
+UPDATE ModuleFilter REMOVE moduleId;
+DROP PROPERTY ModuleFilter.moduleId;
+CREATE PROPERTY ModuleFilter.moduleIds IF NOT EXISTS EMBEDDEDSET LONG (NOTNULL, DEFAULT []);

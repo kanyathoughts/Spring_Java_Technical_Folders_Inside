@@ -1,0 +1,47 @@
+REPEAT WHILE NOT #A
+  ADD 1 TO #X                                                           
+  WRITE NOTITLE '=' #X
+  IF NOT (#B OR #CITY = 'A' THRU 'E')
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  IF NOT (#CITY AND #COUNTRY = 'USI' AND #D)
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+END-REPEAT
+
+REPEAT
+  ADD 1 TO #X                                                           
+  WRITE NOTITLE '=' #X
+  IF NOT (#B OR #CITY = 'A' THRU 'E')
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  IF NOT (#CITY AND #COUNTRY = 'USI' AND #D)
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  WHILE #X <= 5
+END-REPEAT
+
+REPEAT                                                             
+  ADD 1 TO #Y                                                           
+  WRITE '=' #Y
+  IF NOT (#B OR #CITY = 'A' THRU 'E')
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  IF NOT (#CITY AND #COUNTRY = 'USI' AND #D)
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  UNTIL #Y = 6                                                          
+END-REPEAT
+
+REPEAT UNTIL #Y
+  ADD 1 TO #Y                                                           
+  WRITE '=' #Y
+  IF NOT (#B OR #CITY = 'A' THRU 'E')
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+  IF NOT (#CITY AND #COUNTRY = 'USI' AND #D)
+       WRITE NOTITLE '=' #VAR1 '=' #VAR2
+  END-IF
+END-REPEAT
+*                                                                       
+END

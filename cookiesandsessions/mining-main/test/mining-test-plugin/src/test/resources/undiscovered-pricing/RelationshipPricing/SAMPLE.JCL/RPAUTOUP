@@ -1,0 +1,245 @@
+//RPAUTOUP JOB
+//*    ****************************************************             00001000
+//*    * RPAUTOUP - RELATIONSHIP PRICING AUTOMATIC UPDATE *             00002000
+//*    ****************************************************             00003000
+//JOBLIB   DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.DP86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.TI86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//         DD  DSN=CICSTS22.CICS.SDFHEXCI,DISP=SHR                      00005000
+//*                                                                     00006000
+//*    *********************************                                00007000
+//*    * SET FILES TO READ-ONLY STATUS *                                00008000
+//*    *********************************                                00009000
+//STEP005  EXEC PGM=MIR050,REGION=500K                                  00010000
+//SYSPRINT DD  SYSOUT=*                                                 00011000
+//SYSUDUMP DD  SYSOUT=*                                                 00012000
+//SYSDBOUT DD  SYSOUT=*                                                 00013000
+//SYSOUT   DD  SYSOUT=C                                                 00014000
+//MICARD   DD  *                                                        00015000
+001&APPLID                                                              00016000
+002RPFACT  R                                                            00017000
+002RPFMST  R                                                            00018000
+002RPFREL  R                                                            00019000
+002RPFSEC  R                                                            00020000
+/*                                                                      00021000
+//*                                                                     00022000
+//*    *****************************                                    00023000
+//*    * RPR150 - AUTOMATIC UPDATE *                                    00024000
+//*    *****************************                                    00025000
+//STEP010  EXEC PGM=IEFBR14,COND=(0,LT)                                 00026000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00027000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00028000
+//*                                                                     00029000
+//STEP015  EXEC PGM=RPR150,REGION=1024K,COND=(0,LT)                     00030000
+//SYSPRINT DD  SYSOUT=*                                                 00031000
+//SYSUDUMP DD  SYSOUT=*                                                 00032000
+//SYSOUT   DD  SYSOUT=*                                                 00033000
+//PRINTR   DD  SYSOUT=*                                                 00034000
+//PRFICH   DD  SYSOUT=*                                                 00035000
+//PRINTA   DD  SYSOUT=*                                                 00036000
+//PRINTB   DD  SYSOUT=*                                                 00037000
+//PRINTC   DD  SYSOUT=*                                                 00038000
+//PRINTD   DD  SYSOUT=*                                                 00039000
+//PRINTE   DD  SYSOUT=*                                                 00040000
+//PRINTF   DD  SYSOUT=*                                                 00041000
+//PRINTG   DD  SYSOUT=*                                                 00042000
+//PRINTH   DD  SYSOUT=*                                                 00043000
+//PRINTI   DD  SYSOUT=*                                                 00044000
+//PRINTJ   DD  SYSOUT=*                                                 00045000
+//PRNTR01  DD  SYSOUT=3                                                 00046000
+//PRNTRST  DD  SYSOUT=*                                                 00047000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00048000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00049000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//*    **********************************************                   00001000
+//*    * DPVSAMDD - DEPOSITS VSAM API DD STATEMENTS *                   00002000
+//*    **********************************************                   00003000
+//DPFL01   DD  DSN=BNKCAV.IN0.DP85.DPFL01,DISP=SHR                      00004000
+//DPFL02   DD  DSN=BNKCAV.IN0.DP85.DPFL02,DISP=SHR                      00005000
+//DPFL03   DD  DSN=BNKCAV.IN0.DP85.DPFL03,DISP=SHR                      00006000
+//DPFL04   DD  DSN=BNKCAV.IN0.DP85.DPFL04,DISP=SHR                      00007000
+//DPFL05   DD  DSN=BNKCAV.IN0.DP85.DPFL05,DISP=SHR                      00008000
+//DPFL06   DD  DSN=BNKCAV.IN0.DP85.DPFL06,DISP=SHR                      00009000
+//DPFL07   DD  DSN=BNKCAV.IN0.DP85.DPFL07,DISP=SHR                      00010000
+//DPFL08   DD  DSN=BNKCAV.IN0.DP85.DPFL08,DISP=SHR                      00011000
+//DPFL09   DD  DSN=BNKCAV.IN0.DP85.DPFL09,DISP=SHR                      00012000
+//DPFL10   DD  DSN=BNKCAV.IN0.DP85.DPFL10,DISP=SHR                      00013000
+//DPFL11   DD  DSN=BNKCAV.IN0.DP85.DPFL11,DISP=SHR                      00014000
+//DPFL12   DD  DSN=BNKCAV.IN0.DP85.DPFL12,DISP=SHR                      00015000
+//DPFL13   DD  DSN=BNKCAV.IN0.DP85.DPFL13,DISP=SHR                      00016000
+//DPFL14   DD  DSN=BNKCAV.IN0.DP85.DPFL14,DISP=SHR                      00017000
+//DPFL15   DD  DSN=BNKCAV.IN0.DP85.DPFL15,DISP=SHR                      00018000
+//DPFL16   DD  DSN=BNKCAV.IN0.DP85.DPFL16,DISP=SHR                      00019000
+//DPFL17   DD  DSN=BNKCAV.IN0.DP85.DPFL17,DISP=SHR                      00020000
+//DPFL18   DD  DSN=BNKCAV.IN0.DP85.DPFL18,DISP=SHR                      00021000
+//DPFL19   DD  DSN=BNKCAV.IN0.DP85.DPFL19,DISP=SHR                      00022000
+//DPFL20   DD  DSN=BNKCAV.IN0.DP85.DPFL20,DISP=SHR                      00023000
+//DPFL21   DD  DSN=BNKCAV.IN0.DP85.DPFL21,DISP=SHR                      00024000
+//DPFL22   DD  DSN=BNKCAV.IN0.DP85.DPFL22,DISP=SHR                      00025000
+//DPFL23   DD  DSN=BNKCAV.IN0.DP85.DPFL23,DISP=SHR                      00026000
+//DPFL24   DD  DSN=BNKCAV.IN0.DP85.DPFL24,DISP=SHR                      00027000
+//DPFL25   DD  DSN=BNKCAV.IN0.DP85.DPFL25,DISP=SHR                      00028000
+//DPFL26   DD  DSN=BNKCAV.IN0.DP85.DPFL26,DISP=SHR                      00029000
+//DPFL27   DD  DSN=BNKCAV.IN0.DP85.DPFL27,DISP=SHR                      00030000
+//DPFL29   DD  DSN=BNKCAV.IN0.DP85.DPFL29,DISP=SHR                      00031000
+//DPFL39   DD  DSN=BNKCAV.IN0.DP85.DPFL39,DISP=SHR                      00032000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00001000
+//RFFL09   DD  DSN=BNKCAV.IN0.RF21.RFFL09,DISP=SHR                      00002000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00003000
+//RFFL11   DD  DSN=BNKCAV.IN0.RF21.RFFL11,DISP=SHR                      00004000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00005000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00006000
+//RFFL15   DD  DSN=BNKCAV.IN0.RF21.RFFL15,DISP=SHR                      00007000
+//*RFFL17   DD  DSN=BNKCAV.IN0.RF21.RFFL17,DISP=SHR                     00008000
+//*RFFL18   DD  DSN=BNKCAV.IN0.RF21.RFFL18,DISP=SHR                     00009000
+//*    ******************************************                       00001000
+//*    * TIVSAMDD - VSAM API DD/DLBL STATEMENTS *                       00002000
+//*    ******************************************                       00003000
+//TIFL01   DD   DSN=BNKCAV.IN0.TI85.TIFL01,DISP=SHR,                    00004000
+//         AMP=('BUFNI=7','BUFND=15')                                   00005000
+//TIFL02   DD   DSN=BNKCAV.IN0.TI85.TIFL02,DISP=SHR,                    00006000
+//         AMP=('BUFNI=7','BUFND=15')                                   00007000
+//TIFL03   DD   DSN=BNKCAV.IN0.TI85.TIFL03,DISP=SHR,                    00008000
+//         AMP=('BUFNI=7','BUFND=15')                                   00009000
+//TIFL04   DD   DSN=BNKCAV.IN0.TI85.TIFL04,DISP=SHR,                    00010000
+//         AMP=('BUFNI=7','BUFND=15')                                   00011000
+//TIFL05   DD   DSN=BNKCAV.IN0.TI85.TIFL05,DISP=SHR,                    00012000
+//         AMP=('BUFNI=7','BUFND=15')                                   00013000
+//TIFL06   DD   DSN=BNKCAV.IN0.TI85.TIFL06,DISP=SHR,                    00014000
+//         AMP=('BUFNI=7','BUFND=15')                                   00015000
+//TIFL07   DD   DSN=BNKCAV.IN0.TI85.TIFL07,DISP=SHR,                    00016000
+//         AMP=('BUFNI=7','BUFND=15')                                   00017000
+//TIFL08   DD   DSN=BNKCAV.IN0.TI85.TIFL08,DISP=SHR,                    00018000
+//         AMP=('BUFNI=7','BUFND=15')                                   00019000
+//TIFL09   DD   DSN=BNKCAV.IN0.TI85.TIFL09,DISP=SHR,                    00020000
+//         AMP=('BUFNI=7','BUFND=15')                                   00021000
+//TIFL10   DD   DSN=BNKCAV.IN0.TI85.TIFL10,DISP=SHR,                    00022000
+//         AMP=('BUFNI=7','BUFND=15')                                   00023000
+//TIFL11   DD   DSN=BNKCAV.IN0.TI85.TIFL11,DISP=SHR,                    00024000
+//         AMP=('BUFNI=7','BUFND=15')                                   00025000
+//TIFL12   DD   DSN=BNKCAV.IN0.TI85.TIFL12,DISP=SHR,                    00026000
+//         AMP=('BUFNI=7','BUFND=15')                                   00027000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00054000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),      00055000
+//             SPACE=(CYL,(1,1),RLSE)                                   00056000
+//*                                                                     00057000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR150),DISP=SHR              00058000
+//*                                                                     00059000
+/*                                                                      00060000
+//*    ********************                                             00061000
+//*    * CLOSE RPSEC FILE *                                             00062000
+//*    ********************                                             00063000
+//STEP020  EXEC PGM=MIR050,REGION=500K,COND=(0,LT)                      00064000
+//SYSPRINT DD  SYSOUT=*                                                 00065000
+//SYSUDUMP DD  SYSOUT=*                                                 00066000
+//SYSDBOUT DD  SYSOUT=*                                                 00067000
+//SYSOUT   DD  SYSOUT=C                                                 00068000
+//MICARD   DD  *                                                        00069000
+001&APPLID                                                              00070000
+002RPFSEC  C                                                            00071000
+/*                                                                      00072000
+//*                                                                     00073000
+//*    ***********************************************                  00074000
+//*    * RPD240 - SECONDARY RECORD INFORMATION BUILD *                  00075000
+//*    ***********************************************                  00076000
+//STEP025  EXEC PGM=IEFBR14,COND=(0,LT)                                 00077000
+//MIAPIB   DD   DSN=BNKCA.IN0.RP50.BLDSEC,                              00078000
+//         DISP=(MOD,DELETE,DELETE),                                    00079000
+//         UNIT=SYSDA,                                                  00080000
+//         SPACE=(TRK,(1,1),RLSE)                                       00081000
+//*                                                                     00082000
+//STEP030  EXEC PGM=RPD240,REGION=1024K,COND=(0,LT)                     00083000
+//SYSUDUMP DD   SYSOUT=*                                                00084000
+//SYSPRINT DD   SYSOUT=*                                                00085000
+//SYSOUT   DD   SYSOUT=*                                                00086000
+//MIAPIB   DD   DSN=BNKCA.IN0.RP50.BLDSEC,                              00087000
+//         DISP=(NEW,CATLG,DELETE),                                     00088000
+//         UNIT=SYSDA,                                                  00089000
+//         SPACE=(CYL,(50,25),RLSE),                                    00090000
+//         DCB=(RECFM=VB,LRECL=2019,BLKSIZE=26303)                      00091000
+//RPSORT   DD   UNIT=SYSDA,SPACE=(CYL,(2,1))                            00092000
+//RPFREL   DD   DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                     00093000
+//*                                                                     00094000
+//STEP035  EXEC PGM=IDCAMS,REGION=512K,COND=(0,LT)                      00095000
+//SYSUDUMP DD   SYSOUT=*                                                00096000
+//SYSABOUT DD   SYSOUT=*                                                00097000
+//SYSOUT   DD   SYSOUT=*                                                00098000
+//SYSPRINT DD   SYSOUT=*                                                00099000
+//*                                                                     00100000
+//SYSIN    DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPFSEC),DISP=SHR              00101000
+//*                                                                     00102000
+//STEP040  EXEC PGM=BIS863B,REGION=4096K,COND=(0,LT)                    00103000
+//BIPUTIL  DD  DSN=BNKCA.IN0.RP50.BLDSEC,                               00104000
+//             DISP=(OLD,KEEP,KEEP),                                    00105000
+//             DCB=BUFNO=20                                             00106000
+//BIPDSK1  DD  DSN=&&BIPDSK1,DISP=(,DELETE,DELETE),                     00107000
+//             UNIT=SYSDA,SPACE=(CYL,(2,2),RLSE),                       00108000
+//             DCB=(RECFM=VB,LRECL=2015,BLKSIZE=16300)                  00109000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//BNKPRT1  DD  SYSOUT=*                                                 00112000
+//SYSOUT   DD  SYSOUT=*                                                 00113000
+//SYSPRINT DD  SYSOUT=*                                                 00114000
+//* DSNTRACE DD  DUMMY                                                  00115000
+//SYSIN    DD   *                                                       00116000
+IPRP BNK INFOPNT  EN BIS863B  0 L 0                                     00117000
+END                                                                     00118000
+SAI                                                                     00119000
+//*                                                                     00120000
+/*                                                                      00121000
+//*                                                                     00122000
+//*    ******************************************                       00123000
+//*    * OPEN FILES FOR ADD, UPDATE, AND DELETE *                       00124000
+//*    ******************************************                       00125000
+//STEP045  EXEC PGM=MIR050,REGION=500K,COND=(0,LT)                      00126000
+//SYSPRINT DD  SYSOUT=*                                                 00127000
+//SYSUDUMP DD  SYSOUT=*                                                 00128000
+//SYSDBOUT DD  SYSOUT=*                                                 00129000
+//SYSOUT   DD  SYSOUT=C                                                 00130000
+//MICARD   DD  *                                                        00131000
+001&APPLID                                                              00132000
+002RPFACT  U                                                            00133000
+002RPFMST  U                                                            00134000
+002RPFREL  U                                                            00135000
+002RPFSEC  U                                                            00136000
+/*                                                                      00137000
+//

@@ -1,0 +1,690 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.
+           MEE6165D.
+       ENVIRONMENT DIVISION.
+      *
+       CONFIGURATION SECTION.
+      *
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *
+       INPUT-OUTPUT SECTION.
+      *
+       FILE-CONTROL.
+      *
+           SELECT SAPIN ASSIGN TO "AS-INFILE"
+                  ORGANIZATION IS SEQUENTIAL
+                  FILE STATUS IS WS-FILE-STATUS.
+      *
+       DATA DIVISION.
+      *
+       FILE SECTION.
+      *
+      *
+       FD  SAPIN
+           RECORD IS VARYING FROM 49 TO 253 CHARACTERS
+           DEPENDING ON WS-REC-LENGTH.
+      *
+       01  FS-SAPIN-REC.
+           03 FS-SAPIN-KEY                      PIC  X(0023).
+           03 FILLER OCCURS 230.
+              05 FILLER                         PIC  X(0001).
+      *
+       WORKING-STORAGE SECTION.
+      *
+       77  WS-FILE-STATUS                       PIC  X(0002)
+                                                     VALUE SPACE.
+           88 WS-END-OF-FILE                         VALUE "10".
+           88 WS-ISAM-DUPKEY                         VALUE "22".
+           88 WS-ISAM-NOT-FOUND                      VALUE "23".
+           88 WS-ISAM-NOT-FOUND-AFTER-START          VALUE "46".
+       77  WS-FILE-STATUS-SAVE                  PIC  X(0002).
+       77  WS-REC-LENGTH                        PIC  9(0005)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-STA                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-SEQ                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-DIR                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-RENTEN                  PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-REGRESSE                PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-ZAHLUNGEN               PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-REIKO                   PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-UPD                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-PARM-IN                       PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-PARM-WRONG                    PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-PARM-SEL                      PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPSAVE-OUT                   PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SOBLISTE-OUT                  PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPXML-OUT                    PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SAPIN-HEADER-IO               PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-DBNVA-IO                      PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-AKTE-UPD                      PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-ZAHL-IN                       PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-ZAHL-INS                      PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-ADR-ERG-UPD                   PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-ANSPR-INS                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-TVS-IN                        PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-TVS-OK                        PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-TVS-NOT-FOUND                 PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-GBU-IN                        PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-GBU-UPD                       PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-GBU-INS                       PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-TERM-IN                       PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-TERM-OUT                      PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-INTERVAL                          PIC  9(0009)
+      * DIENT ZUR STEUERUNG F�R BEISPIELAUSGABEN NACH SYSOUT
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-INTERVAL-WERT                     PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE 10.
+       77  WS-ANZ-BAST-NOT-FOUND                PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-SHDIAL-USER                   PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-ANZ-IP                            PIC  9(0009)
+                                                     VALUE ZERO.
+       77  WS-ANZ-IP-A                          PIC  9(0009)
+                                                     VALUE ZERO.
+       77  WS-ANZ-ET-OK                         PIC  9(0009)
+                                                     PACKED-DECIMAL
+                                                     VALUE ZERO.
+       77  WS-RESP-CODE                         PIC  9(0009)
+                                                      VALUE ZERO.
+      *
+      *      DATENSATZBESCHREIBUNGEN
+      *
+       01  WS-SAPIN-REC.
+        10 SHCSAPDC.
+      *
+              15 SAP-KOPF.
+      *
+                 20 SAP-SCHL.
+                    25 SAP-SCHL-SOB             PIC  9(0013).
+                    25 SAP-SCHL-PROZESSART      PIC  9(0002).
+                    25 SAP-SCHL-SOB-FOLGE-NR    PIC  9(0008).
+      *
+                 20 SAP-DATEI-STATUS            PIC  9(0001).
+                    88 SAP-UNBEARBEITET      VALUE ZERO.
+                    88 SAP-IN-BEARBEITUNG    VALUE 1.
+                    88 SAP-IN-SHDB-GELADEN   VALUE 2.
+                 20 SAP-SATZ-STATUS REDEFINES SAP-DATEI-STATUS.
+                    25 FILLER                   PIC  9(0001).
+                 20 SAP-DATEI-RC                PIC  9(0002).
+                    88 SAP-RC-OK         VALUE ZERO.
+                    88 SAP-RC-FEHLER     VALUE 1 THRU 98.
+                    88 SAP-MIT-FEHLERN   VALUE 99.
+                 20 SAP-SATZ-RC REDEFINES SAP-DATEI-RC.
+                    25 FILLER                   PIC  9(0002).
+                 20 SAP-DATEINAME               PIC  9(0014).
+                 20 SAP-ZEIT-STMP REDEFINES SAP-DATEINAME.
+                    25 SAP-DATEI-DAT            PIC  9(0008).
+                    25 SAP-DATEI-ZEIT           PIC  9(0006).
+                 20 SAP-ANZ-GESMT               PIC  9(0009).
+       01  WS-BEDINGUNGSVARIABLEN.
+      *
+           05 WS-BDV01                          PIC  X(0020).
+              88 WS-IN-WORK              VALUE "IN WORK".
+              88 WS-END-OF-WORK          VALUE "END OF WORK".
+           05 WS-BDV02                          PIC  X(0020).
+              88 WS-NOT-IN-LOOP          VALUE "NOT IN LOOP".
+              88 WS-START-OF-LOOP        VALUE "START OF LOOP".
+              88 WS-IN-LOOP              VALUE "IN LOOP".
+              88 WS-END-OF-LOOP          VALUE "END OF LOOP".
+           05 WS-BDV021                         PIC  X(0020).
+              88 WS-IN-LOOP2             VALUE "IN LOOP2".
+              88 WS-END-OF-LOOP2         VALUE "END OF LOOP2".
+           05 WS-BDV03                          PIC  X(0020).
+              88 WS-REC-OK               VALUE "REC OK".
+              88 WS-REC-WRONG            VALUE "REC WRONG".
+           05 WS-BDV04                          PIC  X(0020).
+      * M�GLICHE KLASSEN F�R FEHLERURSACHEN
+              88 WS-WORK-OK              VALUE "WORK OK".
+              88 WS-FILE-ERROR           VALUE "FILE-ERROR".
+              88 WS-SHDB-ERROR           VALUE "SHDB-ERROR".
+              88 WS-VI-ERROR             VALUE "VI-ERROR".
+              88 WS-EURO-ERROR           VALUE "EURO-CONV-ERROR".
+              88 WS-DATE-ERROR           VALUE "DATE-ERROR".
+              88 WS-DATA-ERROR           VALUE "DATA-ERROR".
+              88 WS-XML-ERROR            VALUE "XML-ERROR".
+              88 WS-STRUCT-ERROR         VALUE "STRUCT-ERROR".
+           05 WS-BDV05                          PIC  X(0020).
+              88 WS-REC-FOUND             VALUE "REC FOUND".
+              88 WS-REC-NOT-FOUND         VALUE "REC NOT FOUND".
+           05 WS-BDV06                          PIC  X(0020).
+      * DATEINAMEN F�R BS2-FILE-IO
+              88 WS-FILENAME-SAPIN        VALUE "FILENAME SAPIN".
+              88 WS-FILENAME-SAPSAVE      VALUE "FILENAME SAPSAVE".
+              88 WS-FILENAME-PARMFILE     VALUE "FILENAME PARMFILE".
+              88 WS-FILENAME-SOBLISTE     VALUE "FILENAME SOBLISTE".
+           05 WS-BDV07                          PIC  X(0020).
+      * SAP-ISAM-FILE (INPUT + UPDATE)
+              88 WS-SAPIN-START           VALUE "SAPIN START".
+              88 WS-SAPIN-RNXT            VALUE "SAPIN RNXT".
+              88 WS-SAPIN-RKEY            VALUE "SAPIN RKEY".
+              88 WS-SAPIN-REWRITE         VALUE "SAPIN REWRITE".
+           05 WS-BDV08                          PIC  X(0020).
+      * SHDB-NACHVERARBEITUNGS-FILE (INSERT + UPDATE)
+              88 WS-DBNVA-FIND            VALUE "DBNVA-FIND".
+              88 WS-DBNVA-INSERT          VALUE "DBNVA-INSERT".
+              88 WS-DBNVA-UPDATE          VALUE "DBNVA-UPDATE".
+           05 WS-BDV09                          PIC  X(0020).
+              88 WS-RC-OK                 VALUE "00RC OK".
+              88 WS-RC-PROZESSART-WRONG   VALUE "01PROZESSART WRONG".
+              88 WS-RC-SOB-NOT-FOUND      VALUE "02SOB NOT FOUND".
+              88 WS-RC-AKTE-LOCKED        VALUE "03AKTE LOCKED".
+              88 WS-RC-AKTE-UPD-ERROR     VALUE "04AKTE UPD-ERROR".
+              88 WS-RC-WAEH-SCHL-WRONG    VALUE "05WAEH-SCHL WRONG".
+              88 WS-RC-AUSZ-ART-WRONG     VALUE "06AUSZ-ART WRONG".
+              88 WS-RC-LEIST-ART-WRONG    VALUE "07LEIST-ART WRONG".
+              88 WS-RC-LEIST-TYP-WRONG    VALUE "08LEIST-TYP WRONG".
+              88 WS-RC-ZAHL-INS-ERROR     VALUE "09ZAHL INSERT-ERROR".
+              88 WS-RC-SOB-IN-GERAS       VALUE "10SOB/GERAS-SCHADEN".
+              88 WS-RC-VERRECH-KTO-WRONG  VALUE "11VERRECH-KTO WRONG".
+              88 WS-RC-SOLLHABEN-KZ-WRONG VALUE "12SOLLHABEN-KZ WRONG".
+              88 WS-RC-FEHLER-KTO-WRONG   VALUE "13FEHLER-KTO WRONG".
+              88 WS-RC-KTO-KOMBI-WRONG    VALUE "14KTO-KOMBI WRONG".
+              88 WS-RC-BUCH-DAT-WRONG     VALUE "15BUCH-DAT WRONG".
+              88 WS-RC-BLG-NR-WRONG       VALUE "16BLG-NR WRONG".
+              88 WS-RC-HISTORIEN-SOB      VALUE "17HISTORIEN-SOB".
+              88 WS-RC-RR-MIGRIERT        VALUE "18SOB RR-MIGRIERT".
+           05 WS-BDV10                          PIC  X(0020).
+              88 WS-BTCUS-FOUND           VALUE "BTC-USER FOUND".
+              88 WS-BTCUS-NOT-FOUND       VALUE "BTC-USER NOT FOUND".
+           05 WS-BDV11                          PIC  X(0020).
+              88 WS-FREE-GBU-FOUND        VALUE "FREE GBU FOUND".
+              88 WS-FREE-GBU-NOT-FOUND    VALUE "FREE GBU NOT FOUND".
+           05 WS-BDV12                          PIC  X(0020)
+                                          VALUE "XML-OPEN NEIN".
+              88 WS-XML-OPEN-JA           VALUE "XML-OPEN JA".
+              88 WS-XML-OPEN-NEIN         VALUE "XML-OPEN NEIN".
+           05 WS-BDV13                          PIC  X(0020).
+              88 WS-KOMMA-VORH            VALUE "KOMMA VORHANDEN".
+              88 WS-KOMMA-NICHT-VORH      VALUE "KEIN KOMMA VONHANDEN".
+      *
+      * F�R DIE BERECHNUNG WOCHENTAG
+           05 WS-REST                           PIC  9.
+              88 WS-MONTAG                VALUE 1.
+              88 WS-DIENSTAG              VALUE 2.
+              88 WS-MITTWOCH              VALUE 3.
+              88 WS-DONNERSTAG            VALUE 4.
+              88 WS-FREITAG               VALUE 5.
+              88 WS-SAMSTAG               VALUE 6.
+              88 WS-SONNTAG               VALUE ZERO.
+              88 WS-MONTAG-BIS-DONNERSTAG VALUE 1 THRU 4.
+              88 WS-MONTAG-BIS-FREITAG    VALUE 1 THRU 5.
+           05 WS-TAGE                           PIC  9(0008).
+              88 WS-DATUM-FALSCH          VALUE ZERO.
+      *
+       01  WS-ERGEBNIS                          PIC  9(0008).
+       01  WS-WOCHENTAG                         PIC  X(0010).
+      *
+      *
+       01  WS-DVS-CODE.
+           03 WS-DVS-RC                         PIC  9(0002) COMP.
+           03 WS-DVS-CODE-TXT                   PIC  X(0004).
+      *
+        01 WS-DVS-RC-VALUE                      PIC  9(0004).
+      *
+       01  WS-WORKAREA.
+           03 WS-PROZESS-INFO.
+              05 WS-PI-USER-IDENT.
+                 07 WS-PI-JOBTYP                PIC  X(0001).
+                    88 JOBTYP-BATCH VALUE "B".
+                    88 JOBTYP-DIALOG VALUE "D".
+                 07 WS-PI-TSN                   PIC  X(0004).
+              05 WS-PI-KENNUNG.
+                 07 WS-PI-KENNUNGSTYP           PIC  X(0001).
+                    88 KENNUNGSTYP-PROD VALUE "D" "P".
+                    88 KENNUNGSTYP-TEST VALUE "I", "T".
+                 07 WS-PI-SACHGEBIET            PIC  X(0007).
+              05 WS-PI-ACCOUNT                  PIC  X(0008).
+              05 WS-PI-PRIVILEGIERT             PIC  X(0001).
+              05 WS-PI-BS-VERSION               PIC  X(0030).
+           03 WS-CURRENT-DATE.
+              05 WS-CD-DATE                     PIC  9(0008).
+              05 FILLER REDEFINES WS-CD-DATE.
+                 07 WS-CD-JAHR                  PIC  9(0004).
+                 07 FILLER REDEFINES WS-CD-JAHR.
+                    09 WS-CD-JH                 PIC  9(0002).
+                    09 WS-CD-JJ                 PIC  9(0002).
+                 07 WS-CD-MM                    PIC  9(0002).
+                 07 WS-CD-TT                    PIC  9(0002).
+              05 WS-CD-TIME                     PIC  9(0006).
+              05 FILLER REDEFINES WS-CD-TIME.
+                 07 WS-CD-HH                    PIC  9(0002).
+                 07 WS-CD-MIN                   PIC  9(0002).
+                 07 WS-CD-SS                    PIC  9(0002).
+              05 FILLER                         PIC  X(0007).
+           03 WS-VI-INFO                        PIC  X(0072).
+           03 FILLER REDEFINES WS-VI-INFO.
+              05 WS-VI-TXT                      PIC  X(0025).
+           03 WS-ZEIT-STMP.
+              05 WS-ZST-DAT                     PIC  9(0008).
+              05 WS-ZST-ZEIT                    PIC  9(0006).
+           03 WS-WORK-DATE                      PIC  9(0008).
+           03 WS-SCHAD-ZAHL-DAT                 PIC  9(0008).
+           03 WS-SCHAD-ERL-KZ                   PIC  X(0001).
+           03 WS-WAEH-KZ-ISO-ABR                PIC  X(0003)
+                                                     VALUE SPACE.
+           03 WS-ZAHL-KOPF-LNR                  PIC  9(0008).
+           03 WS-ZAHL-POS-LNR                   PIC  9(0008).
+           03 WS-ABW-ZEMPF-LNR                  PIC  9(0004)
+                                                     VALUE ZERO.
+           03 WS-ADR-ZUORD-LNR                  PIC  9(0005)
+                                                     VALUE ZERO.
+           03 WS-SCHAD-ANSPR-LNR                PIC  9(0004)
+                                                     VALUE ZERO.
+           03 WS-SOB                            PIC  9(0013).
+           03 FILLER REDEFINES WS-SOB.
+              05 WS-SOB-GS                      PIC  9(0002).
+              05 WS-SOB-SPARTE                  PIC  9(0003).
+              05 WS-SOB-LNR                     PIC  9(0005).
+              05 WS-SOB-JAHR                    PIC  9(0002).
+              05 WS-SOB-PZ                      PIC  9(0001).
+           03 WS-SOB-ALT                        PIC  9(0013)
+                                                     VALUE ZERO.
+           03 WS-SOB-NEU                        PIC  9(0013)
+                                                     VALUE ZERO.
+           03 WS-SAP-KOPF.
+              05 WS-SAP-SCHL.
+                 07 WS-SAP-SOB                  PIC  9(0013).
+                 07 WS-SAP-PROZS-ART            PIC  9(0002).
+                 07 WS-SAP-PROZS-FOLGE-NR       PIC  9(0008).
+              05 WS-SAP-STATUS                  PIC  9(0001).
+              05 WS-SAP-RC                      PIC  9(0002).
+              05 WS-SAP-ZEIT-STMP               PIC  9(0014).
+              05 WS-SAP-ANZ-GESAMT              PIC  9(0009).
+           03 WS-SAP-STATUS-SAVE                PIC  9(0001)
+                                                     VALUE ZERO.
+           03 WS-SAP-RC-SAVE                    PIC  9(0002)
+                                                     VALUE ZERO.
+           03 WS-SCHAD-SPAR                     PIC  9(0003).
+      *    GLTIGKEITEN ZUR UNTERSCHEIDUNG DER LEISTUNGSARTEN 618/763
+           03 WS-SCHADEN-SPARTE                 PIC  9(0003).
+              88 SCHAD-SPAR-MIT-LEISTART-763
+                 VALUE 526, 600 THRU 920, 939, 940, 970, 980, 985, 990.
+           03 WS-NUM-FILTER                     PIC  X(0040).
+           03 WS-NUMCAR                         PIC S9(0018).
+           03 WS-NUMCAR-ALPHA REDEFINES WS-NUMCAR.
+              05 FILLER                         PIC  X(0018).
+           03 WS-PARM-WORK.
+              05 I-SCHAD-SPAR                   PIC  X(00015).
+              05 FILLER REDEFINES I-SCHAD-SPAR.
+                 07 I-SCHAD-SPAR-NUM            PIC  9(0003).
+              05 I-SPAR-TXT                     PIC  X(0030).
+              05 I-SPAR-BEREICH                 PIC  X(0030).
+              05 I-SPAR-DETAIL                  PIC  X(0030).
+              05 I-SPAR-INTERVAL                PIC  X(0010).
+              05 FILLER REDEFINES I-SPAR-INTERVAL.
+                 07 I-SPAR-INTERVAL-NUM         PIC  9(0003).
+              05 I-SPAR-TRAEGER                 PIC  X(0050).
+           03 WS-PARM-TAB.
+              05 WS-T-PARM-ELEM OCCURS 200.
+                 07 WS-T-PARM-SCHAD-SPAR        PIC  9(0003).
+                 07 WS-T-PARM-TRAEGER           PIC  X(0050).
+           03 WS-SPRUNG-TAB.
+              05 WS-T-SPRUNG-ELEM OCCURS 400.
+                 07 WS-T-SPRUNG-ERL-KZ          PIC  X(0001).
+                 07 WS-T-SPRUNG-SCHAD-SPAR      PIC  9(0003).
+                 07 WS-T-SPRUNG-TRAGER-ELEM OCCURS 5.
+                    09 WS-T-SPRUNG-TRAEGER      PIC  9(0003).
+           03 WS-HUS-SCHADEN                    PIC  9.
+              88 WS-HUS-OK                      VALUE 1.
+              88 WS-HUS-NOT-OK                  VALUE ZERO.
+           03 WS-I1                             PIC  9(0004).
+           03 WS-I2                             PIC  9(0004).
+           03 WS-I3                             PIC  9(0004).
+           03 WS-I4                             PIC  9(0005).
+           03 WS-I5                             PIC  9(0005).
+           03 WS-SAP-ANZ-GESMT                  PIC  ZZZZZZZZ9.
+           03 WS-SAP-BETR-GESMT                 PIC -(13)9,99.
+           03 WS-SAP-ANZ-OK                     PIC  ZZZZZZZZ9.
+           03 WS-SAP-BETR-OK                    PIC -(13)9,99.
+           03 WS-SAP-ANZ-FEHL                   PIC  ZZZZZZZZ9.
+           03 WS-SAP-BETR-FEHL                  PIC -(13)9,99.
+           03 WS-I                              PIC 9(3) VALUE ZERO.
+           03 WS-PNTR                           PIC  9(0005).
+           03 WS-SAP-LEIST-ART                  PIC  9(0005).
+              88 WS-SAP-LEIST-ART-INDIREKT
+                 VALUE 427, 450, 587, 618, 658, 713, 763, 764, 765,
+                       766, 792, 823, 939, 945, 946, 953, 983, 988.
+              88 WS-SAP-LEIST-ART-TA
+                 VALUE 430, 539, 550, 609, 610, 611, 612, 613, 623,
+                       640, 641, 710, 781, 860, 906.
+           03 W-SAMMEL-RETURN          PIC 9(01).
+              88 W-SAMMEL-OK           VALUE ZERO.
+              88 W-SAMMEL-FEHL         VALUE 1.
+              88 W-SAMMEL-ENDE         VALUE 2.
+           03 WS-MAIL                            PIC  9.
+              88 WS-MAIL-OK                      VALUE ZERO.
+              88 WS-MAIL-NOT-OK                  VALUE 1.
+           03 W-LL                               PIC 9.
+           03 W-IPNR                             PIC X(05) VALUE SPACE.
+           03 W-X-IPNR                           PIC X(05).
+           03 W-IPNAME                           PIC X(50) VALUE SPACE.
+           03 W-IPBUERO                          PIC X(50) VALUE SPACE.
+           03 WS-MAIL-SOB                        PIC 9(13) VALUE 0.
+           03 W-IND-1                            PIC 99.
+           03 W-IND-2                            PIC 999.
+           03 W-USER-ID                          PIC  X(0008).
+           03 W-NAME-MA                          PIC  X(0040).
+           03 W-IP-BETRAG                       PIC S9(13)V9(02) COMP-3.
+           03 WS-IP-SUM-INDIR                   PIC S9(13)V9(02) COMP-3.
+           03 W-IP-WAEH                          PIC X(03).
+           03 W-AUSLAND                          PIC X(01) VALUE SPACE.
+           03 W-BETREFF                          PIC X(120) VALUE SPACE.
+           03 WS-IP-TAB.
+              05 WS-T-IP-ELEM OCCURS 99.
+                 07 TAB-FELD-1                  PIC  X(10).
+                 07 TAB-FELD-2                  PIC  X(10).
+                 07 TAB-FELD-3.
+                    10 FILLER                   PIC  X(03).
+                    10 SOB-SPAR-1               PIC  X(01).
+                    10 FILLER                   PIC  X(12).
+                 07 TAB-FELD-4                  PIC  X(15).
+                 07 TAB-FELD-5                  PIC  X(35).
+                 07 TAB-FELD-6                  PIC  X(50).
+                 07 TAB-FELD-7                  PIC  X(50).
+                 07 TAB-FELD-8                  PIC  X(30).
+                 07 TAB-FELD-9                  PIC  X(40).
+                 07 TAB-FELD-10                 PIC  X(08).
+                 07 TAB-FELD-11                 PIC  -(13)9,99.
+                 07 TAB-FELD-12                 PIC  -(13)9,99.
+                 07 TAB-FELD-13                 PIC  -(13)9,99.
+                 07 TAB-FELD-14                 PIC  X(03).
+                 07 TAB-FELD-15                 PIC  X(01).
+           03  WS-LOOP-SWITCH                   PIC 9(01) VALUE 0.
+               88 WS-LOOP-START                 VALUE 0.
+               88 WS-LOOP-ENDE                  VALUE 1.
+
+      *-- WK-FELDER FUER ABSETZEN BS2000-KOMMANDO (SEND-MAIL) --------*
+           03  WK-BS2000-KOMMANDO       PIC X(900).
+           03  WK-BS2000-RETURN         PIC X(79).
+           03  WK-MAILTO-DOMAIN         PIC X(48)        VALUE SPACE.
+           03  WK-MAILTO-NAME           PIC X(48)        VALUE SPACE.
+           03  WK-MAILTO.
+               07 WK-MAILTO-UMGEBUNG    PIC X(01).
+               07 FILLER                PIC X(01).
+               07 WK-MAILTO-ADR         PIC X(100).
+           03  WK-HOST-NAME             PIC X(08).
+               88 WK-HDIHOSTA              VALUE "HDIHOSTA".
+               88 WK-HDIHOSTE              VALUE "HDIHOSTE".
+               88 WK-HDIHOSTB              VALUE "HDIHOSTB".
+
+      *-- UEBERGABEBEREICHE FUER MODULAUFRUF -------------------------*
+
+      *---------------------------------------------------------------
+      *  FELD ZUM UMKEHREN DES INVERSEN SCHADENDATUM
+      *---------------------------------------------------------------
+       01  W-SCHAD-DAT               PIC 9(8).
+       01  FILLER REDEFINES W-SCHAD-DAT.
+           05 W-DAT-JJJJ             PIC 9(04).
+           05 W-DAT-MM               PIC 9(02).
+           05 W-DAT-TT               PIC 9(02).
+       01  W-SCHAD-DAT-TTMMJJJJ.
+           05 W-DAT-TT-X             PIC X(02).
+           05 FILLER                 PIC X(01) VALUE ".".
+           05 W-DAT-MM-X             PIC X(02).
+           05 FILLER                 PIC X(01) VALUE ".".
+           05 W-DAT-JJJJ-X           PIC X(04).
+      *
+       01  W-MELD-DAT                PIC 9(8).
+       01  FILLER REDEFINES W-MELD-DAT.
+           05 W-MELD-JJJJ            PIC 9(04).
+           05 W-MELD-MM              PIC 9(02).
+           05 W-MELD-TT              PIC 9(02).
+       01  W-MELD-DAT-TTMMJJJJ.
+           05 W-MELD-TT-X             PIC X(02).
+           05 FILLER                  PIC X(01) VALUE ".".
+           05 W-MELD-MM-X             PIC X(02).
+           05 FILLER                  PIC X(01) VALUE ".".
+           05 W-MELD-JJJJ-X           PIC X(04).
+      *
+       01  W-SOB-AUFBEREIT.
+           05  W-SOB-T1               PIC X(02).
+           05  FILLER                 PIC X(01) VALUE "-".
+           05  W-SOB-T2               PIC X(03).
+           05  FILLER                 PIC X(01) VALUE "-".
+           05  W-SOB-T3               PIC X(05).
+           05  FILLER                 PIC X(01) VALUE "-".
+           05  W-SOB-T4               PIC X(03).
+      *
+       01  W-VERTRAG-AUFBEREIT.
+           05  W-V-T1                 PIC X(02).
+           05  FILLER                 PIC X(01) VALUE "-".
+           05  W-V-T2                 PIC X(06).
+           05  FILLER                 PIC X(01) VALUE "-".
+           05  W-V-T3                 PIC X(05).
+      *
+
+       PROCEDURE DIVISION.
+      *
+      *
+       SH6540 SECTION.
+       SH6540-START.
+      *
+           MOVE ALL ZEROS TO FS-SAPIN-KEY
+           OPEN I-O SAPIN
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF1'
+           END-IF
+
+           SET WS-SAPIN-REWRITE TO TRUE
+           MOVE 9 TO SAP-DATEI-STATUS
+           DISPLAY "TO REWRITE:", WS-SAPIN-REC
+           PERFORM SAPIN-START
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF3'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC.
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF2'
+           END-IF
+
+           SET WS-SAPIN-REWRITE TO TRUE
+           MOVE 9 TO SAP-DATEI-STATUS
+           DISPLAY "TO REWRITE:", WS-SAPIN-REC
+           PERFORM SAPIN-START
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF3'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF4'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF5'
+           END-IF
+
+           CLOSE SAPIN
+
+           OPEN INPUT SAPIN
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF1'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC.
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF2'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF4'
+           END-IF
+
+           SET WS-SAPIN-RNXT TO TRUE
+           MOVE SPACES TO WS-SAPIN-REC
+           PERFORM SAPIN-START
+           DISPLAY "RNXT:", WS-SAPIN-REC
+           IF WS-END-OF-FILE
+                 DISPLAY 'EOF5'
+           END-IF
+
+           CLOSE SAPIN.
+
+
+      *
+       SH6540-EXIT.
+           STOP RUN.
+      *
+       X100-SAPIN SECTION.
+       SAPIN-START.
+      *
+           SET WS-WORK-OK TO TRUE
+           SET WS-FILENAME-SAPIN TO TRUE
+           EVALUATE TRUE
+              WHEN WS-SAPIN-RNXT
+                 READ SAPIN NEXT INTO WS-SAPIN-REC
+                      AT END
+                         SET WS-END-OF-FILE TO TRUE
+                         MOVE WS-FILE-STATUS TO WS-FILE-STATUS-SAVE
+                 END-READ
+                 IF WS-FILE-STATUS GREATER "10"
+                 THEN
+                    SET WS-FILE-ERROR TO TRUE
+                    SET WS-END-OF-LOOP TO TRUE
+                    SET WS-END-OF-WORK TO TRUE
+                 END-IF
+                 IF     WS-FILE-STATUS LESS "10"
+                    AND NOT WS-END-OF-FILE
+                 THEN
+                    ADD 1 TO WS-ANZ-SAPIN-SEQ
+                    SET WS-REC-FOUND TO TRUE
+                    MOVE SAP-KOPF OF WS-SAPIN-REC TO WS-SAP-KOPF
+                 END-IF
+               WHEN WS-SAPIN-REWRITE
+                 COMPUTE WS-REC-LENGTH = FUNCTION LENGTH
+                                         (FS-SAPIN-REC)
+                 REWRITE FS-SAPIN-REC FROM WS-SAPIN-REC
+                 END-REWRITE
+                 IF WS-FILE-STATUS GREATER "10"
+                 THEN
+                    SET WS-FILE-ERROR TO TRUE
+                    SET WS-END-OF-LOOP TO TRUE
+                    SET WS-END-OF-WORK TO TRUE
+                 END-IF
+                 IF WS-FILE-STATUS LESS "10"
+                 THEN
+                    ADD 1 TO WS-ANZ-SAPIN-UPD
+                    IF FS-SAPIN-KEY EQUAL ZERO
+                    THEN
+                       ADD 1 TO WS-ANZ-SAPIN-HEADER-IO
+                    END-IF
+                 END-IF
+           END-EVALUATE
+           CALL 'MEE6165B'.
+      *
+       SAPIN-EXIT.
+           EXIT.
+      *

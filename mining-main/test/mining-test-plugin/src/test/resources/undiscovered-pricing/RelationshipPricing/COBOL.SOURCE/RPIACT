@@ -1,0 +1,404 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPIACT.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*  RPIACT - RELATIONSHIP PRICING - ACCOUNT RECORD INTERFACE      *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 CONFIGURATION SECTION.                                           00008000
+P0170  SPECIAL-NAMES.                                                   00008100
+P0170      C01 IS C-01, C02 IS C-02, C03 IS C-03.                       00008200
+P0170  INPUT-OUTPUT SECTION.                                            00008300
+P0170  FILE-CONTROL.                                                    00008400
+000000 COPY RPRATCS.                                                    00008500
+000090 DATA DIVISION.                                                   00009000
+000100 FILE SECTION.                                                    00010000
+000000 COPY RPRATCF.                                                    00010300
+P0170  01  RP-RATCREC                  PIC X(80).                       00010600
+000110******************************************************************00011000
+000120 WORKING-STORAGE SECTION.                                         00012000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00013000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00013001
+000140 01  RPS-RLSELIT.                                                 00014000
+000000 COPY RPWRLSE.                                                    00015000
+000160 01  MIWMSTA-AREAS.                                               00016000
+000000 COPY MIWMSTA.                                                    00017000
+P0170  01  SRW000-AREAS.                                                00017200
+000000 COPY SRW000.                                                     00017400
+P0170  01  SRW009-AREAS.                                                00017600
+000000 COPY SRW009.                                                     00017800
+000180 01  SRW105-AREAS.                                                00018000
+000000 COPY SRW105.                                                     00019000
+000200*01  BICPBPRM.                                                    00020000
+000000 COPY BICPBPRM.                                                   00021000
+000220*01  BICRSRB.                                                     00022000
+000000 COPY BICRSRB.                                                    00023000
+000240*01  BICRPSB.                                                     00024000
+000000 COPY BICRPSB.                                                    00025000
+000260*01  BICRVERB.                                                    00026000
+000000 COPY BICRVERB.                                                   00027000
+000280*01  BICRSTAT.                                                    00028000
+000000 COPY BICRSTAT.                                                   00029000
+000300*01  BICRDBS.                                                     00030000
+000000 COPY BICRDBS.                                                    00031000
+000320*01  BICRLOG.                                                     00032000
+000000 COPY BICRLOG.                                                    00033000
+000340 01  RPACT-RECORD.                                                00034000
+000000 COPY RPSACT.                                                     00035000
+000360 01  RPWACT-AREAS.                                                00036000
+000000 COPY RPWACTA.                                                    00037000
+P0170  01  RPRATC-RECORD.                                               00037300
+000000 COPY RPSRATC.                                                    00037600
+000380 01  WS-WORKAREAS.                                                00038000
+000390     03  WS-ACTOPEN              PIC X(01)       VALUE SPACES.    00039000
+P0170      03  WS-RATCOPEN             PIC X(01)       VALUE SPACES.    00039500
+000400     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00040000
+000410     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00041000
+P0170      03  WS-RATE-PCT             PIC SV9(09)     COMP-3           00041070
+P0170                                                  VALUE ZEROS.     00041140
+P0170      03  WS-RATE-BAL             PIC S9(13)V99   COMP-3           00041210
+P0170                                                  VALUE ZEROS.     00041280
+P0170      03  WS-BAL                  PIC S9(13)V99   COMP-3           00041350
+P0170                                                  VALUE ZEROS.     00041420
+P0170      03  WS-SUB1                 PIC S9(04)      COMP             00041490
+P0170                                                  VALUE +0.        00041560
+P0170      03  WS-SUB2                 PIC S9(04)      COMP             00041630
+P0170                                                  VALUE +0.        00041700
+P0170      03  WS-LASTDATE             PIC S9(07)      COMP-3.          00041770
+P0170      03  WS-DAYS-FROM-SC         PIC S9(07)      COMP-3.          00041840
+000420 LINKAGE SECTION.                                                 00042000
+000430 01  LS-LINKDATA.                                                 00043000
+000000 COPY RPW010.                                                     00044000
+000450******************************************************************00045000
+000460 PROCEDURE DIVISION                                               00046000
+000470         USING LS-LINKDATA.                                       00047000
+000480******************************************************************00048000
+000490 INITIALIZATION SECTION.                                          00049000
+000500 IN-START.                                                        00050000
+000510     MOVE 'RPIACT' TO SR-APIPROGLIT.                              00051000
+000520     MOVE 'RPIACT' TO WS-UPD-USER.                                00052000
+000530     MOVE 'N' TO RPS-ACT-LOG.                                     00053000
+000540     IF LS-ACT-FUNCTION IS EQUAL TO 'C'                           00054000
+000550         GO TO CLOSE-ROUTINE.                                     00055000
+000560     IF LS-ACT-FUNCTION IS EQUAL TO 'O'                           00056000
+000570         OR LS-ACT-FUNCTION IS EQUAL TO 'R'                       00057000
+000580         GO TO MAIN-LOGIC.                                        00058000
+000590     MOVE 'X' TO LS-ACT-FUNCTION.                                 00059000
+000600     GO TO RETURN-ROUTINE.                                        00060000
+000610 IN-EXIT.                                                         00061000
+000620     EXIT.                                                        00062000
+000630******************************************************************00063000
+000640 MAIN-LOGIC SECTION.                                              00064000
+000650 ML-START.                                                        00065000
+000660     PERFORM OPEN-ROUTINE.                                        00066000
+000670     IF LS-ACT-FUNCTION IS EQUAL TO 'R'                           00067000
+000680         GO TO READ-RANDOM.                                       00068000
+000690     GO TO RETURN-ROUTINE.                                        00069000
+000700 ML-EXIT.                                                         00070000
+000710     EXIT.                                                        00071000
+000720******************************************************************00072000
+000730 OPEN-ROUTINE SECTION.                                            00073000
+P0199  OR-OPENACT.                                                      00074000
+000750     IF WS-ACTOPEN IS EQUAL TO 'Y'                                00075000
+P0199          GO TO OR-OPENRATC.                                       00076000
+000770     PERFORM GET-FILE-ORGANIZATION.                               00077000
+000780     MOVE 'Y' TO WS-ACTOPEN.                                      00078000
+000790     MOVE LS-ACT-KEY TO RPACT-GRP-KEY.                            00079000
+000800     PERFORM RPS-ACT-OPEN-REQUEST.                                00080000
+P0199  OR-OPENRATC.                                                     00080500
+P0199      IF WS-RATCOPEN IS EQUAL TO 'Y'                               00080560
+P0199          OR LS-ACT-CALL-OPTION IS EQUAL TO 'S'                    00080620
+P0199          GO TO OR-EXIT.                                           00080680
+P0199      MOVE 'Y' TO WS-RATCOPEN.                                     00080740
+P0199      OPEN OUTPUT RP-RATCFIL.                                      00080800
+000810 OR-EXIT.                                                         00081000
+000820     EXIT.                                                        00082000
+000830******************************************************************00083000
+000840 CLOSE-ROUTINE SECTION.                                           00084000
+000850 CR-START.                                                        00085000
+P0170      IF WS-ACTOPEN IS NOT EQUAL TO 'Y'                            00085300
+P0170          GO TO CR-END.                                            00085600
+000860     PERFORM RPS-ACT-CLOSE-REQUEST.                               00086000
+000870     MOVE SPACES TO WS-ACTOPEN.                                   00087000
+P0199      IF WS-RATCOPEN IS NOT EQUAL TO 'Y'                           00087100
+P0199          GO TO CR-END.                                            00087200
+P0199      MOVE SPACES TO WS-RATCOPEN.                                  00087300
+P0170      CLOSE RP-RATCFIL.                                            00087500
+000880 CR-END.                                                          00088000
+000890     GO TO RETURN-ROUTINE.                                        00089000
+000900 CR-EXIT.                                                         00090000
+000910     EXIT.                                                        00091000
+000920******************************************************************00092000
+000930 READ-RANDOM SECTION.                                             00093000
+000940 RR-START.                                                        00094000
+000950     MOVE 'N' TO LS-ACT-RATEINCENTIVE.                            00095000
+000960     MOVE 'N' TO LS-ACT-SCINCENTIVE.                              00096000
+000970     MOVE ZEROS TO LS-ACT-RATE-PERCENT.                           00097000
+000980     MOVE ZEROS TO LS-ACT-DISCAMT.                                00098000
+000990     MOVE '0' TO LS-ACT-RATE-OPTION.                              00099000
+001000     MOVE 'I' TO LS-ACT-RATE-TYPE.                                00100000
+001010     MOVE ZEROS TO LS-ACT-DISCPCT.                                00101000
+P0170      MOVE 'N' TO LS-ACT-RATECHG-FLAG.                             00101300
+P0170      MOVE ZEROS TO LS-ACT-RATE-PREV.                              00101600
+001020     INITIALIZE LS-ACT-SPLIT-RATE-TABLE.                          00102000
+001030 RR-READ.                                                         00103000
+001040     MOVE LS-ACT-KEY TO RPACT-GRP-KEY.                            00104000
+001050     PERFORM RPS-ACT-GET-REQUEST.                                 00105000
+001060     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00106000
+001070         GO TO RETURN-ROUTINE.                                    00107000
+001080 RR-GOOD.                                                         00108000
+001090     MOVE RPACT-SC-INC-QUAL TO LS-ACT-SCINCENTIVE.                00109000
+001100     MOVE RPACT-DISCOUNT-AMOUNT TO LS-ACT-DISCAMT.                00110000
+001110     MOVE RPACT-DISCOUNT-PERCENT TO LS-ACT-DISCPCT.               00111000
+001120     MOVE RPACT-RATE-INC-QUAL TO LS-ACT-RATEINCENTIVE.            00112000
+001130     MOVE RPACT-RATE-OPTION TO LS-ACT-RATE-OPTION.                00113000
+001140     MOVE RPACT-RATE-TYPE TO LS-ACT-RATE-TYPE.                    00114000
+001150     MOVE RPACT-RATE-PERCENT TO LS-ACT-RATE-PERCENT.              00115000
+P0170      MOVE RPACT-SPLIT-RATE-TABLE TO LS-ACT-SPLIT-RATE-TABLE.      00116000
+P0199      IF LS-ACT-CALL-OPTION IS EQUAL TO 'S'                        00116290
+P0199          OR RPACT-RECALC-RATE IS NOT EQUAL 'Y'                    00116370
+P0170          OR RPACT-RATE-INC-QUAL IS NOT EQUAL TO 'Y'               00116580
+P0170          GO TO RR-END.                                            00116870
+P0170      PERFORM RATE-INCENTIVE.                                      00117160
+P0170  RR-END.                                                          00117450
+P0170      GO TO RETURN-ROUTINE.                                        00117740
+P0170  RR-EXIT.                                                         00118030
+001190     EXIT.                                                        00119000
+P0170 ******************************************************************00119004
+P0170  RATE-INCENTIVE SECTION.                                          00119008
+P0170  RI-START.                                                        00119012
+P0170      MOVE ZEROS TO WS-RATE-PCT.                                   00119016
+P0170      MOVE ZEROS TO WS-SUB1.                                       00119020
+P0170      MOVE ZEROS TO WS-RATE-BAL.                                   00119024
+P0170      MOVE LS-ACT-RATE-PERCENT TO LS-ACT-RATE-PREV.                00119028
+P0170      MOVE 'N' TO LS-ACT-RATECHG-FLAG.                             00119032
+P0170  RI-INDIVIDUAL-RATE.                                              00119036
+P0170      IF RPACT-RATE-BALCD IS NOT NUMERIC                           00119040
+P0170          MOVE ZEROS TO RPACT-RATE-BALCD.                          00119044
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO ZEROS                        00119048
+P0170          OR RPACT-RATE-BALCD IS GREATER THAN 06                   00119052
+P0170          GO TO RI-EXIT.                                           00119056
+P0170      PERFORM GET-INDIVIDUAL-BALANCE.                              00119060
+P0170  RI-CHECK-RATE-OPTION.                                            00119064
+P0170      IF RPACT-RATE-BALORDER IS EQUAL TO 'LE'                      00119068
+P0170          GO TO RI-TABLE-LOOP-LE.                                  00119072
+P0170  RI-TABLE-LOOP-GE.                                                00119076
+P0170      ADD +1 TO WS-SUB1.                                           00119080
+P0170      IF WS-SUB1 IS GREATER THAN +15                               00119084
+P0170          GO TO RI-END.                                            00119088
+P0170      IF WS-SUB1 IS EQUAL TO +1                                    00119092
+P0170          GO TO RI-TABLE-CONT-GE.                                  00119096
+P0170      IF LS-ACT-RATEAMT (WS-SUB1) IS NOT GREATER THAN ZEROS        00119100
+P0170          GO TO RI-END.                                            00119104
+P0170  RI-TABLE-CONT-GE.                                                00119108
+P0170      IF WS-RATE-BAL IS NOT LESS THAN LS-ACT-RATEAMT (WS-SUB1)     00119112
+P0170          MOVE LS-ACT-RATEPCT (WS-SUB1) TO WS-RATE-PCT             00119116
+P0170          GO TO RI-TABLE-LOOP-GE.                                  00119120
+P0170      GO TO RI-END.                                                00119124
+P0170  RI-TABLE-LOOP-LE.                                                00119128
+P0170      ADD +1 TO WS-SUB1.                                           00119132
+P0170      IF WS-SUB1 IS GREATER THAN +15                               00119136
+P0170          GO TO RI-END.                                            00119140
+P0170      IF WS-RATE-BAL IS NOT GREATER THAN LS-ACT-RATEAMT (WS-SUB1)  00119144
+P0170          MOVE LS-ACT-RATEPCT (WS-SUB1) TO WS-RATE-PCT             00119148
+P0170          GO TO RI-END.                                            00119152
+P0170      GO TO RI-TABLE-LOOP-LE.                                      00119156
+P0170  RI-END.                                                          00119160
+P0170      IF LS-ACT-RATE-PERCENT IS EQUAL TO WS-RATE-PCT               00119164
+P0170          GO TO RI-EXIT.                                           00119168
+P0170      MOVE LS-ACT-RATE-PERCENT TO LS-ACT-RATE-PREV.                00119172
+P0170      MOVE WS-RATE-PCT TO LS-ACT-RATE-PERCENT.                     00119176
+P0170      PERFORM WRITE-RATE-CHANGE.                                   00119180
+P0170      MOVE 'Y' TO LS-ACT-RATECHG-FLAG.                             00119184
+P0170  RI-EXIT.                                                         00119188
+P0170      EXIT.                                                        00119192
+P0170 ******************************************************************00119196
+P0170  GET-INDIVIDUAL-BALANCE SECTION.                                  00119200
+P0170  GIB-START.                                                       00119204
+P0170      MOVE ZEROS TO WS-RATE-BAL.                                   00119208
+P0170      IF LS-ACT-APPL IS NOT NUMERIC                                00119212
+P0170          MOVE 01 TO LS-ACT-APPL.                                  00119216
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 01                           00119220
+P0170          MOVE LS-ACT-BALCUR TO WS-RATE-BAL                        00119224
+P0170          GO TO GIB-EXIT.                                          00119228
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 04                           00119232
+P0170          AND LS-ACT-APPL IS NOT EQUAL TO 03                       00119236
+P0170          MOVE LS-ACT-SCLOWBAL TO WS-RATE-BAL                      00119240
+P0170          GO TO GIB-EXIT.                                          00119244
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 04                           00119248
+P0170          MOVE LS-ACT-SCLOWBAL TO WS-RATE-BAL                      00119252
+P0170          GO TO GIB-EXIT.                                          00119256
+P0170      IF LS-ACT-APPL IS EQUAL TO 03                                00119260
+P0170          PERFORM GET-CLM-BALANCE                                  00119264
+P0170          GO TO GIB-EXIT.                                          00119268
+P0170      IF LS-ACT-APPL IS EQUAL TO 04                                00119272
+P0170          PERFORM GET-SVM-BALANCE                                  00119276
+P0170          GO TO GIB-EXIT.                                          00119280
+P0170      MOVE LS-ACT-BALCUR TO WS-RATE-BAL.                           00119284
+P0170      MOVE +0 TO WS-SUB2.                                          00119288
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 02                       00119292
+P0170          GO TO GIB-CURBANKCOL.                                    00119296
+P0170  GIB-CURCUSTCOL-LOOP.                                             00119300
+P0170      ADD +1 TO WS-SUB2.                                           00119304
+P0170      SUBTRACT LS-ACT-MFCAMT (WS-SUB2) FROM WS-RATE-BAL.           00119308
+P0170      IF WS-SUB2 IS LESS THAN +9                                   00119312
+P0170          GO TO GIB-CURCUSTCOL-LOOP.                               00119316
+P0170      GO TO GIB-EXIT.                                              00119320
+P0170  GIB-CURBANKCOL.                                                  00119324
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 05                           00119328
+P0170          GO TO GIB-CONT.                                          00119332
+P0170  GIB-CURBANKCOL-LOOP.                                             00119336
+P0170      ADD +1 TO WS-SUB2.                                           00119340
+P0170      SUBTRACT LS-ACT-MFBAMT (WS-SUB2) FROM WS-RATE-BAL.           00119344
+P0170      IF WS-SUB2 IS LESS THAN +9                                   00119348
+P0170          GO TO GIB-CURBANKCOL-LOOP.                               00119352
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 03                           00119356
+P0170          GO TO GIB-EXIT.                                          00119360
+P0170  GIB-CONT.                                                        00119364
+P0170      MOVE LS-ACT-SCDL TO WS-LASTDATE.                             00119368
+P0170      PERFORM COMPUTE-DAYS-IN-CYCLE.                               00119372
+P0170  GIB-AVGBAL.                                                      00119376
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 05                       00119380
+P0170          GO TO GIB-AVGCOLBAL.                                     00119384
+P0170      MOVE ZEROS TO WS-RATE-BAL.                                   00119388
+P0170      IF LS-ACT-SCAGRBAL IS EQUAL TO ZERO                          00119392
+P0170          MOVE LS-ACT-BALCUR TO WS-RATE-BAL                        00119396
+P0170      ELSE                                                         00119400
+P0170          DIVIDE LS-ACT-SCAGRBAL BY WS-DAYS-FROM-SC                00119404
+P0170              GIVING WS-RATE-BAL.                                  00119408
+P0170      GO TO GIB-EXIT.                                              00119412
+P0170  GIB-AVGCOLBAL.                                                   00119416
+P0170      IF LS-ACT-SCCAGR IS EQUAL TO ZERO                            00119420
+P0170          GO TO GIB-EXIT.                                          00119424
+P0170      DIVIDE LS-ACT-SCCAGR BY WS-DAYS-FROM-SC                      00119428
+P0170          GIVING WS-RATE-BAL.                                      00119432
+P0170  GIB-EXIT.                                                        00119436
+P0170      EXIT.                                                        00119440
+P0170 ******************************************************************00119444
+P0170  GET-CLM-BALANCE SECTION.                                         00119448
+P0170  GCB-START.                                                       00119452
+P0170      IF RPACT-RATE-BALCD IS EQUAL TO 04                           00119456
+P0170          MOVE LS-ACT-BALCUR TO WS-RATE-BAL                        00119460
+P0170          GO TO GCB-EXIT.                                          00119464
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 05                       00119468
+P0170          AND RPACT-RATE-BALCD IS NOT EQUAL TO 06                  00119472
+P0170          GO TO GCB-EXIT.                                          00119476
+P0170      MOVE LS-ACT-STMCODLS TO WS-LASTDATE.                         00119480
+P0170      PERFORM COMPUTE-DAYS-IN-CYCLE.                               00119484
+P0170      DIVIDE LS-ACT-INTAGR BY WS-DAYS-FROM-SC                      00119488
+P0170          GIVING WS-RATE-BAL.                                      00119492
+P0170  GCB-EXIT.                                                        00119496
+P0170      EXIT.                                                        00119500
+P0170 ******************************************************************00119504
+P0170  GET-SVM-BALANCE SECTION.                                         00119508
+P0170  GSB-START.                                                       00119512
+P0170      MOVE LS-ACT-BALCUR TO WS-RATE-BAL.                           00119516
+P0170      MOVE +0 TO WS-SUB2.                                          00119520
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 02                       00119524
+P0170          GO TO GSB-CURBANKCOL.                                    00119528
+P0170  GSB-CURCUSTCOL-LOOP.                                             00119532
+P0170      ADD +1 TO WS-SUB2.                                           00119536
+P0170      SUBTRACT LS-ACT-MFCAMT (WS-SUB2) FROM WS-RATE-BAL.           00119540
+P0170      IF WS-SUB2 IS LESS THAN +9                                   00119544
+P0170          GO TO GSB-CURCUSTCOL-LOOP.                               00119548
+P0170      GO TO GSB-EXIT.                                              00119552
+P0170  GSB-CURBANKCOL.                                                  00119556
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 03                       00119560
+P0170          GO TO GSB-AVGBAL.                                        00119564
+P0170  GSB-CURBANKCOL-LOOP.                                             00119568
+P0170      ADD +1 TO WS-SUB2.                                           00119572
+P0170      SUBTRACT LS-ACT-MFBAMT (WS-SUB2) FROM WS-RATE-BAL.           00119576
+P0170      IF WS-SUB2 IS LESS THAN +9                                   00119580
+P0170          GO TO GSB-CURBANKCOL-LOOP.                               00119584
+P0170      GO TO GSB-EXIT.                                              00119588
+P0170  GSB-AVGBAL.                                                      00119592
+P0170      MOVE ZEROS TO WS-RATE-BAL.                                   00119596
+P0170      MOVE LS-ACT-SCDL TO WS-LASTDATE.                             00119600
+P0170      PERFORM COMPUTE-DAYS-IN-CYCLE.                               00119604
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 05                       00119608
+P0170          GO TO GSB-AVGCOLBAL.                                     00119612
+P0170      DIVIDE LS-ACT-SCAGRBAL BY WS-DAYS-FROM-SC                    00119616
+P0170          GIVING WS-RATE-BAL.                                      00119620
+P0170      GO TO GSB-EXIT.                                              00119624
+P0170  GSB-AVGCOLBAL.                                                   00119628
+P0170      IF RPACT-RATE-BALCD IS NOT EQUAL TO 06                       00119632
+P0170          GO TO GSB-EXIT.                                          00119636
+P0170      DIVIDE LS-ACT-SCCAGR BY WS-DAYS-FROM-SC                      00119640
+P0170          GIVING WS-RATE-BAL.                                      00119644
+P0170  GSB-EXIT.                                                        00119648
+P0170      EXIT.                                                        00119652
+P0170 ***************************************************************** 00119656
+P0170  COMPUTE-DAYS-IN-CYCLE SECTION.                                   00119660
+P0170  CDIC-START.                                                      00119664
+P0170      MOVE LS-ACT-NPROCDTA TO SR-FROMJUL.                          00119668
+P0170      MOVE 'D' TO SR-PERIOD.                                       00119672
+P0170      MOVE 1 TO SR-FREQ.                                           00119676
+P0170      MOVE ZEROS TO SR-DAY.                                        00119680
+P0170      PERFORM LAST-DATE-365.                                       00119684
+P0170      MOVE WS-LASTDATE TO SR-FROMJUL.                              00119688
+P0170      PERFORM ELAPSED-DAYS-365.                                    00119692
+P0170      MOVE SR-RESULT TO WS-DAYS-FROM-SC.                           00119696
+P0170      IF WS-DAYS-FROM-SC IS NOT GREATER THAN ZERO                  00119700
+P0170          MOVE +1 TO WS-DAYS-FROM-SC.                              00119704
+P0170  CDIC-EXIT.                                                       00119708
+P0170      EXIT.                                                        00119712
+P0170 ******************************************************************00119716
+P0170  WRITE-RATE-CHANGE SECTION.                                       00119720
+P0170  WRC-START.                                                       00119724
+P0170      MOVE RPACT-GRP-KEY TO RPRATC-KEY.                            00119728
+P0170      MOVE LS-ACT-INST TO RPRATC-INST.                             00119732
+P0170      MOVE LS-ACT-PRODCODE TO RPRATC-PRODCODE.                     00119736
+P0170      MOVE LS-ACT-ACCOUNT TO RPRATC-ACCOUNT.                       00119740
+P0170      MOVE RPACT-RATE-MODEL TO RPRATC-MODEL.                       00119744
+P0170      MOVE LS-ACT-RATE-PREV TO RPRATC-PREV-RATE.                   00119748
+P0170      MOVE LS-ACT-RATE-PERCENT TO RPRATC-NEW-RATE.                 00119752
+P0170      MOVE RPACT-RATE-TYPE TO RPRATC-RATE-TYPE.                    00119756
+P0170      MOVE RPRATC-RECORD TO RP-RATCREC.                            00119760
+P0170      WRITE RP-RATCREC.                                            00119764
+P0170 *CDIC-EXIT.                                                       00119768
+P0170      EXIT.                                                        00119772
+P0170 ******************************************************************00119776
+P0170  JULIAN-365 SECTION.                                              00119780
+000000 COPY SRP001.                                                     00119784
+P0170 ******************************************************************00119788
+P0170  CALENDAR-365 SECTION.                                            00119792
+000000 COPY SRP003.                                                     00119796
+P0170 ******************************************************************00119800
+P0170  ELAPSED-DAYS-365 SECTION.                                        00119804
+000000 COPY SRP005.                                                     00119808
+P0170 ******************************************************************00119812
+P0170  LAST-DATE-365 SECTION.                                           00119816
+000000 COPY SRP019.                                                     00119820
+001200******************************************************************00120000
+000000 COPY RPPACTA.                                                    00121000
+001220***************************************************************** 00122000
+001230 GET-FILE-ORGANIZATION SECTION.                                   00123000
+000000 COPY SRP093.                                                     00124000
+001250******************************************************************00125000
+001260 RETURN-ROUTINE SECTION.                                          00126000
+001270 RET-START.                                                       00127000
+001280     MOVE WS-FUNCTION TO LS-ACT-FUNCTION.                         00128000
+001290     GOBACK.                                                      00129000
+001300******************************************************************00130000

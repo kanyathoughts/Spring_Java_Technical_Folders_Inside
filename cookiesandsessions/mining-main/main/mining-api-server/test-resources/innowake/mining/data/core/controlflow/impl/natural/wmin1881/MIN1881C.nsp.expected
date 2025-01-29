@@ -1,0 +1,13 @@
+ #2 DefineDataStmt
+ #14 WRITE NOTITLE *PROGRAM 'START', FROM={TestEntryPoint}, TO={#21}
+ #21 ResetStmt, FROM={#14}, TO={#24}
+ #24 MoveStmt, FROM={#21}, TO={#28}
+ #28 WRITE NOTITLE *PROGRAM 'Vor REPEAT loop. Naechster Index #I01:' #I01, FROM={#24}, TO={#38}
+ #38 RepeatStmt, Label: REPEAT UNTIL #ARR(#I01) NE 0, FROM={#28, #62(FALSE)}, TO={#47(LOOP BODY), #78(LOOP END)}
+  #47 SubtractStmt, FROM={#38(LOOP BODY)}, TO={#52}
+  #52 WRITE NOTITLE *PROGRAM 'In REPEAT loop.  Naechster Index #I01:' #I01, FROM={#47}, TO={#62}
+  #62 IfStmt, Label: IF #I01 EQ 0, FROM={#52}, TO={#38(FALSE), #68(TRUE)}
+    #68 WRITE NOTITLE *PROGRAM 'ESCAPE BOTTOM', FROM={#62(TRUE)}, TO={#75}
+    #75 EscapeStmt, FROM={#68}, TO={#78}
+ #78 WRITE (1) NOTITLE *PROGRAM 'ENDE', FROM={#38(LOOP END), #75}, TO={#85}
+ #85 EndStmt, FROM={#78}, TO={TestReturnPoint}

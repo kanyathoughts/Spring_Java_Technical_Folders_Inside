@@ -1,0 +1,55 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+572,"","CONCAT.WRK.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+575,"","CONCAT.WRK.TWO","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+573,"","MMRS00C.A.LOADLIB","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+562,"","TESTJOBA","src/jcl/WDIS435/jobs/TESTJOBA.job","JCL","JCL_JOB","PHYSICAL",1,0,10,1,12,1,0,-1,-1
+558,562,"TESTJOBA.STEP01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+563,"","TESTJOBB","src/jcl/WDIS435/jobs/TESTJOBB.job","JCL","JCL_JOB","PHYSICAL",1,0,12,1,13,1,0,-1,-1
+559,563,"TESTJOBB.STEP01.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+565,"","TESTJOBC","src/jcl/WDIS435/jobs/TESTJOBC.job","JCL","JCL_JOB","PHYSICAL",1,0,11,1,13,1,0,-1,-1
+561,565,"TESTJOBC.STEP01.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+564,"","TESTPRC","src/jcl/WDIS435/procs/TESTPRC.proc","JCL","JCL_PROC","PHYSICAL",0,0,15,0,15,1,0,-1,-1
+560,564,"TESTPRC.NATSTEP.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+574,"","WKFA","src/natural/WDIS435/programs/WKFA.nsp","NATURAL","NATURAL_PROGRAM","PHYSICAL",1,0,11,0,19,0,0,-1,-1
+569,"","WKFB","src/natural/WDIS435/programs/WKFB.nsp","NATURAL","NATURAL_PROGRAM","PHYSICAL",1,0,12,0,20,0,0,-1,-1
+568,"","WKFC","src/natural/WDIS435/programs/WKFC.nsp","NATURAL","NATURAL_PROGRAM","PHYSICAL",1,0,10,0,17,0,0,-1,-1
+570,"","WKFD","src/natural/WDIS435/programs/WKFD.nsp","NATURAL","NATURAL_PROGRAM","PHYSICAL",1,0,10,0,17,0,0,-1,-1
+566,"","WRK.A.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+567,"","WRK.B.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+571,"","WRK.C.ONE","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+562,"TESTJOBA","EXEC","Properties: [PGM=NAT], Data Definitions: [STEPLIB{DSN=MMRS00C.A.LOADLIB,DISP=SHR},SYSPRINT{SYSOUT=*},CMWKF01{DSN=WRK.A.ONE,DISP=OLD,DELETE},CMSYNIN{*= LOGON B WKFC FIN}], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOBA]"
+563,"TESTJOBB","EXEC","Properties: [PGM=NAT], Data Definitions: [STEPLIB{DSN=MMRS00C.A.LOADLIB,DISP=SHR},SYSPRINT{SYSOUT=*},CMWKF01{DSN=WRK.B.ONE,DISP=OLD,DELETE},CMWRK02{DSN=CONCAT.WRK.ONE,DISP=OLD,DELETE},CMWRK02{DSN=CONCAT.WRK.TWO,DISP=OLD,DELETE},SYSIN{*= LOGON B WKFD FIN}], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOBA]"
+565,"TESTJOBC","EXEC_PROC","Properties: [PROC=TESTPRC], Data Definitions: [], Additional Properties: [Fully Qualified Step name=STEP01,Step name=STEP01,Job name=TESTJOBB]"
+564,"TESTPRC","EXEC","Properties: [PGM=NATPRG,PARM=IM=D,AUTO=ON,MT=0,REGION=3M], Data Definitions: [STEPLIB{DSN=MMRS00C.A.LOADLIB,DISP=SHR},SYSOUT{SYSOUT=*},CMPRINT{SYSOUT=*},CMPRT01{SYSOUT=*},CMPRT02{SYSOUT=*},CMPRT03{SYSOUT=*},CMPRT04{SYSOUT=*},CMPRT05{SYSOUT=*},CMPRT06{SYSOUT=*},CMSYNIN{DDNAME=SYSIN},SYSPRINT{SYSOUT=*},CMWRK01{DSN=WRK.C.ONE,DISP=OLD,DELETE},SYSIN{*=LOGON LIBWKFCYFIN}], Additional Properties: [Fully Qualified Step name=STEP01.NATSTEP,Step name=NATSTEP,Job name=TESTJOBB]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+562,"TESTJOBA",558,"TESTJOBA.STEP01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+563,"TESTJOBB",559,"TESTJOBB.STEP01.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+565,"TESTJOBC",561,"TESTJOBC.STEP01.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+561,"TESTJOBC.STEP01.EXEC",564,"TESTPRC","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+564,"TESTPRC",560,"TESTPRC.NATSTEP.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+558,"TESTJOBA.STEP01.EXEC_PGM",568,"WKFC","NATURAL","NATURAL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+560,"TESTPRC.NATSTEP.EXEC_PGM",568,"WKFC","NATURAL","NATURAL_PROGRAM","Calls","[561]","LATE","{}",-1,-1,-1,-1
+559,"TESTJOBB.STEP01.EXEC_PGM",570,"WKFD","NATURAL","NATURAL_PROGRAM","Calls","","LATE","{}",-1,-1,-1,-1
+559,"TESTJOBB.STEP01.EXEC_PGM",572,"CONCAT.WRK.ONE","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWRK02""}]}",-1,-1,-1,-1
+559,"TESTJOBB.STEP01.EXEC_PGM",575,"CONCAT.WRK.TWO","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWRK02""}]}",-1,-1,-1,-1
+558,"TESTJOBA.STEP01.EXEC_PGM",573,"MMRS00C.A.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}]}",-1,-1,-1,-1
+559,"TESTJOBB.STEP01.EXEC_PGM",573,"MMRS00C.A.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}]}",-1,-1,-1,-1
+560,"TESTPRC.NATSTEP.EXEC_PGM",573,"MMRS00C.A.LOADLIB","RESOURCE","RESOURCE_LIB","Accesses","[561]","LATE","{""FILE_ACCESS_TYPE"":[""READ""],""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}]}",-1,-1,-1,-1
+574,"WKFA",-1,"WKFA.txt","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{""FILE_ACCESS_TYPE"":[""READ"",""WRITE""]}",-1,-1,-1,-1
+569,"WKFB",-1,"WKFA.txt","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{""FILE_ACCESS_TYPE"":[""READ"",""WRITE""]}",-1,-1,-1,-1
+569,"WKFB",-1,"WKFB.txt","RESOURCE","RESOURCE_FILE","Accesses","","EARLY","{""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+558,"TESTJOBA.STEP01.EXEC_PGM",566,"WRK.A.ONE","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWKF01""}]}",-1,-1,-1,-1
+559,"TESTJOBB.STEP01.EXEC_PGM",567,"WRK.B.ONE","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWKF01""}]}",-1,-1,-1,-1
+560,"TESTPRC.NATSTEP.EXEC_PGM",571,"WRK.C.ONE","RESOURCE","RESOURCE_FILE","Accesses","[561]","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":""OLD,DELETE"",""ID_NAME"":""CMWRK01""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

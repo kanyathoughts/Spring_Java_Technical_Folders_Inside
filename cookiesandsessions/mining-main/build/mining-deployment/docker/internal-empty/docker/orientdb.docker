@@ -1,0 +1,25 @@
+FROM openjdk:11-jdk-slim
+
+RUN apt-get update && apt-get install -y curl wget unzip
+
+COPY orientdb/orientdb-mining*.zip /tmp/orientdb-mining.zip
+
+RUN unzip /tmp/orientdb-mining.zip -d /orientdb
+
+# Make sure that server.sh is executable if the host is Windows
+RUN chmod +x orientdb/bin/server.sh
+
+ENV PATH /orientdb/bin:$PATH
+
+VOLUME ["/orientdb/backup", "/orientdb/databases", "/orientdb/config"]
+
+WORKDIR /orientdb
+
+#OrientDb binary
+EXPOSE 2424
+
+#OrientDb http
+EXPOSE 2480
+
+# Default command start the server
+CMD ["server.sh"]

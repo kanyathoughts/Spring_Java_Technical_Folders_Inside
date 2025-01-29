@@ -1,0 +1,1245 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPD020.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*    RPD020 - RELATIONSHIP PRICING INSTITUTION CONTROL FILE      *00005000
+000060*             UPDATE                                             *00006000
+000070******************************************************************00007000
+000080 ENVIRONMENT DIVISION.                                            00008000
+000090 CONFIGURATION SECTION.                                           00009000
+000100 SPECIAL-NAMES.                                                   00010000
+000110     C01 IS C-01, C02 IS C-02, C03 IS C-03, CSP IS C-SP.          00011000
+000120 INPUT-OUTPUT SECTION.                                            00012000
+000130 FILE-CONTROL.                                                    00013000
+000000 COPY RPCARDS.                                                    00014000
+000000 COPY PRNTERS.                                                    00015000
+000160 DATA DIVISION.                                                   00016000
+000170 FILE SECTION.                                                    00017000
+000000 COPY RPCARDF.                                                    00018000
+000190 01  RP-CARDREC.                                                  00019000
+000000 COPY RPSFM01.                                                    00020000
+000000 COPY PRNTERF.                                                    00021000
+000220 01  PRINTERREC.                                                  00022000
+000000 COPY SRW016.                                                     00023000
+000240     03  PLINE4          REDEFINES PLINE1.                        00024000
+000250         05  FILLER              PIC X(03).                       00025000
+000260         05  P4-INST             PIC X(04).                       00026000
+000270         05  FILLER              PIC X(03).                       00027000
+000280         05  P4-BKNAME           PIC X(45).                       00028000
+000290         05  FILLER              PIC X(04).                       00029000
+000300         05  P4-DATES.                                            00030000
+000310             07  P4-DATE1        PIC X(10).                       00031000
+000320             07  FILLER          PIC X(04).                       00032000
+000330             07  P4-DATE2        PIC X(10).                       00033000
+000340             07  FILLER          PIC X(04).                       00034000
+000350             07  P4-DATE3        PIC X(10).                       00035000
+000360         05  FILLER              PIC X(04).                       00036000
+000370         05  P4-WEEKFLAG         PIC X(01).                       00037000
+000380         05  FILLER              PIC X(04).                       00038000
+000390         05  P4-MONFLAG          PIC X(01).                       00039000
+000400         05  FILLER              PIC X(04).                       00040000
+000410         05  P4-PROCWK           PIC X(07).                       00041000
+000420         05  FILLER              PIC X(04).                       00042000
+000430         05  P4-DAY              PIC X(01).                       00043000
+000440         05  FILLER              PIC X(04).                       00044000
+000450         05  P4-PROCOP           PIC X(01).                       00045000
+000460         05  FILLER              PIC X(04).                       00046000
+000470     03  PLINE5          REDEFINES PLINE1.                        00047000
+000480         05  FILLER              PIC X(01).                       00048000
+000490         05  P5-SYSNBR           PIC X(02).                       00049000
+000500         05  FILLER              PIC X(01).                       00050000
+000510         05  P5-INST             PIC X(04).                       00051000
+000520         05  FILLER              PIC X(01).                       00052000
+000530         05  P5-KEY              PIC X(16).                       00053000
+000540         05  FILLER              PIC X(01).                       00054000
+000550         05  P5-FORMNBR          PIC X(03).                       00055000
+000560         05  P5-CRDNBR           PIC X(02).                       00056000
+000570         05  FILLER              PIC X(01).                       00057000
+000580         05  P5-CRDDATA          PIC X(55).                       00058000
+000590         05  FILLER              PIC X(01).                       00059000
+000600         05  P5-FIELD            PIC X(20).                       00060000
+000610         05  FILLER              PIC X(01).                       00061000
+000620         05  P5-ERROR            PIC X(20).                       00062000
+000630         05  P5-ERRNBR           PIC X(03).                       00063000
+000640******************************************************************00064000
+000650 WORKING-STORAGE SECTION.                                         00065000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00066000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00066001
+000670 01  RPS-RLSELIT.                                                 00067000
+000000 COPY RPWRLSE.                                                    00068000
+000690 01  MIC-RLSELIT.                                                 00069000
+000000 COPY MIWRLSE.                                                    00070000
+000710 01  SRW105-AREAS.                                                00071000
+000000 COPY SRW105.                                                     00072000
+000730*01  BICPBPRM.                                                    00073000
+000000 COPY BICPBPRM.                                                   00074000
+000750*01  BICRSRB.                                                     00075000
+000000 COPY BICRSRB.                                                    00076000
+000770*01  BICRPSB.                                                     00077000
+000000 COPY BICRPSB.                                                    00078000
+000790*01  BICRVERB.                                                    00079000
+000000 COPY BICRVERB.                                                   00080000
+000810*01  BICRSTAT.                                                    00081000
+000000 COPY BICRSTAT.                                                   00082000
+000830*01  BICRDBS.                                                     00083000
+000000 COPY BICRDBS.                                                    00084000
+000850*01  BICRLOG.                                                     00085000
+000000 COPY BICRLOG.                                                    00086000
+000870 01  MIWPRI-AREAS.                                                00087000
+000000 COPY MIWPRI.                                                     00088000
+000890 01  RPWPRI-AREAS.                                                00089000
+000000 COPY RPWPRI.                                                     00090000
+000910 01  MIWMSTA-AREAS.                                               00091000
+000000 COPY MIWMSTA.                                                    00092000
+000930 01  MIMST-RECORD.                                                00093000
+000000 COPY MISMST.                                                     00094000
+000950 01  MI1001-RECORD.                                               00095000
+000000 COPY MIS1001A.                                                   00096000
+000970 01  MI2021-RECORD.                                               00097000
+000000 COPY MIS2021A.                                                   00098000
+000990 01  MI1006-RECORD.                                               00099000
+000000 COPY MIS1006A.                                                   00100000
+001010 01  RPBNK-RECORD.                                                00101000
+000000 COPY RPSBNK.                                                     00102000
+001030 01  RPWBNKA-AREAS.                                               00103000
+000000 COPY RPWBNKA.                                                    00104000
+001050 01  SRW000-AREAS.                                                00105000
+000000 COPY SRW000.                                                     00106000
+001070 01  SRW015-AREAS.                                                00107000
+000000 COPY SRW015.                                                     00108000
+001090 01  WS-ABEND.                                                    00109000
+000000 COPY SRW028.                                                     00110000
+001110*----------------------------------------------------------------*00111000
+001120 01  WS-HEADINGS.                                                 00112000
+001130     03  WS-HEAD1.                                                00113000
+001140         05  FILLER              PIC X(30)       VALUE            00114000
+001150             '   INST                       '.                    00115000
+001160         05  FILLER              PIC X(30)       VALUE            00116000
+001170             '                             L'.                    00117000
+001180         05  FILLER              PIC X(30)       VALUE            00118000
+001190             'AST DATE     NEXT SCHED    NEX'.                    00119000
+001200         05  FILLER              PIC X(30)       VALUE            00120000
+001210             'T ACTUAL   W    M    PROCESS  '.                    00121000
+001220         05  FILLER              PIC X(12)       VALUE            00122000
+001230             '       P    '.                                      00123000
+001240     03  WS-HEAD2.                                                00124000
+001250         05  FILLER              PIC X(30)       VALUE            00125000
+001260             '   NBR    INST NAME           '.                    00126000
+001270         05  FILLER              PIC X(30)       VALUE            00127000
+001280             '                             P'.                    00128000
+001290         05  FILLER              PIC X(30)       VALUE            00129000
+001300             'ROCESSED     PROC DATE     PRO'.                    00130000
+001310         05  FILLER              PIC X(30)       VALUE            00131000
+001320             'C DATE     F    F    1234567  '.                    00132000
+001330         05  FILLER              PIC X(12)       VALUE            00133000
+001340             ' DOW   O    '.                                      00134000
+001350     03  WS-HEAD3.                                                00135000
+001360         05  FILLER              PIC X(30)       VALUE            00136000
+001370             '                              '.                    00137000
+001380         05  FILLER              PIC X(30)       VALUE            00138000
+001390             '  2  3         4         5    '.                    00139000
+001400         05  FILLER              PIC X(30)       VALUE            00140000
+001410             '     6         7         8    '.                    00141000
+001420         05  FILLER              PIC X(30)       VALUE            00142000
+001430             '                              '.                    00143000
+001440         05  FILLER              PIC X(12)       VALUE            00144000
+001450             '            '.                                      00145000
+001460     03  WS-HEAD4.                                                00146000
+001470         05  FILLER              PIC X(30)       VALUE            00147000
+001480             'SYS INST                  FORM'.                    00148000
+001490         05  FILLER              PIC X(30)       VALUE            00149000
+001500             '/ 7890123456789012345678901234'.                    00150000
+001510         05  FILLER              PIC X(30)       VALUE            00151000
+001520             '56789012345678901234567890    '.                    00152000
+001530         05  FILLER              PIC X(30)       VALUE            00153000
+001540             '                              '.                    00154000
+001550         05  FILLER              PIC X(12)       VALUE            00155000
+001560             '            '.                                      00156000
+001570     03  WS-HEAD5.                                                00157000
+001580         05  FILLER              PIC X(30)       VALUE            00158000
+001590             'NBR NBR  *---KEY DATA---* CARD'.                    00159000
+001600         05  FILLER              PIC X(30)       VALUE            00160000
+001610             '  *----------------------CARD '.                    00161000
+001620         05  FILLER              PIC X(30)       VALUE            00162000
+001630             'DATA----------------------* *-'.                    00163000
+001640         05  FILLER              PIC X(30)       VALUE            00164000
+001650             '---FIELD NAME----* *--ERROR ME'.                    00165000
+001660         05  FILLER              PIC X(12)       VALUE            00166000
+001670             'SSAGE---*ERR'.                                      00167000
+001680*----------------------------------------------------------------*00168000
+001690 01  WS-SUBSCRIPTS.                                               00169000
+001700     03  WS-SUB1                 PIC S9(04)      COMP             00170000
+001710                                                 VALUE +0.        00171000
+001720     03  WS-SUB2                 PIC S9(04)      COMP             00172000
+001730                                                 VALUE +0.        00173000
+001740*----------------------------------------------------------------*00174000
+001750 01  WS-ERRORTABLE.                                               00175000
+001760     03  WS-ERRTABLE                             OCCURS 2 TIMES.  00176000
+001770         05  WS-ETENTRY                          OCCURS 14 TIMES. 00177000
+001780             07  WS-ETFIELD      PIC X(20).                       00178000
+001790             07  WS-ETERROR      PIC X(20).                       00179000
+001800*----------------------------------------------------------------*00180000
+001810 01  WS-STORAGE.                                                  00181000
+001820     03  WS-FUNCTION             PIC X(01)       VALUE SPACE.     00182000
+001830     03  WS-ERRORKEY.                                             00183000
+001840         05  WS-ERRKEY.                                           00184000
+001850             07  WS-EKINST       PIC 9(04)       VALUE ZERO.      00185000
+001860             07  WS-EKREC        PIC 9(04)       VALUE 1006.      00186000
+001870             07  WS-EKKEY.                                        00187000
+001880                 09  WS-EKAPPL   PIC 9(02)       VALUE 99.        00188000
+001890                 09  WS-EKFORMNBR                                 00189000
+001900                                 PIC 9(03)       VALUE ZERO.      00190000
+001910         05  WS-EKERRNBR         PIC 9(03)       VALUE ZERO.      00191000
+001920         05  WS-EKLANG           PIC X(02)       VALUE SPACE.     00192000
+001930     03  WS-BKNAME               PIC X(45)       VALUE SPACE.     00193000
+001940     03  WS-LASTBK               PIC X(04)       VALUE LOW-VALUES.00194000
+001950     03  WS-READSW               PIC X(01)       VALUE SPACE.     00195000
+001960     03  WS-FIELD                PIC X(20)       VALUE SPACE.     00196000
+001970     03  WS-ERROR                PIC X(20)       VALUE SPACE.     00197000
+001980     03  WS-ERROR2               PIC X(20)       VALUE SPACE.     00198000
+001990     03  WS-LINES                PIC 9(03)       VALUE ZERO.      00199000
+002000     03  WS-ERRSW                PIC X(01)       VALUE SPACE.     00200000
+002010     03  WS-NOREAD-SW            PIC X(01)       VALUE 'N'.       00201000
+002020     03  WS-EOF-SW               PIC X(01)       VALUE 'N'.       00202000
+002030     03  WS-CURDT                PIC S9(09)      COMP-3           00203000
+002040                                                 VALUE +0.        00204000
+002050     03  WS-NPROCDTADOW          PIC 9(01)       VALUE ZERO.      00205000
+002060     03  WS-CURRENTDT            PIC S9(07)      COMP-3           00206000
+002070                                                 VALUE +0.        00207000
+002080     03  WS-FIRSTDOY             PIC S9(07)      COMP-3           00208000
+002090                                                 VALUE +0.        00209000
+002100     03  WS-LASTDOY              PIC S9(07)      COMP-3           00210000
+002110                                                 VALUE +0.        00211000
+002120     03  WS-FIRSTDOM             PIC S9(07)      COMP-3           00212000
+002130                                                 VALUE +0.        00213000
+002140     03  WS-LASTDOM              PIC S9(07)      COMP-3           00214000
+002150                                                 VALUE +0.        00215000
+002160     03  WS-FIRSTDOW             PIC S9(07)      COMP-3           00216000
+002170                                                 VALUE +0.        00217000
+002180     03  WS-LASTDOW              PIC S9(07)      COMP-3           00218000
+002190                                                 VALUE +0.        00219000
+002200     03  WS-YEAR                 PIC S9(03)      COMP-3           00220000
+002210                                                 VALUE +0.        00221000
+002220     03  WS-DAY                  PIC 9(01)       VALUE ZERO.      00222000
+002230     03  WS-BKZHOLTBL.                                            00223000
+002240         05  WS-BKZHOL                           OCCURS 30 TIMES. 00224000
+002250             07  WS-BKZHOLMO     PIC 9(02).                       00225000
+002260             07  WS-BKZHOLDA     PIC 9(02).                       00226000
+002270     03  WS-BKHOLTBL.                                             00227000
+002280         05  WS-BKHOL                            OCCURS 30 TIMES. 00228000
+002290             07  WS-BKHOLMO      PIC 9(02).                       00229000
+002300             07  WS-BKHOLDA      PIC 9(02).                       00230000
+002310     03  WS-SAVE                 PIC S9(07)      COMP-3           00231000
+002320                                                 VALUE +0.        00232000
+002330     03  WS-TOJUL-HOLD           PIC S9(07)      COMP-3           00233000
+002340                                                 VALUE +0.        00234000
+002350     03  WS-HOLSW                PIC X(01)       VALUE SPACE.     00235000
+002360     03  WS-SYSHOL               PIC X(01)       VALUE SPACE.     00236000
+002370     03  WS-WORKDAY              PIC 9(01)       VALUE ZERO.      00237000
+002380     03  WS-WORK1                PIC S9(05)      COMP-3           00238000
+002390                                                 VALUE +0.        00239000
+002400     03  WS-NODTCK               PIC X(01)       VALUE SPACE.     00240000
+002410     03  WS-CURDATE              PIC 9(06).                       00241000
+002420     03  WS-CURDATEX     REDEFINES WS-CURDATE.                    00242000
+002430         05  WS-CDYR             PIC 9(02).                       00243000
+002440         05  WS-CDMON            PIC 9(02).                       00244000
+002450         05  WS-CDDAY            PIC 9(02).                       00245000
+002460     03  WS-CURDATE-CODASYL      PIC S9(09)      COMP-3           00246000
+002470                                                 VALUE +0.        00247000
+002480     03  WS-FILEOPTIONS          PIC X(25)       VALUE SPACES.    00248000
+002490     03  WS-FILEOPTS     REDEFINES WS-FILEOPTIONS.                00249000
+002500         05  WS-FILEOPT          PIC X(01)       OCCURS 25.       00250000
+002510***************************************************************** 00251000
+002520 PROCEDURE DIVISION.                                              00252000
+002530***************************************************************** 00253000
+002540 INITIALIZATION SECTION.                                          00254000
+002550 IN-START.                                                        00255000
+002560     MOVE SPACE TO WS-BKZHOLTBL.                                  00256000
+002570     PERFORM GET-FILE-ORGANIZATION.                               00257000
+002580     MOVE 'RPD020' TO SR-APIPROGLIT.                              00258000
+002590     MOVE 'RPD020' TO WS-ABPROGID.                                00259000
+002600     MOVE 'O U' TO SR-APIFUNC.                                    00260000
+002610     PERFORM CALL-RPS-BNK.                                        00261000
+002620     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00262000
+002630         GO TO AR-0001.                                           00263000
+002640     MOVE SPACE TO MI1001-RECORD.                                 00264000
+002650     MOVE ZERO TO MIM-1001KINST.                                  00265000
+002660     MOVE +1001 TO MIM-1001KREC.                                  00266000
+002670     MOVE MIC-MST-1001-PRI TO MIC-MST-REC-PRI.                    00267000
+002680     MOVE MI1001-RECORD TO MIMST-RECORD.                          00268000
+002690     PERFORM MIC-MST-GET-REQUEST.                                 00269000
+002700     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00270000
+002710         GO TO AR-0010.                                           00271000
+002720     MOVE MIMST-RECORD TO MI1001-RECORD.                          00272000
+002730     PERFORM BUILD-ERRORTABLE.                                    00273000
+002740     OPEN OUTPUT PRINTERFIL.                                      00274000
+002750     IF WS-SYSHOL IS EQUAL TO 'S'                                 00275000
+002760         GO TO IN-UPDATE.                                         00276000
+002770     OPEN INPUT RP-CARDFIL.                                       00277000
+002780     MOVE 'INSTITUTION CONTROL MAINTENANCE' TO SR-BKNAME.         00278000
+002790     MOVE 'RELATIONSHIP PRICING' TO SR-SYSTEM.                    00279000
+002800     MOVE SPACES TO SR-BRNAME.                                    00280000
+002810     MOVE SPACES TO SR-REPORT.                                    00281000
+002820     MOVE 50001 TO SR-RPTNBR.                                     00282000
+002830     ACCEPT WS-CURDATE FROM DATE.                                 00283000
+002840     MOVE WS-CDMON TO SR-C6MON.                                   00284000
+002850     MOVE WS-CDDAY TO SR-C6DAY.                                   00285000
+002860     MOVE WS-CDYR TO SR-C6YR.                                     00286000
+002870     PERFORM CONVERT-6-TO-8.                                      00287000
+002880     MOVE SR-CYEAR-FIRST TO WS-CURDATE-CODASYL.                   00288000
+002890     MOVE ZERO TO RPBNK-INST.                                     00289000
+002900     MOVE 'R  ' TO SR-APIFUNC.                                    00290000
+002910     PERFORM CALL-RPS-BNK.                                        00291000
+002920     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00292000
+002930         GO TO AR-0002.                                           00293000
+002940     IF RPBNK-INCH IS EQUAL TO '8'                                00294000
+002950         MOVE +78 TO SR-PAGE.                                     00295000
+002960     MOVE RPBNK-CURDT TO SR-CODASYL.                              00296000
+002970     MOVE MIM-1001DATE-SEQ TO SR-CDSEQ.                           00297000
+002980     MOVE MIM-1001DATE-DELIM TO SR-CDDELIM.                       00298000
+002990     PERFORM EDIT-CODASYL-DATE.                                   00299000
+003000     MOVE SR-CODASYL-EDITED TO SR-TODAY-X.                        00300000
+003010     MOVE SPACES TO PRINTERREC.                                   00301000
+003020     PERFORM MAINTENANCE-ROUTINE.                                 00302000
+003030     CLOSE RP-CARDFIL.                                            00303000
+003040 IN-UPDATE.                                                       00304000
+003050     MOVE +0 TO SR-PGCTR.                                         00305000
+003060     MOVE +99 TO SR-LINES.                                        00306000
+003070     MOVE 'INSTITUTION CONTROL UPDATE' TO SR-BKNAME.              00307000
+003080     MOVE 50002 TO SR-RPTNBR.                                     00308000
+003090     GO TO UPDATE-ROUTINE.                                        00309000
+003100 IN-EXIT.                                                         00310000
+003110     EXIT.                                                        00311000
+003120***************************************************************** 00312000
+003130 MAINTENANCE-ROUTINE SECTION.                                     00313000
+003140 MR-START.                                                        00314000
+003150     READ RP-CARDFIL                                              00315000
+003160         AT END                                                   00316000
+003170         GO TO MR-EXIT.                                           00317000
+003180     MOVE SPACE TO WS-ERRSW.                                      00318000
+003190     IF RPFM01-FORMNBR IS NOT EQUAL TO '04'                       00319000
+003200         GO TO MR-SYSTEST.                                        00320000
+003210     IF RPFM01-PROCOP IS EQUAL TO 'X'                             00321000
+003220         MOVE RPFM01-PROCOP TO WS-NODTCK                          00322000
+003230         GO TO MR-START.                                          00323000
+003240     MOVE RPFM01-CURDT TO SR-CODASYL-EDITED.                      00324000
+003250     MOVE SPACE TO SR-CDZEROIND.                                  00325000
+003260     MOVE SPACE TO SR-CDDELIM.                                    00326000
+003270     MOVE 3 TO SR-CDSEQ.                                          00327000
+003280     PERFORM DEEDIT-CODASYL-DATE.                                 00328000
+003290     IF SR-CDERROR IS NOT EQUAL TO SPACE                          00329000
+003300         GO TO MR-CURDTERR.                                       00330000
+003310     MOVE SR-CODASYL TO WS-CURDATE-CODASYL.                       00331000
+003320     GO TO MR-START.                                              00332000
+003330 MR-CURDTERR.                                                     00333000
+003340     GO TO AR-0003.                                               00334000
+003350 MR-SYSTEST.                                                      00335000
+003360     IF RPFM01-FORMNBR IS EQUAL TO '03'                           00336000
+003370         GO TO MR-START.                                          00337000
+003380     IF RPFM01-SYSNBR IS EQUAL TO '50'                            00338000
+003390         GO TO MR-INSTTEST.                                       00339000
+003400     MOVE 'X' TO WS-READSW.                                       00340000
+003410     MOVE 'SYSTEM NUMBER' TO WS-FIELD.                            00341000
+003420     MOVE 'NOT 50' TO WS-ERROR.                                   00342000
+003430     GO TO MR-ERROR.                                              00343000
+003440 MR-INSTTEST.                                                     00344000
+003450     IF RPFM01-INST IS NUMERIC                                    00345000
+003460         AND RPFM01-CRDNBR IS EQUAL TO 2                          00346000
+003470         GO TO MR-CONTINUE.                                       00347000
+003480     IF RPFM01-INST IS NOT NUMERIC                                00348000
+003490         OR RPFM01-INST IS NOT GREATER THAN WS-LASTBK             00349000
+003500         GO TO MR-INSTERR.                                        00350000
+003510 MR-CONTINUE.                                                     00351000
+003520     MOVE SPACE TO MI1001-RECORD.                                 00352000
+003530     MOVE RPFM01-INST TO MIM-1001KINST.                           00353000
+003540     MOVE +1001 TO MIM-1001KREC.                                  00354000
+003550     MOVE MIC-MST-1001-PRI TO MIC-MST-REC-PRI.                    00355000
+003560     MOVE MI1001-RECORD TO MIMST-RECORD.                          00356000
+003570     PERFORM MIC-MST-GET-REQUEST.                                 00357000
+003580     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00358000
+003590         GO TO MR-INSTERR.                                        00359000
+003600     MOVE MIMST-RECORD TO MI1001-RECORD.                          00360000
+003610     MOVE RPFM01-INST TO RPBNK-INST.                              00361000
+003620     MOVE 'R  ' TO SR-APIFUNC.                                    00362000
+003630     PERFORM CALL-RPS-BNK.                                        00363000
+003640     IF RPFM01-FORMNBR IS EQUAL TO '00'                           00364000
+003650         GO TO MR-ADD.                                            00365000
+003660     IF RPFM01-FORMNBR IS EQUAL TO '01'                           00366000
+003670         GO TO MR-CHANGE.                                         00367000
+003680     IF RPFM01-FORMNBR IS EQUAL TO '02'                           00368000
+003690         GO TO MR-DELETE.                                         00369000
+003700     MOVE 'NOT 00 01 OR 02' TO WS-ERROR.                          00370000
+003710     GO TO MR-FORMERR.                                            00371000
+003720 MR-ADD.                                                          00372000
+003730     IF RPFM01-CRDNBR IS EQUAL TO 2                               00373000
+003740         MOVE 1 TO RPFM01-FORMNBR                                 00374000
+003750         GO TO MR-CHANGE.                                         00375000
+003760     IF WS-FUNCTION IS NOT EQUAL TO 'N'                           00376000
+003770         MOVE 'RECORD FOUND' TO WS-ERROR                          00377000
+003780         GO TO MR-FORMERR.                                        00378000
+003790     MOVE ZERO TO WS-EKFORMNBR.                                   00379000
+003800     INITIALIZE RPBNK-RECORD.                                     00380000
+003810     MOVE RPFM01-INST TO RPBNK-INST.                              00381000
+003820     GO TO MR-BUILD.                                              00382000
+003830 MR-CHANGE.                                                       00383000
+003840     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00384000
+003850         MOVE 'NO RECORD FOUND' TO WS-ERROR                       00385000
+003860         GO TO MR-FORMERR.                                        00386000
+003870     MOVE 1 TO WS-EKFORMNBR.                                      00387000
+003880     GO TO MR-BUILD.                                              00388000
+003890 MR-DELETE.                                                       00389000
+003900     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00390000
+003910         MOVE 'NO RECORD FOUND' TO WS-ERROR                       00391000
+003920         GO TO MR-FORMERR.                                        00392000
+003930     IF RPFM01-INST IS EQUAL TO ZERO                              00393000
+003940         MOVE 'SYSTEM BCR' TO WS-ERROR                            00394000
+003950         GO TO MR-FORMERR.                                        00395000
+003960     MOVE 'D' TO RPBNK-PROCFLAG.                                  00396000
+003970     GO TO MR-WRITE.                                              00397000
+003980 MR-BUILD.                                                        00398000
+003990     PERFORM EDIT-CARD.                                           00399000
+004000     IF WS-ERRSW IS NOT EQUAL TO SPACE                            00400000
+004010         MOVE 'X' TO WS-READSW                                    00401000
+004020         MOVE '** CARD REJECTED **' TO WS-ERROR                   00402000
+004030         PERFORM CARD-ERROR                                       00403000
+004040         GO TO MR-CLEAR.                                          00404000
+004050     PERFORM BUILD-INST.                                          00405000
+004060 MR-WRITE.                                                        00406000
+004070     PERFORM WRITE-INST.                                          00407000
+004080     MOVE RPFM01-INST TO WS-LASTBK.                               00408000
+004090     MOVE 'X' TO WS-READSW.                                       00409000
+004100     MOVE '** CARD ACCEPTED **' TO WS-ERROR.                      00410000
+004110     PERFORM CARD-ERROR.                                          00411000
+004120 MR-CLEAR.                                                        00412000
+004130     MOVE ALL '-' TO PLINE1.                                      00413000
+004140     PERFORM PR-01 THRU PR-EXIT.                                  00414000
+004150     GO TO MR-START.                                              00415000
+004160 MR-INSTERR.                                                      00416000
+004170     MOVE 'X' TO WS-READSW.                                       00417000
+004180     MOVE 'INST NUMBER' TO WS-FIELD.                              00418000
+004190     MOVE 'INVALID NUMBER' TO WS-ERROR.                           00419000
+004200     GO TO MR-ERROR.                                              00420000
+004210 MR-FORMERR.                                                      00421000
+004220     MOVE 'X' TO WS-READSW.                                       00422000
+004230     MOVE 'FORM NUMBER' TO WS-FIELD.                              00423000
+004240     GO TO MR-ERROR.                                              00424000
+004250 MR-ERROR.                                                        00425000
+004260     MOVE '** CARD REJECTED **' TO WS-ERROR2.                     00426000
+004270     PERFORM CARD-ERROR.                                          00427000
+004280     GO TO MR-CLEAR.                                              00428000
+004290 MR-EXIT.                                                         00429000
+004300     EXIT.                                                        00430000
+004310***************************************************************** 00431000
+004320 UPDATE-ROUTINE SECTION.                                          00432000
+004330 UR-START.                                                        00433000
+004340     MOVE ZERO TO RPBNK-INST.                                     00434000
+004350     MOVE 'R  ' TO SR-APIFUNC.                                    00435000
+004360     PERFORM CALL-RPS-BNK.                                        00436000
+004370     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00437000
+004380         GO TO AR-0004.                                           00438000
+004390     GO TO UR-SETKEY.                                             00439000
+004400 UR-READ.                                                         00440000
+004410     MOVE 'N  ' TO SR-APIFUNC.                                    00441000
+004420     PERFORM CALL-RPS-BNK.                                        00442000
+004430     IF WS-FUNCTION IS EQUAL TO 'E'                               00443000
+004440         GO TO END-ROUTINE.                                       00444000
+004450     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00445000
+004460         GO TO AR-0005.                                           00446000
+004470 UR-SETKEY.                                                       00447000
+004480     IF RPBNK-PROCFLAG IS EQUAL TO 'D'                            00448000
+004490         GO TO UR-READ.                                           00449000
+004500     MOVE SPACE TO MI1001-RECORD.                                 00450000
+004510     MOVE RPBNK-INST TO MIM-1001KINST.                            00451000
+004520     MOVE +1001 TO MIM-1001KREC.                                  00452000
+004530 UR-COMMONFILE.                                                   00453000
+004540     MOVE MIC-MST-1001-PRI TO MIC-MST-REC-PRI.                    00454000
+004550     MOVE MI1001-RECORD TO MIMST-RECORD.                          00455000
+004560     PERFORM MIC-MST-GET-REQUEST.                                 00456000
+004570     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00457000
+004580         GO TO UR-INSTERR.                                        00458000
+004590     MOVE MIMST-RECORD TO MI1001-RECORD.                          00459000
+004600     MOVE MIM-1001NAME TO WS-BKNAME.                              00460000
+004610     PERFORM UPDATE-INST.                                         00461000
+004620     GO TO UR-WRITE.                                              00462000
+004630 UR-INSTERR.                                                      00463000
+004640     MOVE '*** INVALID INST ***' TO WS-BKNAME.                    00464000
+004650     MOVE 'N' TO RPBNK-PROCFLAG.                                  00465000
+004660 UR-WRITE.                                                        00466000
+004670     PERFORM PRINT-INST.                                          00467000
+004680     MOVE SPACE TO WS-FUNCTION.                                   00468000
+004690     PERFORM WRITE-INST.                                          00469000
+004700     GO TO UR-READ.                                               00470000
+004710 UR-EXIT.                                                         00471000
+004720     EXIT.                                                        00472000
+004730***************************************************************** 00473000
+004740 BUILD-ERRORTABLE SECTION.                                        00474000
+004750 BE-START.                                                        00475000
+004760     MOVE SPACES TO WS-ERRORTABLE.                                00476000
+004770     MOVE SPACE TO MI1006-RECORD.                                 00477000
+004780     MOVE WS-ERRORKEY TO MIM-1006-GRP-KEY.                        00478000
+004790     MOVE MIM-1001LANG TO MIM-1006KLANG.                          00479000
+004800     MOVE MIC-MST-1006-PRI TO MIC-MST-REC-PRI.                    00480000
+004810     MOVE MI1006-RECORD TO MIMST-RECORD.                          00481000
+004820     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00482000
+004830     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00483000
+004840         GO TO BE-EXIT.                                           00484000
+004850     GO TO BE-CONT.                                               00485000
+004860 BE-READ.                                                         00486000
+004870     PERFORM MIC-MST-GET-NEXT-REQUEST.                            00487000
+004880     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00488000
+004890         GO TO BE-EXIT.                                           00489000
+004900 BE-CONT.                                                         00490000
+004910     IF MIMST-KREC IS NOT EQUAL TO +1006                          00491000
+004920         GO TO BE-EXIT.                                           00492000
+004930     MOVE MIMST-RECORD TO MI1006-RECORD.                          00493000
+004940     MOVE MIM-1006-GRP-KEY TO WS-ERRORKEY.                        00494000
+004950     IF WS-EKINST IS NOT EQUAL TO ZERO                            00495000
+004960         GO TO BE-EXIT.                                           00496000
+004970     IF WS-EKKEY IS NOT EQUAL TO '99000'                          00497000
+004980         AND WS-EKKEY IS NOT EQUAL TO '99001'                     00498000
+004990         GO TO BE-EXIT.                                           00499000
+005000     MOVE WS-EKFORMNBR TO WS-SUB1.                                00500000
+005010     ADD +1 TO WS-SUB1.                                           00501000
+005020     IF WS-SUB1 IS LESS THAN +1                                   00502000
+005030         OR WS-SUB1 IS GREATER THAN +2                            00503000
+005040         GO TO BE-EXIT.                                           00504000
+005050     MOVE WS-EKERRNBR TO WS-SUB2.                                 00505000
+005060     IF WS-SUB2 IS LESS THAN +1                                   00506000
+005070         OR WS-SUB2 IS GREATER THAN +14                           00507000
+005080         GO TO BE-EXIT.                                           00508000
+005090     IF WS-EKLANG IS NOT EQUAL TO MIM-1001LANG                    00509000
+005100         GO TO BE-READ.                                           00510000
+005110     MOVE MIM-1006FLDNAME TO WS-ETFIELD (WS-SUB1 WS-SUB2).        00511000
+005120     MOVE MIM-1006ERRMSG TO WS-ETERROR (WS-SUB1 WS-SUB2).         00512000
+005130     GO TO BE-READ.                                               00513000
+005140 BE-EXIT.                                                         00514000
+005150     EXIT.                                                        00515000
+005160***************************************************************** 00516000
+005170 MIC-MST-API SECTION.                                             00517000
+000000 COPY MIPMSTA.                                                    00518000
+005190***************************************************************** 00519000
+005200 CARD-ERROR SECTION.                                              00520000
+005210 CE-START.                                                        00521000
+005220     MOVE SR-LINES TO WS-LINES.                                   00522000
+005230     IF WS-ERROR2 IS NOT EQUAL TO SPACES                          00523000
+005240         ADD +1 TO WS-LINES.                                      00524000
+005250     IF WS-LINES IS GREATER THAN SR-PAGE                          00525000
+005260         ADD +1 TO SR-PGCTR                                       00526000
+005270         PERFORM HEADING-ROUTINE.                                 00527000
+005280     IF WS-ERRSW IS NOT EQUAL TO SPACES                           00528000
+005290         GO TO CE-SEARCHTBL.                                      00529000
+005300     MOVE RPFM01-SYSNBR TO P5-SYSNBR.                             00530000
+005310     MOVE RPFM01-INST TO P5-INST.                                 00531000
+005320     MOVE RPFM01-FORMNBR TO P5-FORMNBR.                           00532000
+005330     MOVE RPFM01-CRDNBR TO P5-CRDNBR.                             00533000
+005340     MOVE RPFM01-DATA TO P5-CRDDATA.                              00534000
+005350 CE-SEARCHTBL.                                                    00535000
+005360     IF WS-READSW IS NOT EQUAL TO SPACES                          00536000
+005370         GO TO CE-MESSAGES.                                       00537000
+005380     MOVE WS-EKFORMNBR TO WS-SUB1.                                00538000
+005390     ADD +1 TO WS-SUB1.                                           00539000
+005400     MOVE WS-EKERRNBR TO WS-SUB2.                                 00540000
+005410     IF WS-ETENTRY (WS-SUB1, WS-SUB2) IS EQUAL TO SPACES          00541000
+005420         MOVE WS-ERRORKEY TO WS-FIELD                             00542000
+005430         MOVE 'INVALID' TO WS-ERROR                               00543000
+005440         GO TO CE-MESSAGES.                                       00544000
+005450     MOVE WS-ETFIELD (WS-SUB1, WS-SUB2) TO WS-FIELD.              00545000
+005460     MOVE WS-ETERROR (WS-SUB1, WS-SUB2) TO WS-ERROR.              00546000
+005470 CE-MESSAGES.                                                     00547000
+005480     MOVE WS-FIELD TO P5-FIELD.                                   00548000
+005490     MOVE WS-ERROR TO P5-ERROR.                                   00549000
+005500     IF WS-READSW IS EQUAL TO SPACES                              00550000
+005510         MOVE WS-EKERRNBR TO P5-ERRNBR.                           00551000
+005520     PERFORM PR-01 THRU PR-EXIT.                                  00552000
+005530     IF WS-ERROR2 IS EQUAL TO SPACES                              00553000
+005540         GO TO CE-CLEAR.                                          00554000
+005550     MOVE WS-ERROR2 TO P5-ERROR.                                  00555000
+005560     PERFORM PR-01 THRU PR-EXIT.                                  00556000
+005570 CE-CLEAR.                                                        00557000
+005580     MOVE 'X' TO WS-ERRSW.                                        00558000
+005590     MOVE SPACE TO WS-READSW.                                     00559000
+005600     MOVE SPACES TO WS-FIELD.                                     00560000
+005610     MOVE SPACES TO WS-ERROR.                                     00561000
+005620     MOVE SPACES TO WS-ERROR2.                                    00562000
+005630 CE-EXIT.                                                         00563000
+005640     EXIT.                                                        00564000
+005650***************************************************************** 00565000
+005660 CALL-RPS-BNK SECTION.                                            00566000
+000000 COPY RPPBNKB.                                                    00567000
+005680***************************************************************** 00568000
+005690 BUILD-INST SECTION.                                              00569000
+005700 BB-START.                                                        00570000
+005710     MOVE RPFM01-CURDT TO SR-FROMCAL.                             00571000
+005720     MOVE SR-FCMON TO SR-CMM.                                     00572000
+005730     MOVE SR-FCDAY TO SR-CDD.                                     00573000
+005740     MOVE SR-FCYR TO SR-CYYYY.                                    00574000
+005750     MOVE SR-CYEAR-FIRST TO RPBNK-CURDT.                          00575000
+005760     MOVE RPFM01-LPROCDT TO SR-FROMCAL.                           00576000
+005770     MOVE SR-FCMON TO SR-CMM.                                     00577000
+005780     MOVE SR-FCDAY TO SR-CDD.                                     00578000
+005790     MOVE SR-FCYR TO SR-CYYYY.                                    00579000
+005800     MOVE SR-CYEAR-FIRST TO RPBNK-LPROCDT.                        00580000
+005810     MOVE RPFM01-NPROCDTS TO SR-FROMCAL.                          00581000
+005820     MOVE SR-FCMON TO SR-CMM.                                     00582000
+005830     MOVE SR-FCDAY TO SR-CDD.                                     00583000
+005840     MOVE SR-FCYR TO SR-CYYYY.                                    00584000
+005850     MOVE SR-CYEAR-FIRST TO RPBNK-NPROCDTS.                       00585000
+005860     MOVE RPFM01-NPROCDTA TO SR-FROMCAL.                          00586000
+005870     MOVE SR-FCMON TO SR-CMM.                                     00587000
+005880     MOVE SR-FCDAY TO SR-CDD.                                     00588000
+005890     MOVE SR-FCYR TO SR-CYYYY.                                    00589000
+005900     MOVE SR-CYEAR-FIRST TO RPBNK-NPROCDTA.                       00590000
+005910     MOVE RPFM01-PROCWK TO RPBNK-PROCWK.                          00591000
+005920     MOVE SPACES TO RPBNK-PROCFLAG.                               00592000
+005930     MOVE RPFM01-PROCOP TO RPBNK-PROCOP.                          00593000
+005940     MOVE RPFM01-INCH TO RPBNK-INCH.                              00594000
+005950 BB-EXIT.                                                         00595000
+005960     EXIT.                                                        00596000
+005970***************************************************************** 00597000
+005980 EDIT-CARD SECTION.                                               00598000
+005990 EC-START.                                                        00599000
+006000     MOVE RPFM01-CURDT TO SR-CODASYL-EDITED.                      00600000
+006010     MOVE SPACE TO SR-CDZEROIND.                                  00601000
+006020     MOVE SPACE TO SR-CDDELIM.                                    00602000
+006030     MOVE 3 TO SR-CDSEQ.                                          00603000
+006040     PERFORM DEEDIT-CODASYL-DATE.                                 00604000
+006050     IF SR-CDERROR IS NOT EQUAL TO SPACE                          00605000
+006060         GO TO EC-CURDTERR.                                       00606000
+006070     MOVE SR-CODASYL TO WS-CURDT.                                 00607000
+006080     GO TO EC-LPROCDT.                                            00608000
+006090 EC-CURDTERR.                                                     00609000
+006100     MOVE 1 TO WS-EKERRNBR.                                       00610000
+006110     PERFORM CARD-ERROR.                                          00611000
+006120 EC-LPROCDT.                                                      00612000
+006130     MOVE RPFM01-LPROCDT TO SR-CODASYL-EDITED.                    00613000
+006140     MOVE SPACE TO SR-CDZEROIND.                                  00614000
+006150     MOVE SPACE TO SR-CDDELIM.                                    00615000
+006160     MOVE 3 TO SR-CDSEQ.                                          00616000
+006170     PERFORM DEEDIT-CODASYL-DATE.                                 00617000
+006180     IF SR-CDERROR IS NOT EQUAL TO SPACE                          00618000
+006190         GO TO EC-LPROCDTERR.                                     00619000
+006200     IF SR-CODASYL IS NOT LESS THAN WS-CURDT                      00620000
+006210         GO TO EC-LPROCDTERR.                                     00621000
+006220     GO TO EC-NPROCDTS.                                           00622000
+006230 EC-LPROCDTERR.                                                   00623000
+006240     MOVE 2 TO WS-EKERRNBR.                                       00624000
+006250     PERFORM CARD-ERROR.                                          00625000
+006260 EC-NPROCDTS.                                                     00626000
+006270     MOVE RPFM01-NPROCDTS TO SR-CODASYL-EDITED.                   00627000
+006280     MOVE SPACE TO SR-CDZEROIND.                                  00628000
+006290     MOVE SPACE TO SR-CDDELIM.                                    00629000
+006300     MOVE 3 TO SR-CDSEQ.                                          00630000
+006310     PERFORM DEEDIT-CODASYL-DATE.                                 00631000
+006320     IF SR-CDERROR IS NOT EQUAL TO SPACE                          00632000
+006330         GO TO EC-NPROCDTSERR.                                    00633000
+006340     IF SR-CODASYL IS NOT GREATER THAN WS-CURDT                   00634000
+006350         GO TO EC-NPROCDTSERR.                                    00635000
+006360     GO TO EC-NPROCDTA.                                           00636000
+006370 EC-NPROCDTSERR.                                                  00637000
+006380     MOVE 3 TO WS-EKERRNBR.                                       00638000
+006390     PERFORM CARD-ERROR.                                          00639000
+006400 EC-NPROCDTA.                                                     00640000
+006410     MOVE +0 TO WS-NPROCDTADOW.                                   00641000
+006420     MOVE RPFM01-NPROCDTA TO SR-CODASYL-EDITED.                   00642000
+006430     MOVE SPACE TO SR-CDZEROIND.                                  00643000
+006440     MOVE SPACE TO SR-CDDELIM.                                    00644000
+006450     MOVE 3 TO SR-CDSEQ.                                          00645000
+006460     PERFORM DEEDIT-CODASYL-DATE.                                 00646000
+006470     IF SR-CDERROR IS NOT EQUAL TO SPACE                          00647000
+006480         GO TO EC-NPROCDTAERR.                                    00648000
+006490     MOVE SR-CODASYL-MM TO SR-FCMON.                              00649000
+006500     MOVE SR-CODASYL-DD TO SR-FCDAY.                              00650000
+006510     MOVE SR-CODASYL-YYYY TO SR-FCYR.                             00651000
+006520     PERFORM JULIAN-365.                                          00652000
+006530     MOVE SR-TOJUL TO SR-FROMJUL.                                 00653000
+006540     PERFORM DAY-OF-THE-WEEK.                                     00654000
+006550     MOVE SR-DOW TO WS-NPROCDTADOW.                               00655000
+006560     IF SR-CODASYL IS NOT GREATER THAN WS-CURDT                   00656000
+006570         GO TO EC-NPROCDTAERR.                                    00657000
+006580     GO TO EC-PROCWK.                                             00658000
+006590 EC-NPROCDTAERR.                                                  00659000
+006600     MOVE 4 TO WS-EKERRNBR.                                       00660000
+006610     PERFORM CARD-ERROR.                                          00661000
+006620 EC-PROCWK.                                                       00662000
+006630     MOVE +0 TO WS-SUB1.                                          00663000
+006640 EC-PWLOOP.                                                       00664000
+006650     ADD +1 TO WS-SUB1.                                           00665000
+006660     IF WS-SUB1 IS GREATER THAN +7                                00666000
+006670         GO TO EC-NPDAOPEN.                                       00667000
+006680     IF RPFM01-PWDAY (WS-SUB1) IS NOT EQUAL TO ' '                00668000
+006690         AND RPFM01-PWDAY (WS-SUB1) IS NOT EQUAL TO 'N'           00669000
+006700         AND RPFM01-PWDAY (WS-SUB1) IS NOT EQUAL TO 'C'           00670000
+006710         GO TO EC-PROCWKERR.                                      00671000
+006720     GO TO EC-PWLOOP.                                             00672000
+006730 EC-PROCWKERR.                                                    00673000
+006740     MOVE 6 TO WS-EKERRNBR.                                       00674000
+006750     PERFORM CARD-ERROR.                                          00675000
+006760 EC-NPDAOPEN.                                                     00676000
+006770     IF WS-NPROCDTADOW IS EQUAL TO ZERO                           00677000
+006780         GO TO EC-NPDAOPENERR.                                    00678000
+006790     MOVE WS-NPROCDTADOW TO WS-SUB1.                              00679000
+006800     IF RPFM01-PWDAY (WS-SUB1) IS EQUAL TO 'C'                    00680000
+006810         GO TO EC-NPDAOPENERR.                                    00681000
+006820     GO TO EC-PROCOP.                                             00682000
+006830 EC-NPDAOPENERR.                                                  00683000
+006840     MOVE 5 TO WS-EKERRNBR.                                       00684000
+006850     PERFORM CARD-ERROR.                                          00685000
+006860 EC-PROCOP.                                                       00686000
+006870     IF RPFM01-PROCOP IS NOT EQUAL TO 'A'                         00687000
+006880         AND RPFM01-PROCOP IS NOT EQUAL TO 'B'                    00688000
+006890         GO TO EC-PROCOPERR.                                      00689000
+006900     GO TO EC-INCH.                                               00690000
+006910 EC-PROCOPERR.                                                    00691000
+006920     MOVE 7 TO WS-EKERRNBR.                                       00692000
+006930     PERFORM CARD-ERROR.                                          00693000
+006940 EC-INCH.                                                         00694000
+006950     IF RPFM01-INST IS NOT EQUAL TO ZERO                          00695000
+006960         MOVE SPACE TO RPFM01-INCH                                00696000
+006970         GO TO EC-EXIT.                                           00697000
+006980     IF RPFM01-INCH IS NOT EQUAL TO '6'                           00698000
+006990         AND RPFM01-INCH IS NOT EQUAL TO '8'                      00699000
+007000         GO TO EC-INCHERR.                                        00700000
+007010     GO TO EC-EXIT.                                               00701000
+007020 EC-INCHERR.                                                      00702000
+007030     MOVE 8 TO WS-EKERRNBR.                                       00703000
+007040     PERFORM CARD-ERROR.                                          00704000
+007050 EC-EXIT.                                                         00705000
+007060     EXIT.                                                        00706000
+007070***************************************************************** 00707000
+007080 UPDATE-INST SECTION.                                             00708000
+007090 UI-START.                                                        00709000
+007100     IF RPBNK-INST IS EQUAL TO ZERO                               00710000
+007110         GO TO UI-SYSTEMREC.                                      00711000
+007120     MOVE RPBNK-NPROCDTA TO SR-CYEAR-FIRST.                       00712000
+007130     MOVE SR-CMM TO SR-FCMON.                                     00713000
+007140     MOVE SR-CDD TO SR-FCDAY.                                     00714000
+007150     MOVE SR-CYYYY TO SR-FCYR.                                    00715000
+007160     PERFORM JULIAN-365.                                          00716000
+007170     IF SR-TOJUL IS NOT GREATER THAN WS-CURRENTDT                 00717000
+007180         GO TO UI-UPDATE.                                         00718000
+007190     MOVE 'N' TO RPBNK-PROCFLAG.                                  00719000
+007200     GO TO UI-CLEAR.                                              00720000
+007210 UI-SYSTEMREC.                                                    00721000
+007220     MOVE RPBNK-NPROCDTA TO SR-CYEAR-FIRST.                       00722000
+007230     MOVE SR-CMM TO SR-FCMON.                                     00723000
+007240     MOVE SR-CDD TO SR-FCDAY.                                     00724000
+007250     MOVE SR-CYYYY TO SR-FCYR.                                    00725000
+007260     PERFORM JULIAN-365.                                          00726000
+007270     MOVE SR-TOJUL TO WS-CURRENTDT.                               00727000
+007280     MOVE WS-CURRENTDT TO SR-FROMJUL.                             00728000
+007290     MOVE 001 TO SR-FJDAY.                                        00729000
+007300     MOVE SR-FROMJUL TO WS-FIRSTDOY.                              00730000
+007310     MOVE SR-FJYR TO SR-FCYR.                                     00731000
+007320     MOVE 12 TO SR-FCMON.                                         00732000
+007330     MOVE 31 TO SR-FCDAY.                                         00733000
+007340     PERFORM JULIAN-365.                                          00734000
+007350     MOVE SR-TOJUL TO WS-LASTDOY.                                 00735000
+007360     MOVE SR-TJDAY TO WS-YEAR.                                    00736000
+007370     MOVE SR-CYEAR-FIRST TO SR-CODASYL.                           00737000
+007380     MOVE MIM-1001DATE-SEQ TO SR-CDSEQ.                           00738000
+007390     MOVE MIM-1001DATE-DELIM TO SR-CDDELIM.                       00739000
+007400     PERFORM EDIT-CODASYL-DATE.                                   00740000
+007410     MOVE SR-CODASYL-EDITED TO SR-TODAY-X.                        00741000
+007420     MOVE WS-CURRENTDT TO SR-FROMJUL.                             00742000
+007430     PERFORM CALENDAR-365.                                        00743000
+007440     MOVE SR-TOCAL TO SR-FROMCAL.                                 00744000
+007450     MOVE 01 TO SR-FCDAY.                                         00745000
+007460     PERFORM JULIAN-365.                                          00746000
+007470     MOVE SR-TOJUL TO WS-FIRSTDOM.                                00747000
+007480     IF SR-FCMON IS EQUAL TO 12                                   00748000
+007490         MOVE WS-LASTDOY TO WS-LASTDOM                            00749000
+007500     ELSE                                                         00750000
+007510         ADD +1 TO SR-FCMON                                       00751000
+007520         PERFORM JULIAN-365                                       00752000
+007530         SUBTRACT +1 FROM SR-TJDAY                                00753000
+007540         MOVE SR-TOJUL TO WS-LASTDOM.                             00754000
+007550     MOVE WS-CURRENTDT TO SR-FROMJUL.                             00755000
+007560     PERFORM DAY-OF-THE-WEEK.                                     00756000
+007570     MOVE SR-DOW TO WS-DAY.                                       00757000
+007580     SUBTRACT +1 FROM WS-DAY                                      00758000
+007590         GIVING SR-WORK3.                                         00759000
+007600     PERFORM DECREASE-DATE.                                       00760000
+007610     MOVE SR-TOJUL TO WS-FIRSTDOW.                                00761000
+007620     SUBTRACT WS-DAY FROM +7                                      00762000
+007630         GIVING SR-WORK3.                                         00763000
+007640     PERFORM INCREASE-DATE.                                       00764000
+007650     MOVE SR-TOJUL TO WS-LASTDOW.                                 00765000
+007660     IF RPBNK-INCH IS EQUAL TO '8'                                00766000
+007670         MOVE +78 TO SR-PAGE.                                     00767000
+007680 UI-UPDATE.                                                       00768000
+007690     MOVE SPACES TO RPBNK-PROCFLAG.                               00769000
+007700     MOVE RPBNK-CURDT TO RPBNK-LPROCDT.                           00770000
+007710     MOVE WS-CURRENTDT TO SR-FROMJUL.                             00771000
+007720     PERFORM CALENDAR-365.                                        00772000
+007730     MOVE SR-TCMON TO SR-CMM.                                     00773000
+007740     MOVE SR-TCDAY TO SR-CDD.                                     00774000
+007750     MOVE SR-TCYR TO SR-CYYYY.                                    00775000
+007760     MOVE SR-CYEAR-FIRST TO RPBNK-CURDT.                          00776000
+007770     MOVE WS-FIRSTDOY TO SR-FROMJUL.                              00777000
+007780     PERFORM CALENDAR-365.                                        00778000
+007790     MOVE SR-TCMON TO SR-CMM.                                     00779000
+007800     MOVE SR-TCDAY TO SR-CDD.                                     00780000
+007810     MOVE SR-TCYR TO SR-CYYYY.                                    00781000
+007820     MOVE SR-CYEAR-FIRST TO RPBNK-FIRSTDOY.                       00782000
+007830     MOVE WS-LASTDOY TO SR-FROMJUL.                               00783000
+007840     PERFORM CALENDAR-365.                                        00784000
+007850     MOVE SR-TCMON TO SR-CMM.                                     00785000
+007860     MOVE SR-TCDAY TO SR-CDD.                                     00786000
+007870     MOVE SR-TCYR TO SR-CYYYY.                                    00787000
+007880     MOVE SR-CYEAR-FIRST TO RPBNK-LASTDOY.                        00788000
+007890     MOVE WS-FIRSTDOM TO SR-FROMJUL.                              00789000
+007900     PERFORM CALENDAR-365.                                        00790000
+007910     MOVE SR-TCMON TO SR-CMM.                                     00791000
+007920     MOVE SR-TCDAY TO SR-CDD.                                     00792000
+007930     MOVE SR-TCYR TO SR-CYYYY.                                    00793000
+007940     MOVE SR-CYEAR-FIRST TO RPBNK-FIRSTDOM.                       00794000
+007950     MOVE WS-LASTDOM TO SR-FROMJUL.                               00795000
+007960     PERFORM CALENDAR-365.                                        00796000
+007970     MOVE SR-TCMON TO SR-CMM.                                     00797000
+007980     MOVE SR-TCDAY TO SR-CDD.                                     00798000
+007990     MOVE SR-TCYR TO SR-CYYYY.                                    00799000
+008000     MOVE SR-CYEAR-FIRST TO RPBNK-LASTDOM.                        00800000
+008010     MOVE WS-FIRSTDOW TO SR-FROMJUL.                              00801000
+008020     PERFORM CALENDAR-365.                                        00802000
+008030     MOVE SR-TCMON TO SR-CMM.                                     00803000
+008040     MOVE SR-TCDAY TO SR-CDD.                                     00804000
+008050     MOVE SR-TCYR TO SR-CYYYY.                                    00805000
+008060     MOVE SR-CYEAR-FIRST TO RPBNK-FIRSTDOW.                       00806000
+008070     MOVE WS-LASTDOW TO SR-FROMJUL.                               00807000
+008080     PERFORM CALENDAR-365.                                        00808000
+008090     MOVE SR-TCMON TO SR-CMM.                                     00809000
+008100     MOVE SR-TCDAY TO SR-CDD.                                     00810000
+008110     MOVE SR-TCYR TO SR-CYYYY.                                    00811000
+008120     MOVE SR-CYEAR-FIRST TO RPBNK-LASTDOW.                        00812000
+008130     MOVE WS-DAY TO RPBNK-DAY.                                    00813000
+008140     IF WS-NODTCK IS EQUAL TO 'X'                                 00814000
+008150         GO TO UI-NEXTSCHED.                                      00815000
+008160     IF RPBNK-INST IS EQUAL TO ZERO                               00816000
+008170         AND RPBNK-CURDT IS NOT EQUAL TO WS-CURDATE-CODASYL       00817000
+008180         GO TO AR-0006.                                           00818000
+008190 UI-NEXTSCHED.                                                    00819000
+008200     MOVE ZERO TO SR-WORK3.                                       00820000
+008210     MOVE WS-DAY TO WS-SUB1.                                      00821000
+008220 UI-NSLOOP1.                                                      00822000
+008230     ADD +1 TO WS-SUB1.                                           00823000
+008240     IF WS-SUB1 IS GREATER THAN +7                                00824000
+008250         SUBTRACT WS-DAY FROM WS-SUB1                             00825000
+008260             GIVING SR-WORK3                                      00826000
+008270         SUBTRACT +1 FROM SR-WORK3                                00827000
+008280         MOVE ZERO TO WS-SUB1                                     00828000
+008290         GO TO UI-NSLOOP2.                                        00829000
+008300     IF RPBNK-PWDAY (WS-SUB1) IS EQUAL TO SPACES                  00830000
+008310         SUBTRACT WS-DAY FROM WS-SUB1                             00831000
+008320         GO TO UI-NSOUT.                                          00832000
+008330     GO TO UI-NSLOOP1.                                            00833000
+008340 UI-NSLOOP2.                                                      00834000
+008350     ADD +1 TO WS-SUB1.                                           00835000
+008360     IF WS-SUB1 IS GREATER THAN WS-DAY                            00836000
+008370         SUBTRACT +1 FROM WS-SUB1                                 00837000
+008380         GO TO UI-NSOUT.                                          00838000
+008390     IF RPBNK-PWDAY (WS-SUB1) IS NOT EQUAL TO SPACES              00839000
+008400         GO TO UI-NSLOOP2.                                        00840000
+008410 UI-NSOUT.                                                        00841000
+008420     ADD WS-SUB1 TO SR-WORK3.                                     00842000
+008430     MOVE WS-CURRENTDT TO SR-FROMJUL.                             00843000
+008440     PERFORM INCREASE-DATE.                                       00844000
+008450     MOVE SR-TOJUL TO SR-FROMJUL.                                 00845000
+008460     PERFORM CALENDAR-365.                                        00846000
+008470     MOVE SR-TCMON TO SR-CMM.                                     00847000
+008480     MOVE SR-TCDAY TO SR-CDD.                                     00848000
+008490     MOVE SR-TCYR TO SR-CYYYY.                                    00849000
+008500     MOVE SR-CYEAR-FIRST TO RPBNK-NPROCDTS.                       00850000
+008510 UI-NEXTACT.                                                      00851000
+008520     MOVE RPBNK-NPROCDTS TO SR-CYEAR-FIRST.                       00852000
+008530     MOVE SR-CMM TO SR-FCMON.                                     00853000
+008540     MOVE SR-CDD TO SR-FCDAY.                                     00854000
+008550     MOVE SR-CYYYY TO SR-FCYR.                                    00855000
+008560     PERFORM JULIAN-365.                                          00856000
+008570     MOVE SR-TOJUL TO SR-FROMJUL.                                 00857000
+008580     PERFORM DAY-OF-THE-WEEK.                                     00858000
+008590     MOVE SR-DOW TO WS-WORKDAY.                                   00859000
+008600     PERFORM HOLIDAY-CHECK.                                       00860000
+008610     IF WS-HOLSW IS EQUAL TO SPACES                               00861000
+008620         GO TO UI-NAMOVE.                                         00862000
+008630     IF RPBNK-PROCOP IS EQUAL TO 'A'                              00863000
+008640         GO TO UI-AFTER.                                          00864000
+008650 UI-BEFORE.                                                       00865000
+008660     MOVE ZERO TO WS-WORK1.                                       00866000
+008670     MOVE WS-WORKDAY TO WS-SUB2.                                  00867000
+008680 UI-BLOOP1.                                                       00868000
+008690     SUBTRACT +1 FROM WS-SUB2.                                    00869000
+008700     IF WS-SUB2 IS LESS THAN +1                                   00870000
+008710         MOVE +8 TO WS-SUB2                                       00871000
+008720         GO TO UI-BLOOP2.                                         00872000
+008730     ADD +1 TO WS-WORK1.                                          00873000
+008740     IF RPBNK-PWDAY (WS-SUB2) IS EQUAL TO 'C'                     00874000
+008750         GO TO UI-BLOOP1.                                         00875000
+008760     MOVE WS-WORK1 TO SR-WORK3.                                   00876000
+008770     PERFORM DECREASE-DATE.                                       00877000
+008780     MOVE SR-TOJUL TO WS-TOJUL-HOLD.                              00878000
+008790     MOVE RPBNK-LPROCDT TO SR-CYEAR-FIRST.                        00879000
+008800     MOVE SR-CMM TO SR-FCMON.                                     00880000
+008810     MOVE SR-CDD TO SR-FCDAY.                                     00881000
+008820     MOVE SR-CYYYY TO SR-FCYR.                                    00882000
+008830     PERFORM JULIAN-365.                                          00883000
+008840     IF WS-TOJUL-HOLD IS NOT GREATER THAN SR-TOJUL                00884000
+008850         OR WS-TOJUL-HOLD IS NOT GREATER THAN WS-CURRENTDT        00885000
+008860         MOVE WS-TOJUL-HOLD TO SR-TOJUL                           00886000
+008870         GO TO UI-AFTER.                                          00887000
+008880     MOVE WS-TOJUL-HOLD TO SR-TOJUL.                              00888000
+008890     MOVE SR-TOJUL TO SR-FROMJUL.                                 00889000
+008900     PERFORM HOLIDAY-CHECK.                                       00890000
+008910     IF WS-HOLSW IS EQUAL TO SPACES                               00891000
+008920         GO TO UI-NAMOVE.                                         00892000
+008930     MOVE RPBNK-NPROCDTS TO SR-CYEAR-FIRST.                       00893000
+008940     MOVE SR-CMM TO SR-FCMON.                                     00894000
+008950     MOVE SR-CDD TO SR-FCDAY.                                     00895000
+008960     MOVE SR-CYYYY TO SR-FCYR.                                    00896000
+008970     PERFORM JULIAN-365.                                          00897000
+008980     MOVE SR-TOJUL TO SR-FROMJUL.                                 00898000
+008990     GO TO UI-BLOOP1.                                             00899000
+009000 UI-BLOOP2.                                                       00900000
+009010     SUBTRACT +1 FROM WS-SUB2.                                    00901000
+009020     IF WS-SUB2 IS LESS THAN WS-DAY                               00902000
+009030         GO TO UI-AFTER.                                          00903000
+009040     ADD +1 TO WS-WORK1.                                          00904000
+009050     IF RPBNK-PWDAY (WS-SUB2) IS EQUAL TO 'C'                     00905000
+009060         GO TO UI-BLOOP2.                                         00906000
+009070     MOVE WS-WORK1 TO SR-WORK3.                                   00907000
+009080     PERFORM DECREASE-DATE.                                       00908000
+009090     MOVE SR-TOJUL TO WS-TOJUL-HOLD.                              00909000
+009100     MOVE RPBNK-LPROCDT TO SR-CYEAR-FIRST.                        00910000
+009110     MOVE SR-CMM TO SR-FCMON.                                     00911000
+009120     MOVE SR-CDD TO SR-FCDAY.                                     00912000
+009130     MOVE SR-CYYYY TO SR-FCYR.                                    00913000
+009140     PERFORM JULIAN-365.                                          00914000
+009150     IF WS-TOJUL-HOLD IS NOT GREATER THAN SR-TOJUL                00915000
+009160         OR WS-TOJUL-HOLD IS NOT GREATER THAN WS-CURRENTDT        00916000
+009170         MOVE WS-TOJUL-HOLD TO SR-TOJUL                           00917000
+009180         GO TO UI-AFTER.                                          00918000
+009190     MOVE WS-TOJUL-HOLD TO SR-TOJUL.                              00919000
+009200     MOVE SR-TOJUL TO SR-FROMJUL.                                 00920000
+009210     PERFORM HOLIDAY-CHECK.                                       00921000
+009220     IF WS-HOLSW IS EQUAL TO SPACES                               00922000
+009230         GO TO UI-NAMOVE.                                         00923000
+009240     MOVE RPBNK-NPROCDTS TO SR-CYEAR-FIRST.                       00924000
+009250     MOVE SR-CMM TO SR-FCMON.                                     00925000
+009260     MOVE SR-CDD TO SR-FCDAY.                                     00926000
+009270     MOVE SR-CYYYY TO SR-FCYR.                                    00927000
+009280     PERFORM JULIAN-365.                                          00928000
+009290     MOVE SR-TOJUL TO SR-FROMJUL.                                 00929000
+009300     GO TO UI-BLOOP2.                                             00930000
+009310 UI-AFTER.                                                        00931000
+009320     MOVE ZERO TO WS-WORK1.                                       00932000
+009330     MOVE WS-WORKDAY TO WS-SUB2.                                  00933000
+009340 UI-ALOOP1.                                                       00934000
+009350     ADD +1 TO WS-SUB2.                                           00935000
+009360     IF WS-SUB2 IS GREATER THAN +7                                00936000
+009370         MOVE ZERO TO WS-SUB2                                     00937000
+009380         GO TO UI-ALOOP1.                                         00938000
+009390     ADD +1 TO WS-WORK1.                                          00939000
+009400     IF RPBNK-PWDAY (WS-SUB2) IS EQUAL TO 'C'                     00940000
+009410         GO TO UI-ALOOP1.                                         00941000
+009420     MOVE WS-WORK1 TO SR-WORK3.                                   00942000
+009430     PERFORM INCREASE-DATE.                                       00943000
+009440     MOVE SR-TOJUL TO SR-FROMJUL.                                 00944000
+009450     PERFORM HOLIDAY-CHECK.                                       00945000
+009460     IF WS-HOLSW IS EQUAL TO SPACES                               00946000
+009470         GO TO UI-NAMOVE.                                         00947000
+009480     MOVE RPBNK-NPROCDTS TO SR-CYEAR-FIRST.                       00948000
+009490     MOVE SR-CMM TO SR-FCMON.                                     00949000
+009500     MOVE SR-CDD TO SR-FCDAY.                                     00950000
+009510     MOVE SR-CYYYY TO SR-FCYR.                                    00951000
+009520     PERFORM JULIAN-365.                                          00952000
+009530     MOVE SR-TOJUL TO SR-FROMJUL.                                 00953000
+009540     GO TO UI-ALOOP1.                                             00954000
+009550 UI-NAMOVE.                                                       00955000
+009560     PERFORM CALENDAR-365.                                        00956000
+009570     MOVE SR-TCMON TO SR-CMM.                                     00957000
+009580     MOVE SR-TCDAY TO SR-CDD.                                     00958000
+009590     MOVE SR-TCYR TO SR-CYYYY.                                    00959000
+009600     MOVE SR-CYEAR-FIRST TO RPBNK-NPROCDTA.                       00960000
+009610 UI-WEEK.                                                         00961000
+009620     MOVE SPACES TO RPBNK-WEEKFLAG.                               00962000
+009630     IF RPBNK-LPROCDT IS LESS THAN RPBNK-FIRSTDOW                 00963000
+009640         MOVE 'F' TO RPBNK-WEEKFLAG.                              00964000
+009650     IF RPBNK-NPROCDTA IS NOT GREATER THAN RPBNK-LASTDOW          00965000
+009660         GO TO UI-MONTH.                                          00966000
+009670     IF RPBNK-WEEKFLAG IS EQUAL TO SPACES                         00967000
+009680         MOVE 'L' TO RPBNK-WEEKFLAG                               00968000
+009690     ELSE                                                         00969000
+009700         MOVE 'B' TO RPBNK-WEEKFLAG.                              00970000
+009710 UI-MONTH.                                                        00971000
+009720     MOVE SPACES TO RPBNK-MONFLAG.                                00972000
+009730     IF RPBNK-LPROCDT IS LESS THAN RPBNK-FIRSTDOM                 00973000
+009740         MOVE 'F' TO RPBNK-MONFLAG.                               00974000
+009750     IF RPBNK-NPROCDTA IS NOT GREATER THAN RPBNK-LASTDOM          00975000
+009760         GO TO UI-CLEAR.                                          00976000
+009770     IF RPBNK-MONFLAG IS EQUAL TO SPACES                          00977000
+009780         MOVE 'L' TO RPBNK-MONFLAG                                00978000
+009790     ELSE                                                         00979000
+009800         MOVE 'B' TO RPBNK-MONFLAG.                               00980000
+009810 UI-CLEAR.                                                        00981000
+009820     IF RPBNK-INST IS EQUAL TO ZERO                               00982000
+009830         GO TO UI-EXIT.                                           00983000
+009840     IF RPBNK-PROCFLAG IS EQUAL TO 'N'                            00984000
+009850         OR RPBNK-PROCFLAG IS EQUAL TO 'D'                        00985000
+009860         GO TO UI-EXIT.                                           00986000
+009870     MOVE SPACE TO RPBNK-PROCFLAG.                                00987000
+009880 UI-EXIT.                                                         00988000
+009890     EXIT.                                                        00989000
+009900***************************************************************** 00990000
+009910 HOLIDAY-CHECK SECTION.                                           00991000
+009920 HC-START.                                                        00992000
+009930     MOVE SPACES TO WS-HOLSW.                                     00993000
+009940     PERFORM CALENDAR-365.                                        00994000
+009950     MOVE SPACE TO MI2021-RECORD.                                 00995000
+009960     MOVE RPBNK-INST TO MIM-2021KINST.                            00996000
+009970     MOVE SR-FJYR TO MIM-2021KYEAR.                               00997000
+009980     MOVE +2021 TO MIM-2021KREC.                                  00998000
+009990     MOVE MIC-MST-2021-PRI TO MIC-MST-REC-PRI.                    00999000
+010000     MOVE MI2021-RECORD TO MIMST-RECORD.                          01000000
+010010     PERFORM MIC-MST-GET-REQUEST.                                 01001000
+010020     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01002000
+010030         IF WS-BKZHOLTBL IS EQUAL TO SPACE                        01003000
+010040             MOVE '*** MISSING 2021 ***' TO WS-BKNAME             01004000
+010050             MOVE 'N' TO RPBNK-PROCFLAG                           01005000
+010060             GO TO HC-EXIT                                        01006000
+010070         ELSE                                                     01007000
+010080             MOVE WS-BKZHOLTBL TO WS-BKHOLTBL.                    01008000
+010090     IF WS-FUNCTION IS EQUAL TO SPACE                             01009000
+010100         MOVE MIMST-RECORD TO MI2021-RECORD                       01010000
+010110         MOVE MIM-2021HOLIDAY-TABLE TO WS-BKHOLTBL                01011000
+010120         IF RPBNK-INST IS EQUAL TO ZERO                           01012000
+010130             MOVE MIM-2021HOLIDAY-TABLE TO WS-BKZHOLTBL.          01013000
+010140     MOVE ZERO TO WS-SUB1.                                        01014000
+010150 HC-LOOP1.                                                        01015000
+010160     ADD +1 TO WS-SUB1.                                           01016000
+010170     IF WS-SUB1 IS GREATER THAN +30                               01017000
+010180         MOVE ZERO TO WS-SUB1                                     01018000
+010190         GO TO HC-LOOP2.                                          01019000
+010200     IF WS-BKZHOL (WS-SUB1) IS EQUAL TO SPACES                    01020000
+010210         OR WS-BKZHOL (WS-SUB1) IS EQUAL TO ZEROS                 01021000
+010220         GO TO HC-LOOP1.                                          01022000
+010230     IF WS-BKZHOLMO (WS-SUB1) IS EQUAL TO SR-TCMON                01023000
+010240         AND WS-BKZHOLDA (WS-SUB1) IS EQUAL TO SR-TCDAY           01024000
+010250         MOVE 'X' TO WS-HOLSW                                     01025000
+010260         MOVE 'X' TO WS-SYSHOL                                    01026000
+010270         GO TO HC-EXIT.                                           01027000
+010280     GO TO HC-LOOP1.                                              01028000
+010290 HC-LOOP2.                                                        01029000
+010300     ADD +1 TO WS-SUB1.                                           01030000
+010310     IF WS-SUB1 IS GREATER THAN +30                               01031000
+010320         MOVE ZERO TO WS-SUB1                                     01032000
+010330         GO TO HC-EXIT.                                           01033000
+010340     IF WS-BKHOL (WS-SUB1) IS EQUAL TO SPACES                     01034000
+010350         OR WS-BKHOL (WS-SUB1) IS EQUAL TO ZEROS                  01035000
+010360         GO TO HC-LOOP2.                                          01036000
+010370     IF WS-BKHOLMO (WS-SUB1) IS EQUAL TO SR-TCMON                 01037000
+010380         AND WS-BKHOLDA (WS-SUB1) IS EQUAL TO SR-TCDAY            01038000
+010390         MOVE 'X' TO WS-HOLSW                                     01039000
+010400         GO TO HC-EXIT.                                           01040000
+010410     GO TO HC-LOOP2.                                              01041000
+010420 HC-EXIT.                                                         01042000
+010430     EXIT.                                                        01043000
+010440***************************************************************** 01044000
+010450 DECREASE-DATE SECTION.                                           01045000
+010460 DD-START.                                                        01046000
+010470     MOVE SR-FROMJUL TO WS-SAVE.                                  01047000
+010480     MOVE SR-FJDAY TO SR-WORK2.                                   01048000
+010490     SUBTRACT SR-WORK3 FROM SR-WORK2.                             01049000
+010500     IF SR-WORK2 IS GREATER THAN +0                               01050000
+010510         MOVE SR-WORK2 TO SR-FJDAY                                01051000
+010520         MOVE SR-FROMJUL TO SR-TOJUL                              01052000
+010530         GO TO DD-RESTORE.                                        01053000
+010540     MOVE SR-FJYR TO SR-FCYR.                                     01054000
+010550     SUBTRACT +1 FROM SR-FCYR.                                    01055000
+010560     MOVE 12 TO SR-FCMON.                                         01056000
+010570     MOVE 31 TO SR-FCDAY.                                         01057000
+010580     PERFORM JULIAN-365.                                          01058000
+010590     MOVE SR-TJDAY TO SR-WORK3.                                   01059000
+010600     ADD SR-WORK2 TO SR-WORK3.                                    01060000
+010610     MOVE SR-WORK3 TO SR-TJDAY.                                   01061000
+010620 DD-RESTORE.                                                      01062000
+010630     MOVE WS-SAVE TO SR-FROMJUL.                                  01063000
+010640 DD-EXIT.                                                         01064000
+010650     EXIT.                                                        01065000
+010660***************************************************************** 01066000
+010670 INCREASE-DATE SECTION.                                           01067000
+010680 ID-START.                                                        01068000
+010690     MOVE SR-FROMJUL TO WS-SAVE.                                  01069000
+010700     ADD SR-WORK3 TO SR-FJDAY.                                    01070000
+010710     IF SR-FJDAY IS GREATER THAN WS-YEAR                          01071000
+010720         ADD +1 TO SR-FJYR                                        01072000
+010730         MOVE WS-LASTDOY TO SR-TOJUL                              01073000
+010740         SUBTRACT SR-TJDAY FROM SR-FJDAY.                         01074000
+010750     MOVE SR-FROMJUL TO SR-TOJUL.                                 01075000
+010760     MOVE WS-SAVE TO SR-FROMJUL.                                  01076000
+010770 ID-EXIT.                                                         01077000
+010780     EXIT.                                                        01078000
+010790***************************************************************** 01079000
+010800 PRINT-INST SECTION.                                              01080000
+010810 PB-START.                                                        01081000
+010820     MOVE SR-LINES TO WS-LINES.                                   01082000
+010830     ADD +2 TO WS-LINES.                                          01083000
+010840     IF WS-LINES IS GREATER THAN SR-PAGE                          01084000
+010850         ADD +1 TO SR-PGCTR                                       01085000
+010860         PERFORM HEADING-ROUTINE.                                 01086000
+010870     MOVE RPBNK-INST TO P4-INST.                                  01087000
+010880     MOVE WS-BKNAME TO P4-BKNAME.                                 01088000
+010890     MOVE MIM-1001DATE-SEQ TO SR-CDSEQ.                           01089000
+010900     MOVE MIM-1001DATE-DELIM TO SR-CDDELIM.                       01090000
+010910     MOVE RPBNK-LPROCDT TO SR-CODASYL.                            01091000
+010920     PERFORM EDIT-CODASYL-DATE.                                   01092000
+010930     MOVE SR-CODASYL-EDITED TO P4-DATE1.                          01093000
+010940     MOVE RPBNK-NPROCDTS TO SR-CODASYL.                           01094000
+010950     PERFORM EDIT-CODASYL-DATE.                                   01095000
+010960     MOVE SR-CODASYL-EDITED TO P4-DATE2.                          01096000
+010970     MOVE RPBNK-NPROCDTA TO SR-CODASYL.                           01097000
+010980     PERFORM EDIT-CODASYL-DATE.                                   01098000
+010990     MOVE SR-CODASYL-EDITED TO P4-DATE3.                          01099000
+011000     MOVE RPBNK-WEEKFLAG TO P4-WEEKFLAG.                          01100000
+011010     MOVE RPBNK-MONFLAG TO P4-MONFLAG.                            01101000
+011020     MOVE RPBNK-PROCWK TO P4-PROCWK.                              01102000
+011030     MOVE RPBNK-DAY TO P4-DAY.                                    01103000
+011040     MOVE RPBNK-PROCOP TO P4-PROCOP.                              01104000
+011050     PERFORM PR-02 THRU PR-EXIT.                                  01105000
+011060     IF RPBNK-PROCFLAG IS EQUAL TO 'N'                            01106000
+011070         MOVE '*** NOT PROCESSED TODAY ***' TO P4-BKNAME          01107000
+011080         PERFORM PR-02 THRU PR-EXIT.                              01108000
+011090     MOVE ALL '-' TO PLINE1.                                      01109000
+011100     PERFORM PR-02 THRU PR-EXIT.                                  01110000
+011110 PB-EXIT.                                                         01111000
+011120     EXIT.                                                        01112000
+011130***************************************************************** 01113000
+011140 WRITE-INST SECTION.                                              01114000
+011150 WB-START.                                                        01115000
+011160     IF WS-FUNCTION IS EQUAL TO SPACE                             01116000
+011170         GO TO WB-REWRITE.                                        01117000
+011180     MOVE 'A  ' TO SR-APIFUNC.                                    01118000
+011190     PERFORM CALL-RPS-BNK.                                        01119000
+011200     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01120000
+011210         GO TO AR-0007.                                           01121000
+011220     GO TO WB-EXIT.                                               01122000
+011230 WB-REWRITE.                                                      01123000
+011240     MOVE 'W  ' TO SR-APIFUNC.                                    01124000
+011250     PERFORM CALL-RPS-BNK.                                        01125000
+011260     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01126000
+011270         GO TO AR-0008.                                           01127000
+011280 WB-EXIT.                                                         01128000
+011290     EXIT.                                                        01129000
+011300***************************************************************** 01130000
+011310 JULIAN-365 SECTION.                                              01131000
+000000 COPY SRP001.                                                     01132000
+011330***************************************************************** 01133000
+011340 CALENDAR-365 SECTION.                                            01134000
+000000 COPY SRP003.                                                     01135000
+011360***************************************************************** 01136000
+011370 DAY-OF-THE-WEEK SECTION.                                         01137000
+000000 COPY SRP008.                                                     01138000
+011390***************************************************************** 01139000
+011400 DEEDIT-CODASYL-DATE SECTION.                                     01140000
+000000 COPY SRP086.                                                     01141000
+011420******************************************************            01142000
+011430 EDIT-CODASYL-DATE SECTION.                                       01143000
+000000 COPY SRP087.                                                     01144000
+011450******************************************************            01145000
+011460 CONVERT-6-TO-8 SECTION.                                          01146000
+000000 COPY SRP011.                                                     01147000
+011480***************************************************************** 01148000
+011490 DATE-VALIDATION SECTION.                                         01149000
+000000 COPY SRP007.                                                     01150000
+011510***************************************************************** 01151000
+011520 HEADING-ROUTINE SECTION.                                         01152000
+000000 COPY SRP016.                                                     01153000
+011540 HR-DETAIL.                                                       01154000
+011550     IF SR-RPTNBR IS EQUAL TO '50001'                             01155000
+011560         GO TO HR-DETAIL2.                                        01156000
+011570     MOVE WS-HEAD1 TO PLINE1.                                     01157000
+011580     PERFORM PR-01 THRU PR-EXIT.                                  01158000
+011590     MOVE WS-HEAD2 TO PLINE1.                                     01159000
+011600     PERFORM PR-02 THRU PR-EXIT.                                  01160000
+011610     GO TO HR-DEXIT.                                              01161000
+011620 HR-DETAIL2.                                                      01162000
+011630     MOVE WS-HEAD3 TO PLINE1.                                     01163000
+011640     PERFORM PR-01 THRU PR-EXIT.                                  01164000
+011650     MOVE WS-HEAD4 TO PLINE1.                                     01165000
+011660     PERFORM PR-01 THRU PR-EXIT.                                  01166000
+011670     MOVE WS-HEAD5 TO PLINE1.                                     01167000
+011680     PERFORM PR-02 THRU PR-EXIT.                                  01168000
+011690 HR-DEXIT.                                                        01169000
+011700     EXIT.                                                        01170000
+011710***************************************************************** 01171000
+011720 GET-FILE-ORGANIZATION SECTION.                                   01172000
+000000 COPY SRP093.                                                     01173000
+011740***************************************************************** 01174000
+011750 PRINTER-ROUTINE SECTION.                                         01175000
+000000 COPY SRP017.                                                     01176000
+011770***************************************************************** 01177000
+011780 ABORT-ROUTINE SECTION.                                           01178000
+011790 AR-0001.                                                         01179000
+011800     MOVE 0001 TO WS-ABCODE.                                      01180000
+011810     GO TO AR-MSG.                                                01181000
+011820 AR-0002.                                                         01182000
+011830     MOVE 0002 TO WS-ABCODE.                                      01183000
+011840     GO TO AR-MSG.                                                01184000
+011850 AR-0003.                                                         01185000
+011860     MOVE 0003 TO WS-ABCODE.                                      01186000
+011870     GO TO AR-MSG.                                                01187000
+011880 AR-0004.                                                         01188000
+011890     MOVE 0004 TO WS-ABCODE.                                      01189000
+011900     GO TO AR-MSG.                                                01190000
+011910 AR-0005.                                                         01191000
+011920     MOVE 0005 TO WS-ABCODE.                                      01192000
+011930     GO TO AR-MSG.                                                01193000
+011940 AR-0006.                                                         01194000
+011950     MOVE 0006 TO WS-ABCODE.                                      01195000
+011960     GO TO AR-MSG.                                                01196000
+011970 AR-0007.                                                         01197000
+011980     MOVE 0007 TO WS-ABCODE.                                      01198000
+011990     GO TO AR-MSG.                                                01199000
+012000 AR-0008.                                                         01200000
+012010     MOVE 0008 TO WS-ABCODE.                                      01201000
+012020     GO TO AR-MSG.                                                01202000
+012030 AR-0009.                                                         01203000
+012040     MOVE 0009 TO WS-ABCODE.                                      01204000
+012050     GO TO AR-MSG.                                                01205000
+012060 AR-0010.                                                         01206000
+012070     MOVE 0010 TO WS-ABCODE.                                      01207000
+012080     GO TO AR-MSG.                                                01208000
+012090 AR-MSG.                                                          01209000
+012100     MOVE WS-FUNCTION TO WS-ABFC.                                 01210000
+012110 AR-PRINT.                                                        01211000
+000000 COPY SRP029.                                                     01212000
+012130***************************************************************** 01213000
+012140 END-ROUTINE SECTION.                                             01214000
+012150 ER-START.                                                        01215000
+012160     PERFORM MIC-MST-GLOBAL-CLOSE-REQUEST.                        01216000
+012170     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01217000
+012180         GO TO AR-0009.                                           01218000
+012190 ER-CLOSE.                                                        01219000
+000000 COPY SRP027.                                                     01220000
+012210     CLOSE PRINTERFIL.                                            01221000
+012220     STOP RUN.                                                    01222000

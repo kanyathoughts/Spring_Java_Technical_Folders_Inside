@@ -1,0 +1,67 @@
+* ---------------------------------------------------------------------
+* FNEEM-1PP
+* TESTPROGRAMM FUER EDITMASK
+*
+* AUTOR: FRANK NEUDERT
+* DATUM: 02.12.2013
+*
+* ---------------------------------------------------------------------
+*
+DEFINE DATA
+*
+LOCAL
+01         #N-FELDER
+  02       #P3-1                       (P005)
+  02       #P3-2                       (P005)
+  02       #P3-3                       (P005)
+  02       #P32-1                      (P005,2)
+  02       #P32-2                      (P005,2)
+  02       #P32-3                      (P005,2)
+*
+LOCAL USING Z1069--A
+LOCAL USING Z1069--L
+END-DEFINE
+*
+INCLUDE Z1069--C
+FORMAT (1) PS=0
+
+WRITE (1) NOTITLE *PROGRAM '- Start'
+*
+ASSIGN  #P3-1                          :=  5
+ASSIGN  #P32-1                         :=  520 / 100
+PERFORM  AUSGABE
+*
+ASSIGN  #P3-1                          :=  54
+ASSIGN  #P32-1                         :=  5421 / 100
+PERFORM  AUSGABE
+*
+ASSIGN  #P3-1                          :=  543
+ASSIGN  #P32-1                         :=  54320 / 100
+PERFORM  AUSGABE
+*
+ASSIGN  #P3-1                          :=  5432
+ASSIGN  #P32-1                         :=  543221 / 100
+PERFORM  AUSGABE
+*
+ASSIGN  #P3-1                          :=  54321
+ASSIGN  #P32-1                         :=  5432121 / 100
+PERFORM  AUSGABE
+*
+WRITE (1) *PROGRAM '- Ende'
+*
+* ---------------------------------------------------------------------
+DEFINE SUBROUTINE  AUSGABE
+* ---------------------------------------------------------------------
+*
+MOVE  #P3-1                            TO  #P3-2
+MOVE  #P3-1                            TO  #P3-3
+MOVE  #P32-1                           TO  #P32-2
+MOVE  #P32-1                           TO  #P32-3
+*
+WRITE (1) NOTITLE USING FORM  'MEE1857M'
+*
+END-SUBROUTINE
+* ---------------------------------------------------------------------
+*
+*
+END

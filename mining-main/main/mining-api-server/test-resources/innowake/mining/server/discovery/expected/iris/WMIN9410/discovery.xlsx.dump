@@ -1,0 +1,20 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+4124,"","CICSPGM","src/cobol/WMIN9410/programs/CICSPGM.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,13,0,14,1,0,-1,-1
+4125,4123,"MAP","","CICS","CICS_BMS_MAP","VIRTUAL",1,0,3,0,3,0,0,-1,-1
+4123,"","MAPSET","src/cics/WMIN9410/maps/MIV2009.map","CICS","CICS_BMS_MAPSET","PHYSICAL",1,0,12,0,12,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+4124,"CICSPGM","EXEC_CICS","EXEC CICS SEND MAP ('MAP') MAPSET ('MAPSET') FROM(WS-OUTPUT) ERASE END-EXEC"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+4124,"CICSPGM",4125,"MAP","CICS","CICS_BMS_MAP","Includes","","LATE","{""CALL_TYPE"":[""MAP""],""SEND_RECEIVE_ACCESS_TYPE"":[""SEND""]}",205,156,-1,-1
+4125,"MAP",4123,"MAPSET","CICS","CICS_BMS_MAPSET","Includes","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

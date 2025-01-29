@@ -1,0 +1,130 @@
+<project name="build-feature-branch" default="start-build"  basedir=".">
+
+	<property name="maven.executable" value="C:\Users\nprzybylek\development\maven\3.9.5\bin\mvn.cmd" />
+
+	<target name="start-build">
+		<!--exec dir="base-skeleton-spring-boot" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec-->
+		
+		<exec dir="mining-shared" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+
+
+		<exec dir="spring-data-orientdb" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Dmaven.test.skip=true" />
+		</exec>
+
+
+		<exec dir="mining-job" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+
+
+		<exec dir="mining-data" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+
+
+		<exec dir="mining-api-client" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+		<exec dir="mining-api-client" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Ddist" />
+		</exec>
+		<!--exec dir="mining-api-client" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-P!default-profile,!dist-profile,standalone-profile" />
+		</exec-->
+
+
+		<exec dir="mining-data-core" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+
+
+		<exec dir="mining-data-plugin" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+		
+		<exec dir="mining-data-plugin" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Ddist" />
+		</exec>
+
+
+		<!--exec dir="mining-data-debug-plugin" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+		</exec>
+		<exec dir="mining-data-debug-plugin" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Ddist" />
+		</exec-->
+
+
+		<!-- creates the mining-api-server-deps jar, no dist, required for generating swagger client config in mining-api-server, never deploy!!! -->
+		<exec dir="mining-api-server-deps" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Pnightly" />
+		</exec>
+
+
+		<!-- creates the mining-api-angular-client bundle for mining-ui, no dist -->
+		<exec dir="mining-api-server" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="package" />
+						<arg value="-Pgenerate-swagger-client" />
+		</exec>
+
+		<exec executable="cmd" dir="mining-api-server/target/generated-sources/openapi" failonerror="true" osfamily="windows"> <arg line="/c npm install &amp; npm run build" /></exec>
+		<exec executable="sh"  dir="mining-api-server/target/generated-sources/openapi" failonerror="true" osfamily="unix">    <arg line="-c npm install &amp; npm run build" /></exec>
+
+		<exec executable="cmd" dir="mining-api-server/target/generated-sources/openapi/dist" failonerror="true" osfamily="windows"> <arg line="/c npm pack" /></exec>
+		<exec executable="sh"  dir="mining-api-server/target/generated-sources/openapi/dist" failonerror="true" osfamily="unix">    <arg line="-c npm pack" /></exec>
+
+		<exec dir="mining-ui" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Pnightly" />
+		</exec>
+				
+	
+		<exec dir="mining-api-server-deps" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Ddist" />
+		</exec>
+
+		
+
+		<exec dir="mining-api-server" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Pno-integration-tests" />
+		</exec>
+		<exec dir="mining-api-server" executable="${maven.executable}" failonerror="true">
+						<arg value="clean" />
+						<arg value="install" />
+						<arg value="-Ddist" />
+						<arg value="-Pdist-no-integration-tests" />
+		</exec>
+	</target>
+
+</project>

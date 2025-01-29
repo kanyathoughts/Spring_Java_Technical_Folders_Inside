@@ -1,0 +1,497 @@
+Form CLM_PHY_FRM_03
+    {**************************************************************************
+    *
+    * SYSTEM:  Provider System
+    * TITLE:   Physician Information Selection screen
+    *
+    * OVERVIEW:		Revised : <DD-MMM-YYYY> By <Progammer/Analyst>
+    *
+    * <Start here....>
+    *
+    *  MOD         DATE               NAME and VMS ID            DESCRIPTION
+    *  As per new coding standards modification tag has been modified
+    *
+    *  MOD #1      05-AUG-2016        Sandhya P M (SN1)
+    *              PID 21932 REFERRING PHYSICIAN SELECTION
+    *              Added new owner confirmation panel to skip the physician selection
+    *
+    ***************************************************************************}
+
+    Form Data 
+        CURRENTITEM Character(32) Varying Builtin
+        {----------------------------------------------------------------------}
+        {   DECform Builtin variables					       }
+        {----------------------------------------------------------------------}
+        CURRENTITEMHELPED Character(32) Varying Builtin
+        CURRENTPANELHELPED Character(32) Varying Builtin
+        FORMNAME Character(32) Varying Builtin
+        FUNCTIONNAME Character(20) Varying Builtin
+        SESSION Character(32) Varying Builtin
+        TERMINAL Character(20) Varying Builtin
+        PARENTREQUESTID Character(24) Builtin
+        FIELDIMAGE Character(80) Varying Builtin
+        FIELDVALUE Builtin
+        CURRENT_ITEM Character(32)
+        CURRENT_PANEL Character(32)
+        FUNCTION_NAME Character(32)
+        FIELD_IMAGE Character(80)
+        FIELD_VALUE Character(80)
+    End Data
+
+    Form Data 
+        STATUS Longword Integer
+	TEMP	LONGWORD INTEGER
+        {----------------------------------------------------------------------}
+        {   Global Common fields for all panels				       }
+        {----------------------------------------------------------------------}
+        NULL_DATE Date
+        DUMMY_FIELD Character(1)
+	LOAD_DATA_FLAG	   CHARACTER(1)
+		VALUE	"L"
+        TWO_SECONDS FFloating
+            Value 2
+{Begin mod #1}
+	OWN_CONFIRM CHARACTER(1)
+{End mod #1}
+	REFRESH_FLAG Character(1)
+        SAVE_CURR_PHY_ARRAY	Longword Integer
+    END DATA
+
+    Form Data 
+	USER_PHY_ID	CHARACTER(6)
+	USER_PRV_TYPE	CHARACTER(1)
+	USER_PRV_ID	CHARACTER(4)
+        MORE_DATA_FLAG  CHARACTER(1)
+        MAX_PHY_ARRAY	LONGWORD Integer
+        CURR_PHY_ARRAY	Longword Integer
+	LAST_PAGE_PHY_ARRAY  Longword Integer
+        Group PHY_ARRAY
+            Occurs 400
+            Current CURR_PHY_ARRAY
+            PHY_ID Character(6)
+	    PRV_TYPE	CHARACTER(1)
+	    PRV_ID	CHARACTER(4)
+            PHY_LINE Character(76)
+        End Group
+    End Data
+
+
+    Form Record PRV_PHY_ORX_03_REC
+        MORE_DATA_FLAG  CHARACTER(1)
+        MAX_PHY_ARRAY	LONGWORD Integer
+	LAST_PAGE_PHY_ARRAY LONGWORD INTEGER
+        CURR_PHY_ARRAY	Longword Integer
+        Group PHY_ARRAY
+            Occurs 400
+            PHY_ID Character(6)
+	    PRV_TYPE	CHARACTER(1)
+	    PRV_ID	CHARACTER(4)
+            PHY_LINE Character(76)
+        End Group
+    End RECORD
+
+
+    Form Record CONTROL_WKSP
+        CURRENT_ITEM Character(32)
+        CURRENT_PANEL Character(32)
+        FUNCTION_NAME Character(32)
+        FIELD_IMAGE Character(80)
+        FIELD_VALUE Character(80)
+    End Record
+
+    Form Record REFRESH_REC
+	REFRESH_FLAG Character(1)
+    End Record
+
+    Form Record MESSAGE_RECORD
+        MESSAGEPANEL Character(512) Varying
+    End Record
+
+    Record List DUMMY_RECORD_LIST
+        {***********************Record List start******************************}
+    End List
+
+    Record List TASK_MAIN_PANEL
+        CONTROL_WKSP
+        PRV_PHY_ORX_03_REC
+    End List
+
+    Record List TASK_CONFIRM_PANEL
+        CONTROL_WKSP
+        PRV_PHY_ORX_03_REC
+    End List
+    
+
+    Layout PRV_PHY_FRM_03
+        Device
+            Terminal
+                Type %VT100
+        End Device
+
+        Size 24 Lines by 80 Columns
+        Attribute REVERSE_BOLD
+            Is
+                Bold
+                Reverse
+        End Attribute
+
+        Viewport OPTION_VIEWPORT
+            Lines 23 Through 23
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport MAIN_VIEWPORT
+            Lines 11 Through 21
+            Columns 2 Through 79
+        End Viewport
+
+        Viewport MESSAGE_VIEWPORT
+            Lines 24 Through 24
+            Columns 1 Through 80
+        End Viewport
+
+{Begin mod #1}
+	 Viewport OWNER_CONFIRM_VIEWPORT
+	     Lines 15 Through 17
+	     Columns 1 Through 80
+	 End Viewport
+{End Mod #1}
+        Function F6
+            Is %F6
+        End Function
+
+        Function F10
+            Is %F10
+        End Function
+
+        Function SELECT
+            Is %SELECT
+        End Function
+
+        Function PREV_SCREEN
+            Is %PREV_SCREEN
+        End Function
+
+        Function NEXT_SCREEN
+            Is %NEXT_SCREEN
+        End Function
+
+        Function PF1
+            Is %PF1
+        End Function
+
+        Function PF2
+            Is %PF2
+        End Function
+
+        Function PF3
+            Is %PF3
+        End Function
+
+        Function PF4
+            Is %PF4
+        End Function
+
+
+        Function UP ITEM
+            Is %UP
+        End Function
+
+        Function DOWN ITEM
+            Is %DOWN
+        End Function
+
+        Function NEXT ITEM
+            Is %HORIZONTAL_TAB
+               %CARRIAGE_RETURN
+               %KP_ENTER
+        End Function
+
+        Send Response REFRESH_REC
+	    REFRESH ALL
+	End Response
+
+        Transceive Response TASK_MAIN_PANEL TASK_MAIN_PANEL
+            Display
+                MAIN_PANEL
+	    Display
+		OPTION_PANEL
+	    RESET
+		SAVE_CURR_PHY_ARRAY
+            Activate
+                Panel MAIN_PANEL
+        End Response
+
+
+            Function Response F6
+                Message
+                    "Function Key Not Defined."
+		Invalid
+            End Response
+
+            Function Response F10
+                Message
+                    "Function Key Not Defined."
+		Invalid
+            End Response
+
+
+        Message Panel MESSAGEPANEL
+            Viewport MESSAGE_VIEWPORT
+        End Panel
+
+
+
+        Panel OPTION_PANEL
+
+            Viewport OPTION_VIEWPORT
+
+            Literal Text
+                Line 1
+                Column 2
+                Value "Options: "
+            End Literal
+
+
+            Literal Text
+                Line 1
+                Column 11
+                Value "Next"
+		Display Reverse
+            End Literal
+
+
+            Literal Text
+                Line 1
+                Column 17
+                Value "Prev"
+		Display Reverse
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 23
+                Value "Up"
+		Display Reverse
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 27
+                Value "Down"
+		Display Reverse
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 33
+                Value "Select"
+		Display Reverse
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 41
+                Value "PF4"
+		Display Reverse
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 44
+                Value "(=Exit to Physician Last Name)"
+            End Literal
+
+        End Panel
+
+
+
+        Panel MAIN_PANEL
+
+            Viewport MAIN_VIEWPORT
+
+	    Retain
+
+	    Function response SELECT
+		Let User_Phy_ID	=   PHY_ARRAY(CURR_PHY_ARRAY).PHY_ID
+		LET USER_PRV_TYPE = PHY_ARRAY(CURR_PHY_ARRAY).PRV_TYPE
+		LET USER_PRV_ID = PHY_ARRAY(CURR_PHY_ARRAY).PRV_ID
+		Let FUNCTION_NAME = "SELECT"
+	        RETURN IMMEDIATE
+	    END RESPONSE
+{Begin mod #1}
+            Function Response PF4
+      	       Activate
+                    Panel OWNER_CONFIRM_PANEL
+               Position Immediate To Field
+                    OWN_CONFIRM On OWNER_CONFIRM_PANEL
+            End Response
+{End mod #1}
+            Function Response UP ITEM
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                End If
+            End Response
+
+            Function Response NEXT ITEM
+                If (CURR_PHY_ARRAY = MAX_PHY_ARRAY ) Then
+                  if MORE_DATA_FLAG = 2 then
+                    Message
+                        "Bottom of list, press NEXT to display next group"
+                  else
+                    Message
+                        "End of list"
+                  end if
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response DOWN ITEM
+                If (CURR_PHY_ARRAY = MAX_PHY_ARRAY ) Then
+                  if MORE_DATA_FLAG = 2 then
+                    Message
+                        "Bottom of list, press NEXT to display next group"
+                  else
+                    Message
+                        "End of list"
+                  end if
+                Else
+                    Position To Down Occurrence
+                End If
+            End Response
+
+            Function Response NEXT_SCREEN
+                If (CURR_PHY_ARRAY = MAX_PHY_ARRAY ) Then
+                  if MORE_DATA_FLAG = 2 then
+                    Message
+                        "Bottom of list"
+		    Let FUNCTION_NAME = "NEXT_GROUP"
+                    RETURN IMMEDIATE
+                  else
+                    Message
+                        "End of list"
+                  end if
+		Else
+                    If (CURR_PHY_ARRAY > LAST_PAGE_PHY_ARRAY ) Then
+                        Position Immediate To Field 
+                            PHY_ARRAY(MAX_PHY_ARRAY).PHY_LINE On MAIN_PANEL
+                    Else
+                        Position To Down Occurrence
+                            Unseen
+                    End If
+                End If
+            End Response
+
+            Function Response PREV_SCREEN
+                If FIRST OCCURRENCE VERTICAL Then
+                    Message
+                        "Top of list"
+                Else
+                    Position To Up Occurrence
+                        Unseen
+                End If
+            End Response
+
+            Function Response UNDEFINED FUNCTION
+                Message
+                    "Undefined function key."
+            End Response
+
+            Apply No Field Default
+
+            Group PHY_ARRAY
+                Vertical
+                    Displays 11
+		    SCROLL BY PAGE 
+
+		ENTRY RESPONSE
+		    LET	SAVE_CURR_PHY_ARRAY = CURR_PHY_ARRAY
+		END RESPONSE
+
+                Field PHY_LINE
+                    Line 1
+                    Column 2
+
+		    EXIT RESPONSE
+			MESSAGE
+			    ""
+		    END RESPONSE   
+
+                    Output Picture X(76)
+
+  		    HIGHLIGHT
+			REVERSE_BOLD
+			  WHEN (PHY_ARRAY(CURR_PHY_ARRAY).PHY_ID = 
+				    PHY_ARRAY(**).PHY_ID ) AND
+				(PHY_ARRAY(CURR_PHY_ARRAY).PHY_LINE =     
+				    PHY_ARRAY(**).PHY_LINE ) AND
+				(PHY_ARRAY(CURR_PHY_ARRAY).PHY_LINE <> "")
+                    No Data Input
+                End Field
+
+            End Group
+
+        End Panel
+
+{Begin mod #1}         
+        Panel OWNER_CONFIRM_PANEL
+           Viewport OWNER_CONFIRM_VIEWPORT
+
+           Literal Rectangle
+              Line 1  Column 1
+              Line 3 Column 80
+              Display
+              Bold
+          End Literal
+
+           Literal Text
+              Line 2
+              Column 2
+              Value "The physician is contracted.Do you really want to skip the selection(Y/N)?"
+          End Literal
+
+          Field OWN_CONFIRM
+              Line 2
+              Column 76
+
+              Output Picture X(1)
+
+              Validation Response
+                If OWN_CONFIRM = "N"
+                Then
+                   Deactivate
+                        Panel OWNER_CONFIRM_PANEL
+                   Remove
+                        OWNER_CONFIRM_VIEWPORT
+
+                  Activate
+                        Panel MAIN_PANEL
+			Position Immediate to Field PHY_ARRAY(1).PHY_LINE on
+					MAIN_PANEL
+                else
+                    Deactivate
+                        Panel OWNER_CONFIRM_PANEL
+                    Remove
+                        OWNER_CONFIRM_VIEWPORT
+
+                     Deactivate
+                        Panel MAIN_PANEL    
+                     Let FUNCTION_NAME = "PF4"
+                     RETURN IMMEDIATE
+                    
+               end if 
+          End Response
+                  
+          Uppercase
+
+          End Field
+
+       End Panel
+{End mod #1}
+    End Layout
+End Form
+

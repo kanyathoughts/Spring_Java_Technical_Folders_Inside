@@ -1,0 +1,3 @@
+PuBlIc ClAsS TestJava {
+psvm() {
+}

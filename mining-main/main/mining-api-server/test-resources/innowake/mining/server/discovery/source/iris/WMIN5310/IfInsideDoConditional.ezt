@@ -1,0 +1,20 @@
+
+DEFINE COUNT-1 W 3 N VALUE 0                                           
+DEFINE COUNT-2 W 3 N VALUE 0                                           
+DEFINE RESULT  W 3 N VALUE 0                                           
+*                                                                      
+JOB INPUT NULL NAME MYPROG                                             
+   DO WHILE COUNT-1 LT 10                                              
+     COUNT-1 = COUNT-1 + 1                                             
+     COUNT-2 = 0 
+   IF PAY-GROSS > 500.00 AND FIRST-DUP ACCEPT OR NOT DUPLICATE A0
+
+        XMAS-BONUS = PAY-GROSS * 1.03 
+  ELSE-IF NOT FIRST-DUP B3 AND PAY > 100 
+        XMAS-BONUS = PAY-GROSS * 1.05
+  ELSE
+     TOTAL-EMP# = TOTAL-EMP# + 1                                     
+  END-IF                                                         
+   END-DO                                                              
+STOP                                                                  
+

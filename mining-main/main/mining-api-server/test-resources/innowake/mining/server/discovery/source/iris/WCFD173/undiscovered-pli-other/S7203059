@@ -1,0 +1,50 @@
+                                                                        
+ /********************************************************************/ 
+ /*                                                                  */ 
+ /*                     INSPECTION SYSTEM                            */ 
+ /*                                                                  */ 
+ /*  ===> RECREATE FILES USED IN MONTHLY INSPECTION ACCOUNTING       */ 
+ /*                                                                  */ 
+ /*  ==> S7203059  -  MAIN MODULE PROGRAM                            */ 
+ /*                                                                  */ 
+ /*   =======>  TO COMPILE & LINK:                                   */ 
+ /*                USE MEMBER:  S7203059                             */ 
+ /*                LEL MEMBER:  NONE                                 */ 
+ /*               LOAD MODULE:  U7203059                             */ 
+ /*               PRODUCTION :  P7203059                             */ 
+ /*                                                                  */ 
+ /********************************************************************/ 
+                                                                        
+  NEWFILE:                                                              
+      PROCEDURE OPTIONS (MAIN);                                         
+                                                                        
+   DEFAULT RANGE (*) STATIC;                                            
+                                                                        
+ /********************************************************************/ 
+ /*                                                                  */ 
+ /*                    PROGRAM FILES                                 */ 
+ /*                                                                  */ 
+ /********************************************************************/ 
+                                                                        
+   DCL FINREP1 FILE OUTPUT RECORD,                                      
+       FINREP2 FILE OUTPUT RECORD,                                      
+       SYSPRINT FILE STREAM OUTPUT PRINT;                               
+                                                                        
+                                                                        
+ /*********************************************************************/
+ /*                                                                   */
+ /*                     PROGRAM CODE                                  */
+ /*                                                                   */
+ /*********************************************************************/
+                                                                        
+   OPEN FILE (FINREP1),                                                 
+        FILE (FINREP2);                                                 
+                                                                        
+  CLOSE FILE (FINREP1),                                                 
+        FILE (FINREP2);                                                 
+                                                                        
+  PUT EDIT ('NORMAL JOB TERMINATION  ** S7203059 **')                   
+           (SKIP(1),A);                                                 
+                                                                        
+                                                                        
+  END NEWFILE;                                                          

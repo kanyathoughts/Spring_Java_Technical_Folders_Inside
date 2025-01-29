@@ -1,0 +1,31 @@
+<nz-alert nzType="warning" class="mining__content-page-header" *ngIf="isOutdatedModules"
+  [nzIconType]="'exclamation-circle'" [nzMessage]="outdatedAlertContent" nzShowIcon></nz-alert>
+<nz-alert nzType="warning" class="mining__content-page-header" *ngIf="isDeletedMoudles"
+  [nzIconType]="'exclamation-circle'" [nzMessage]="deletedAlertContent" nzShowIcon></nz-alert>
+
+<ng-template #outdatedAlertContent>
+  <div nz-row nz-justify="space-between">
+    <div nz-col nzFlex="auto">
+      <span>{{'reachability.outdatedModuleTxt' | translate}}</span>
+    </div>
+    <span nz-col *ngIf="canUpdateOrDeleteRB">
+      <button nz-button nzSize="small" nzType="primary" [nzLoading]="loadAction" (click)="OutdatedUpdateOrRemoveDeletedRB('update')">
+        {{'reachability.oudatedBtn' | translate}}
+      </button>
+    </span>
+  </div>
+</ng-template>
+
+<ng-template #deletedAlertContent>
+  <div nz-row nz-justify="space-between">
+    <div nz-col nzFlex="auto">
+      <span>{{ (isDeleteActionRequired ? 'reachability.deletedModuleTxt' : 'reachability.deletedModuleTxtInTableView') |
+        translate }}</span>
+    </div>
+    <span *ngIf="isDeleteActionRequired && canUpdateOrDeleteRB" nz-col>
+      <button nz-button nzSize="small" nzType="primary" (click)="OutdatedUpdateOrRemoveDeletedRB('delete')">
+        {{'reachability.deleteBtn' | translate}}
+      </button>
+    </span>
+  </div>
+</ng-template>

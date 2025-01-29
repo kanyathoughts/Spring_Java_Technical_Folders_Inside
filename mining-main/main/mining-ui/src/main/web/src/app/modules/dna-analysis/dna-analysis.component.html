@@ -1,0 +1,66 @@
+<nz-page-header class="mining__content-page-header" [nzTitle]="'navigation.dna' | translate" [nzSubtitle]="infoIcon">
+  <nz-page-header-extra *ngIf="isShowDnaChart && canExecuteDNA">
+    <nz-select *ngIf="snapshotList.length" [(ngModel)]="selectedDnaSnapshot" ngDefaultControl (ngModelChange)="addSnapshotToUrl($event)">
+      <nz-option *ngFor="let option of snapshotList" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+    <button nz-button nzType="primary" (click)="analyzeDNA()">
+      {{ 'dnaAnalysis.analyze' | translate }}
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<nz-content class="mining__card-grid-layout" *ngIf="isShowDnaChart; else noAnalysis">
+  <nz-row *appLoader="loadState" [nzGutter]="[16,16]">
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="20" [nzLg]="12" [nzXl]="12" [nzXXl]="12"
+      *ngFor="let dnaCardData of dnaCardList; index as i">
+      <app-dna-card [dnaCardData]="dnaCardData" [chartFilterData]="dnaCardData.chartFilterData"
+        (openTableForFilter)="openChartDetailsTable($event, i)">
+      </app-dna-card>
+    </nz-col>
+  </nz-row>
+</nz-content>
+
+<nz-content  *ngIf="dnaChartsData && dnaChartsData.clusterings.length === 0">
+  <nz-row nzJustify="center">
+    <nz-space class="dna-clusters">
+      <h5 nz-typography *nzSpaceItem>{{ 'dnaAnalysis.noDnaCluster' | translate }}</h5>
+  </nz-space>
+  </nz-row>
+</nz-content>
+
+<ng-template #noAnalysis>
+  <nz-empty [nzNotFoundImage]="imageTpl" [nzNotFoundContent]="noAnalysisContent" [nzNotFoundFooter]="footerTpl"
+    class="dna-analysis-module__no-analysis-footer">
+    <ng-template #imageTpl>
+      <img src="assets/DNA-analysis.svg" class="dna-analysis-module__no-analysis-img"
+        alt="{{ 'dnaAnalysis.noDNAanalysisText' | translate }}" />
+    </ng-template>
+    <ng-template #noAnalysisContent>
+      <nz-space nzSize="middle" nzDirection="vertical">
+        <h5 nz-typography *nzSpaceItem> {{ 'dnaAnalysis.noDNAFound' | translate }} </h5>
+        <nz-content *nzSpaceItem>
+          <button *ngIf="canExecuteDNA" nz-button nzType="primary" (click)="analyzeDNA()">
+            {{ 'dnaAnalysis.analyze' | translate }}
+          </button>
+        </nz-content>
+      </nz-space>
+    </ng-template>
+    <ng-template #footerTpl>
+      <span class="ant-helper-secondary-text">{{ 'dnaAnalysis.noDNAanalysisText' | translate }}</span>
+    </ng-template>
+  </nz-empty>
+</ng-template>
+
+<ng-template #infoIcon>
+  <nz-space nzSize="small" nzDirection="horizontal">
+    <span *nzSpaceItem>{{'dnaAnalysis.subTitle' | translate }}</span>
+    <i *nzSpaceItem nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+      nzTooltipTitle="{{'dnaAnalysis.infoIconTooltipText' | translate}}" aria-hidden="true">
+    </i>
+  </nz-space>
+</ng-template>
+
+<dna-chart-details *ngIf="showChartDetails && chartDataFilters" (showChartDetails)="addSnapshotToUrl()" [updatedTime] ="selectedDnaSnapshot"
+  [filters]="chartDataFilters.filters" [chartTitle]="selectedCard?.title" [algorithm]="selectedCard?.title"
+  [projectId]="projectId" [selectedClusterDetails] ="selectedClusterDetails">
+</dna-chart-details>

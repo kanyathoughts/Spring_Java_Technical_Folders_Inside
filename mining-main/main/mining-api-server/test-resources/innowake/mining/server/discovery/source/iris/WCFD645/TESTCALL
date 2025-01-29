@@ -1,0 +1,22 @@
+002000 IDENTIFICATION DIVISION.
+       PROGRAM-ID. WCFD236.
+      ******************************************************************
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       DATA DIVISION.       
+       WORKING-STORAGE SECTION.
+TCSTST 01 TS-TESTCALL-PROGS.                                                      
+TCSTST    02 TC-TESTCALL-PGM-NAME                PIC X(8).                        
+TCSTST       88 C-TESTCALL-PGM                   VALUE 'WW101'                    
+TCSTST                                               'ABCDE'                 
+TCSTST                                                     'AA99'.      
+
+       LINKAGE SECTION.
+
+       PROCEDURE DIVISION.
+
+                      CALL TC-TESTCALL-PGM-NAME USING WS-REQUEST
+                                            WS-KEY
+                                            WS-ROW
+                                            WS-STATUS
+           GOBACK.

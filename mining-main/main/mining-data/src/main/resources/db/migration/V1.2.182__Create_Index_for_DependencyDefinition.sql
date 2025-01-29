@@ -1,0 +1,2 @@
+CREATE INDEX DependencyDefinition_moduleLink_idx IF NOT EXISTS ON DependencyDefinition (moduleLink) NOTUNIQUE;
+CREATE INDEX DependencyDefinition_moduleLink_resolved_idx IF NOT EXISTS ON DependencyDefinition (moduleLink, resolved) NOTUNIQUE;

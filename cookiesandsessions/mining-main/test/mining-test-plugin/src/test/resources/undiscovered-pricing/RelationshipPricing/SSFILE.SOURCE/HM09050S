@@ -1,0 +1,36 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7109                                             *
+*   Description  . . Balance Option                                    *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(23,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                      Balance Option - Help
+
+    Identifies the balance to use to determine service charge
+    incentive.  Valid entries are:
+      C  Use the Combined Balance 1 on MICM Record 7101 (Model
+         Definition) to calculate the service charge incentive.
+
+      D  Use the Combined Balance 2 on MICM Record 7101.
+
+      E  Use the Combined Balance 3 on MICM Record 7101.
+
+      F  Use the Combined Balance 4 on MICM Record 7101.
+
+      G  Use the higher amount of the four combined balances.
+
+      I  Use the individual account's balance defined in
+         the Service Charge Balance Code on MICM Record 7102
+         (Product Definition).
+                                                                _
+    F12=Cancel                                            M09050S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

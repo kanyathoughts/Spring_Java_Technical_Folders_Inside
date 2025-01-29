@@ -1,0 +1,27 @@
+<nz-card
+  [nzTitle]="dnaCardData?.title"
+  id="{{chartId}}"
+  class="metrics-card__card-container dna-card-component"
+  [nzExtra]= "exportChartTemplate"
+  nzHoverable
+  (click)="clickService.clickOnCard($event, dnaCardData?.title)">
+  <ng-template #exportChartTemplate>
+    <a nz-button nzType="link" data-html2canvas-ignore (click)="exportDNAChart('.png', $event)" nzSize="small" >{{"module.graphs.png" | translate}}</a>
+  </ng-template>
+  <nz-space nzSize="middle" nzDirection="vertical">
+    <p class="dna-card-component__card-txt">{{dnaChartTxt}}</p>
+  </nz-space>
+  <nz-space nzSize="middle" nzDirection="vertical">
+    <div #dnaChart></div>
+    <nz-collapse nzGhost>
+      <nz-collapse-panel [nzHeader]="'dnaAnalysis.configuration' | translate" [(nzActive)]="isCollapseActive" (click)="$event.stopPropagation()">
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="12" [nzXXl]="12"
+            *ngFor="let option of dnaCardData?.options">
+            <span> {{option.title}}: {{option.value}} </span>
+          </nz-col> 
+        </nz-row>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </nz-space>
+</nz-card>

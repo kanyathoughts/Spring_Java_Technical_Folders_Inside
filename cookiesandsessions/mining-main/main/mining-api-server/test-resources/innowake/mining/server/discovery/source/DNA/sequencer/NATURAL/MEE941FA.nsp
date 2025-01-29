@@ -1,0 +1,18 @@
+DEFINE DATA
+LOCAL USING Z1069--A
+LOCAL USING Z1069--L
+LOCAL
+1 #A (A1)
+END-DEFINE
+
+INCLUDE Z1069--C
+FORMAT (1) PS=0
+
+* Testing normal behaviour
+STACK TOP DATA ' '
+REINPUT 'reinput from main'
+STACK TOP DATA 'A'
+INPUT 'main:' #A
+WRITE (1) NOTITLE  #A
+
+END

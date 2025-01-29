@@ -1,0 +1,36 @@
+  /* Manual test file for Control flow IF statement  */ 
+ CTL012A: PROC OPTIONS(MAIN);
+ 
+   %INCLUDE BAS001A;
+    DCL 1 GROUP,
+        2 FXD1 FIXED DECIMAL(1) INIT(9),
+        2 FXD2 FIXED DECIMAL(2,1) INIT(9.9);
+    DCL RESULT BIT(8) INIT(11111111B);
+    
+    /* Test case for nested IF and non-nested ELSE Statement 
+    *  THEN UNIT FOLLOWED BY; WILL BE TREATED AS END OF IF
+    *  
+    */
+    IF RESULT
+    THEN     
+       PUT SKIP LIST("RESULT", RESULT);
+    IF RESULT = FXD1 >= FXD2
+    THEN 
+       PUT SKIP LIST("FXD1 >= FXD2", RESULT);   
+            
+    PUT SKIP LIST(' END OF IF');   
+    PUT SKIP LIST('');
+    PUT SKIP LIST('');
+    PUT SKIP LIST('GROUP');
+    PUT SKIP LIST('Control Flow IF : GROUP    ******');
+    PUT SKIP LIST('');
+    CALL DUMP(ADDR(GROUP),SIZE(GROUP));   
+            
+    PUT SKIP LIST('');
+    PUT SKIP LIST('');
+    PUT SKIP LIST('RESULT');
+    PUT SKIP LIST('Control Flow IF : RESULT    ******');
+    PUT SKIP LIST('');
+    CALL DUMP(ADDR(RESULT),SIZE(RESULT)); 
+         
+ END CTL012A;

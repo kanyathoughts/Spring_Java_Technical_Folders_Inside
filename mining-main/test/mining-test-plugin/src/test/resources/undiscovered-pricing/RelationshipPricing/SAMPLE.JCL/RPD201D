@@ -1,0 +1,45 @@
+//RPD201D JOB
+//*    ************************************                             00001000
+//*    * RPD201 - CREATE FILE TO LOAD ACT *                             00002000
+//*    ************************************                             00003000
+//RPD201S  EXEC PGM=IEFBR14                                             00004000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDACT,                               00005000
+//             DISP=(MOD,DELETE,DELETE),                                00006000
+//             UNIT=SYSDA,                                              00007000
+//             SPACE=(TRK,(1,1),RLSE)                                   00008000
+//RPACTE   DD  DSN=BNKCA.IN0.RP50.RPACTE,                               00009000
+//             DISP=(MOD,DELETE,DELETE),                                00010000
+//             UNIT=SYSDA,                                              00011000
+//             SPACE=(TRK,(1,1),RLSE)                                   00012000
+/*                                                                      00013000
+//RPD201   EXEC PGM=RPD201,REGION=1024K,COND=(0,LT)                     00014000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//* ====== OUTPUT FILE ==========================================       00016000
+//SYSPRINT DD  SYSOUT=*                                                 00017000
+//SYSUDUMP DD  SYSOUT=*                                                 00018000
+//SYSOUT   DD  SYSOUT=*                                                 00019000
+//MIAPIB   DD  DSN=BNKCA.IN0.RP50.BLDACT,                               00020000
+//             DISP=(NEW,CATLG,DELETE),                                 00021000
+//             UNIT=SYSDA,                                              00022000
+//             SPACE=(CYL,(50,25),RLSE),                                00023000
+//             DCB=(RECFM=VB,LRECL=2019,BLKSIZE=26303)                  00024000
+//RPACTE   DD  DSN=BNKCA.IN0.RP50.RPACTE,                               00025000
+//             DISP=(NEW,CATLG,DELETE),                                 00026000
+//             UNIT=SYSDA,                                              00027000
+//             DCB=(RECFM=FB,LRECL=0080,BLKSIZE=27920),                 00028000
+//             SPACE=(CYL,(2,1),RLSE)                                   00029000
+//* ====== INPUT FILE ===========================================       00030000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//RPACTW   DD  DSN=BNKCA.IN0.RP50.RPACTW,DISP=SHR                       00032000
+//RPRPTS   DD  DSN=BNKCAV.IN0.RP50.RPRPTS,DISP=SHR                      00033000
+//*                                                                     00034000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD201),DISP=SHR              00035000
+//*                                                                     00036000
+//

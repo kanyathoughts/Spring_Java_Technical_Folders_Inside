@@ -1,0 +1,668 @@
+000010     SUBROUTINE COBOL$PLOT (FUNCTIONNAME, X1, Y1, X2, Y2, RADIUS,
+000020      X                         TEXT1, TEXT2, TEXT3, TEXT4, TEXT5)
+000030 
+000040     INTRINSIC     SIND,COSD
+000050 
+000060         CHARACTER*20  FUNCTIONNAME
+000070         INTEGER*2     X1,Y1,X2,Y2,RADIUS
+000080         CHARACTER*40  TEXT1, TEXT2, TEXT3, TEXT4, TEXT5
+000090 
+000100         CHARACTER*183  TEXTTABLE(64)
+000110         INTEGER*2     X,Y,Z,I,ROW,COL
+000120     INTEGER*2     XDIFF,YDIFF,XHEAD1,YHEAD1,XHEAD2,YHEAD2
+000130     INTEGER*2     YAVERAGE
+000140     INTEGER*2     SIXELWORD
+000150     BYTE          SIXELBYTE
+000160     CHARACTER*272 SIXELLINE
+000170     CHARACTER*16  LANDSCAPE1
+000180     CHARACTER*18  LANDSCAPE2
+000190     CHARACTER*25  GRAPHICWINDOW
+000200 
+000210     CHARACTER*2   CRLFPAIR
+000220     CHARACTER*1   LFCHAR
+000230     CHARACTER*1   CRCHAR
+000240     CHARACTER*1   EOFMARKER
+000250     CHARACTER*1   ESCCHAR
+000260     CHARACTER*1   BLANKCHAR
+000270 
+000280     INTEGER*2     SIXEL(272,1275)
+000290 
+000300         REAL*4        DEGREES, RX, RY
+000310     REAL*4        ANGLE,HEADANGLE
+000320 
+000330     EQUIVALENCE   (SIXELWORD,SIXELBYTE)
+000340 
+000350     COMMON/BLOCK1/SIXEL
+000360 
+000370     IF (FUNCTIONNAME.EQ.'RESET               ') GOTO 1000
+000380     IF (FUNCTIONNAME.EQ.'START               ') GOTO 2000
+000390     IF (FUNCTIONNAME.EQ.'BOX                 ') GOTO 3000
+000400     IF (FUNCTIONNAME.EQ.'ARC_BOX             ') GOTO 3500
+000410         IF (FUNCTIONNAME.EQ.'CIRCLE              ') GOTO 4000
+000420         IF (FUNCTIONNAME.EQ.'LINE                ') GOTO 5000
+000430     IF (FUNCTIONNAME.EQ.'LINE_ARROW_1        ') GOTO 5000
+000440         IF (FUNCTIONNAME.EQ.'LINE_ARROW_2        ') GOTO 5000
+000450         IF (FUNCTIONNAME.EQ.'TEXT                ') GOTO 6000
+000460         IF (FUNCTIONNAME.EQ.'END                 ') GOTO 8000
+000470 
+000480 C
+000490 C Not a valid function name
+000500 C
+000510         FUNCTIONNAME = 'ERROR'
+000520         RETURN
+000530 
+000540
+000550  C******************************************************************************
+000560 C Paragraph 1000 - Reset the Sixel array and the Text Table
+000570
+000580  C******************************************************************************
+000590 1000    DO Y = 1, 1275
+000600         DO X = 1,272
+000610         SIXEL (X,Y) = 0
+000620         END DO
+000630     END DO
+000640 
+000650     DO I = 1, 64
+000660         TEXTTABLE (I) = ' '
+000670     END DO
+000680 
+000690     RETURN
+000700 
+000710
+000720  C******************************************************************************
+000730 C Paragraph 2000 - Start the plot
+000740
+000750  C******************************************************************************
+000760 
+000770 C
+000780 C Define special characters
+000790 C
+000800 2000    ESCCHAR    = CHAR(27)
+000810     CRCHAR     = CHAR(13)
+000820     LFCHAR     = CHAR(10)
+000830     BLANKCHAR  = ' '
+000840 
+000850     CRLFPAIR (1:1) = CRCHAR
+000860     CRLFPAIR (2:2) = LFCHAR
+000870 C
+000880 C Define special strings
+000890 C
+000900     LANDSCAPE1 (1:1)      = ESCCHAR
+000910     LANDSCAPE1 (2:13)     = '+0303960A1-L'
+000920     LANDSCAPE1 (14:14)    = LFCHAR
+000930     LANDSCAPE1 (15:15)    = ESCCHAR
+000940     LANDSCAPE1 (16:16)    = '0'
+000950 
+000960     LANDSCAPE2 (1:1)      = ESCCHAR
+000970     LANDSCAPE2 (2:17)     = 'm510,15,0,15,660'
+000980     LANDSCAPE2 (18:18)    = LFCHAR
+000990 
+001000     GRAPHICWINDOW (1:1)   = ESCCHAR
+001010     GRAPHICWINDOW (2:23)  = 'gw2;001,0001,1632,1275'
+001020     GRAPHICWINDOW (24:24) = CRCHAR
+001030     GRAPHICWINDOW (25:25) = LFCHAR
+001040 
+001050     EOFMARKER = CHAR(26)
+001060 
+001070     OPEN(UNIT=2,FILE='PLOT$PORT',TYPE='NEW',RECORDTYPE='VARIABLE'
+001080      X  ,ORGANIZATION='SEQUENTIAL',CARRIAGECONTROL='NONE'
+001090      X  ,RECL=272)
+001100 
+001110 C
+001120 C  Set printer to 17 pitch landscape
+001130 C
+001140     WRITE (2,9010) LANDSCAPE1
+001150     WRITE (2,9010) LANDSCAPE2
+001160 C
+001170 C  Create Graphics window
+001180 C
+001190     WRITE (2,9010) GRAPHICWINDOW
+001200 
+001210     RETURN
+001220 
+001230
+001240  C******************************************************************************
+001250 C  Paragraph 3000 - Draw a box
+001260
+001270  C******************************************************************************
+001280 
+001290 3000    DO X = X1-1, X2+1
+001300         CALL COBOL$PLOT_SETSIXEL(X,Y1-1)
+001310         CALL COBOL$PLOT_SETSIXEL(X,Y1  )
+001320         CALL COBOL$PLOT_SETSIXEL(X,Y1+1)
+001330         CALL COBOL$PLOT_SETSIXEL(X,Y2-1)
+001340         CALL COBOL$PLOT_SETSIXEL(X,Y2  )
+001350         CALL COBOL$PLOT_SETSIXEL(X,Y2+1)
+001360     END DO
+001370 
+001380     DO Y = Y1-1,Y2+1
+001390         CALL COBOL$PLOT_SETSIXEL(X1-1,Y)
+001400         CALL COBOL$PLOT_SETSIXEL(X1  ,Y)
+001410         CALL COBOL$PLOT_SETSIXEL(X1+1,Y)
+001420         CALL COBOL$PLOT_SETSIXEL(X2-1,Y)
+001430         CALL COBOL$PLOT_SETSIXEL(X2  ,Y)
+001440         CALL COBOL$PLOT_SETSIXEL(X2+1,Y)
+001450     END DO
+001460 
+001470 C
+001480 C Add text in the box
+001490 C
+001500     IF (TEXT1.EQ.' '.AND.TEXT2.EQ.' '.AND.TEXT3.EQ.' '.AND.
+001510      X      TEXT4.EQ.' '.AND.TEXT5.EQ.' ') THEN
+001520         RETURN
+001530     END IF
+001540 
+001550     ROW = INT (REAL(Y1 - 18.0)/18.0) + 1
+001560     COL = INT (REAL(X1 - 30.0)/8.427) + 1
+001570 
+001580     IF (TEXT1.NE.' ') THEN
+001590             I = 40
+001600         DO WHILE (TEXT1(I:I).EQ.BLANKCHAR)
+001610             I = I - 1
+001620         END DO
+001630         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+001640             TEXTTABLE(ROW) (COL:COL+I) = TEXT1(1:I)
+001650         END IF
+001660     END IF
+001670 
+001680         ROW = ROW + 1
+001690     IF (TEXT2.NE.' ') THEN
+001700             I = 40
+001710         DO WHILE (TEXT2(I:I).EQ.BLANKCHAR)
+001720             I = I - 1
+001730         END DO
+001740         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+001750             TEXTTABLE(ROW) (COL:COL+I) = TEXT2(1:I)
+001760         END IF
+001770     END IF
+001780 
+001790         ROW = ROW + 1
+001800     IF (TEXT3.NE.' ') THEN
+001810             I = 40
+001820         DO WHILE (TEXT3(I:I).EQ.BLANKCHAR)
+001830             I = I - 1
+001840         END DO
+001850         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+001860             TEXTTABLE(ROW) (COL:COL+I) = TEXT3(1:I)
+001870         END IF
+001880     END IF
+001890 
+001900         ROW = ROW + 1
+001910     IF (TEXT4.NE.' ') THEN
+001920             I = 40
+001930         DO WHILE (TEXT4(I:I).EQ.BLANKCHAR)
+001940             I = I - 1
+001950         END DO
+001960         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+001970             TEXTTABLE(ROW) (COL:COL+I) = TEXT4(1:I)
+001980         END IF
+001990     END IF
+002000 
+002010         ROW = ROW + 1
+002020     IF (TEXT5.NE.' ') THEN
+002030             I = 40
+002040         DO WHILE (TEXT5(I:I).EQ.BLANKCHAR)
+002050             I = I - 1
+002060         END DO
+002070         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+002080             TEXTTABLE(ROW) (COL:COL+I) = TEXT5(1:I)
+002090         END IF
+002100     END IF
+002110 
+002120     RETURN
+002130 
+002140 
+002150
+002160  C******************************************************************************
+002170 C Paragraph 3500 - Draw an Arc-Box    (A box with rounded sides)
+002180
+002190  C******************************************************************************
+002200 
+002210 3500    DO X = X1-1, X2+1
+002220         CALL COBOL$PLOT_SETSIXEL(X,Y1-1)
+002230         CALL COBOL$PLOT_SETSIXEL(X,Y1  )
+002240         CALL COBOL$PLOT_SETSIXEL(X,Y1+1)
+002250         CALL COBOL$PLOT_SETSIXEL(X,Y2-1)
+002260         CALL COBOL$PLOT_SETSIXEL(X,Y2  )
+002270         CALL COBOL$PLOT_SETSIXEL(X,Y2+1)
+002280     END DO
+002290 
+002300     YAVERAGE = (Y1 + Y2) / 2
+002310     YDIFF    = ABS (Y1 - Y2) / 2
+002320 
+002330     DO DEGREES = 90,270,.1
+002340         RX = COSD(DEGREES) * YDIFF + X1
+002350         RY = SIND(DEGREES) * YDIFF + YAVERAGE
+002360             X = INT(RX + .5)
+002370         Y = INT(RY + .5)
+002380         CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+002390         CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+002400         CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+002410         CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+002420     END DO
+002430 
+002440     DO DEGREES = -90,90,.1
+002450         RX = COSD(DEGREES) * YDIFF + X2
+002460         RY = SIND(DEGREES) * YDIFF + YAVERAGE
+002470             X = INT(RX + .5)
+002480         Y = INT(RY + .5)
+002490         CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+002500         CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+002510         CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+002520         CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+002530     END DO
+002540 C
+002550 C Add text in the arc-box
+002560 C
+002570     IF (TEXT1.EQ.' '.AND.TEXT2.EQ.' '.AND.TEXT3.EQ.' '.AND.
+002580      X      TEXT4.EQ.' '.AND.TEXT5.EQ.' ') THEN
+002590         RETURN
+002600     END IF
+002610 
+002620     ROW = INT (REAL(Y1 - 18.0)/18.0) + 1
+002630     COL = INT (REAL(X1 - 30.0)/8.427) - 2
+002640 
+002650     IF (TEXT1.NE.' ') THEN
+002660             I = 40
+002670         DO WHILE (TEXT1(I:I).EQ.BLANKCHAR)
+002680             I = I - 1
+002690         END DO
+002700         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+002710             TEXTTABLE(ROW) (COL:COL+I) = TEXT1(1:I)
+002720         END IF
+002730     END IF
+002740 
+002750         ROW = ROW + 1
+002760     IF (TEXT2.NE.' ') THEN
+002770             I = 40
+002780         DO WHILE (TEXT2(I:I).EQ.BLANKCHAR)
+002790             I = I - 1
+002800         END DO
+002810         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+002820             TEXTTABLE(ROW) (COL:COL+I) = TEXT2(1:I)
+002830         END IF
+002840     END IF
+002850 
+002860         ROW = ROW + 1
+002870     IF (TEXT3.NE.' ') THEN
+002880             I = 40
+002890         DO WHILE (TEXT3(I:I).EQ.BLANKCHAR)
+002900             I = I - 1
+002910         END DO
+002920         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+002930             TEXTTABLE(ROW) (COL:COL+I) = TEXT3(1:I)
+002940         END IF
+002950     END IF
+002960 
+002970         ROW = ROW + 1
+002980     IF (TEXT4.NE.' ') THEN
+002990             I = 40
+003000         DO WHILE (TEXT4(I:I).EQ.BLANKCHAR)
+003010             I = I - 1
+003020         END DO
+003030         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003040             TEXTTABLE(ROW) (COL:COL+I) = TEXT4(1:I)
+003050         END IF
+003060     END IF
+003070 
+003080         ROW = ROW + 1
+003090     IF (TEXT5.NE.' ') THEN
+003100             I = 40
+003110         DO WHILE (TEXT5(I:I).EQ.BLANKCHAR)
+003120             I = I - 1
+003130         END DO
+003140         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003150             TEXTTABLE(ROW) (COL:COL+I) = TEXT5(1:I)
+003160         END IF
+003170     END IF
+003180 
+003190     RETURN
+003200 
+003210 
+003220
+003230  C******************************************************************************
+003240 C Paragraph 4000 - Draw a circle
+003250
+003260  C******************************************************************************
+003270 
+003280 4000    DO DEGREES = 0,360,.1
+003290         RX = COSD(DEGREES) * RADIUS + X1
+003300         RY = SIND(DEGREES) * RADIUS + Y1
+003310             X = INT(RX + .5)
+003320         Y = INT(RY + .5)
+003330         CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+003340         CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+003350         CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+003360         CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+003370     END DO
+003380 
+003390 C
+003400 C Add text to the circle
+003410 C
+003420     IF (TEXT1.EQ.' '.AND.TEXT2.EQ.' '.AND.TEXT3.EQ.' '.AND.
+003430      X      TEXT4.EQ.' '.AND.TEXT5.EQ.' ') THEN
+003440         RETURN
+003450     END IF
+003460 
+003470     X = INT(REAL(X1) + COSD(210.0) * REAL(RADIUS))
+003480     Y = INT(REAL(Y1) + SIND(210.0) * REAL(RADIUS))
+003490 
+003500     ROW = INT (REAL(Y - 18.0)/18.0) + 1
+003510     COL = INT (REAL(X - 30.0)/8.427) + 1
+003520 
+003530     IF (TEXT1.NE.' ') THEN
+003540             I = 40
+003550         DO WHILE (TEXT1(I:I).EQ.BLANKCHAR)
+003560             I = I - 1
+003570         END DO
+003580         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003590             TEXTTABLE(ROW) (COL:COL+I) = TEXT1(1:I)
+003600         END IF
+003610     END IF
+003620 
+003630         ROW = ROW + 1
+003640     IF (TEXT2.NE.' ') THEN
+003650             I = 40
+003660         DO WHILE (TEXT2(I:I).EQ.BLANKCHAR)
+003670             I = I - 1
+003680         END DO
+003690         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003700             TEXTTABLE(ROW) (COL:COL+I) = TEXT2(1:I)
+003710         END IF
+003720     END IF
+003730 
+003740         ROW = ROW + 1
+003750     IF (TEXT3.NE.' ') THEN
+003760             I = 40
+003770         DO WHILE (TEXT3(I:I).EQ.BLANKCHAR)
+003780             I = I - 1
+003790         END DO
+003800         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003810             TEXTTABLE(ROW) (COL:COL+I) = TEXT3(1:I)
+003820         END IF
+003830     END IF
+003840 
+003850         ROW = ROW + 1
+003860     IF (TEXT4.NE.' ') THEN
+003870             I = 40
+003880         DO WHILE (TEXT4(I:I).EQ.BLANKCHAR)
+003890             I = I - 1
+003900         END DO
+003910         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+003920             TEXTTABLE(ROW) (COL:COL+I) = TEXT4(1:I)
+003930         END IF
+003940     END IF
+003950 
+003960         ROW = ROW + 1
+003970     IF (TEXT5.NE.' ') THEN
+003980             I = 40
+003990         DO WHILE (TEXT5(I:I).EQ.BLANKCHAR)
+004000             I = I - 1
+004010         END DO
+004020         IF (ROW.LE.64 .AND. (COL+I).LE.183) THEN
+004030             TEXTTABLE(ROW) (COL:COL+I) = TEXT5(1:I)
+004040         END IF
+004050     END IF
+004060 
+004070     RETURN
+004080 
+004090
+004100  C******************************************************************************
+004110 C Paragraph 5000 - Draw a line
+004120
+004130  C******************************************************************************
+004140 
+004150 5000    CALL COBOL$PLOT_LINE(X1,Y1,X2,Y2)
+004160 
+004170     IF (X1.EQ.X2 .AND. Y1.EQ.Y2) THEN
+004180         RETURN
+004190     END IF
+004200 
+004210         IF (FUNCTIONNAME.EQ.'LINE                ') RETURN
+004220 
+004230     IF (FUNCTIONNAME.EQ.'LINE_ARROW_1        ') THEN
+004240         XDIFF = X2 - X1
+004250         YDIFF = Y1 - Y2
+004260         XHEAD1 = X1
+004270         YHEAD1 = Y1
+004280     ELSE
+004290         XDIFF = X1 - X2
+004300         YDIFF = Y2 - Y1
+004310         XHEAD1 = X2
+004320         YHEAD1 = Y2
+004330     END IF
+004340 
+004350     ANGLE = ATAN2D (REAL(YDIFF),REAL(XDIFF))
+004360 
+004370         RX = COSD (ANGLE + 30.0) *  15.0 + REAL(XHEAD1)
+004380     XHEAD2 = INT (RX + .5)
+004390     RY = SIND (ANGLE + 30.0) * -15.0 + REAL(YHEAD1)
+004400     YHEAD2 = INT (RY + .5)
+004410     CALL COBOL$PLOT_LINE (XHEAD1,YHEAD1,XHEAD2,YHEAD2)
+004420 
+004430         RX = COSD (ANGLE - 30.0) *  15.0 + REAL(XHEAD1)
+004440     XHEAD2 = INT (RX + .5)
+004450     RY = SIND (ANGLE - 30.0) * -15.0 + REAL(YHEAD1)
+004460     YHEAD2 = INT (RY + .5)
+004470     CALL COBOL$PLOT_LINE (XHEAD1,YHEAD1,XHEAD2,YHEAD2)
+004480 
+004490        RETURN
+004500 
+004510
+004520  C******************************************************************************
+004530 C Paragraph 6000 - Add text not contained in boxes/circles (e.g.
+004540                                                           titles)
+004550
+004560  C******************************************************************************
+004570 
+004580 6000    IF(TEXT1.EQ.' ') RETURN
+004590         I = 40
+004600     DO WHILE (TEXT1(I:I).EQ.BLANKCHAR)
+004610         I = I - 1
+004620     END DO
+004630 
+004640     IF (X1.LE.64 .AND. (Y1+I).LE.183) THEN
+004650         TEXTTABLE(X1) (Y1:Y1+I) = TEXT1(1:I)
+004660     END IF
+004670 
+004680         RETURN
+004690 
+004700 
+004710
+004720  C******************************************************************************
+004730 C Paragraph 8000 - END Plot.  Rasterize and Close the file
+004740
+004750  C******************************************************************************
+004760 
+004770 C
+004780 C Send out Raster Data
+004790 C
+004800 8000    DO Y = 1, 1275
+004810        DO Z = 1, 272
+004820            SIXELWORD = SIXEL(Z,Y) + 63
+004830            SIXELLINE (Z:Z) = CHAR (SIXELBYTE)
+004840        END DO
+004850        WRITE (2,9010) SIXELLINE
+004860     END DO
+004870 C
+004880 C Send out text data
+004890 C
+004900     DO I = 1,64
+004910         WRITE (2,9010) TEXTTABLE(I)
+004920         WRITE (2,9010) CRLFPAIR
+004930     END DO
+004940 
+004950 C
+004960 C  End of file marker
+004970 C
+004980     WRITE (2,9010) EOFMARKER
+004990 
+005000     CLOSE (UNIT=2)
+005010 
+005020     RETURN
+005030 
+005040
+005050  C******************************************************************************
+005060 C Paragraph 9000 - Format statement for use from above
+005070
+005080  C******************************************************************************
+005090 
+005100 9010    FORMAT (A)
+005110 
+005120     END
+005130 
+005140
+005150  C******************************************************************************
+005160
+005170  C******************************************************************************
+005180
+005190  C******************************************************************************
+005200     SUBROUTINE COBOL$PLOT_LINE (X1,Y1,X2,Y2)
+005210 
+005220     INTEGER*2  X1,Y1,X2,Y2
+005230 
+005240     INTEGER*2  X,Y
+005250     REAL*4     RX,RY,XSLOPE,YSLOPE
+005260     INTEGER*2  SIXEL(272,1275)
+005270     COMMON/BLOCK1/SIXEL
+005280 
+005290     IF (X1.EQ.X2 .AND. Y1.EQ.Y2) THEN
+005300         CALL COBOL$PLOT_SETSIXEL(X1  ,Y1  )
+005310         CALL COBOL$PLOT_SETSIXEL(X1+1,Y1  )
+005320         CALL COBOL$PLOT_SETSIXEL(X1  ,Y1+1)
+005330         CALL COBOL$PLOT_SETSIXEL(X1+1,Y1+1)
+005340         RETURN
+005350     END IF
+005360 
+005370 C
+005380 C Test for vertical line
+005390 C
+005400     IF (X1.EQ.X2) THEN
+005410         X = X1
+005420         IF (Y1.LT.Y2) THEN
+005430             DO Y = Y1,Y2
+005440                 CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+005450                 CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+005460                 CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+005470                 CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+005480             END DO
+005490         RETURN
+005500         ELSE
+005510             DO Y = Y2,Y1
+005520                 CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+005530                 CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+005540                 CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+005550                 CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+005560             END DO
+005570             RETURN
+005580         END IF
+005590     END IF
+005600 
+005610 C
+005620 C Test for Horizontal line
+005630 C
+005640     IF (Y1.EQ.Y2) THEN
+005650         Y = Y1
+005660         IF (X1.LT.X2) THEN
+005670             DO X = X1,X2
+005680                 CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+005690                 CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+005700                 CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+005710                 CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+005720             END DO
+005730             RETURN
+005740         ELSE
+005750             DO X = X2,X1
+005760                 CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+005770                 CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+005780                 CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+005790                 CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+005800             END DO
+005810             RETURN
+005820         END IF
+005830     END IF
+005840 
+005850 C
+005860 C It's a diagonal line!
+005870 C
+005880     YSLOPE = REAL (Y2 - Y1) / REAL (ABS(X2 - X1))
+005890     XSLOPE = REAL (X2 - X1) / REAL (ABS(Y2 - Y1))
+005900 
+005910     IF (ABS(XSLOPE).GT.ABS(YSLOPE)) THEN
+005920         IF (X2.GT.X1) THEN
+005930         RY = REAL(Y1)
+005940         DO X = X1, X2
+005950             Y = INT (RY + .5)
+005960             CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+005970             CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+005980             CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+005990             CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+006000             RY = RY + YSLOPE
+006010         END DO
+006020         ELSE
+006030         RY = REAL(Y2)
+006040         YSLOPE = -1.0 * YSLOPE
+006050         DO X = X2, X1
+006060             Y = INT (RY + .5)
+006070             CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+006080             CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+006090             CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+006100             CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+006110             RY = RY + YSLOPE
+006120         END DO
+006130         END IF
+006140     ELSE
+006150         IF (Y2.GT.Y1) THEN
+006160         RX = REAL(X1)
+006170         DO Y = Y1, Y2
+006180             X = INT (RX + .5)
+006190             CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+006200             CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+006210             CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+006220             CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+006230             RX = RX + XSLOPE
+006240         END DO
+006250         ELSE
+006260         RX = REAL(X2)
+006270                 XSLOPE = -1 * XSLOPE
+006280         DO Y = Y2, Y1
+006290             X = INT (RX + .5)
+006300             CALL COBOL$PLOT_SETSIXEL(X  ,Y  )
+006310             CALL COBOL$PLOT_SETSIXEL(X+1,Y  )
+006320             CALL COBOL$PLOT_SETSIXEL(X  ,Y+1)
+006330             CALL COBOL$PLOT_SETSIXEL(X+1,Y+1)
+006340             RX = RX + XSLOPE
+006350         END DO
+006360         END IF
+006370     END IF
+006380 
+006390     RETURN
+006400 
+006410     END
+006420
+006430  C******************************************************************************
+006440
+006450  C******************************************************************************
+006460
+006470  C******************************************************************************
+006480     SUBROUTINE COBOL$PLOT_SETSIXEL (X,Y)
+006490 
+006500         INTRINSIC     IBSET
+006510         INTEGER*2     W,X,Y,Z
+006520     INTEGER*2     SIXEL(272,1275)
+006530     COMMON/BLOCK1/SIXEL
+006540 
+006550     Z = INT(X/6)
+006560     W = Z * 6
+006570 
+006580     IF (W.LT.X) THEN
+006590         Z = Z + 1
+006600         SIXEL(Z,Y) = IBSET (SIXEL(Z,Y), (6 - (X - (Z - 1) * 6)))
+006610     ELSE
+006620         SIXEL(Z,Y) = IBSET (SIXEL(Z,Y), 0)
+006630     END IF
+006640 
+006650     RETURN
+006660 
+006670     END
+006680 

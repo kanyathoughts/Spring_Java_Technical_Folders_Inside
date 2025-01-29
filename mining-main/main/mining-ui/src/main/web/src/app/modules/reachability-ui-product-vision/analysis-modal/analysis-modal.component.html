@@ -1,0 +1,74 @@
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Reachability Analysis" nzWidth="1200px" (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()" [nzFooter]="modalFooter" class="analysis-modal">
+  <ng-container *nzModalContent>
+    <nz-steps [nzCurrent]="current" (nzIndexChange)="onIndexChange($event)">
+      <nz-step nzTitle="Input" nzDescription="Provide upper or lower boundaries"></nz-step>
+      <nz-step nzTitle="Approach" nzDescription="How do you want to analyze"></nz-step>
+      <nz-step nzTitle="Chain Criteria" nzDescription="Define your result"></nz-step>
+    </nz-steps>
+
+    <form>
+       <!-- We are using ngClass to hide the element here so the stuff entered in filter-form doesn't get reset when going through the steps -->
+      <div [ngClass]="{'hidden' : current !== 0}" nz-form [nzLayout]="'vertical'" class="analysis-modal__input" nz-row>
+        <!-- Upper Boundaries -->
+        <div nz-col nzSpan="10" class="analysis-modal__boundaries-box">
+          <h2 class="centered analysis-modal__form-header">From Upper Boundaries</h2>
+          <filter-form #upper></filter-form>
+        </div>
+  
+        <!-- Relationships -->
+        <div nz-col nzSpan="4" class="analysis-modal__relation-picker">
+          <h2 class="centered analysis-modal__form-header">Relation</h2>
+          <nz-select [nzMaxTagCount]="3" nzMode="multiple" nzPlaceHolder="Please select"
+            class="analysis-modal__relation-picker__select" [(ngModel)]="selectedRelationships" name="relation">
+            <nz-option *ngFor="let item of relationshipList" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+        </div>
+  
+        <!-- Lower Boundaries -->
+        <div nz-col nzSpan="10" class="analysis-modal__boundaries-box">
+          <h2 class="centered analysis-modal__form-header">To Lower Boundaries</h2>
+          <filter-form #lower></filter-form>
+        </div>
+      </div>
+  
+      <div *ngIf="current === 1" class="analysis-modal__input analysis-modal__input--approach">
+        <h2 class="centered analysis-modal__form-header">Approach</h2>
+        <nz-radio-group [(ngModel)]="radioValue" name="approach">
+          <label nz-radio nzValue="impact_analysis"><img src="{{pathImgAnalysis}}" [ngClass]="{'analysis-modal__img--selected' : radioValue === 'impact_analysis', 
+            'analysis-modal__img--deselected' : radioValue !== 'impact_analysis'}" class="analysis-modal__img"/></label>
+          <label nz-radio nzValue="decomposition"><img src="{{pathImgDecomposition}}" [ngClass]="{'analysis-modal__img--selected' : radioValue === 'decomposition', 
+            'analysis-modal__img--deselected' : radioValue !== 'decomposition'}" class="analysis-modal__img"/></label>
+        </nz-radio-group>
+      </div>
+  
+      <div [ngClass]="{'hidden' : current !== 2}" class="analysis-modal__input analysis-modal__input--criteria">
+        <div class="analysis-modal__boundaries-box analysis-modal__boundaries-box--criteria centered">
+          <h2 class="centered analysis-modal__form-header">Chain Criteria <label class="analysis-modal__subtitle">Select
+              what you want to see in between</label></h2>
+          <div nz-form [nzLayout]="'vertical'">
+            <div nz-row>
+              <div nz-col [nzSpan]="24">
+                <label nz-checkbox [(ngModel)]="conditionalDependencies" name="conditionalDependencies">Only conditional dependencies</label>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col [nzSpan]="24">
+                <label nz-checkbox [(ngModel)]="controlM" name="controlM">Consider ControlM</label>
+              </div>
+            </div>
+            <br/>
+            <filter-form #chainCriteria [maxTagCount]="9"></filter-form>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+  <button *ngIf="current !== 0" nz-button nzType="default" (click)="handleBack()">Back</button>
+  <button *ngIf="current < maxStepIndex" nz-button nzType="primary" (click)="handleNext()">Next</button>
+  <button *ngIf="current === maxStepIndex" nz-button nzType="primary" (click)="handleOk()">Analyze</button>
+</ng-template>

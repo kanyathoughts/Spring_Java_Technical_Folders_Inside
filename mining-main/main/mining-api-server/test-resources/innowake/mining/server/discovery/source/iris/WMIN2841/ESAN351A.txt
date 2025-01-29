@@ -1,0 +1,303 @@
+--#SET SQLFORMAT SQLPL                                                          
+--#SET TERMINATOR ต                                                             
+                                                                                
+CREATE PROCEDURE DP0GWPRD.ESAN351A                                              
+    ( IN    p_PACKAGE       CHAR(6)                                             
+    ,IN     p_APPNM         CHAR(8)                                             
+    ,IN     p_USERID        CHAR(8)                                             
+    ,IN     p_APPLID        CHAR(8)                                             
+    ,INOUT  p_TS            CHAR(26)                                            
+    ,INOUT  p_ESEVERE       CHAR(1)                                             
+    ,INOUT  p_ENUM          INTEGER                                             
+    ,INOUT  p_EGROUP        INTEGER                                             
+    ,INOUT  p_ESQLCD        INTEGER                                             
+    ,INOUT  p_EPGM          CHAR(8)                                             
+    ,INOUT  p_ETEXT         CHAR(250)                                           
+    ,INOUT  p_EDBAVAIL      CHAR(1)                                             
+    ,INOUT  p_POID          DECIMAL(15, 0)                                      
+    )                                                                           
+    VERSION V1                                                                  
+    LANGUAGE SQL                                                                
+    NOT DETERMINISTIC                                                           
+    MODIFIES SQL DATA                                                           
+    CALLED ON NULL INPUT                                                        
+    DYNAMIC RESULT SETS 1                                                       
+    ALLOW DEBUG MODE                                                            
+    ASUTIME LIMIT 500000                                                        
+    COMMIT ON RETURN NO                                                         
+    WITH EXPLAIN                                                                
+    ISOLATION LEVEL CS                                                          
+    RELEASE AT COMMIT                                                           
+    WITHOUT KEEP DYNAMIC                                                        
+    DYNAMICRULES RUN                                                            
+    REOPT NONE                                                                  
+    VALIDATE BIND                                                               
+    SQL PATH DP0GWPRD                                                           
+  BEGIN                                                                         
+---------------------------------------------------------------------------     
+--    THIS MODULE WILL RETURN CURRENT PLAN INFORMATION                          
+--    FOR AN INPUT PO-ID                                                        
+---------------------------------------------------------------------------     
+--                        MAINTENANCE LOG                                       
+--                                                                              
+-- PGR   DATE         DESCRIPTION                                               
+-- ----  ----------   -----------                                               
+-- U2WB  04/15/2016   ORIGINAL                                                  
+---------------------------------------------------------------------------     
+--        ERR   L                                                               
+--        CODES V    DESCRIPTION                                                
+---------------------------------------------------------------------------     
+-- DASMSG 1100  93  NO PACKAGESET PASSED                                        
+-- DASMSG 1120  99  UNABLE TO SET PACKAGESET                                    
+-- DASMSG 1300  99  UNABLE TO SET TIMESTAMP                                     
+-- DASMSG 1400  93  p_POID IS BLANK                                             
+-- DASMSG 1500  99  ERROR OPENNING TW_ST_CSR                                    
+---------------------------------------------------------------------------     
+-- VARIABLE DECLARATION                                                         
+---------------------------------------------------------------------------     
+   DECLARE v_POID DECIMAL(15,0) DEFAULT 0;                                      
+---------------------------------------------------------------------------     
+-- REQUIRED FIELDS TO CALL ERROR COBOL SP                                       
+---------------------------------------------------------------------------     
+   DECLARE v_ERR_LOG_FL  CHAR(1)    DEFAULT ' ';                                
+   DECLARE v_ERR_MSG     VARCHAR(400)  DEFAULT ' ';                             
+   DECLARE v_SQLSTATE    CHAR(5)    DEFAULT ' ';                                
+---------------------------------------------------------------------------     
+                                                                                
+-- REQUIRED FIELD TO DISPLAY FOR DEBUGGING                                      
+---------------------------------------------------------------------------     
+   DECLARE v_DISPL_MSG  VARCHAR(930);                                           
+   DECLARE v_DEBUG_MODE_FL   CHAR(01) DEFAULT 'N';                              
+   DECLARE v_LABEL           CHAR(12) DEFAULT ' ';                              
+---------------------------------------------------------------------------     
+-- RETURN CODE DECLARATION                                                      
+---------------------------------------------------------------------------     
+   DECLARE SQLCODE  INTEGER DEFAULT 0;                                          
+   DECLARE SQLSTATE CHAR(5) DEFAULT '00000';                                    
+   DECLARE RETCODE  INTEGER DEFAULT 0;                                          
+---------------------------------------------------------------------------     
+--                                                                              
+---------------------------------------------------------------------------     
+-- THE FOLLOWING CURSOR RETRIEVES CURRENT INFORMATION FROM THE TRADE    .       
+-- WORKSHEET STATUS TABLE FOR A PARTICULAR INSTANCE OF REBALANCE                
+---------------------------------------------------------------------------     
+ DECLARE PLN_CSR CURSOR WITH RETURN FOR                                         
+   WITH MGR_RV                                                                  
+   ( ADVC_PROFL_ID                                                              
+    ,RBLNC_NO                                                                   
+    ,ADVC_FINC_PLN_ID                                                           
+   ) AS                                                                         
+   ( SELECT MRV.ADVC_PROFL_ID                                                   
+           ,MRV.RBLNC_NO                                                        
+           ,MRV.ADVC_FINC_PLN_ID                                                
+     FROM VT_ADVC_RBL_MGR_RV MRV                                                
+     INNER JOIN VADVC_PROFL PRF                                                 
+        ON PRF.ADVC_PROFL_ID = MRV.ADVC_PROFL_ID                                
+     INNER JOIN VSAG_BUS_RLSHP BUS                                              
+         ON BUS.SAG_ID = PRF.SAG_ID                                             
+     INNER JOIN VSAG SAG                                                        
+        ON SAG.SAG_ID = BUS.SAG_ID                                              
+    WHERE PRF.EFFTV_BGN_DT        <= CURRENT DATE                               
+      AND PRF.EFFTV_END_DT        >  CURRENT DATE                               
+      AND SAG.EFFTV_END_DT        > CURRENT DATE                                
+      AND SAG.SERV_ID = 413                                                     
+      AND BUS.PO_ROLE_CD = 'OW'                                                 
+      AND BUS.PO_ID = p_POID                                                    
+      AND BUS.EFFTV_END_DT > CURRENT_DATE                                       
+    UNION ALL                                                                   
+    SELECT  MRH.ADVC_PROFL_ID                                                   
+           ,MRH.RBLNC_NO                                                        
+           ,MRH.ADVC_FINC_PLN_ID                                                
+    FROM VT_ADV_RBL_MG_RV_H MRH                                                 
+    INNER JOIN VADVC_PROFL PRF                                                  
+       ON PRF.ADVC_PROFL_ID = MRH.ADVC_PROFL_ID                                 
+    INNER JOIN VSAG_BUS_RLSHP BUS                                               
+       ON BUS.SAG_ID = PRF.SAG_ID                                               
+    INNER JOIN VSAG SAG                                                         
+       ON SAG.SAG_ID = BUS.SAG_ID                                               
+    WHERE PRF.EFFTV_BGN_DT        <= CURRENT DATE                               
+      AND PRF.EFFTV_END_DT        >  CURRENT DATE                               
+      AND SAG.EFFTV_END_DT        > CURRENT DATE                                
+      AND SAG.SERV_ID = 413                                                     
+      AND BUS.PO_ROLE_CD = 'OW'                                                 
+      AND BUS.PO_ID = p_POID                                                    
+      AND BUS.EFFTV_END_DT > CURRENT_DATE                                       
+   )                                                                            
+    SELECT DISTINCT                                                             
+       MGR_RV.ADVC_PROFL_ID                                                     
+      ,MGR_RV.RBLNC_NO                                                          
+      ,MGR_RV.ADVC_FINC_PLN_ID                                                  
+      ,RPT.RPT_RLSE_DT                                                          
+      ,RPT.RPT_RLSE_STATUS_CD                                                   
+      ,AFP.PLN_ACPTD_TS                                                         
+      ,AFP.EFFTV_BGN_TS AS PLN_TS                                               
+    FROM MGR_RV                                                                 
+    INNER JOIN VADVC_FINCL_PLN AFP                                              
+       ON MGR_RV.ADVC_FINC_PLN_ID = AFP.ADVC_FINC_PLN_ID                        
+    INNER JOIN VRPT_INSTNC RPT                                                  
+       ON RPT.RPT_INSTNC_ID = AFP.RPT_INSTNC_ID                                 
+    WHERE AFP.PLN_ACPTD_TS IS NOT NULL                                          
+    ORDER BY AFP.PLN_ACPTD_TS DESC                                              
+    FETCH FIRST ROW ONLY                                                        
+    FOR READ ONLY WITH UR;                                                      
+                                                                                
+--                                                                              
+-- SQL CONDITIONS                                                               
+--                                                                              
+-- DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET ERRORCODE = SQLCODE            
+---------------------------------------------------------------------------     
+-- GET SQLCODE, SQLSTATE, and SQLERRMC from SQLCA                               
+---------------------------------------------------------------------------     
+   DECLARE CONTINUE HANDLER FOR SQLEXCEPTION                                    
+     BEGIN                                                                      
+       GET DIAGNOSTICS EXCEPTION 1 v_ERR_MSG  = MESSAGE_TEXT,                   
+                                 RETCODE      = DB2_RETURNED_SQLCODE,           
+                                 v_SQLSTATE   = RETURNED_SQLSTATE;              
+       SET p_ETEXT = v_ERR_MSG;                                                 
+     END;                                                                       
+--                                                                              
+   DECLARE CONTINUE HANDLER FOR SQLWARNING                                      
+     BEGIN                                                                      
+       GET DIAGNOSTICS EXCEPTION 1 v_ERR_MSG    = MESSAGE_TEXT,                 
+                                 RETCODE        = DB2_RETURNED_SQLCODE,         
+                                 v_SQLSTATE     = RETURNED_SQLSTATE;            
+       SET p_ETEXT = v_ERR_MSG;                                                 
+     END;                                                                       
+--                                                                              
+--                                                                              
+-- INTIALIZE VARIABLES                                                          
+                                                                                
+   SET p_ESEVERE = '';                                                          
+   SET p_ETEXT = '';                                                            
+   SET p_EDBAVAIL = 'Y';                                                        
+   SET p_ENUM = 0;                                                              
+   SET p_EGROUP = 0;                                                            
+   SET p_ESQLCD = 0;                                                            
+   SET p_EPGM = 'ESAN351A';                                                     
+--                                                                              
+-- VERIFY AND SET PACKAGESET                                                    
+--                                                                              
+   IF p_PACKAGE = '' THEN                                                       
+      SET p_ENUM = 1100;                                                        
+      SET p_ESEVERE = 'S';                                                      
+      SET p_EGROUP = 4;                                                         
+      SET v_ERR_LOG_FL = 'T';                                                   
+      SET p_ETEXT = 'PACKAGESET IS INVALID';                                    
+      GOTO THEEND;                                                              
+   END IF;                                                                      
+--                                                                              
+-- SET PACKAGESET                                                               
+--                                                                              
+   SET CURRENT PACKAGESET = p_PACKAGE;                                          
+   IF RETCODE <> 0 THEN                                                         
+      SET p_ENUM = 1120;                                                        
+      SET p_ESEVERE = 'S';                                                      
+      SET v_ERR_LOG_FL = 'T';                                                   
+      SET p_EGROUP = 5;                                                         
+      SET p_ETEXT = 'UNABLE TO SET PACKAGESET';                                 
+      GOTO THEEND;                                                              
+   END IF;                                                                      
+--                                                                              
+-- SET CURRENT TIMESTAMP                                                        
+--                                                                              
+   SET p_TS = CURRENT TIMESTAMP;                                                
+   IF RETCODE  <> 0 THEN                                                        
+      SET p_ENUM = 1300;                                                        
+      SET p_ESEVERE = 'S';                                                      
+      SET v_ERR_LOG_FL = 'D';                                                   
+      SET p_EGROUP = 4;                                                         
+      GOTO THEERROR;                                                            
+   END IF;                                                                      
+----------------------------------------------------------------                
+-- VALIDATE and LOAD                                                            
+----------------------------------------------------------------                
+    SET v_POID = p_POID;                                                        
+    IF v_POID <= 0 THEN                                                         
+      SET p_ENUM = 1400;                                                        
+      SET p_ESEVERE = 'S';                                                      
+      SET v_ERR_LOG_FL = 'T';                                                   
+      SET p_EGROUP = 4;                                                         
+      SET p_ETEXT = 'v_POID IS SPACES';                                         
+      GOTO THEERROR;                                                            
+    END IF;                                                                     
+    SET RETCODE = 0;                                                            
+    OPENCSR:                                                                    
+       OPEN PLN_CSR;                                                            
+       IF RETCODE <> 0 THEN                                                     
+          SET p_ENUM       = 1500;                                              
+          SET p_ESEVERE    = 'S';                                               
+          SET v_ERR_LOG_FL = 'T';                                               
+          GOTO THEERROR;                                                        
+       END IF;                                                                  
+                                                                                
+       GOTO THEEND;                                                             
+--                                                                              
+-- ERROR HANDLING                                                               
+--                                                                              
+   THEERROR:                                                                    
+     SET p_ESQLCD = RETCODE;                                                    
+     CALL DISO100A                                                              
+            ( p_PACKAGE                                                         
+             ,p_APPNM                                                           
+             ,p_USERID                                                          
+             ,p_APPLID                                                          
+             ,p_TS                                                              
+             ,p_ESEVERE                                                         
+             ,p_ENUM                                                            
+             ,p_EGROUP                                                          
+             ,p_ESQLCD                                                          
+             ,p_EPGM                                                            
+             ,p_ETEXT                                                           
+             ,p_EDBAVAIL                                                        
+             ,v_SQLSTATE                                                        
+             ,v_ERR_MSG                                                         
+             ,v_ERR_LOG_FL ); COMMIT;                                           
+--- DISPLAY MESSAGE                                                             
+       IF RETCODE <> 0 THEN                                                     
+          SET v_DISPL_MSG = 'CALL TO DISO100A FAILED ' ||                       
+                            'SQLCODE = '               ||                       
+                             CHAR(RETCODE);                                     
+          SET v_LABEL = 'RET_DISO100A';                                         
+          GOTO DISPLAY;                                                         
+       END IF;                                                                  
+--                                                                              
+    RET_DISO100A:                                                               
+       GOTO THEEND;                                                             
+--                                                                              
+    DISPLAY:                                                                    
+       IF v_DEBUG_MODE_FL = 'Y' THEN                                            
+          CALL DISO101A                                                         
+               ( p_PACKAGE                                                      
+                ,p_APPNM                                                        
+                ,p_USERID                                                       
+                ,p_APPLID                                                       
+                ,p_TS                                                           
+                ,p_ESEVERE                                                      
+                ,p_ENUM                                                         
+                ,p_EGROUP                                                       
+                ,p_ESQLCD                                                       
+                ,p_EPGM                                                         
+                ,p_ETEXT                                                        
+                ,p_EDBAVAIL                                                     
+                ,v_DISPL_MSG                                                    
+              );                                                                
+       END IF;                                                                  
+-- USE LABEL AND CASE to get PERFORM FUNCTIONALITY                              
+       CASE v_LABEL                                                             
+         WHEN 'RET_DISO100A'                                                    
+            THEN GOTO RET_DISO100A;                                             
+         ELSE                                                                   
+            GOTO THEEND;                                                        
+       END CASE;                                                                
+--                                                                              
+-- END OF PROCESSING                                                            
+--                                                                              
+   THEEND:                                                                      
+     SET p_ESQLCD = RETCODE;                                                    
+     SET p_TS     = CURRENT TIMESTAMP;                                          
+   END                                                                          
+ ต                                                                              
+--                                                                              
+--#SET TERMINATOR ;                                                             
+--                                                                              
+   COMMIT;                                                                      

@@ -1,0 +1,17 @@
+ #2 DefineDataStmt
+ #19 DefineWorkFileStmt, FROM={TestEntryPoint}, TO={#22}
+ #22 ReadWorkFileStmt, Label: READ WORK FILE 2 #A, FROM={#19, #27}, TO={#27(LOOP BODY), #31(LOOP END)}
+  #26 EveryRecord
+   #27 WRITE NOTITLE '0', FROM={#22(LOOP BODY)}, TO={#22}
+ #31 ReadWorkFileStmt, FROM={#22(LOOP END)}, TO={#42}
+   #36 AssignStmt
+   #39 WriteWorkFileStmt
+ #42 ReadWorkFileStmt, Label: READ WORK FILE 2 AND SELECT #A, FROM={#31, #57}, TO={#47(LOOP BODY), #61(LOOP END)}
+  #46 EveryRecord
+   #47 DisplayStmt, FROM={#42(LOOP BODY)}, TO={#57}
+   #57 WRITE NOTITLE '1', FROM={#47}, TO={#42}
+ #61 ReadWorkFileStmt, Label: READ WORK FILE 2 RECORD #A, FROM={#42(LOOP END), #72}, TO={#65(LOOP BODY), #76(LOOP END)}
+  #64 EveryRecord
+   #65 DisplayStmt, FROM={#61(LOOP BODY)}, TO={#72}
+   #72 WRITE NOTITLE '2', FROM={#65}, TO={#61}
+ #76 EndStmt, FROM={#61(LOOP END)}, TO={TestReturnPoint}

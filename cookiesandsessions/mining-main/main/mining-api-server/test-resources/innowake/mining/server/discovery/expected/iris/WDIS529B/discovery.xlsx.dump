@@ -1,0 +1,40 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2050,"","A","","JAVA","JAVA_PACKAGE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2049,2048,"A.ClassInit","","JAVA","JAVA_TYPE","VIRTUAL",-1,0,-1,-1,-1,0,0,184,489
+2048,"","ClassInit","src/java/WDIS529B/ClassInit.java","JAVA","JAVA_COMPILATION_UNIT","PHYSICAL",1,1,22,3,31,0,0,-1,-1
+2047,"","GETPRML","src/cobol/WDIS529B/programs/GETPRML.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,58,23,88,0,0,-1,-1
+2046,2045,"GETPRML","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,0,423
+2045,"","StoredPrcedure","src/maybe/sql/WDIS529B/StoredPrcedure.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,16,0,16,0,1,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2045,"StoredPrcedure","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE GETPRML(PROCNM CHAR(18) IN, SCHEMA CHAR(8) IN,
+OUTCODE INTEGER OUT, PARMLST VARCHAR(254) OUT)
+LANGUAGE COBOL
+  DETERMINISTIC READS SQL DATA
+EXTERNAL NAME GETPRML
+COLLID GETPRML
+ASUTIME NO LIMIT
+PARAMETER STYLE GENERAL
+STAY RESIDENT NO
+RUN OPTIONS ""MSGFILE(OUTFILE),RPTSTG(ON),RPTOPTS(ON)""
+WLM ENVIRONMENT SAMPPROG
+PROGRAM TYPE MAIN
+SECURITY DB2
+RESULT SETS 2
+COMMIT ON RETURN NO"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2049,"A.ClassInit",2046,"GETPRML","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",365,49,-1,-1
+2049,"A.ClassInit",2046,"GETPRML","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",533,57,-1,-1
+2047,"GETPRML",0,"SQLCA","COBOL","COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+2046,"GETPRML",2047,"GETPRML","COBOL","COBOL_PROGRAM","Calls","","LATE","{""OUTBOUND_TARGETS"":""GETPRML""}",0,423,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2048,"ClassInit","WARNING","INVALID_SEARCH_ORDER_CONFIGURATION","Java file is located in the wrong folder Or source pattern doesn't match with the path and package. Actual Package: **/*/A, But was: src/java/WDIS529B",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

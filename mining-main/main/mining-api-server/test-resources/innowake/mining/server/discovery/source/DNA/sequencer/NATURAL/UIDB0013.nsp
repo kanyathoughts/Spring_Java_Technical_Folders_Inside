@@ -1,0 +1,25 @@
+** Example 'REAEX2': READ and FIND combination                          
+************************************************************************
+DEFINE DATA LOCAL                                                       
+1 EMPLOY-VIEW VIEW OF EMPLOYEES                                         
+  2 PERSONNEL-ID                                                        
+  2 FIRST-NAME                                                          
+  2 NAME                                                                
+  2 CITY                                                                
+1 VEH-VIEW VIEW OF VEHICLES                                             
+  2 PERSONNEL-ID                                                        
+  2 MAKE                                                                
+END-DEFINE                                                              
+*                                                                       
+RD. READ (10) EMPLOY-VIEW BY NAME STARTING FROM 'JONES'                    
+  FD. FIND VEH-VIEW WITH PERSONNEL-ID = PERSONNEL-ID (RD.)       
+    IF NO RECORDS FOUND                                                 
+      ENTER                                   
+    END-NOREC                                 
+    WRITE NOTITLE
+          PERSONNEL-ID (RD.)                
+          FIRST-NAME (RD.)                  
+          MAKE (FD.)               
+  END-FIND
+END-READ                          
+END

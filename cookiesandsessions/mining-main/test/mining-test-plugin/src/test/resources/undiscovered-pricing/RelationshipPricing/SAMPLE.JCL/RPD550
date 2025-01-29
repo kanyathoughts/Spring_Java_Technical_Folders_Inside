@@ -1,0 +1,29 @@
+//RPD550 JOB
+//*    ************************************                             00001000
+//*    * RPD550 - RP/RCIF SYNCHRONIZATION *                             00002000
+//*    ************************************                             00003000
+//SCRATCH  EXEC PGM=IEFBR14                                             00001000
+//RFTRN    DD  DSN=BNKCA.IN0.RP50.RFTRN,DISP=(MOD,DELETE,DELETE),       00002000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00003000
+//RPD550   EXEC PGM=RPD550,REGION=4096K                                 00004000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00006000
+//SYSUDUMP DD  SYSOUT=*                                                 00007000
+//SYSOUT   DD  SYSOUT=*                                                 00008000
+//PRINTR   DD  SYSOUT=2                                                 00009000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00010000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00011000
+//RFFL06   DD  DSN=BNKCAV.IN0.RF21.RFFL06,DISP=SHR                      00012000
+//RFFL10   DD  DSN=BNKCAV.IN0.RF21.RFFL10,DISP=SHR                      00012000
+//RFFL12   DD  DSN=BNKCAV.IN0.RF21.RFFL12,DISP=SHR                      00013000
+//RFFL13   DD  DSN=BNKCAV.IN0.RF21.RFFL13,DISP=SHR                      00013000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00014000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00015000
+//RFTRN    DD  DSN=BNKCA.IN0.RP50.RFTRN,DISP=(NEW,CATLG,DELETE),        00016000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0660,BLKSIZE=23100),      00017000
+//             SPACE=(CYL,(1,1),RLSE)                                   00018000
+//

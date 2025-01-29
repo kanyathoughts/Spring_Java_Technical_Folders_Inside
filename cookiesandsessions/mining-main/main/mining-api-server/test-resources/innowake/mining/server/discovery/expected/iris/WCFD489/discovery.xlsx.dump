@@ -1,0 +1,282 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2096,"","&&DB2HLQ..DB2.RUNLIB.LOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2094,"","&&DB2HLQ..DB2.SDSNEXIT","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2095,"","&&DB2HLQ..DB2.SDSNLOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2100,"","AXXXA1.DB2.RUNLIB.LOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2101,"","AXXXA1.DB2.SDSNEXIT","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2099,"","AXXXA1.DB2.SDSNLOAD","","RESOURCE","RESOURCE_LIB","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2108,"","TEST_CD","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2106,"","TEST_EXAM","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2109,"","TEST_NEWCO_LOC","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2089,"","TEST25P2","src/jcl/WCFD489/jobs/TEST25P2.job","JCL","JCL_JOB","PHYSICAL",1,0,12,2,15,2,0,-1,-1
+2090,2089,"TEST25P2.IEXU0001.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2091,2089,"TEST25P2.IKJE0001.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,1,-1,-1
+2097,"","TEST9301","src/jcl/WCFD489/jobs/TEST9301.job","JCL","JCL_JOB","PHYSICAL",1,0,237,1,238,1,0,-1,-1
+2098,2097,"TEST9301.UNLODDAT.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,1,-1,-1
+2105,"","TESTCLASS","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2104,"","TESTCONTRACT_STAT_CD","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2110,"","TESTDA","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2092,"","TESTLREP","src/jcl/WCFD489/jobs/TESTLREP.job","JCL","JCL_JOB","PHYSICAL",1,0,115,2,118,1,0,-1,-1
+2093,2092,"TESTLREP.DSNTIAUL.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,3,-1,-1,-1,0,0,-1,-1
+2102,"","TESTOA","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2107,"","TESTOA_DTL","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2103,"","TESTPERS","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2089,"TEST25P2","EXEC","Properties: [PGM=IEXUNCAT], Data Definitions: [SYSPRINT{SYSOUT=*},SYSIN{*=AX29UT.ADB425P2.ADSI.INPUT                                                      }], Additional Properties: [Fully Qualified Step name=IEXU0001,Step name=IEXU0001,Job name=TEST25P2]"
+2089,"TEST25P2","EXEC","Properties: [PGM=IKJEFT1B], Data Definitions: [SYSIN{*=         SELECT DISTINCT NEWCO_TEST_NUM M FROM TEST_NEWCO_LOC                                  WHERE NEWCO_TEST_CD IN                                                        ('TEST1','TEST2',           'TEST3','TEST4');                                                                                                }], Additional Properties: [Fully Qualified Step name=IKJE0001,Step name=IKJE0001,Job name=TEST25P2]"
+2097,"TEST9301","EXEC","Properties: [DYNAMNBR=20,PGM=IKJEFT01], Data Definitions: [STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.SDSNEXIT},STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.SDSNLOAD},STEPLIB{DISP=SHR,DSN=AXXXA1.DB2.RUNLIB.LOAD},SYSIN{*=  SET CURRENT SQLID = 'AX29UTDA' ;                                      00250000  SELECT                                                                           E.LST_NAME                                                                     ,E.FRST_NAME                                                                    ,B.CNTR_PFX_ID||SUBSTR(A.CNTR_NUM,2,5)                                          ,(CASE F.AGNT_CLASS_CD                                                           WHEN '0001'   THEN  'S AGENT'                                     WHEN '0002'   THEN  'GRADUATE'                                        WHEN '0003'   THEN  'C L AGENT'                                          ELSE ' '  END)                                                                 ,(CASE                                                                            WHEN F.AGNT_CLASS_CD IS NULL THEN  ' '                                          ELSE F.AGNT_CLASS_CD  END)                                                    ,(CASE F1.AGNT_CLASS_CD                                                           WHEN '0001'   THEN  'SALES MANAGER'                                 WHEN '0002'   THEN  'MANAGER FINANCIAL'                                WHEN '0003'   THEN  'PROTOTYPE MANAGER'                                   ELSE ' ' END)                                                                 ,(CASE                                                                            WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '                                          ELSE F1.AGNT_CLASS_CD END)                                                    ,SUBSTR(A.FINAL_CD,1,1)                                                         ,G.STAT_CD_DESCR                                                                ,A.EN_DT                                                                        ,T1.LIC_EXAM_VAL                                                                ,T1.LIC_EXAM_EFF_DT                                                             ,T1.LIC_EXAM_SCORE_NUM                                               ,T2.STATUS_NAME                                                                 FROM TESTOA A                                                                       ,TESTOA_DTL B, TESTPERS E                                                       ,TESTCLASS F LEFT OUTER JOIN TESTCLASS F1 ON                                             F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM                                        AND F1.REL_FINAL_CD = 'A'                                                       AND F1.CLASS_TYP_CD = '0002'                                               ,TESTCONTRACT_STAT_CD G                                                         ,TEST_EXAM T1, TEST_CD T2                                           WHERE A.FINAL_CD = 'A00'                                                          AND A.CNTR_NUM = F.NEWCO_CNTR_NUM                                               AND F.REL_FINAL_CD = 'A'                                                        AND F.CLASS_TYP_CD = '0007'                                                     AND A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID                                            AND A.CNTR_NUM = B.OA_CNTR_NUM                                                  AND B.CRT_TS = (SELECT MAX(CRT_TS) FROM TESTOA_DTL                                               WHERE B.OA_CNTR_NUM = OA_CNTR_NUM                                            AND (PRIR_CONTR_IND IS NULL OR  PRIR_CONTR_IND = ' '))            AND T1.SSN_NUM = E.SSN_NUM                                                      AND T1.STATUS_CD = T2.STATUS_CD                                                 AND SUBSTR(A.FINAL_CD,1,1) = G.STAT_CD                                                                                                                          UNION                                                                                                                                                           SELECT                                                                           E.LST_NAME                                                                     ,E.FRST_NAME                                                                    ,A.CNTR_NUM                                                                     ,(CASE F.AGNT_CLASS_CD                                                           WHEN '0001'   THEN  'SALES MANAGER'                                 WHEN '0002'   THEN  'MANAGER FINANCIAL'                                WHEN '0003'   THEN  'PROTOTYPE MANAGER'                                       ELSE ' ' END)                                                                ,(CASE                                                                            WHEN F.AGNT_CLASS_CD IS NULL THEN  ' '                                          ELSE F.AGNT_CLASS_CD  END)                                                    ,(CASE F1.AGNT_CLASS_CD                                                           WHEN '0001'   THEN  'SALES MANAGER'                                 WHEN '0002'   THEN  'MANAGER SERVICES'                                WHEN '0003'   THEN  'PROTOTYPE SALES MANAGER'                                   WHEN '0004'   THEN  'PLANNING SALES MANAGER'                                    WHEN '0005'   THEN  'AGENCY RECRUITER'                                          WHEN '0006'   THEN  'DIRECT HIRE MANAGER'                                       WHEN '0007'   THEN  'FIELD SUPERVISOR'                                          WHEN '0008'   THEN  'AGENCY TRAINER'                                            ELSE ' ' END)                                                                 ,(CASE                                                                            WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '                                          ELSE F1.AGNT_CLASS_CD END)                                                    ,SUBSTR(A.FINAL_CD,1,1)                                                         ,G.STAT_CD_DESCR                                                                ,A.EN_DT                                                                        ,T1.LIC_EXAM_VAL                                                                ,T1.LIC_EXAM_EFF_DT                                                             ,T1.LIC_EXAM_SCORE_NUM                                               ,T2.STATUS_NAME                                                                 FROM                                                                                    TESTDA A,                                                                       TESTPERS E,                                                                     TESTCLASS F                                                                     LEFT OUTER JOIN                                                                 TESTCLASS F1                                                                    ON                                                                                  F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM AND                                        F1.REL_FINAL_CD = 'A' AND                                                       F1.CLASS_TYP_CD = '0002',                                                   TESTCONTRACT_STAT_CD G,                                                         TEST_EXAM T1,                                                                 TEST_CD T2                                                             WHERE                                                                               A.FINAL_CD IN ('A00', 'M00', 'L00', 'E00') AND                                  A.CNTR_NUM = F.NEWCO_CNTR_NUM AND                                               F.REL_FINAL_CD = 'A' AND                                                        F.CLASS_TYP_CD = '0007' AND                                                     A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID AND                                            T1.SSN_NUM = E.SSN_NUM AND                                                      T1.STATUS_CD = T2.STATUS_CD AND                                                 SUBSTR (A.FINAL_CD,                                                                     1,                                                                              1) = G.STAT_CD                                                                                                                                      UNION                                                                                                                                                               SELECT                                                                              E.LST_NAME,                                                                     E.FRST_NAME,                                                                    B.CNTR_PFX_ID || SUBSTR (A.CNTR_NUM,                                                                     2,                                                                              5)                                                                                                                       ,(CASE F.AGNT_CLASS_CD                                                          WHEN '0001'   THEN  'SALES MANAGER'                             WHEN '0002'   THEN  'MANAGER FINANCIAL'                            WHEN '0003'   THEN  'PROTOTYPE MANAGER'                                       ELSE ' '  END)                                                                  ,(CASE                                                                            WHEN F.AGNT_CLASS_CD IS NULL THEN  ' '                                          ELSE F.AGNT_CLASS_CD  END)                                                    ,(CASE F1.AGNT_CLASS_CD                                                         WHEN '0001'   THEN  'SALES MANAGER'                             WHEN '0002'   THEN  'MANAGER SERVICES'                            WHEN '0003'   THEN  'PROTOTYPE SALES MANAGER'                               WHEN '0004'   THEN  'PLANNING SALES MANAGER'                                WHEN '0005'   THEN  'AGENCY RECRUITER'                                      WHEN '0006'   THEN  'DIRECT HIRE MANAGER'                                   WHEN '0007'   THEN  'FIELD SUPERVISOR'                                      WHEN '0008'   THEN  'AGENCY TRAINER'ELSE ' ' END)                                                                   ,(CASE                                                                            WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '                                          ELSE F1.AGNT_CLASS_CD END)                                                    ,SUBSTR(A.FINAL_CD,1,1)                                                         ,G.STAT_CD_DESCR                                                                ,A.EN_DT                                                                        ,T1.LIC_EXAM_VAL                                                                ,T1.LIC_EXAM_EFF_DT                                                             ,T1.LIC_EXAM_SCORE_NUM                                               ,T2.STATUS_NAME                                                                   FROM                                                                                    TESTOA A,                                                                       TESTOA_DTL B,                                                                   TESTPERS E,                                                                     TESTCLASS F                                                                     LEFT OUTER JOIN                                                                 TESTCLASS F1                                                                    ON                                                                                  F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM AND                                        F1.REL_FINAL_CD = 'A' AND                                                       F1.CLASS_TYP_CD = '0002',                                                   TESTCONTRACT_STAT_CD G,                                                         TEST_EXAM T1,                                                                 TEST_CD T2                                                            WHERE                                                                                   A.FINAL_CD <> 'A00' AND                                                         A.EN_DT >= '2016-01-01' AND                                                     A.CNTR_NUM = F.NEWCO_CNTR_NUM AND                                               F.REL_FINAL_CD = 'A' AND                                                        F.CLASS_TYP_CD = '0007' AND                                                     A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID AND                                            A.CNTR_NUM = B.OA_CNTR_NUM AND                                                  B.CRT_TS = (SELECT MAX (CRT_TS)                                                             FROM TESTOA_DTL                                                                 WHERE                                                                               B.OA_CNTR_NUM = OA_CNTR_NUM AND                                                 (PRIR_CONTR_IND IS NULL OR                                                       PRIR_CONTR_IND = ' ')) AND                                     T1.SSN_NUM = E.SSN_NUM AND                                                      T1.STATUS_CD = T2.STATUS_CD AND                                                 SUBSTR (A.FINAL_CD,                                                                     1,                                                                              1) = G.STAT_CD                                                                                                                                   UNION                                                                                                                                                               SELECT                                                                              E.LST_NAME                                                                     ,E.FRST_NAME                                                                    ,A.CNTR_NUM                                                           ,(CASE F.AGNT_CLASS_CD                                                           WHEN '0001'   THEN  'SALES MANAGER'                                 WHEN '0002'   THEN  'MANAGER FINANCIAL'                                WHEN '0003'   THEN  'PROTOTYPE MANAGER'    ELSE ' ' END)                                                                ,(CASE                                                                            WHEN F.AGNT_CLASS_CD IS NULL THEN  ' '                                          ELSE F.AGNT_CLASS_CD  END)                                                       ,(CASE F1.AGNT_CLASS_CD                                                         WHEN '0001'   THEN  'SALES MANAGER'                                WHEN '0002'   THEN  'MANAGER SERVICES'                               WHEN '0003'   THEN  'PROTOTYPE SALES MANAGER'                                  WHEN '0004'   THEN  'PLANNING SALES MANAGER'                                   WHEN '0005'   THEN  'AGENCY RECRUITER'                                         WHEN '0006'   THEN  'DIRECT HIRE MANAGER'                                      WHEN '0007'   THEN  'FIELD SUPERVISOR'                                         WHEN '0008'   THEN  'AGENCY TRAINER'                                            ELSE ' ' END)                                                                ,(CASE                                                                            WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '                                          ELSE F1.AGNT_CLASS_CD END)                                                       ,SUBSTR(A.FINAL_CD,1,1)                                                         ,G.STAT_CD_DESCR                                                                ,A.EN_DT                                                                        ,T1.LIC_EXAM_VAL                                                                ,T1.LIC_EXAM_EFF_DT                                                             ,T1.LIC_EXAM_SCORE_NUM                                               ,T2.STATUS_NAME                                                                 FROM TESTDA A                                                                   , TESTPERS E                                                                    , TESTCLASS F LEFT OUTER JOIN TESTCLASS F1 ON                                           F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM                                      AND F1.REL_FINAL_CD = 'A'                                                       AND F1.CLASS_TYP_CD = '0002'                                                  , TESTCONTRACT_STAT_CD G                                                        , TEST_EXAM T1, TEST_CD T2                                               WHERE  A.FINAL_CD NOT IN ( 'A00' , 'M00', 'L00' , 'E00')                           AND A.EN_DT >= '2016-01-01'                                                     AND A.CNTR_NUM = F.NEWCO_CNTR_NUM                                               AND F.REL_FINAL_CD = 'A'                                                        AND F.CLASS_TYP_CD = '0007'                                                     AND A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID                                            AND T1.SSN_NUM = E.SSN_NUM                                                     AND T1.STATUS_CD = T2.STATUS_CD                                                 AND SUBSTR(A.FINAL_CD,1,1) = G.STAT_CD                                        ORDER BY  8,1,2,3;                                                           }], Additional Properties: [Fully Qualified Step name=UNLODDAT,Step name=UNLODDAT,Job name=TEST9301]"
+2092,"TESTLREP","EXEC","Properties: [PGM=IKJEFT1B], Data Definitions: [STEPLIB{DSN=&DB2HLQ..DB2.SDSNEXIT,DISP=SHR},STEPLIB{DSN=&DB2HLQ..DB2.SDSNLOAD,DISP=SHR},STEPLIB{DSN=&DB2HLQ..DB2.RUNLIB.LOAD,DISP=SHR},SYSIN{SUBSYS=CCSS,' SET CURRENT SQLID = ''AX29UTDA'';                            ',' SELECT T1.CHILD_CNTR_NUM||''~''||T1.PRNT_CNTR_NUM||''~''||   ',' T1.AGNT_TYP_CD||''~''||T1.GRID_ID||''~''||T1.REL_FINAL_CD    ',' ||''~''||CHAR(T1.START_DT)||''~''||CHAR(T1.END_DT)||''~''||  ',' T1.PROT_REL_IND||''~''||CHAR(T1.CRT_TS)||''~''||T1.CRT_BY_ID ',' ||''~''||CHAR(T1.UPDT_TS)||''~''||T1.UPDT_BY_ID||''~''||     ',' T1.HIST_IND||''~''||T1.ADDR_TYP_CD||''~''||T1.STATE_CD       ',' ||''~''||T1.ZIP_CD||''~''||T1.USER_OVERRIDE_IND||''~''||     ',' T1.FIRM_CNTR_NUM||''~''||T1.REL_TYP_CD                      ','   FROM                                                     ','        UTT_PROD_RELS T1                                    ','       ,UTT_GRID_RELS G1                                    ','       ,UTT_OA_REL    BX                                    ','       ,UTT_GRID_RELS B1                                    ','      WHERE                                                 ','            G1.CNTR_NUM           = BX.PARNT_CNTR_NUM       ','        AND BX.REL_TYP_CD         = ''B''                   ','        AND (                                               ','             (G1.START_DT   BETWEEN BX.REL_BG_DT AND        ','              (CASE BX.REL_EN_DT                            ','               WHEN ''0001-01-01''   THEN ''9999-12-31''    ','               WHEN ''9000-01-01''   THEN ''9999-12-31''    ','               ELSE  BX.REL_EN_DT   END                     ','              )                                             ','             )                                              ','         OR                                                 ','             (BX.REL_BG_DT  BETWEEN                         ','              G1.START_DT     AND     G1.END_DT             ','             )                                              ','            )                                               ','        AND G1.END_DT =                                     ','           (SELECT MAX(END_DT) FROM UTT_GRID_RELS           ','              WHERE G1.CNTR_NUM = CNTR_NUM                  ','                AND G1.GRID_ID = GRID_ID)                   ','        AND G1.REL_FINAL_CD = ''A''                         ','        AND BX.CHLD_CNTR_NUM   = B1.CNTR_NUM                ','        AND B1.END_DT          =                            ','           (SELECT MAX(END_DT) FROM UTT_GRID_RELS           ','              WHERE B1.CNTR_NUM = CNTR_NUM                  ','                AND B1.GRID_ID = GRID_ID)                   ','        AND B1.REL_FINAL_CD       = ''A''                   ','        AND NOT EXISTS                                      ','           (  SELECT 1 FROM UTT_GRID_RELS X                 ','              WHERE X.CNTR_NUM = B1.CNTR_NUM                ','                AND B1.GRID_ID = G1.GRID_ID                 ','                AND REL_FINAL_CD = ''A''                    ','           )                                                ','        AND EXISTS                                          ','           (  SELECT 1 FROM UTT_GRID_RELS X                 ','              WHERE X.CNTR_NUM = B1.CNTR_NUM                ','                AND B1.GRID_ID NOT IN                       ','                   (SELECT GRID_ID FROM UTT_GRID_RELS       ','                     WHERE CNTR_NUM = G1.CNTR_NUM)          ','                AND REL_FINAL_CD = ''A''                    ','           )                                                ','        AND B1.GRID_ID = T1.GRID_ID                         ','        AND (T1.FIRM_CNTR_NUM = B1.CNTR_NUM                 ','          OR T1.CHILD_CNTR_NUM = B1.CNTR_NUM)               ','        AND T1.START_DT >= B1.START_DT                      ','        AND T1.END_DT   <= B1.END_DT                        ','   UNION                                                    ',' SELECT T1.CHILD_CNTR_NUM||''~''||T1.PRNT_CNTR_NUM||''~''||   ',' T1.AGNT_TYP_CD||''~''||T1.GRID_ID||''~''||T1.REL_FINAL_CD    ',' ||''~''||CHAR(T1.START_DT)||''~''||CHAR(T1.END_DT)||''~''||  ',' T1.PROT_REL_IND||''~''||CHAR(T1.CRT_TS)||''~''||T1.CRT_BY_ID ',' ||''~''||CHAR(T1.UPDT_TS)||''~''||T1.UPDT_BY_ID||''~''||     ',' T1.HIST_IND||''~''||T1.ADDR_TYP_CD||''~''||T1.STATE_CD       ',' ||''~''||T1.ZIP_CD||''~''||T1.USER_OVERRIDE_IND||''~''||     ',' T1.FIRM_CNTR_NUM||''~''||T1.REL_TYP_CD                      ','   FROM                                                     ','        UTT_PROD_RELS T1                                    ','   WHERE T1.START_DT > T1.END_DT                            ','   UNION                                                    ',' SELECT T1.CHILD_CNTR_NUM||''~''||T1.PRNT_CNTR_NUM||''~''||   ',' T1.AGNT_TYP_CD||''~''||T1.GRID_ID||''~''||T1.REL_FINAL_CD    ',' ||''~''||CHAR(T1.START_DT)||''~''||CHAR(T1.END_DT)||''~''||  ',' T1.PROT_REL_IND||''~''||CHAR(T1.CRT_TS)||''~''||T1.CRT_BY_ID ',' ||''~''||CHAR(T1.UPDT_TS)||''~''||T1.UPDT_BY_ID||''~''||     ',' T1.HIST_IND||''~''||T1.ADDR_TYP_CD||''~''||T1.STATE_CD       ',' ||''~''||T1.ZIP_CD||''~''||T1.USER_OVERRIDE_IND||''~''||     ',' T1.FIRM_CNTR_NUM||''~''||T1.REL_TYP_CD                      ','   FROM                                                     ','        UTT_PROD_RELS T1                                    ','   WHERE EXISTS                                             ','       (SELECT 1                                            ','        FROM UTT_OA B                                       ','            ,UTT_NON_PRU_ORG C                              ','        WHERE B.CNTR_NUM = T1.CHILD_CNTR_NUM                ','          AND B.MKTR_FOCAL_SUBJ_ID = C.SUBJ_ID              ','       )                                                    ','   UNION                                                    ',' SELECT T1.CHILD_CNTR_NUM||''~''||T1.PRNT_CNTR_NUM||''~''||   ',' T1.AGNT_TYP_CD||''~''||T1.GRID_ID||''~''||T1.REL_FINAL_CD    ',' ||''~''||CHAR(T1.START_DT)||''~''||CHAR(T1.END_DT)||''~''||  ',' T1.PROT_REL_IND||''~''||CHAR(T1.CRT_TS)||''~''||T1.CRT_BY_ID ',' ||''~''||CHAR(T1.UPDT_TS)||''~''||T1.UPDT_BY_ID||''~''||     ',' T1.HIST_IND||''~''||T1.ADDR_TYP_CD||''~''||T1.STATE_CD       ',' ||''~''||T1.ZIP_CD||''~''||T1.USER_OVERRIDE_IND||''~''||     ',' T1.FIRM_CNTR_NUM||''~''||T1.REL_TYP_CD                      ','   FROM                                                     ','        UTT_PROD_RELS T1                                    ','   WHERE NOT EXISTS                                         ','       (SELECT 1                                            ','        FROM UTT_OA B                                       ','        WHERE B.CNTR_NUM = T1.CHILD_CNTR_NUM                ','       );                                                   ','  '}], Additional Properties: [Fully Qualified Step name=DSNTIAUL,Step name=DSNTIAUL,Job name=TESTLREP]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2091,"TEST25P2.IKJE0001.EXEC_PGM","SELECT",110,1,1,7,3.17,1.00,"SELECT DISTINCT NEWCO_TEST_NUM M FROM TEST_NEWCO_LOC
+WHERE NEWCO_TEST_CD IN
+('TEST1','TEST2',
+'TEST3','TEST4')"
+2098,"TEST9301.UNLODDAT.EXEC_PGM","SELECT",5384,32,8,285,260.53,40.33,"SELECT
+E.LST_NAME
+,E.FRST_NAME
+,B.CNTR_PFX_ID||SUBSTR(A.CNTR_NUM,2,5)
+,(CASE F.AGNT_CLASS_CD
+WHEN '0001' THEN 'S AGENT'
+WHEN '0002' THEN 'GRADUATE'
+WHEN '0003' THEN 'C L AGENT'
+ELSE ' ' END)
+,(CASE
+WHEN F.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F.AGNT_CLASS_CD END)
+,(CASE F1.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER FINANCIAL'
+WHEN '0003' THEN 'PROTOTYPE MANAGER'
+ELSE ' ' END)
+,(CASE
+WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F1.AGNT_CLASS_CD END)
+,SUBSTR(A.FINAL_CD,1,1)
+,G.STAT_CD_DESCR
+,A.EN_DT
+,T1.LIC_EXAM_VAL
+,T1.LIC_EXAM_EFF_DT
+,T1.LIC_EXAM_SCORE_NUM
+,T2.STATUS_NAME
+FROM TESTOA A
+,TESTOA_DTL B, TESTPERS E
+,TESTCLASS F LEFT OUTER JOIN TESTCLASS F1 ON
+F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM
+AND F1.REL_FINAL_CD = 'A'
+AND F1.CLASS_TYP_CD = '0002'
+,TESTCONTRACT_STAT_CD G
+,TEST_EXAM T1, TEST_CD T2
+WHERE A.FINAL_CD = 'A00'
+AND A.CNTR_NUM = F.NEWCO_CNTR_NUM
+AND F.REL_FINAL_CD = 'A'
+AND F.CLASS_TYP_CD = '0007'
+AND A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID
+AND A.CNTR_NUM = B.OA_CNTR_NUM
+AND B.CRT_TS = (SELECT MAX(CRT_TS) FROM TESTOA_DTL
+WHERE B.OA_CNTR_NUM = OA_CNTR_NUM
+AND (PRIR_CONTR_IND IS NULL OR PRIR_CONTR_IND = ' '))
+AND T1.SSN_NUM = E.SSN_NUM
+AND T1.STATUS_CD = T2.STATUS_CD
+AND SUBSTR(A.FINAL_CD,1,1) = G.STAT_CD UNION SELECT
+E.LST_NAME
+,E.FRST_NAME
+,A.CNTR_NUM
+,(CASE F.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER FINANCIAL'
+WHEN '0003' THEN 'PROTOTYPE MANAGER'
+ELSE ' ' END)
+,(CASE
+WHEN F.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F.AGNT_CLASS_CD END)
+,(CASE F1.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER SERVICES'
+WHEN '0003' THEN 'PROTOTYPE SALES MANAGER'
+WHEN '0004' THEN 'PLANNING SALES MANAGER'
+WHEN '0005' THEN 'AGENCY RECRUITER'
+WHEN '0006' THEN 'DIRECT HIRE MANAGER'
+WHEN '0007' THEN 'FIELD SUPERVISOR'
+WHEN '0008' THEN 'AGENCY TRAINER'
+ELSE ' ' END)
+,(CASE
+WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F1.AGNT_CLASS_CD END)
+,SUBSTR(A.FINAL_CD,1,1)
+,G.STAT_CD_DESCR
+,A.EN_DT
+,T1.LIC_EXAM_VAL
+,T1.LIC_EXAM_EFF_DT
+,T1.LIC_EXAM_SCORE_NUM
+,T2.STATUS_NAME
+FROM
+TESTDA A,
+TESTPERS E,
+TESTCLASS F
+LEFT OUTER JOIN
+TESTCLASS F1
+ON
+F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM AND
+F1.REL_FINAL_CD = 'A' AND
+F1.CLASS_TYP_CD = '0002',
+TESTCONTRACT_STAT_CD G,
+TEST_EXAM T1,
+TEST_CD T2
+WHERE
+A.FINAL_CD IN ('A00', 'M00', 'L00', 'E00') AND
+A.CNTR_NUM = F.NEWCO_CNTR_NUM AND
+F.REL_FINAL_CD = 'A' AND
+F.CLASS_TYP_CD = '0007' AND
+A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID AND
+T1.SSN_NUM = E.SSN_NUM AND
+T1.STATUS_CD = T2.STATUS_CD AND
+SUBSTR (A.FINAL_CD,
+1,
+1) = G.STAT_CD UNION SELECT
+E.LST_NAME,
+E.FRST_NAME,
+B.CNTR_PFX_ID || SUBSTR (A.CNTR_NUM,
+2,
+5) ,(CASE F.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER FINANCIAL'
+WHEN '0003' THEN 'PROTOTYPE MANAGER'
+ELSE ' ' END)
+,(CASE
+WHEN F.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F.AGNT_CLASS_CD END)
+,(CASE F1.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER SERVICES'
+WHEN '0003' THEN 'PROTOTYPE SALES MANAGER'
+WHEN '0004' THEN 'PLANNING SALES MANAGER'
+WHEN '0005' THEN 'AGENCY RECRUITER'
+WHEN '0006' THEN 'DIRECT HIRE MANAGER'
+WHEN '0007' THEN 'FIELD SUPERVISOR'
+WHEN '0008' THEN 'AGENCY TRAINER'ELSE ' ' END)
+,(CASE
+WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F1.AGNT_CLASS_CD END)
+,SUBSTR(A.FINAL_CD,1,1)
+,G.STAT_CD_DESCR
+,A.EN_DT
+,T1.LIC_EXAM_VAL
+,T1.LIC_EXAM_EFF_DT
+,T1.LIC_EXAM_SCORE_NUM
+,T2.STATUS_NAME
+FROM
+TESTOA A,
+TESTOA_DTL B,
+TESTPERS E,
+TESTCLASS F
+LEFT OUTER JOIN
+TESTCLASS F1
+ON
+F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM AND
+F1.REL_FINAL_CD = 'A' AND
+F1.CLASS_TYP_CD = '0002',
+TESTCONTRACT_STAT_CD G,
+TEST_EXAM T1,
+TEST_CD T2
+WHERE
+A.FINAL_CD <> 'A00' AND
+A.EN_DT >= '2016-01-01' AND
+A.CNTR_NUM = F.NEWCO_CNTR_NUM AND
+F.REL_FINAL_CD = 'A' AND
+F.CLASS_TYP_CD = '0007' AND
+A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID AND
+A.CNTR_NUM = B.OA_CNTR_NUM AND
+B.CRT_TS = (SELECT MAX (CRT_TS)
+FROM TESTOA_DTL
+WHERE
+B.OA_CNTR_NUM = OA_CNTR_NUM AND
+(PRIR_CONTR_IND IS NULL OR
+PRIR_CONTR_IND = ' ')) AND
+T1.SSN_NUM = E.SSN_NUM AND
+T1.STATUS_CD = T2.STATUS_CD AND
+SUBSTR (A.FINAL_CD,
+1,
+1) = G.STAT_CD UNION SELECT
+E.LST_NAME
+,E.FRST_NAME
+,A.CNTR_NUM
+,(CASE F.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER FINANCIAL'
+WHEN '0003' THEN 'PROTOTYPE MANAGER'
+ELSE ' ' END)
+,(CASE
+WHEN F.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F.AGNT_CLASS_CD END)
+,(CASE F1.AGNT_CLASS_CD
+WHEN '0001' THEN 'SALES MANAGER'
+WHEN '0002' THEN 'MANAGER SERVICES'
+WHEN '0003' THEN 'PROTOTYPE SALES MANAGER'
+WHEN '0004' THEN 'PLANNING SALES MANAGER'
+WHEN '0005' THEN 'AGENCY RECRUITER'
+WHEN '0006' THEN 'DIRECT HIRE MANAGER'
+WHEN '0007' THEN 'FIELD SUPERVISOR'
+WHEN '0008' THEN 'AGENCY TRAINER'
+ELSE ' ' END)
+,(CASE
+WHEN F1.AGNT_CLASS_CD IS NULL THEN ' '
+ELSE F1.AGNT_CLASS_CD END)
+,SUBSTR(A.FINAL_CD,1,1)
+,G.STAT_CD_DESCR
+,A.EN_DT
+,T1.LIC_EXAM_VAL
+,T1.LIC_EXAM_EFF_DT
+,T1.LIC_EXAM_SCORE_NUM
+,T2.STATUS_NAME
+FROM TESTDA A
+, TESTPERS E
+, TESTCLASS F LEFT OUTER JOIN TESTCLASS F1 ON
+F.NEWCO_CNTR_NUM = F1.NEWCO_CNTR_NUM
+AND F1.REL_FINAL_CD = 'A'
+AND F1.CLASS_TYP_CD = '0002'
+, TESTCONTRACT_STAT_CD G
+, TEST_EXAM T1, TEST_CD T2
+WHERE A.FINAL_CD NOT IN ( 'A00' , 'M00', 'L00' , 'E00')
+AND A.EN_DT >= '2016-01-01'
+AND A.CNTR_NUM = F.NEWCO_CNTR_NUM
+AND F.REL_FINAL_CD = 'A'
+AND F.CLASS_TYP_CD = '0007'
+AND A.MKTR_FOCAL_SUBJ_ID = E.SUBJ_ID
+AND T1.SSN_NUM = E.SSN_NUM
+AND T1.STATUS_CD = T2.STATUS_CD
+AND SUBSTR(A.FINAL_CD,1,1) = G.STAT_CD
+ORDER BY 8,1,2,3"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2089,"TEST25P2",2090,"TEST25P2.IEXU0001.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2089,"TEST25P2",2091,"TEST25P2.IKJE0001.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2090,"TEST25P2.IEXU0001.EXEC_PGM",0,"IEXUNCAT","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+2091,"TEST25P2.IKJE0001.EXEC_PGM",0,"IKJEFT1B","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":0,""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+2091,"TEST25P2.IKJE0001.EXEC_PGM",2109,"TEST_NEWCO_LOC","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2097,"TEST9301",2098,"TEST9301.UNLODDAT.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2100,"AXXXA1.DB2.RUNLIB.LOAD","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2101,"AXXXA1.DB2.SDSNEXIT","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2099,"AXXXA1.DB2.SDSNLOAD","RESOURCE","RESOURCE_LIB","Accesses","","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""STEPLIB""}],""FILE_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",0,"IKJEFT01","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":0,""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2105,"TESTCLASS","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2104,"TESTCONTRACT_STAT_CD","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2110,"TESTDA","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2102,"TESTOA","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2107,"TESTOA_DTL","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2103,"TESTPERS","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2108,"TEST_CD","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2098,"TEST9301.UNLODDAT.EXEC_PGM",2106,"TEST_EXAM","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",-1,-1,-1,-1
+2092,"TESTLREP",2093,"TESTLREP.DSNTIAUL.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+2093,"TESTLREP.DSNTIAUL.EXEC_PGM",0,"IKJEFT1B","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":0,""OUTBOUND"":0,""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2093,"TESTLREP.DSNTIAUL.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","DSNTIAUL step has invalid resource file name, contains '&' in &DB2HLQ..DB2.SDSNEXIT",-1,-1
+2093,"TESTLREP.DSNTIAUL.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","DSNTIAUL step has invalid resource file name, contains '&' in &DB2HLQ..DB2.SDSNLOAD",-1,-1
+2093,"TESTLREP.DSNTIAUL.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","DSNTIAUL step has invalid resource file name, contains '&' in &DB2HLQ..DB2.RUNLIB.LOAD",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

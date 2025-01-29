@@ -1,0 +1,37 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 IfStatement, Label: IF FXD2 > FXD3 THEN PUT SKIP LIST("FXD2 > FXD3"); ELSE PUT SKIP LIST("FXD2 <= FXD3");, FROM={#6}, TO={#30(TRUE), #47(FALSE)}
+    #30 PutStatement, FROM={#15(TRUE)}, TO={#62}
+    #47 PutStatement, FROM={#15(FALSE)}, TO={#62}
+  #62 IfStatement, Label: IF FXD2 <= FXD3 THEN PUT SKIP LIST("FXD2 <= FXD3"); ELSE PUT SKIP LIST("FXD2 > FXD3");, FROM={#30, #47}, TO={#77(TRUE), #94(FALSE)}
+    #77 PutStatement, FROM={#62(TRUE)}, TO={#109}
+    #94 PutStatement, FROM={#62(FALSE)}, TO={#109}
+  #109 PutStatement, FROM={#77, #94}, TO={#124}
+  #124 PutStatement, FROM={#109}, TO={#139}
+  #139 IfStatement, Label: IF FXB1 <= FXB2 THEN PUT SKIP LIST("FXB1 <= FXB2"); ELSE PUT SKIP LIST("FXB1 > FXB2");, FROM={#124}, TO={#154(TRUE), #171(FALSE)}
+    #154 PutStatement, FROM={#139(TRUE)}, TO={#186}
+    #171 PutStatement, FROM={#139(FALSE)}, TO={#186}
+  #186 IfStatement, Label: IF FXB1 <= FXB3 THEN PUT SKIP LIST("FXB1 <= FXB3"); ELSE PUT SKIP LIST("FXB1 > FXB3");, FROM={#154, #171}, TO={#201(TRUE), #218(FALSE)}
+    #201 PutStatement, FROM={#186(TRUE)}, TO={#233}
+    #218 PutStatement, FROM={#186(FALSE)}, TO={#233}
+  #233 SelectGroup, Label: SELECT ; OTHERWISE PUT SKIP LIST('NO MATCH FOUND'); END;, FROM={#201, #218}, TO={#239(OTHERWISE)}
+   #234 SelectStatement
+   #237 OtherwiseStatement
+    #239 PutStatement, FROM={#233(OTHERWISE)}, TO={#254}
+   #254 EndStatement, FROM={#239}, TO={#257}
+  #257 IfStatement, Label: IF RESULT THEN PUT SKIP LIST("FXD1 >= FXD2", RESULT);, FROM={#254}, TO={#265(TRUE), #286(FALSE)}
+    #265 PutStatement, FROM={#257(TRUE)}, TO={#286}
+  #286 IfStatement, Label: IF FXD1 <= FXD2 THEN PUT SKIP LIST("FXD1 <= FXD2"); ELSE PUT SKIP LIST("FXD1 > FXD2");, FROM={#257(FALSE), #265}, TO={#301(TRUE), #318(FALSE)}
+    #301 PutStatement, FROM={#286(TRUE)}, TO={#333}
+    #318 PutStatement, FROM={#286(FALSE)}, TO={#333}
+  #333 IfStatement, Label: IF FXD1 <= FXD3 THEN PUT SKIP LIST("FXD1 <= FXD3"); ELSE PUT SKIP LIST("FXD1 > FXD3");, FROM={#301, #318}, TO={#348(TRUE), #365(FALSE)}
+    #348 PutStatement, FROM={#333(TRUE)}, TO={#380}
+    #365 PutStatement, FROM={#333(FALSE)}, TO={#380}
+  #380 SelectGroup, Label: SELECT ; WHEN (LABEL_A()) PUT SKIP LIST('INSIDE WHEN LABEL_A'); WHEN (LABEL_B()) PUT SKIP LIST('INSIDE WHEN LABEL_B'); END;, FROM={#348, #365}, TO={#395(LABEL_A()), #421(LABEL_B()), #436}
+   #381 SelectStatement
+   #384 WhenStatement
+    #395 PutStatement, FROM={#380(LABEL_A())}, TO={#436}
+   #410 WhenStatement
+    #421 PutStatement, FROM={#380(LABEL_B())}, TO={#436}
+   #436 EndStatement, FROM={#380, #395, #421}, TO={#439}
+  #439 EndStatement, FROM={#436}, TO={TestHaltPoint}

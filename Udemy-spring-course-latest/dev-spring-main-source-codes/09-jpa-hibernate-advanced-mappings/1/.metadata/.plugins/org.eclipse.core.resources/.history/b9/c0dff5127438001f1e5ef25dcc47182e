@@ -1,0 +1,52 @@
+package entity;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class ComparatorExample {
+
+	public static void main(String[] args) {
+		
+		Comparator<Integer> com = new Comparator<Integer>() {
+			
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				if (o1 % 10 > o2 % 10) {
+					return 1; // 1 means swap, here we want in ascending order so if first value is greater than 2nd value 
+					//then we need to swap to get smaller value in starting position
+				} else {
+					return -1; // -1 means don't swap
+				}
+			}
+		};
+		
+		List<Integer> nums = new ArrayList<Integer>();
+		nums.add(34);
+		nums.add(45);
+		nums.add(72);
+		nums.add(29);
+		
+		System.out.println(nums);
+		
+		
+		System.out.println("Sort by thier last digits");
+		Collections.sort(nums, com);
+		System.out.println(nums);
+		
+		
+		List<String> names = new ArrayList<String>();
+		names.add("Jashwitha");
+		names.add("Akhil");
+		names.add("Kanyakumari");
+		names.add("Thattu");
+		
+		System.out.println(names);
+		Collections.sort(names);
+		System.out.println("General sorting====================");
+		
+	}
+	
+	
+}

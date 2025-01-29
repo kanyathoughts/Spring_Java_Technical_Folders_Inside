@@ -1,0 +1,11 @@
+<div [hidden]="isContentAvailable()">
+  <nz-card>
+    <p class="mining-msg mining-msg__noDataPlaceholder"> {{'schemaInfo.invalidSchemaError' | translate}}
+      <a [routerLink]="configSchemaRoute"> {{'schemaInfo.schemaConfigPageLink' | translate}} </a>
+    </p>
+  </nz-card>
+</div>
+<div [hidden]="!isContentAvailable()">
+    <mn-table *appLoader="loadState; errorMessage: errorMessage" [config]="tableConfig" [value]="schemaInfo"
+              (optionSelected)="onOptionSelected($event)"></mn-table>
+</div>

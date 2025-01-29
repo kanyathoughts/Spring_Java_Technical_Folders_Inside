@@ -1,0 +1,61 @@
+DEFINE DATA
+LOCAL
+01         #I01                        (I004)
+01         #ARR                        (N003/2)
+END-DEFINE
+
+WRITE NOTITLE  *PROGRAM 'START'
+
+RESET  #ARR(*)
+MOVE  2                                TO  #I01
+WRITE NOTITLE *PROGRAM 'Vor REPEAT loop. Naechster Index #I01:' #I01
+
+REPEAT  UNTIL  #ARR(#I01)                    NE  0
+  SUBTRACT  1                        FROM  #I01
+  WRITE NOTITLE 'START LOOP 1'
+
+  IF  #I01                             EQ  0
+  WRITE NOTITLE 'ESCAPE BOTTOM LOOP 1'
+    ESCAPE BOTTOM
+  END-IF
+    IF  #I01                             EQ  10
+  WRITE NOTITLE 'ESCAPE BOTTOM LOOP 1'
+    ESCAPE TOP
+  END-IF
+  
+  REPEAT  UNTIL  #ARR(#I01)                    NE  0
+    SUBTRACT  1                        FROM  #I01
+    WRITE NOTITLE 'START LOOP 2'
+    
+    REPEAT  UNTIL  #ARR(#I01)                    NE  0
+      SUBTRACT  1                        FROM  #I01
+      WRITE NOTITLE 'START LOOP 3'
+    
+      IF  #I01                             EQ  0
+      WRITE NOTITLE 'ESCAPE BOTTOM LOOP 3'
+        ESCAPE BOTTOM
+      END-IF
+        IF  #I01                             EQ  10
+      WRITE NOTITLE 'ESCAPE BOTTOM LOOP 3'
+        ESCAPE TOP
+      END-IF
+      WRITE NOTITLE 'END LOOP 3'
+    END-REPEAT
+    
+    IF  #I01                             EQ  0
+    WRITE NOTITLE 'ESCAPE BOTTOM LOOP 2'
+      ESCAPE BOTTOM
+    END-IF
+      IF  #I01                             EQ  10
+    WRITE NOTITLE 'ESCAPE BOTTOM LOOP 2'
+      ESCAPE TOP
+    END-IF
+    WRITE NOTITLE 'END LOOP 2'
+  END-REPEAT
+  
+  WRITE NOTITLE 'END LOOP 1'
+END-REPEAT
+
+WRITE (1) NOTITLE  *PROGRAM 'ENDE'
+
+END

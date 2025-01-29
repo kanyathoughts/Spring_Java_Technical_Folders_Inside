@@ -1,0 +1,13 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.
+           MODCD.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       FILE SECTION.
+       WORKING-STORAGE SECTION.
+   
+       PROCEDURE DIVISION.
+
+           DISPLAY "Inside Call"
+
+           EXIT.

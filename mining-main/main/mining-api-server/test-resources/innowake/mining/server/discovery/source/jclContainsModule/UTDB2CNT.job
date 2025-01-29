@@ -1,0 +1,48 @@
+//UTDB2CNT JOB (A,X,29UT00),'00  ADB/PLR   &:YWC',                              
+//         MSGCLASS=W,USER=ZIIGADI,GROUP=AX29UTDA                               
+//*+JBS BIND XPDDBA1.ONLINE                                                     
+//*---------------------------------------------------------------------        
+//*AUTOBEEP PAGE=PMADB                                                          
+//*---------------------------------------------------------------------        
+//RUNSQL   PROC                                                                 
+//*---------------------------------------------------------------------        
+//IKJE0001 EXEC PGM=IKJEFT1B,DYNAMNBR=20                                        
+//STEPLIB  DD DISP=SHR,DSN=AXXXA1.DB2.SDSNEXIT                                  
+//         DD DISP=SHR,DSN=AXXXA1.DB2.SDSNLOAD                                  
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSREC00 DD SYSOUT=*                                                          
+//SYSPUNCH DD DUMMY                                                             
+//SYSIN    DD DISP=SHR,DSN=&DSN                                                 
+//*---------------------------------------------------------------------        
+// PEND                                                                         
+//*---------------------------------------------------------------------        
+//RUNS0001 EXEC RUNSQL,DSN=AX87FT.IDPS.X0196.CHGMAN.IDS.#000115                 
+//IKJE0001.SYSTSIN DD *                                                         
+  DSN SYSTEM(DBA1)                                                              
+  RUN  PROGRAM(DSNTEP2) PLAN(DSNTEP2) -                                         
+       LIB('AXXXA1.DB2.RUNLIB.LOAD')                                            
+/*                                                                              
+//*---------------------------------------------------------------------        
+/*---------------------------------------------------------------------        
+//RUNSQL2   PROC                                                                 
+//*---------------------------------------------------------------------        
+//IKJE0002 EXEC PGM=IKJEFT1B,DYNAMNBR=20                                        
+//STEPLIB  DD DISP=SHR,DSN=AXXXA1.DB2.SDSNEXIT                                  
+//         DD DISP=SHR,DSN=AXXXA1.DB2.SDSNLOAD                                  
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSREC00 DD SYSOUT=*                                                          
+//SYSPUNCH DD DUMMY                                                             
+//SYSIN    DD DISP=SHR,DSN=&DSN                                                 
+//*---------------------------------------------------------------------        
+// PEND                                                                         
+//*---------------------------------------------------------------------        
+//RUNS0001 EXEC RUNSQL2,DSN=AX87FT.IDPS.X0196.CHGMAN.IDS.#000115                 
+//IKJE0002.SYSTSIN DD *                                                         
+  DSN SYSTEM(DBA1)                                                              
+  RUN  PROGRAM(DSNTEP2) PLAN(DSNTEP2) -                                         
+       LIB('AXXXA1.DB2.RUNLIB.LOAD')                                            
+/*                                                                              
+//*---------------------------------------------------------------------
+//                                                                              

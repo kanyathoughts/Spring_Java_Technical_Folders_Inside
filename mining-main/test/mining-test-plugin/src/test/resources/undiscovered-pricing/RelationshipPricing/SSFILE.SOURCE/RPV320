@@ -1,0 +1,55 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . RPRELO                                            *
+*   Description  . . Outside Relationship                              *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ RPRELO    ________            Outside Relationship            ____  __________
+
+
+ Product Code  : ______   Account Number : __________________
+ Customer Name : ________________________________________
+ Model . . . . : __________  ____________________  __________________________
+ ID Number . . : __________________
+
+ Inst   Product    Account Number
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+ ____   ______   __________________
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M
+FIELD=SYSDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=PRODCD,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HMST004S
+FIELD=ACCOUNT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST005S
+FIELD=CUSTNA,   PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001S
+FIELD=MODEL,    PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST006S
+FIELD=MODDESC,  PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HM01051S
+FIELD=RELTYPE,  PIC='X(26)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX004S
+FIELD=IDNBR,    PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST024S
+LABEL=(LABEL,IMPORTANT)
+LABEL=(LABEL,IMPORTANT)
+OCCURS 10 MULTI
+FIELD=INSTX,    PIC='X(04)', ATTR=(INPUT,OPTIONAL), HELP=HREL009S
+FIELD=PRODCDX,  PIC='X(06)', ATTR=(INPUT,OPTIONAL), HELP=HREL010S
+FIELD=ACCTX,    PIC='X(18)', ATTR=(INPUT,OPTIONAL), HELP=HREL011S
+END
+FIELD=MSGLINE,  PIC='X(78)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

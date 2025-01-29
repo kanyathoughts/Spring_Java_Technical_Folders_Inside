@@ -1,0 +1,33 @@
+//RPD126LD JOB
+//********************************************************************  00001000
+//*                                                                  *  00002000
+//*   LOAD EXTRACTED RECORDS INTO RELATIONSHIP PRICING VSAM FILES    *  00003000
+//*                                                                  *  00004000
+//********************************************************************  00005000
+//*                                                                     00006000
+//RPD126L  EXEC PGM=BIS863B,REGION=4096K,COND=(0,LT)                    00007000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//BIPUTIL  DD  DSN=BNKCA.IN0.RP50.BLDINT,                               00009000
+//             DISP=(OLD,KEEP,KEEP),                                    00010000
+//             DCB=BUFNO=20                                             00011000
+//BIPDSK1  DD  DSN=&&BIPDSK1,DISP=(,DELETE,DELETE),                     00012000
+//             UNIT=SYSDA,SPACE=(CYL,(2,2),RLSE),                       00013000
+//             DCB=(RECFM=VB,LRECL=2015,BLKSIZE=16300)                  00014000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//BNKPRT1  DD  SYSOUT=*                                                 00016000
+//SYSOUT   DD  SYSOUT=*                                                 00017000
+//SYSPRINT DD  SYSOUT=*                                                 00018000
+//* DSNTRACE DD  DUMMY                                                  00019000
+//SYSIN    DD   *                                                       00020000
+IPRP BNK INFOPNT  EN BIS863B  0 L 0                                     00021000
+END                                                                     00022000
+SAD                                                                     00023000
+/*                                                                      00024000
+//

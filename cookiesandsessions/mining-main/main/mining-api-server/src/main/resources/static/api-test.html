@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+
+	function doCall() {
+		const http = new XMLHttpRequest();
+		const domRslt = document.getElementById("rslt"); 
+		
+		http.open('GET', '/api/v1/auth/login', true); 
+		http.send();
+		domRslt.innerHTML = "...";
+		
+		http.onload = () => { 
+			if (http.status === 200) {
+				const resp = JSON.parse(http.response);
+				domRslt.innerHTML = JSON.stringify(resp, null, 2); 
+			} else { 
+				domRslt.innerHTML = "ERROR #" + http.status;
+			}
+		}; 
+	}
+
+    </script>
+  </head>
+  <body>
+    <h1>API Test</h1>
+    <p><a href="javascript:doCall()">Call</a></p>
+    <pre id="rslt">-</pre>
+    <p><a href="/api/v1/auth/logout">Logout</a></p>
+  </body>
+</html>

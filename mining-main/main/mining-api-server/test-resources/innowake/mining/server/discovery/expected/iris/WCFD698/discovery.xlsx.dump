@@ -1,0 +1,48 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2814,"","ABORT","src/cobol/WCFD698/programs/ABORT.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",5,1,73,25,116,7,0,-1,-1
+2815,"","CDA009","src/cobol/WCFD698/programs/CDA009.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",7,0,168,0,183,12,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+2814,"ABORT","CALL","CALL 'AIBTDLI' USING: ['ROLB', WS-AIB-MASK] {calltype : IMS-SYS-SERVICE}"
+2814,"ABORT","CALL","CALL 'CEE3ABD' USING: [WSP-ABORT-CODE]"
+2814,"ABORT","CALL","CALL 'CEE3DMP' USING: [WSP-ABORT-CODE]"
+2814,"ABORT","CONDITIONAL","IF WS-AIB-REASON-CODE NE SPACES"
+2814,"ABORT","CONDITIONAL","IF WS-AIB-RETURN-CODE NE SPACES"
+2814,"ABORT","CONDITIONAL","IF WSH-RETURN-CODE EQ ZEROES"
+2814,"ABORT","CONDITIONAL","IF WSH-RUN-TYPE EQ WSC-IMS"
+2815,"CDA009","CALL","CALL 'AIBTDLI' USING: ['INQY', AAA-AIB, AAA-INQY-IO-AREA] {calltype : IMS-SYS-SERVICE}"
+2815,"CDA009","CALL","CALL 'CBLTDLI' USING: ['GN  ', IO-PCB-1, TERMINAL-INPUT]{calltype : IMS-DB-MNGMNT}"
+2815,"CDA009","CALL","CALL 'CBLTDLI' USING: ['GU  ', IO-PCB-1, SPA-AREA]{calltype : IMS-DB-MNGMNT}"
+2815,"CDA009","CALL","CALL 'CBLTDLI' USING: ['ISRT', IO-PCB-1, SPA-AREA] {calltype : IMS-TM-MSG}"
+2815,"CDA009","CALL","CALL 'CBLTDLI' USING: ['ISRT', IO-PCB-1, TERMINAL-INPUT, 'CODA009 '] {calltype : IMS-TM-MSG}"
+2815,"CDA009","CALL","CALL 'CBLTDLI' USING: ['ROLL'] {calltype : IMS-SYS-SERVICE}"
+2815,"CDA009","CONDITIONAL","IF IO-STATUS-CODE-1 EQ '  '"
+2815,"CDA009","CONDITIONAL","IF IO-STATUS-CODE-1 EQ 'QC'"
+2815,"CDA009","CONDITIONAL","IF IO-STATUS-CODE-1 EQ SPACES OR IO-STATUS-CODE-1 EQ 'QD'"
+2815,"CDA009","CONDITIONAL","IF IO-STATUS-CODE-1 NE SPACES"
+2815,"CDA009","CONDITIONAL","SEARCH ALL WST-24X7-TRAN-ENTRY [WST-24X7-TRANID([WST-INDEX-1]) EQ AAA-INQY-TRANNAME]"
+2815,"CDA009","ENTRY","ENTRY DLITCBL USING: [IO-PCB-1, IO-PCB-2, IO-PCB-3, IO-PCB-4, IO-PCB-5]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2814,"ABORT",0,"AIBTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",7395,41,-1,-1
+2814,"ABORT",0,"CEE3ABD","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8543,35,-1,-1
+2814,"ABORT",0,"CEE3ABD","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8789,35,-1,-1
+2814,"ABORT",0,"CEE3DMP","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8461,35,-1,-1
+2814,"ABORT",0,"CEE3DMP","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8707,35,-1,-1
+2815,"CDA009",0,"AIBTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",10355,204,-1,-1
+2815,"CDA009",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",12168,43,-1,-1
+2815,"CDA009",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",12742,49,-1,-1
+2815,"CDA009",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",13398,45,-1,-1
+2815,"CDA009",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",13972,60,-1,-1
+2815,"CDA009",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",14710,25,-1,-1
+2815,"CDA009",-1,"QW247TRN","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2814,"ABORT","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file DFSVSAMP to actual data set.",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

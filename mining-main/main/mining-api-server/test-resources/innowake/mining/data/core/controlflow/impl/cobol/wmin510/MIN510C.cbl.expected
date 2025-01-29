@@ -1,0 +1,35 @@
+#8 ProcedureDivision
+ #9 CobolMoveStmt, FROM={TestEntryPoint}, TO={#14}
+ #14 CobolDisplayStmt ' ----- A:', FROM={#9}, TO={#17}
+ #17 CobolPerformStmt LABEL3 THRU LABEL5 , FROM={#14}, TO={#32}
+  #18 CobolFieldReference
+  #19 CobolFieldReference
+ #20 CobolGoBackStmt, FROM={#61, #65}, TO={TestReturnPoint}
+ #21 CobolLabelStmt LABEL1 
+  #22 CobolDisplayStmt ' ----- B:'
+ #25 CobolLabelStmt LABEL2 
+  #26 CobolDisplayStmt ' ----- C:'
+  #29 CobolDisplayStmt ' --- END --- '
+ #32 CobolLabelStmt LABEL3 , FROM={#17}, TO={#33}
+  #33 CobolDisplayStmt ' ----- D:', FROM={#32}, TO={#36}
+  #36 CobolIfStmt <branch stmt>, Label: IF 1 EQ TESTFIELD, FROM={#33}, TO={#42(TRUE), #45(FALSE)}
+   #37 CobolComparisonExpression
+   #42 CobolThenBlock, FROM={#36(TRUE)}, TO={#43}
+    #43 CobolPerformStmt LABEL5, FROM={#42}, TO={#53}
+     #44 CobolFieldReference
+   #45 CobolElseBlock, FROM={#36(FALSE)}, TO={#46}
+    #46 CobolDisplayStmt 'ELSE 1', FROM={#45}, TO={#49}
+ #49 CobolLabelStmt LABEL4 , FROM={#46, #61, #65}, TO={#50}
+  #50 CobolDisplayStmt ' ----- E:', FROM={#49}, TO={#53}
+ #53 CobolLabelStmt LABEL5 , FROM={#43, #50}, TO={#54}
+  #54 CobolIfStmt <branch stmt>, Label: IF 1 EQ TESTFIELD, FROM={#53}, TO={#60(TRUE), #64(FALSE)}
+   #55 CobolComparisonExpression
+   #60 CobolThenBlock, FROM={#54(TRUE)}, TO={#61}
+    #61 CobolDisplayStmt 'IF 2', FROM={#60}, TO={#20, #49}
+   #64 CobolElseBlock, FROM={#54(FALSE)}, TO={#65}
+    #65 CobolDisplayStmt 'ELSE 2', FROM={#64}, TO={#20, #49}
+ #68 CobolLabelStmt LABEL6 
+  #69 CobolDisplayStmt ' ----- G:'
+ #72 CobolLabelStmt LABEL7 
+  #73 CobolGoBackStmt
+  #74 CobolEndStmt

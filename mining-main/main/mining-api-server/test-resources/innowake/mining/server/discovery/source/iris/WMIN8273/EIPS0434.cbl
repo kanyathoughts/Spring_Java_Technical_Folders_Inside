@@ -1,0 +1,17 @@
+       IDENTIFICATION  DIVISION.
+       PROGRAM-ID.     EIPS0434.
+
+       DATA            DIVISION.
+       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
+
+       PROCEDURE DIVISION.
+           EXEC SQL INCLUDE TIPS002
+           END-EXEC.
+           EXEC SQL
+            SELECT    DEPTNO
+	          FROM      VIP_ID AS VSAMK
+	          ORDER BY  VSAMK.DEPTNO ASC
+	          FOR       FETCH ONLY 
+           END-EXEC.
+       END PROGRAM EIPS0434.

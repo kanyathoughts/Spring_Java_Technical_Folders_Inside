@@ -1,0 +1,21 @@
+  #4 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#10}
+   #10 CWhileStatement, Label: while (i <= 5) { printf("inside the while"); ++i; if(a> b) { break; } printf("Should be un reachable"); }, FROM={#31, #4}, TO={#15(LOOP BODY), #36(LOOP END)}
+    #15 CExpressionStatement, FROM={#10(LOOP BODY)}, TO={#20}
+      #17 CFunctionReference
+    #20 CExpressionStatement, FROM={#15}, TO={#23}
+    #23 CIfElseStatement, Label: if(a> b) { break; }, FROM={#20}, TO={#30(TRUE), #31(FALSE)}
+      #30 CBreakStatement, FROM={#23(TRUE)}, TO={#36}
+    #31 CExpressionStatement, FROM={#23(FALSE)}, TO={#10}
+      #33 CFunctionReference
+   #36 CExpressionStatement, FROM={#10(LOOP END), #30}, TO={#41}
+     #38 CFunctionReference
+   #41 CWhileStatement, Label: while (i <= 3) { printf("inside the while"); ++i; if(a >= b) { break; } printf("Should be un reachable"); }, FROM={#36, #62}, TO={#46(LOOP BODY), #67(LOOP END)}
+    #46 CExpressionStatement, FROM={#41(LOOP BODY)}, TO={#51}
+      #48 CFunctionReference
+    #51 CExpressionStatement, FROM={#46}, TO={#54}
+    #54 CIfElseStatement, Label: if(a >= b) { break; }, FROM={#51}, TO={#61(TRUE), #62(FALSE)}
+      #61 CBreakStatement, FROM={#54(TRUE)}, TO={#67}
+    #62 CExpressionStatement, FROM={#54(FALSE)}, TO={#41}
+      #64 CFunctionReference
+   #67 CExpressionStatement, FROM={#41(LOOP END), #61}, TO={TestReturnPoint}
+     #69 CFunctionReference

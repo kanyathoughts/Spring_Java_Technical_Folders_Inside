@@ -1,0 +1,1433 @@
+* REL=S08IODB.10                                                        00001000
+**********************************************************************  00002000
+*                                                                       00003000
+*  S08IODB .... STATIC SQL I/O MODULE                                   00004000
+*                                                                       00005000
+*  CREATION DATE: 04/25/16                                              00006000
+*                                                                       00007000
+*  FUNCTIONAL DESCRIPTION: THIS PROGRAM CONTAINS THE STATIC SQL         00008000
+*  VECTORS REQUIRED TO SUPPORT I/O TO THE S08 FILE.  IT IS LOADED       00009000
+*  BY THE DB2 I/O MANAGER (BIPDB2X).  THIS PROGRAM WILL BE USED         00010000
+*  IN BOTH A CICS AND BATCH ENVIRONMENT AND MUST BE RE-ENTRANT          00011000
+*  AND VOID OF SVC CALLS.                                               00012000
+*     ***************************************************************   00013000
+*     *                                                             *   00013001
+*     *                           NOTICE                            *   00013002
+*     *                                                             *   00013003
+*     *   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00013004
+*     *   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00013005
+*     *   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00013006
+*     *   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00013007
+*     *   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00013008
+*     *   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00013009
+*     *   ALL OTHER RIGHTS RESERVED.                                *   00013010
+*     *                                                             *   00013011
+*     *   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00013012
+*     *   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00013013
+*     *   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00013014
+*     *   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00013015
+*     *   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00013016
+*     *   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00013017
+*     *                                                             *   00013018
+*     ***************************************************************   00013019
+*     *     Infopoint Relationship Pricing                          *   00013020
+*     *     RP 5.0.01                                               *   00013021
+*     ***************************************************************   00013022
+**********************************************************************  00014000
+* SQI COMMUNICATION AREA DSECT ADDRESSED BY REGISTER 11                 00015000
+*   MUST NOT BE MODIFIED.                                               00016000
+**********************************************************************  00017000
+*                                                                       00018000
+COM#AREA DSECT                         SQI COMMUNICATION AREA           00019000
+SQW@CAF  DS    F                       ADDRESS OF ATTACH FACILITY       00020000
+SQW@RET  DS    F                       RETURN ADDRESS TO SQI            00021000
+SQWSQLCA DS    XL136                   GLOBAL SQLCA                     00022000
+         ORG   SQWSQLCA                                                 00023000
+         EXEC  SQL INCLUDE SQLCA                                        00024000
+*                                                                       00025000
+*                                                                       00026000
+**********************************************************************  00027000
+* HOST VARIABLE AREA DSECT ADDRESSED BY REGISTER 2                      00028000
+*   MUST NOT BE MODIFIED.                                               00029000
+**********************************************************************  00030000
+*                                                                       00031000
+HOST#VAR DSECT                         PROGRAM HOST VARIABLES           00032000
+CSRPTR   DS    H                       CURSOR ROUTINE POINTER           00033000
+         DS    CL6                     RESERVED                         00034000
+ORG      DS    CL6                     RECORD ORG CODE                  00035000
+COBREC   DS    CL68                    COBOL RECORD (UNALIGNED)         00036000
+ASMREC   DS    0F                      ASSEMBLER RECORD (ALIGNED)       00037000
+INST     DS    CL4                                                      00038000
+RECNBR   DS    CL4                                                      00039000
+SECSVCCD DS    CL6                                                      00040000
+AUDDATE  DS    PL5'0.'                                                  00041000
+AUDTIME  DS    PL5'0.'                                                  00042000
+AUDUSER  DS    CL8                                                      00043000
+AUDORG   DS    CL6                                                      00044000
+DESCRIPT DS    CL30                                                     00045000
+*                                                                       00046000
+*                                                                       00047000
+**********************************************************************  00048000
+* PROGRAM TABLE HEADER SECTION:                                         00049000
+*   THIS SECTION CONTAINS STATIC DESCRIPTIVE FIELDS.                    00050000
+*   THE CONTENTS OF THIS SECTION SHOULD NOT BE MODIFIED.                00051000
+**********************************************************************  00052000
+*                                                                       00053000
+S08IODB  CSECT                         PROGRAM TABLE SECTION            00054000
+S08IODB  AMODE ANY                                                      00055000
+S08IODB  RMODE ANY                                                      00056000
+         DC    CL9'S08IODB'            PROGRAM ID                       00057000
+         DC    CL8'&SYSDATE',CL1' ',CL5'&SYSTIME',CL1' '                00058000
+         DC    A(SQLDLEN)              SQLDSECT SIZE                    00059000
+         DC    A(0)                    RESERVED                         00060000
+         DC    A(0)                    RESERVED                         00061000
+         DC    24CL1' '                RESERVED                         00062000
+         DC    A(STM#TAB)              STATEMENT TABLE ADDRESS          00063000
+*                                                                       00064000
+         DC    CL43'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. '        00065000
+         DC    CL29'WWW.INFOR.COM                '                      00065001
+*                                                                       00066000
+*                                                                       00067000
+**********************************************************************  00068000
+* STATEMENT TABLE SECTION:                                              00069000
+*   THIS SECTION DEFINES AN ENTRY VECTOR FOR EACH SQL STATEMENT.        00070000
+*   THE CONTENTS AND ORDER OF THE STATEMENTS IN THIS SECTION            00071000
+*   SHOULD NOT BE MODIFIED.                                             00072000
+**********************************************************************  00073000
+*                                                                       00074000
+STM#TAB  CSECT                         STATEMENT TABLE SECTION          00075000
+STM#TAB  AMODE ANY                                                      00076000
+STM#TAB  RMODE ANY                                                      00077000
+         DC    A(SQL#0000)             SELECT INTO (KEY 0)              00078000
+         DC    A(SQL#0001)             SELECT INTO (KEY 1)              00079000
+         DC    A(SQL#0002)             SELECT INTO (KEY 2)              00080000
+         DC    A(SQL#0003)             SELECT INTO (KEY 3)              00081000
+         DC    A(SQL#0004)             SELECT UPDATE CURSOR (KEY 0)     00082000
+         DC    A(SQL#0005)             SELECT UPDATE CURSOR (KEY 1)     00083000
+         DC    A(SQL#0006)             SELECT UPDATE CURSOR (KEY 2)     00084000
+         DC    A(SQL#0007)             SELECT UPDATE CURSOR (KEY 3)     00085000
+         DC    A(SQL#0008)             FETCH UPDATE CURSOR (KEY 0)      00086000
+         DC    A(SQL#0009)             FETCH UPDATE CURSOR (KEY 1)      00087000
+         DC    A(SQL#0010)             FETCH UPDATE CURSOR (KEY 2)      00088000
+         DC    A(SQL#0011)             FETCH UPDATE CURSOR (KEY 3)      00089000
+         DC    A(SQL#0012)             CLOSE UPDATE CURSOR (KEY 0)      00090000
+         DC    A(SQL#0013)             CLOSE UPDATE CURSOR (KEY 1)      00091000
+         DC    A(SQL#0014)             CLOSE UPDATE CURSOR (KEY 2)      00092000
+         DC    A(SQL#0015)             CLOSE UPDATE CURSOR (KEY 3)      00093000
+         DC    A(SQL#0016)             SELECT SEQ CURSOR (KEY 0)        00094000
+         DC    A(SQL#0017)             SELECT SEQ CURSOR (KEY 1)        00095000
+         DC    A(SQL#0018)             SELECT SEQ CURSOR (KEY 2)        00096000
+         DC    A(SQL#0019)             SELECT SEQ CURSOR (KEY 3)        00097000
+         DC    A(SQL#0020)             FETCH SEQ CURSOR (KEY 0)         00098000
+         DC    A(SQL#0021)             FETCH SEQ CURSOR (KEY 1)         00099000
+         DC    A(SQL#0022)             FETCH SEQ CURSOR (KEY 2)         00100000
+         DC    A(SQL#0023)             FETCH SEQ CURSOR (KEY 3)         00101000
+         DC    A(SQL#0024)             FETCH SEQ CURSOR UPDATE (KEY 0)  00102000
+         DC    A(SQL#0025)             FETCH SEQ CURSOR UPDATE (KEY 1)  00103000
+         DC    A(SQL#0026)             FETCH SEQ CURSOR UPDATE (KEY 2)  00104000
+         DC    A(SQL#0027)             FETCH SEQ CURSOR UPDATE (KEY 3)  00105000
+         DC    A(SQL#0028)             CLOSE SEQ CURSOR (KEY 0)         00106000
+         DC    A(SQL#0029)             CLOSE SEQ CURSOR (KEY 1)         00107000
+         DC    A(SQL#0030)             CLOSE SEQ CURSOR (KEY 2)         00108000
+         DC    A(SQL#0031)             CLOSE SEQ CURSOR (KEY 3)         00109000
+         DC    A(SQL#0032)             SELECT KEY (KEY 0)               00110000
+         DC    A(SQL#0033)             SELECT KEY (KEY 1)               00111000
+         DC    A(SQL#0034)             SELECT KEY (KEY 2)               00112000
+         DC    A(SQL#0035)             SELECT KEY (KEY 3)               00113000
+         DC    A(SQL#0036)             INSERT STATEMENT                 00114000
+         DC    A(SQL#0037)             UPDATE STATEMENT (KEY 0)         00115000
+         DC    A(SQL#0038)             UPDATE STATEMENT (KEY 1)         00116000
+         DC    A(SQL#0039)             UPDATE STATEMENT (KEY 2)         00117000
+         DC    A(SQL#0040)             UPDATE STATEMENT (KEY 3)         00118000
+         DC    A(SQL#0041)             DELETE STATEMENT (KEY 0)         00119000
+         DC    A(SQL#0042)             DELETE STATEMENT (KEY 1)         00120000
+         DC    A(SQL#0043)             DELETE STATEMENT (KEY 2)         00121000
+         DC    A(SQL#0044)             DELETE STATEMENT (KEY 3)         00122000
+         DC    A(SQL#0045)             DELETE ALL STATEMENT             00123000
+         DC    4X'FF'                                                   00124000
+*                                                                       00125000
+*                                                                       00126000
+**********************************************************************  00127000
+* SQL STATEMENT SECTION:                                                00128000
+*   THIS SECTION CONTAINS ALL THE STATIC SQL STATEMENTS REQUIRED        00129000
+*     TO SUPPORT THIS TABLE.                                            00130000
+*   THE INDICATED STATEMENTS MAY BE MODIFIED, AS LONG AS THE RESULTS    00131000
+*     ARE EQUIVALENT.                                                   00132000
+**********************************************************************  00133000
+*                                                                       00134000
+SQL#STMT CSECT                         SQL STATEMENT SECTION            00135000
+SQL#STMT AMODE ANY                                                      00136000
+SQL#STMT RMODE ANY                                                      00137000
+         USING HOST#VAR,2              ADDRESS HOST VARIABLES           00138000
+         USING SQLDSECT,10             ADDRESS SQLDSECT                 00139000
+         USING COM#AREA,11             ADDRESS COMMAREA                 00140000
+*                                                                       00141000
+*                                                                       00142000
+**********************************************************************  00143000
+* SELECT INTO STATEMENT BY PRIMARY KEY:                                 00144000
+*   THIS STATEMENT SUPPORTS THE GET (WITHOUT LOCK) VERB.                00145000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00146000
+**********************************************************************  00147000
+*                                                                       00148000
+SQL#0000 DS    0H                                                       00149000
+         USING SQL#0000,12             ESTABLISH BASE REGISTER          00150000
+         LA    3,X'80'                 LOAD MASK FOR KEY 0              00151000
+         L     5,=A(IN#KEY)            LOAD KEY CONVERSION ROUTINE      00152000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         00153000
+         EXEC  SQL                                                     *00154000
+               SELECT AUDIT_DATE,                                      *00155000
+                   AUDIT_TIME,                                         *00156000
+                   AUDIT_USER,                                         *00157000
+                   AUDIT_ORG,                                          *00158000
+                   DESCRIPTION                                         *00159000
+                 INTO :AUDDATE,                                        *00160000
+                   :AUDTIME,                                           *00161000
+                   :AUDUSER,                                           *00162000
+                   :AUDORG,                                            *00163000
+                   :DESCRIPT                                           *00164000
+                 FROM S08                                              *00165000
+                 WHERE INST_NBR = :INST AND                            *00166000
+                   RECORD_NBR = :RECNBR AND                            *00167000
+                   SERVICE_CODE = :SECSVCCD                            *00168000
+                 FETCH FIRST 1 ROW ONLY                                 00169000
+         L     5,=A(OUT#REC)           LOAD OUTPUT CONVERSION ROUTINE   00170000
+         BALR  4,5                     MOVE INTO RECORD AREA            00171000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00172000
+         BR    14                      RETURN TO CALLER                 00173000
+         LTORG                                                          00174000
+*                                                                       00175000
+*                                                                       00176000
+**********************************************************************  00177000
+* SELECT INTO STATEMENT BY ALTERNATE KEY 1:                             00178000
+*   THIS STATEMENT SUPPORTS THE GET (WITHOUT LOCK) VERB.                00179000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00180000
+**********************************************************************  00181000
+*                                                                       00182000
+SQL#0001 DS    0H                                                       00183000
+         USING SQL#0001,12             ESTABLISH BASE REGISTER          00184000
+         LA    15,255                  SET RETURN CODE                  00185000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00186000
+         BR    14                      RETURN TO CALLER                 00187000
+         LTORG                                                          00188000
+*                                                                       00189000
+*                                                                       00190000
+**********************************************************************  00191000
+* SELECT INTO STATEMENT BY ALTERNATE KEY 2:                             00192000
+*   THIS STATEMENT SUPPORTS THE GET (WITHOUT LOCK) VERB.                00193000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00194000
+**********************************************************************  00195000
+*                                                                       00196000
+SQL#0002 DS    0H                                                       00197000
+         USING SQL#0002,12             ESTABLISH BASE REGISTER          00198000
+         LA    15,255                  SET RETURN CODE                  00199000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00200000
+         BR    14                      RETURN TO CALLER                 00201000
+         LTORG                                                          00202000
+*                                                                       00203000
+*                                                                       00204000
+**********************************************************************  00205000
+* SELECT INTO STATEMENT BY ALTERNATE KEY 3:                             00206000
+*   THIS STATEMENT SUPPORTS THE GET (WITHOUT LOCK) VERB.                00207000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00208000
+**********************************************************************  00209000
+*                                                                       00210000
+SQL#0003 DS    0H                                                       00211000
+         USING SQL#0003,12             ESTABLISH BASE REGISTER          00212000
+         LA    15,255                  SET RETURN CODE                  00213000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00214000
+         BR    14                      RETURN TO CALLER                 00215000
+         LTORG                                                          00216000
+*                                                                       00217000
+*                                                                       00218000
+**********************************************************************  00219000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY PRIMARY KEY:       00220000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00221000
+*   THEY ARE ALSO USED AFTER A SUCCESSFUL SELECT SEQUENTIAL STATEMENT   00222000
+*     FOR THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS.                      00223000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00224000
+*     COLUMNS REFERENCED AS UPDATEABLE, AND THEN MODIFYING THE          00225000
+*     UPDATE STATEMENT TO MATCH.                                        00226000
+**********************************************************************  00227000
+*                                                                       00228000
+SQL#0004 DS    0H                                                       00229000
+         USING SQL#0004,12             ESTABLISH BASE REGISTER          00230000
+         LA    3,X'80'                 LOAD MASK FOR KEY 0              00231000
+         L     5,=A(IN#KEY)            LOAD KEY CONVERSION ROUTINE      00232000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         00233000
+         EXEC  SQL                                                     *00234000
+               DECLARE S08UPD0 CURSOR FOR                              *00235000
+               SELECT AUDIT_DATE,                                      *00236000
+                   AUDIT_TIME,                                         *00237000
+                   AUDIT_USER,                                         *00238000
+                   AUDIT_ORG,                                          *00239000
+                   DESCRIPTION                                         *00240000
+                 FROM S08                                              *00241000
+                 WHERE INST_NBR = :INST AND                            *00242000
+                   RECORD_NBR = :RECNBR AND                            *00243000
+                   SERVICE_CODE = :SECSVCCD                            *00244000
+                 FOR UPDATE OF AUDIT_DATE,                             *00245000
+                   AUDIT_TIME,                                         *00246000
+                   AUDIT_USER,                                         *00247000
+                   AUDIT_ORG,                                          *00248000
+                   DESCRIPTION                                         *00249000
+                 FETCH FIRST 1 ROW ONLY                                 00250000
+         EXEC  SQL                                                     *00251000
+               OPEN S08UPD0                                             00252000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00253000
+         BR    14                      RETURN TO CALLER                 00254000
+         LTORG                                                          00255000
+*                                                                       00256000
+*                                                                       00257000
+**********************************************************************  00258000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY ALTERNATE KEY 1:   00259000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00260000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00261000
+*     COLUMNS REFERENCED AS UPDATEABLE, AND THEN MODIFYING THE          00262000
+*     UPDATE STATEMENT TO MATCH.                                        00263000
+**********************************************************************  00264000
+*                                                                       00265000
+SQL#0005 DS    0H                                                       00266000
+         USING SQL#0005,12             ESTABLISH BASE REGISTER          00267000
+         LA    15,255                  SET RETURN CODE                  00268000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00269000
+         BR    14                      RETURN TO CALLER                 00270000
+         LTORG                                                          00271000
+*                                                                       00272000
+*                                                                       00273000
+**********************************************************************  00274000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY ALTERNATE KEY 2:   00275000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00276000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00277000
+*     COLUMNS REFERENCED AS UPDATEABLE, AND THEN MODIFYING THE          00278000
+*     UPDATE STATEMENT TO MATCH.                                        00279000
+**********************************************************************  00280000
+*                                                                       00281000
+SQL#0006 DS    0H                                                       00282000
+         USING SQL#0006,12             ESTABLISH BASE REGISTER          00283000
+         LA    15,255                  SET RETURN CODE                  00284000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00285000
+         BR    14                      RETURN TO CALLER                 00286000
+         LTORG                                                          00287000
+*                                                                       00288000
+*                                                                       00289000
+**********************************************************************  00290000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY ALTERNATE KEY 3:   00291000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00292000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00293000
+*     COLUMNS REFERENCED AS UPDATEABLE, AND THEN MODIFYING THE          00294000
+*     UPDATE STATEMENT TO MATCH.                                        00295000
+**********************************************************************  00296000
+*                                                                       00297000
+SQL#0007 DS    0H                                                       00298000
+         USING SQL#0007,12             ESTABLISH BASE REGISTER          00299000
+         LA    15,255                  SET RETURN CODE                  00300000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00301000
+         BR    14                      RETURN TO CALLER                 00302000
+         LTORG                                                          00303000
+*                                                                       00304000
+*                                                                       00305000
+**********************************************************************  00306000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                   00307000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00308000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00309000
+*     THE ACTUAL ROW.                                                   00310000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00311000
+**********************************************************************  00312000
+*                                                                       00313000
+SQL#0008 DS    0H                                                       00314000
+         USING SQL#0008,12             ESTABLISH BASE REGISTER          00315000
+         EXEC  SQL                                                     *00316000
+               FETCH S08UPD0                                           *00317000
+                 INTO :AUDDATE,                                        *00318000
+                   :AUDTIME,                                           *00319000
+                   :AUDUSER,                                           *00320000
+                   :AUDORG,                                            *00321000
+                   :DESCRIPT                                            00322000
+         L     5,=A(OUT#REC)           LOAD OUTPUT CONVERSION ROUTINE   00323000
+         BALR  4,5                     MOVE INTO RECORD AREA            00324000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00325000
+         BR    14                      RETURN TO CALLER                 00326000
+         LTORG                                                          00327000
+*                                                                       00328000
+*                                                                       00329000
+**********************************************************************  00330000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 1:               00331000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00332000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00333000
+*     THE ACTUAL ROW.                                                   00334000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00335000
+**********************************************************************  00336000
+*                                                                       00337000
+SQL#0009 DS    0H                                                       00338000
+         USING SQL#0009,12             ESTABLISH BASE REGISTER          00339000
+         LA    15,255                  SET RETURN CODE                  00340000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00341000
+         BR    14                      RETURN TO CALLER                 00342000
+         LTORG                                                          00343000
+*                                                                       00344000
+*                                                                       00345000
+**********************************************************************  00346000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 2:               00347000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00348000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00349000
+*     THE ACTUAL ROW.                                                   00350000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00351000
+**********************************************************************  00352000
+*                                                                       00353000
+SQL#0010 DS    0H                                                       00354000
+         USING SQL#0010,12             ESTABLISH BASE REGISTER          00355000
+         LA    15,255                  SET RETURN CODE                  00356000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00357000
+         BR    14                      RETURN TO CALLER                 00358000
+         LTORG                                                          00359000
+*                                                                       00360000
+*                                                                       00361000
+**********************************************************************  00362000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 3:               00363000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00364000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00365000
+*     THE ACTUAL ROW.                                                   00366000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00367000
+**********************************************************************  00368000
+*                                                                       00369000
+SQL#0011 DS    0H                                                       00370000
+         USING SQL#0011,12             ESTABLISH BASE REGISTER          00371000
+         LA    15,255                  SET RETURN CODE                  00372000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00373000
+         BR    14                      RETURN TO CALLER                 00374000
+         LTORG                                                          00375000
+*                                                                       00376000
+*                                                                       00377000
+**********************************************************************  00378000
+* CLOSE UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                        00379000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00380000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00381000
+*     TO CLOSE THE UPDATE CURSOR.                                       00382000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00383000
+**********************************************************************  00384000
+*                                                                       00385000
+SQL#0012 DS    0H                                                       00386000
+         USING SQL#0012,12             ESTABLISH BASE REGISTER          00387000
+         EXEC  SQL                                                     *00388000
+               CLOSE S08UPD0                                            00389000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00390000
+         BR    14                      RETURN TO CALLER                 00391000
+         LTORG                                                          00392000
+*                                                                       00393000
+*                                                                       00394000
+**********************************************************************  00395000
+* CLOSE UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 1:                    00396000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00397000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00398000
+*     TO CLOSE THE UPDATE CURSOR.                                       00399000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00400000
+**********************************************************************  00401000
+*                                                                       00402000
+SQL#0013 DS    0H                                                       00403000
+         USING SQL#0013,12             ESTABLISH BASE REGISTER          00404000
+         LA    15,255                  SET RETURN CODE                  00405000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00406000
+         BR    14                      RETURN TO CALLER                 00407000
+         LTORG                                                          00408000
+*                                                                       00409000
+*                                                                       00410000
+**********************************************************************  00411000
+* CLOSE UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 2:                    00412000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00413000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00414000
+*     TO CLOSE THE UPDATE CURSOR.                                       00415000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00416000
+**********************************************************************  00417000
+*                                                                       00418000
+SQL#0014 DS    0H                                                       00419000
+         USING SQL#0014,12             ESTABLISH BASE REGISTER          00420000
+         LA    15,255                  SET RETURN CODE                  00421000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00422000
+         BR    14                      RETURN TO CALLER                 00423000
+         LTORG                                                          00424000
+*                                                                       00425000
+*                                                                       00426000
+**********************************************************************  00427000
+* CLOSE UPDATE CURSOR STATEMENT FOR ALTERNATE KEY 3:                    00428000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00429000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00430000
+*     TO CLOSE THE UPDATE CURSOR.                                       00431000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00432000
+**********************************************************************  00433000
+*                                                                       00434000
+SQL#0015 DS    0H                                                       00435000
+         USING SQL#0015,12             ESTABLISH BASE REGISTER          00436000
+         LA    15,255                  SET RETURN CODE                  00437000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00438000
+         BR    14                      RETURN TO CALLER                 00439000
+         LTORG                                                          00440000
+*                                                                       00441000
+*                                                                       00442000
+**********************************************************************  00443000
+* SELECT SEQUENTIAL AND OPEN SEQUENTIAL CURSOR STATEMENTS BY PRIMARY    00444000
+* KEY:                                                                  00445000
+*   THESE STATEMENTS SUPPORT THE GET-GE, GET-GE-LOCK, GET-NEXT,         00446000
+*     AND GET-NEXT-LOCK VERBS.                                          00447000
+*   A SELECT UPDATE STATEMENT WILL FOLLOW IN THE CASE OF A              00448000
+*     GET-GE-LOCK OR GET-NEXT-LOCK VERB.                                00449000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00450000
+*     GREATER THAN COMPARES IN THE WHERE CLAUSE AND BY DROPPING THE     00451000
+*     ORDER BY CLAUSE.                                                  00452000
+**********************************************************************  00453000
+*                                                                       00454000
+SQL#0016 DS    0H                                                       00455000
+         USING SQL#0016,12             ESTABLISH BASE REGISTER          00456000
+         LA    3,X'80'                 LOAD MASK FOR KEY 0              00457000
+         L     5,=A(IN#KEY)            LOAD KEY CONVERSION ROUTINE      00458000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         00459000
+         EXEC  SQL                                                     *00460000
+               DECLARE S08SQ001 CURSOR FOR                             *00461000
+               SELECT INST_NBR,                                        *00462000
+                   RECORD_NBR,                                         *00463000
+                   SERVICE_CODE,                                       *00464000
+                   AUDIT_DATE,                                         *00465000
+                   AUDIT_TIME,                                         *00466000
+                   AUDIT_USER,                                         *00467000
+                   AUDIT_ORG,                                          *00468000
+                   DESCRIPTION                                         *00469000
+                 FROM S08                                              *00470000
+                 WHERE                                                 *00471000
+                    INST_NBR = :INST AND                               *00472000
+                    RECORD_NBR = :RECNBR AND                           *00473000
+                    SERVICE_CODE >= :SECSVCCD                          *00474000
+                 ORDER BY SERVICE_CODE                                 *00475000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       00476000
+         EXEC  SQL                                                     *00477000
+               OPEN S08SQ001                                            00478000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00479000
+         BR    14                      RETURN TO CALLER                 00480000
+         LTORG                                                          00481000
+*                                                                       00482000
+*                                                                       00483000
+**********************************************************************  00484000
+* SELECT SEQUENTIAL AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE  00485000
+* KEY 1:                                                                00486000
+*   THESE STATEMENTS SUPPORT THE GET-GE, GET-GE-LOCK, GET-NEXT,         00487000
+*     AND GET-NEXT-LOCK VERBS.                                          00488000
+*   A SELECT UPDATE STATEMENT WILL FOLLOW IN THE CASE OF A              00489000
+*     GET-GE-LOCK OR GET-NEXT-LOCK VERB.                                00490000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00491000
+*     GREATER THAN COMPARES IN THE WHERE CLAUSE AND BY DROPPING THE     00492000
+*     ORDER BY CLAUSE.                                                  00493000
+**********************************************************************  00494000
+*                                                                       00495000
+SQL#0017 DS    0H                                                       00496000
+         USING SQL#0017,12             ESTABLISH BASE REGISTER          00497000
+         LA    15,255                  SET RETURN CODE                  00498000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00499000
+         BR    14                      RETURN TO CALLER                 00500000
+         LTORG                                                          00501000
+*                                                                       00502000
+*                                                                       00503000
+**********************************************************************  00504000
+* SELECT SEQUENTIAL AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE  00505000
+* KEY 2:                                                                00506000
+*   THESE STATEMENTS SUPPORT THE GET-GE, GET-GE-LOCK, GET-NEXT,         00507000
+*     AND GET-NEXT-LOCK VERBS.                                          00508000
+*   A SELECT UPDATE STATEMENT WILL FOLLOW IN THE CASE OF A              00509000
+*     GET-GE-LOCK OR GET-NEXT-LOCK VERB.                                00510000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00511000
+*     GREATER THAN COMPARES IN THE WHERE CLAUSE AND BY DROPPING THE     00512000
+*     ORDER BY CLAUSE.                                                  00513000
+**********************************************************************  00514000
+*                                                                       00515000
+SQL#0018 DS    0H                                                       00516000
+         USING SQL#0018,12             ESTABLISH BASE REGISTER          00517000
+         LA    15,255                  SET RETURN CODE                  00518000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00519000
+         BR    14                      RETURN TO CALLER                 00520000
+         LTORG                                                          00521000
+*                                                                       00522000
+*                                                                       00523000
+**********************************************************************  00524000
+* SELECT SEQUENTIAL AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE  00525000
+* KEY 3:                                                                00526000
+*   THESE STATEMENTS SUPPORT THE GET-GE, GET-GE-LOCK, GET-NEXT,         00527000
+*     AND GET-NEXT-LOCK VERBS.                                          00528000
+*   A SELECT UPDATE STATEMENT WILL FOLLOW IN THE CASE OF A              00529000
+*     GET-GE-LOCK OR GET-NEXT-LOCK VERB.                                00530000
+*   THEY MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF      00531000
+*     GREATER THAN COMPARES IN THE WHERE CLAUSE AND BY DROPPING THE     00532000
+*     ORDER BY CLAUSE.                                                  00533000
+**********************************************************************  00534000
+*                                                                       00535000
+SQL#0019 DS    0H                                                       00536000
+         USING SQL#0019,12             ESTABLISH BASE REGISTER          00537000
+         LA    15,255                  SET RETURN CODE                  00538000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00539000
+         BR    14                      RETURN TO CALLER                 00540000
+         LTORG                                                          00541000
+*                                                                       00542000
+*                                                                       00543000
+**********************************************************************  00544000
+* FETCH FROM SEQUENTIAL CURSOR STATEMENT FOR PRIMARY KEY:               00545000
+*   THIS STATEMENT SUPPORTS THE GET-GE AND GET-NEXT VERBS.              00546000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00547000
+*     RETRIEVE THE ACTUAL ROW.                                          00548000
+*   THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS USE A DIFFERENT             00549000
+*     FETCH STATEMENT AS ONLY THE KEY FIELDS ARE NEEDED.                00550000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00551000
+**********************************************************************  00552000
+*                                                                       00553000
+SQL#0020 DS    0H                                                       00554000
+         USING SQL#0020,12             ESTABLISH BASE REGISTER          00555000
+         LH    1,CSRPTR                LOAD CURRENT CURSOR POINTER      00556000
+         LA    12,VECT0020(1)          LOAD POINTER TO FETCH ROUTINE    00557000
+         L     12,0(12)                LOAD FETCH ROUTINE ADDRESS       00558000
+         BR    12                      GO TO CURRENT FETCH ROUTINE      00559000
+VECT0020 DC    A(SQL#0120)                                              00560000
+         DC    A(SQL#0220)                                              00561000
+         DC    A(SQL#0320)                                              00562000
+         LTORG                                                          00563000
+*                                                                       00564000
+SQL#0120 DS    0H                                                       00565000
+         USING SQL#0120,12             ESTABLISH BASE REGISTER          00566000
+         EXEC  SQL                                                     *00567000
+               FETCH S08SQ001                                          *00568000
+                 INTO :INST,                                           *00569000
+                      :RECNBR,                                         *00570000
+                      :SECSVCCD,                                       *00571000
+                      :AUDDATE,                                        *00572000
+                      :AUDTIME,                                        *00573000
+                      :AUDUSER,                                        *00574000
+                      :AUDORG,                                         *00575000
+                      :DESCRIPT                                         00576000
+         CLC   SQLCODE,=F'+100'        CHECK FOR ROW NOT FOUND          00577000
+         BNE   *+14                    RETURN IF NOT SQLCODE +100       00578000
+         L     9,=A(SQL#0020)          LOAD RETURN ROUTINE ADDRESS      00579000
+         L     12,=A(SQL#0046)         LOAD CURSOR ROUTINE BASE REG     00580000
+         BR    12                      OPEN NEXT CURSOR                 00581000
+         L     5,=A(OUT#REC)           LOAD OUTPUT CONVERSION ROUTINE   00582000
+         BALR  4,5                     MOVE INTO RECORD AREA            00583000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00584000
+         BR    14                      RETURN TO CALLER                 00585000
+         LTORG                                                          00586000
+*                                                                       00587000
+SQL#0220 DS    0H                                                       00588000
+         USING SQL#0220,12             ESTABLISH BASE REGISTER          00589000
+         EXEC  SQL                                                     *00590000
+               FETCH S08SQ002                                          *00591000
+                 INTO :INST,                                           *00592000
+                      :RECNBR,                                         *00593000
+                      :SECSVCCD,                                       *00594000
+                      :AUDDATE,                                        *00595000
+                      :AUDTIME,                                        *00596000
+                      :AUDUSER,                                        *00597000
+                      :AUDORG,                                         *00598000
+                      :DESCRIPT                                         00599000
+         CLC   SQLCODE,=F'+100'        CHECK FOR ROW NOT FOUND          00600000
+         BNE   *+14                    RETURN IF NOT SQLCODE +100       00601000
+         L     9,=A(SQL#0020)          LOAD RETURN ROUTINE ADDRESS      00602000
+         L     12,=A(SQL#0046)         LOAD CURSOR ROUTINE BASE REG     00603000
+         BR    12                      OPEN NEXT CURSOR                 00604000
+         L     5,=A(OUT#REC)           LOAD OUTPUT CONVERSION ROUTINE   00605000
+         BALR  4,5                     MOVE INTO RECORD AREA            00606000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00607000
+         BR    14                      RETURN TO CALLER                 00608000
+         LTORG                                                          00609000
+*                                                                       00610000
+SQL#0320 DS    0H                                                       00611000
+         USING SQL#0320,12             ESTABLISH BASE REGISTER          00612000
+         EXEC  SQL                                                     *00613000
+               FETCH S08SQ003                                          *00614000
+                 INTO :INST,                                           *00615000
+                      :RECNBR,                                         *00616000
+                      :SECSVCCD,                                       *00617000
+                      :AUDDATE,                                        *00618000
+                      :AUDTIME,                                        *00619000
+                      :AUDUSER,                                        *00620000
+                      :AUDORG,                                         *00621000
+                      :DESCRIPT                                         00622000
+         L     5,=A(OUT#REC)           LOAD OUTPUT CONVERSION ROUTINE   00623000
+         BALR  4,5                     MOVE INTO RECORD AREA            00624000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00625000
+         BR    14                      RETURN TO CALLER                 00626000
+         LTORG                                                          00627000
+*                                                                       00628000
+*                                                                       00629000
+**********************************************************************  00630000
+* FETCH FROM SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 1:           00631000
+*   THIS STATEMENT SUPPORTS THE GET-GE AND GET-NEXT VERBS.              00632000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00633000
+*     RETRIEVE THE ACTUAL ROW.                                          00634000
+*   THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS USE A DIFFERENT             00635000
+*     FETCH STATEMENT AS ONLY THE KEY FIELDS ARE NEEDED.                00636000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00637000
+**********************************************************************  00638000
+*                                                                       00639000
+SQL#0021 DS    0H                                                       00640000
+         USING SQL#0021,12             ESTABLISH BASE REGISTER          00641000
+         LA    15,255                  SET RETURN CODE                  00642000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00643000
+         BR    14                      RETURN TO CALLER                 00644000
+         LTORG                                                          00645000
+*                                                                       00646000
+*                                                                       00647000
+**********************************************************************  00648000
+* FETCH FROM SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 2:           00649000
+*   THIS STATEMENT SUPPORTS THE GET-GE AND GET-NEXT VERBS.              00650000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00651000
+*     RETRIEVE THE ACTUAL ROW.                                          00652000
+*   THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS USE A DIFFERENT             00653000
+*     FETCH STATEMENT AS ONLY THE KEY FIELDS ARE NEEDED.                00654000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00655000
+**********************************************************************  00656000
+*                                                                       00657000
+SQL#0022 DS    0H                                                       00658000
+         USING SQL#0022,12             ESTABLISH BASE REGISTER          00659000
+         LA    15,255                  SET RETURN CODE                  00660000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00661000
+         BR    14                      RETURN TO CALLER                 00662000
+         LTORG                                                          00663000
+*                                                                       00664000
+*                                                                       00665000
+**********************************************************************  00666000
+* FETCH FROM SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 3:           00667000
+*   THIS STATEMENT SUPPORTS THE GET-GE AND GET-NEXT VERBS.              00668000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00669000
+*     RETRIEVE THE ACTUAL ROW.                                          00670000
+*   THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS USE A DIFFERENT             00671000
+*     FETCH STATEMENT AS ONLY THE KEY FIELDS ARE NEEDED.                00672000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00673000
+**********************************************************************  00674000
+*                                                                       00675000
+SQL#0023 DS    0H                                                       00676000
+         USING SQL#0023,12             ESTABLISH BASE REGISTER          00677000
+         LA    15,255                  SET RETURN CODE                  00678000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00679000
+         BR    14                      RETURN TO CALLER                 00680000
+         LTORG                                                          00681000
+*                                                                       00682000
+*                                                                       00683000
+**********************************************************************  00684000
+* FETCH FROM SEQUENTIAL CURSOR FOR EVENTUAL UPDATE STATEMENT FOR        00685000
+* THE PRIMARY KEY:                                                      00686000
+*   THIS STATEMENT SUPPORTS THE GET-GE-LOCK AND GET-NEXT-LOCK           00687000
+*     VERBS.                                                            00688000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00689000
+*     RETRIEVE THE ACTUAL ROW.                                          00690000
+*   ONLY THE PRIMARY KEY FIELDS ARE RETRIEVED AS A SELECT FOR UPDATE    00691000
+*     STATEMENT WILL FOLLOW AND RETREIVAL OF THE ACTUAL ROW             00692000
+*     WILL BE THRU THE UPDATE CURSOR.                                   00693000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00694000
+**********************************************************************  00695000
+*                                                                       00696000
+SQL#0024 DS    0H                                                       00697000
+         USING SQL#0024,12             ESTABLISH BASE REGISTER          00698000
+         LH    1,CSRPTR                LOAD CURRENT CURSOR POINTER      00699000
+         LA    12,VECT0024(1)          LOAD POINTER TO FETCH ROUTINE    00700000
+         L     12,0(12)                LOAD FETCH ROUTINE ADDRESS       00701000
+         BR    12                      GO TO CURRENT FETCH ROUTINE      00702000
+VECT0024 DC    A(SQL#0124)                                              00703000
+         DC    A(SQL#0224)                                              00704000
+         DC    A(SQL#0324)                                              00705000
+         LTORG                                                          00706000
+*                                                                       00707000
+SQL#0124 DS    0H                                                       00708000
+         USING SQL#0124,12             ESTABLISH BASE REGISTER          00709000
+         EXEC  SQL                                                     *00710000
+               FETCH S08SQ001                                          *00711000
+                 INTO :INST,                                           *00712000
+                      :RECNBR,                                         *00713000
+                      :SECSVCCD                                         00714000
+         CLC   SQLCODE,=F'+100'        CHECK FOR ROW NOT FOUND          00715000
+         BNE   *+14                    RETURN IF NOT SQLCODE +100       00716000
+         L     9,=A(SQL#0024)          LOAD RETURN ROUTINE ADDRESS      00717000
+         L     12,=A(SQL#0046)         LOAD CURSOR ROUTINE BASE REG     00718000
+         BR    12                      OPEN NEXT CURSOR                 00719000
+         L     5,=A(OUT#KEY)           LOAD OUTPUT CONVERSION ROUTINE   00720000
+         BALR  4,5                     MOVE INTO RECORD AREA            00721000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00722000
+         BR    14                      RETURN TO CALLER                 00723000
+         LTORG                                                          00724000
+*                                                                       00725000
+SQL#0224 DS    0H                                                       00726000
+         USING SQL#0224,12             ESTABLISH BASE REGISTER          00727000
+         EXEC  SQL                                                     *00728000
+               FETCH S08SQ002                                          *00729000
+                 INTO :INST,                                           *00730000
+                      :RECNBR,                                         *00731000
+                      :SECSVCCD                                         00732000
+         CLC   SQLCODE,=F'+100'        CHECK FOR ROW NOT FOUND          00733000
+         BNE   *+14                    RETURN IF NOT SQLCODE +100       00734000
+         L     9,=A(SQL#0024)          LOAD RETURN ROUTINE ADDRESS      00735000
+         L     12,=A(SQL#0046)         LOAD CURSOR ROUTINE BASE REG     00736000
+         BR    12                      OPEN NEXT CURSOR                 00737000
+         L     5,=A(OUT#KEY)           LOAD OUTPUT CONVERSION ROUTINE   00738000
+         BALR  4,5                     MOVE INTO RECORD AREA            00739000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00740000
+         BR    14                      RETURN TO CALLER                 00741000
+         LTORG                                                          00742000
+*                                                                       00743000
+SQL#0324 DS    0H                                                       00744000
+         USING SQL#0324,12             ESTABLISH BASE REGISTER          00745000
+         EXEC  SQL                                                     *00746000
+               FETCH S08SQ003                                          *00747000
+                 INTO :INST,                                           *00748000
+                      :RECNBR,                                         *00749000
+                      :SECSVCCD                                         00750000
+         L     5,=A(OUT#KEY)           LOAD OUTPUT CONVERSION ROUTINE   00751000
+         BALR  4,5                     MOVE INTO RECORD AREA            00752000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00753000
+         BR    14                      RETURN TO CALLER                 00754000
+         LTORG                                                          00755000
+*                                                                       00756000
+*                                                                       00757000
+**********************************************************************  00758000
+* FETCH FROM SEQUENTIAL CURSOR FOR EVENTUAL UPDATE STATEMENT FOR        00759000
+* ALTERNATE KEY 1:                                                      00760000
+*   THIS STATEMENT SUPPORTS THE GET-GE-LOCK AND GET-NEXT-LOCK           00761000
+*     VERBS.                                                            00762000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00763000
+*     RETRIEVE THE ACTUAL ROW.                                          00764000
+*   ONLY THE PRIMARY KEY FIELDS ARE RETRIEVED AS A SELECT FOR UPDATE    00765000
+*     STATEMENT WILL FOLLOW AND RETREIVAL OF THE ACTUAL ROW             00766000
+*     WILL BE THRU THE UPDATE CURSOR.                                   00767000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00768000
+**********************************************************************  00769000
+*                                                                       00770000
+SQL#0025 DS    0H                                                       00771000
+         USING SQL#0025,12             ESTABLISH BASE REGISTER          00772000
+         LA    15,255                  SET RETURN CODE                  00773000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00774000
+         BR    14                      RETURN TO CALLER                 00775000
+         LTORG                                                          00776000
+*                                                                       00777000
+*                                                                       00778000
+**********************************************************************  00779000
+* FETCH FROM SEQUENTIAL CURSOR FOR EVENTUAL UPDATE STATEMENT FOR        00780000
+* ALTERNATE KEY 2:                                                      00781000
+*   THIS STATEMENT SUPPORTS THE GET-GE-LOCK AND GET-NEXT-LOCK           00782000
+*     VERBS.                                                            00783000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00784000
+*     RETRIEVE THE ACTUAL ROW.                                          00785000
+*   ONLY THE PRIMARY KEY FIELDS ARE RETRIEVED AS A SELECT FOR UPDATE    00786000
+*     STATEMENT WILL FOLLOW AND RETREIVAL OF THE ACTUAL ROW             00787000
+*     WILL BE THRU THE UPDATE CURSOR.                                   00788000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00789000
+**********************************************************************  00790000
+*                                                                       00791000
+SQL#0026 DS    0H                                                       00792000
+         USING SQL#0026,12             ESTABLISH BASE REGISTER          00793000
+         LA    15,255                  SET RETURN CODE                  00794000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00795000
+         BR    14                      RETURN TO CALLER                 00796000
+         LTORG                                                          00797000
+*                                                                       00798000
+*                                                                       00799000
+**********************************************************************  00800000
+* FETCH FROM SEQUENTIAL CURSOR FOR EVENTUAL UPDATE STATEMENT FOR        00801000
+* ALTERNATE KEY 3:                                                      00802000
+*   THIS STATEMENT SUPPORTS THE GET-GE-LOCK AND GET-NEXT-LOCK           00803000
+*     VERBS.                                                            00804000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT SEQUENTIAL STATEMENT TO          00805000
+*     RETRIEVE THE ACTUAL ROW.                                          00806000
+*   ONLY THE PRIMARY KEY FIELDS ARE RETRIEVED AS A SELECT FOR UPDATE    00807000
+*     STATEMENT WILL FOLLOW AND RETREIVAL OF THE ACTUAL ROW             00808000
+*     WILL BE THRU THE UPDATE CURSOR.                                   00809000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00810000
+**********************************************************************  00811000
+*                                                                       00812000
+SQL#0027 DS    0H                                                       00813000
+         USING SQL#0027,12             ESTABLISH BASE REGISTER          00814000
+         LA    15,255                  SET RETURN CODE                  00815000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00816000
+         BR    14                      RETURN TO CALLER                 00817000
+         LTORG                                                          00818000
+*                                                                       00819000
+*                                                                       00820000
+**********************************************************************  00821000
+* CLOSE SEQUENTIAL CURSOR STATEMENT FOR PRIMARY KEY:                    00822000
+*   THIS STATEMENT SUPPORTS THE GET-GE, GET-GE-LOCK, GET-NEXT,          00823000
+*     AND GET-NEXT-LOCK VERBS.                                          00824000
+*   IT WILL FOLLOW THE LAST FETCH FROM SEQUENTIAL CURSOR STATEMENT      00825000
+*     TO CLOSE THE SEQUENTIAL CURSOR.                                   00826000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00827000
+**********************************************************************  00828000
+*                                                                       00829000
+SQL#0028 DS    0H                                                       00830000
+         USING SQL#0028,12             ESTABLISH BASE REGISTER          00831000
+         LH    1,CSRPTR                LOAD CURRENT CURSOR POINTER      00832000
+         XC    CSRPTR,CSRPTR           CLEAR CURSOR ROUTINE POINTER     00833000
+         LA    12,VECT0028(1)          LOAD POINTER TO CLOSE ROUTINE    00834000
+         L     12,0(12)                LOAD CLOSE ROUTINE ADDRESS       00835000
+         BR    12                      GO TO CURRENT CLOSE ROUTINE      00836000
+VECT0028 DC    A(SQL#0128)                                              00837000
+         DC    A(SQL#0228)                                              00838000
+         DC    A(SQL#0328)                                              00839000
+         LTORG                                                          00840000
+*                                                                       00841000
+SQL#0128 DS    0H                                                       00842000
+         USING SQL#0128,12             ESTABLISH BASE REGISTER          00843000
+         EXEC  SQL                                                     *00844000
+               CLOSE S08SQ001                                           00845000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00846000
+         BR    14                      RETURN TO CALLER                 00847000
+         LTORG                                                          00848000
+*                                                                       00849000
+SQL#0228 DS    0H                                                       00850000
+         USING SQL#0228,12             ESTABLISH BASE REGISTER          00851000
+         EXEC  SQL                                                     *00852000
+               CLOSE S08SQ002                                           00853000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00854000
+         BR    14                      RETURN TO CALLER                 00855000
+         LTORG                                                          00856000
+*                                                                       00857000
+SQL#0328 DS    0H                                                       00858000
+         USING SQL#0328,12             ESTABLISH BASE REGISTER          00859000
+         EXEC  SQL                                                     *00860000
+               CLOSE S08SQ003                                           00861000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00862000
+         BR    14                      RETURN TO CALLER                 00863000
+         LTORG                                                          00864000
+*                                                                       00865000
+*                                                                       00866000
+**********************************************************************  00867000
+* CLOSE SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 1:                00868000
+*   THIS STATEMENT SUPPORTS THE GET-GE, GET-GE-LOCK, GET-NEXT,          00869000
+*     AND GET-NEXT-LOCK VERBS.                                          00870000
+*   IT WILL FOLLOW THE LAST FETCH FROM SEQUENTIAL CURSOR STATEMENT      00871000
+*     TO CLOSE THE SEQUENTIAL CURSOR.                                   00872000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00873000
+**********************************************************************  00874000
+*                                                                       00875000
+SQL#0029 DS    0H                                                       00876000
+         USING SQL#0029,12             ESTABLISH BASE REGISTER          00877000
+         LA    15,255                  SET RETURN CODE                  00878000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00879000
+         BR    14                      RETURN TO CALLER                 00880000
+         LTORG                                                          00881000
+*                                                                       00882000
+*                                                                       00883000
+**********************************************************************  00884000
+* CLOSE SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 2:                00885000
+*   THIS STATEMENT SUPPORTS THE GET-GE, GET-GE-LOCK, GET-NEXT,          00886000
+*     AND GET-NEXT-LOCK VERBS.                                          00887000
+*   IT WILL FOLLOW THE LAST FETCH FROM SEQUENTIAL CURSOR STATEMENT      00888000
+*     TO CLOSE THE SEQUENTIAL CURSOR.                                   00889000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00890000
+**********************************************************************  00891000
+*                                                                       00892000
+SQL#0030 DS    0H                                                       00893000
+         USING SQL#0030,12             ESTABLISH BASE REGISTER          00894000
+         LA    15,255                  SET RETURN CODE                  00895000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00896000
+         BR    14                      RETURN TO CALLER                 00897000
+         LTORG                                                          00898000
+*                                                                       00899000
+*                                                                       00900000
+**********************************************************************  00901000
+* CLOSE SEQUENTIAL CURSOR STATEMENT FOR ALTERNATE KEY 3:                00902000
+*   THIS STATEMENT SUPPORTS THE GET-GE, GET-GE-LOCK, GET-NEXT,          00903000
+*     AND GET-NEXT-LOCK VERBS.                                          00904000
+*   IT WILL FOLLOW THE LAST FETCH FROM SEQUENTIAL CURSOR STATEMENT      00905000
+*     TO CLOSE THE SEQUENTIAL CURSOR.                                   00906000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00907000
+**********************************************************************  00908000
+*                                                                       00909000
+SQL#0031 DS    0H                                                       00910000
+         USING SQL#0031,12             ESTABLISH BASE REGISTER          00911000
+         LA    15,255                  SET RETURN CODE                  00912000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00913000
+         BR    14                      RETURN TO CALLER                 00914000
+         LTORG                                                          00915000
+*                                                                       00916000
+*                                                                       00917000
+**********************************************************************  00918000
+* SELECT KEY STATEMENT BY PRIMARY KEY:                                  00919000
+*   THIS STATEMENT SUPPORTS THE LOCATE VERB.                            00920000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00921000
+**********************************************************************  00922000
+*                                                                       00923000
+SQL#0032 DS    0H                                                       00924000
+         USING SQL#0032,12             ESTABLISH BASE REGISTER          00925000
+         LA    3,X'80'                 LOAD MASK FOR KEY 0              00926000
+         L     5,=A(IN#KEY)            LOAD KEY CONVERSION ROUTINE      00927000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         00928000
+         EXEC  SQL                                                     *00929000
+               SELECT INST_NBR,                                        *00930000
+                   RECORD_NBR,                                         *00931000
+                   SERVICE_CODE                                        *00932000
+                 INTO :INST,                                           *00933000
+                   :RECNBR,                                            *00934000
+                   :SECSVCCD                                           *00935000
+                 FROM S08                                              *00936000
+                 WHERE INST_NBR = :INST AND                            *00937000
+                   RECORD_NBR = :RECNBR AND                            *00938000
+                   SERVICE_CODE = :SECSVCCD                            *00939000
+                 FETCH FIRST 1 ROW ONLY                                 00940000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00941000
+         BR    14                      RETURN TO CALLER                 00942000
+         LTORG                                                          00943000
+*                                                                       00944000
+*                                                                       00945000
+**********************************************************************  00946000
+* SELECT KEY STATEMENT BY ALTERNATE KEY 1:                              00947000
+*   THIS STATEMENT SUPPORTS THE LOCATE VERB.                            00948000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00949000
+**********************************************************************  00950000
+*                                                                       00951000
+SQL#0033 DS    0H                                                       00952000
+         USING SQL#0033,12             ESTABLISH BASE REGISTER          00953000
+         LA    15,255                  SET RETURN CODE                  00954000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00955000
+         BR    14                      RETURN TO CALLER                 00956000
+         LTORG                                                          00957000
+*                                                                       00958000
+*                                                                       00959000
+**********************************************************************  00960000
+* SELECT KEY STATEMENT BY ALTERNATE KEY 2:                              00961000
+*   THIS STATEMENT SUPPORTS THE LOCATE VERB.                            00962000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00963000
+**********************************************************************  00964000
+*                                                                       00965000
+SQL#0034 DS    0H                                                       00966000
+         USING SQL#0034,12             ESTABLISH BASE REGISTER          00967000
+         LA    15,255                  SET RETURN CODE                  00968000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00969000
+         BR    14                      RETURN TO CALLER                 00970000
+         LTORG                                                          00971000
+*                                                                       00972000
+*                                                                       00973000
+**********************************************************************  00974000
+* SELECT KEY STATEMENT BY ALTERNATE KEY 3:                              00975000
+*   THIS STATEMENT SUPPORTS THE LOCATE VERB.                            00976000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00977000
+**********************************************************************  00978000
+*                                                                       00979000
+SQL#0035 DS    0H                                                       00980000
+         USING SQL#0035,12             ESTABLISH BASE REGISTER          00981000
+         LA    15,255                  SET RETURN CODE                  00982000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00983000
+         BR    14                      RETURN TO CALLER                 00984000
+         LTORG                                                          00985000
+*                                                                       00986000
+*                                                                       00987000
+**********************************************************************  00988000
+* INSERT STATEMENT:                                                     00989000
+*   THIS STATEMENT SUPPORTS THE PUT VERB.                               00990000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  00991000
+**********************************************************************  00992000
+*                                                                       00993000
+SQL#0036 DS    0H                                                       00994000
+         USING SQL#0036,12             ESTABLISH BASE REGISTER          00995000
+         L     5,=A(IN#HOST)           LOAD INPUT CONVERSION ROUTINE    00996000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         00997000
+         EXEC  SQL                                                     *00998000
+               INSERT INTO S08                                         *00999000
+                   (INST_NBR,                                          *01000000
+                    RECORD_NBR,                                        *01001000
+                    SERVICE_CODE,                                      *01002000
+                    AUDIT_DATE,                                        *01003000
+                    AUDIT_TIME,                                        *01004000
+                    AUDIT_USER,                                        *01005000
+                    AUDIT_ORG,                                         *01006000
+                    DESCRIPTION)                                       *01007000
+                  VALUES (:INST,                                       *01008000
+                   :RECNBR,                                            *01009000
+                   :SECSVCCD,                                          *01010000
+                   :AUDDATE,                                           *01011000
+                   :AUDTIME,                                           *01012000
+                   :AUDUSER,                                           *01013000
+                   :AUDORG,                                            *01014000
+                   :DESCRIPT)                                           01015000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01016000
+         BR    14                      RETURN TO CALLER                 01017000
+         LTORG                                                          01018000
+*                                                                       01019000
+*                                                                       01020000
+**********************************************************************  01021000
+* UPDATE STATEMENT BY PRIMARY KEY:                                      01022000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             01023000
+*   IT MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF        01024000
+*     COLUMNS REFERENCED AS UPDATEABLE IN THE SELECT FOR UPDATE         01025000
+*     STATEMENT, THEN MATCHING THAT REDUCTION IN THE UPDATE             01026000
+*     STATEMENT.                                                        01027000
+**********************************************************************  01028000
+*                                                                       01029000
+SQL#0037 DS    0H                                                       01030000
+         USING SQL#0037,12             ESTABLISH BASE REGISTER          01031000
+         L     5,=A(IN#HOST)           LOAD INPUT CONVERSION ROUTINE    01032000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         01033000
+         EXEC  SQL                                                     *01034000
+               UPDATE S08                                              *01035000
+                   SET AUDIT_DATE = :AUDDATE,                          *01036000
+                     AUDIT_TIME = :AUDTIME,                            *01037000
+                     AUDIT_USER = :AUDUSER,                            *01038000
+                     AUDIT_ORG = :AUDORG,                              *01039000
+                     DESCRIPTION = :DESCRIPT                           *01040000
+                 WHERE CURRENT OF S08UPD0                               01041000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01042000
+         BR    14                      RETURN TO CALLER                 01043000
+         LTORG                                                          01044000
+*                                                                       01045000
+*                                                                       01046000
+**********************************************************************  01047000
+* UPDATE STATEMENT BY ALTERNATE KEY 1:                                  01048000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             01049000
+*   IT MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF        01050000
+*     COLUMNS REFERENCED AS UPDATEABLE IN THE SELECT FOR UPDATE         01051000
+*     STATEMENT, THEN MATCHING THAT REDUCTION IN THE UPDATE             01052000
+*     STATEMENT.                                                        01053000
+**********************************************************************  01054000
+*                                                                       01055000
+SQL#0038 DS    0H                                                       01056000
+         USING SQL#0038,12             ESTABLISH BASE REGISTER          01057000
+         LA    15,255                  SET RETURN CODE                  01058000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01059000
+         BR    14                      RETURN TO CALLER                 01060000
+         LTORG                                                          01061000
+*                                                                       01062000
+*                                                                       01063000
+**********************************************************************  01064000
+* UPDATE STATEMENT BY ALTERNATE KEY 2:                                  01065000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             01066000
+*   IT MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF        01067000
+*     COLUMNS REFERENCED AS UPDATEABLE IN THE SELECT FOR UPDATE         01068000
+*     STATEMENT, THEN MATCHING THAT REDUCTION IN THE UPDATE             01069000
+*     STATEMENT.                                                        01070000
+**********************************************************************  01071000
+*                                                                       01072000
+SQL#0039 DS    0H                                                       01073000
+         USING SQL#0039,12             ESTABLISH BASE REGISTER          01074000
+         LA    15,255                  SET RETURN CODE                  01075000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01076000
+         BR    14                      RETURN TO CALLER                 01077000
+         LTORG                                                          01078000
+*                                                                       01079000
+*                                                                       01080000
+**********************************************************************  01081000
+* UPDATE STATEMENT BY ALTERNATE KEY 3:                                  01082000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             01083000
+*   IT MAY BE MODIFIED FOR PERFORMANCE BY REDUCING THE NUMBER OF        01084000
+*     COLUMNS REFERENCED AS UPDATEABLE IN THE SELECT FOR UPDATE         01085000
+*     STATEMENT, THEN MATCHING THAT REDUCTION IN THE UPDATE             01086000
+*     STATEMENT.                                                        01087000
+**********************************************************************  01088000
+*                                                                       01089000
+SQL#0040 DS    0H                                                       01090000
+         USING SQL#0040,12             ESTABLISH BASE REGISTER          01091000
+         LA    15,255                  SET RETURN CODE                  01092000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01093000
+         BR    14                      RETURN TO CALLER                 01094000
+         LTORG                                                          01095000
+*                                                                       01096000
+*                                                                       01097000
+**********************************************************************  01098000
+* DELETE STATEMENT BY PRIMARY KEY:                                      01099000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            01100000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  01101000
+**********************************************************************  01102000
+*                                                                       01103000
+SQL#0041 DS    0H                                                       01104000
+         USING SQL#0041,12             ESTABLISH BASE REGISTER          01105000
+         EXEC  SQL                                                     *01106000
+               DELETE FROM S08                                         *01107000
+                 WHERE CURRENT OF S08UPD0                               01108000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01109000
+         BR    14                      RETURN TO CALLER                 01110000
+         LTORG                                                          01111000
+*                                                                       01112000
+*                                                                       01113000
+**********************************************************************  01114000
+* DELETE STATEMENT BY ALTERNATE KEY 1:                                  01115000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            01116000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  01117000
+**********************************************************************  01118000
+*                                                                       01119000
+SQL#0042 DS    0H                                                       01120000
+         USING SQL#0042,12             ESTABLISH BASE REGISTER          01121000
+         LA    15,255                  SET RETURN CODE                  01122000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01123000
+         BR    14                      RETURN TO CALLER                 01124000
+         LTORG                                                          01125000
+*                                                                       01126000
+*                                                                       01127000
+**********************************************************************  01128000
+* DELETE STATEMENT BY ALTERNATE KEY 2:                                  01129000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            01130000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  01131000
+**********************************************************************  01132000
+*                                                                       01133000
+SQL#0043 DS    0H                                                       01134000
+         USING SQL#0043,12             ESTABLISH BASE REGISTER          01135000
+         LA    15,255                  SET RETURN CODE                  01136000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01137000
+         BR    14                      RETURN TO CALLER                 01138000
+         LTORG                                                          01139000
+*                                                                       01140000
+*                                                                       01141000
+**********************************************************************  01142000
+* DELETE STATEMENT BY ALTERNATE KEY 3:                                  01143000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            01144000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  01145000
+**********************************************************************  01146000
+*                                                                       01147000
+SQL#0044 DS    0H                                                       01148000
+         USING SQL#0044,12             ESTABLISH BASE REGISTER          01149000
+         LA    15,255                  SET RETURN CODE                  01150000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01151000
+         BR    14                      RETURN TO CALLER                 01152000
+         LTORG                                                          01153000
+*                                                                       01154000
+*                                                                       01155000
+**********************************************************************  01156000
+* DELETE ALL STATEMENT:                                                 01157000
+*   THIS STATEMENT SUPPORTS THE DELETE-FILE VERB.                       01158000
+*   IT SHOULD NOT NEED TO BE MODIFIED FOR PERFORMANCE.                  01159000
+**********************************************************************  01160000
+*                                                                       01161000
+SQL#0045 DS    0H                                                       01162000
+         USING SQL#0045,12             ESTABLISH BASE REGISTER          01163000
+         EXEC  SQL                                                     *01164000
+               DELETE FROM S08                                          01165000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01166000
+         BR    14                      RETURN TO CALLER                 01167000
+         LTORG                                                          01168000
+*                                                                       01169000
+*                                                                       01170000
+**********************************************************************  01171000
+* SELECT AND OPEN SEQUENTIAL CURSOR STATEMENTS BY PRIMARY KEY:          01172000
+*   THIS ROUTINE HANDLES PRIMARY KEY SEQUENTIAL CURSORS.                01173000
+**********************************************************************  01174000
+*                                                                       01175000
+SQL#0046 DS    0H                                                       01176000
+         USING SQL#0046,12             ESTABLISH BASE REGISTER          01177000
+         LA    3,X'80'                 LOAD MASK FOR KEY 0              01178000
+         L     5,=A(IN#KEY)            LOAD KEY CONVERSION ROUTINE      01179000
+         BALR  4,5                     MOVE INTO HOST VARIABLES         01180000
+         LH    1,CSRPTR                LOAD CURRENT CURSOR POINTER      01181000
+         LA    1,4(1)                  INCREMENT TO NEXT CURSOR         01182000
+         STH   1,CSRPTR                SAVE FOR NEXT CALL               01183000
+         LA    12,VECT0046(1)          LOAD POINTER TO NEXT CURSOR      01184000
+         L     12,0(12)                LOAD CURSOR ROUTINE ADDRESS      01185000
+         BR    12                      GO TO CURRENT CURSOR ROUTINE     01186000
+VECT0046 DC    A(0)                                                     01187000
+         DC    A(SQL#0246)                                              01188000
+         DC    A(SQL#0346)                                              01189000
+         LTORG                                                          01190000
+*                                                                       01191000
+SQL#0246 DS    0H                                                       01192000
+         USING SQL#0246,12             ESTABLISH BASE REGISTER          01193000
+         EXEC  SQL                                                     *01194000
+               CLOSE S08SQ001                                           01195000
+         EXEC  SQL                                                     *01196000
+               DECLARE S08SQ002 CURSOR FOR                             *01197000
+               SELECT INST_NBR,                                        *01198000
+                   RECORD_NBR,                                         *01199000
+                   SERVICE_CODE,                                       *01200000
+                   AUDIT_DATE,                                         *01201000
+                   AUDIT_TIME,                                         *01202000
+                   AUDIT_USER,                                         *01203000
+                   AUDIT_ORG,                                          *01204000
+                   DESCRIPTION                                         *01205000
+                 FROM S08                                              *01206000
+                 WHERE                                                 *01207000
+                    INST_NBR = :INST AND                               *01208000
+                    RECORD_NBR > :RECNBR                               *01209000
+                 ORDER BY RECORD_NBR,                                  *01210000
+                   SERVICE_CODE                                        *01211000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       01212000
+         EXEC  SQL                                                     *01213000
+               OPEN S08SQ002                                            01214000
+         ICM   15,B'1111',SQLCODE      IS RETURN CODE ZERO ?            01215000
+         BNZ   *+8                     NO - RETURN ERROR                01216000
+         LR    12,9                    LOAD RETURN ADDRESS              01217000
+         BR    12                      RETURN TO FETCH ROUTINE          01218000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01219000
+         BR    14                      RETURN TO CALLER                 01220000
+         LTORG                                                          01221000
+*                                                                       01222000
+SQL#0346 DS    0H                                                       01223000
+         USING SQL#0346,12             ESTABLISH BASE REGISTER          01224000
+         EXEC  SQL                                                     *01225000
+               CLOSE S08SQ002                                           01226000
+         EXEC  SQL                                                     *01227000
+               DECLARE S08SQ003 CURSOR FOR                             *01228000
+               SELECT INST_NBR,                                        *01229000
+                   RECORD_NBR,                                         *01230000
+                   SERVICE_CODE,                                       *01231000
+                   AUDIT_DATE,                                         *01232000
+                   AUDIT_TIME,                                         *01233000
+                   AUDIT_USER,                                         *01234000
+                   AUDIT_ORG,                                          *01235000
+                   DESCRIPTION                                         *01236000
+                 FROM S08                                              *01237000
+                 WHERE                                                 *01238000
+                    INST_NBR > :INST                                   *01239000
+                 ORDER BY INST_NBR,                                    *01240000
+                   RECORD_NBR,                                         *01241000
+                   SERVICE_CODE                                        *01242000
+                 OPTIMIZE FOR 1 ROW FOR READ ONLY                       01243000
+         EXEC  SQL                                                     *01244000
+               OPEN S08SQ003                                            01245000
+         ICM   15,B'1111',SQLCODE      IS RETURN CODE ZERO ?            01246000
+         BNZ   *+8                     NO - RETURN ERROR                01247000
+         LR    12,9                    LOAD RETURN ADDRESS              01248000
+         BR    12                      RETURN TO FETCH ROUTINE          01249000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01250000
+         BR    14                      RETURN TO CALLER                 01251000
+         LTORG                                                          01252000
+*                                                                       01253000
+*                                                                       01254000
+**********************************************************************  01255000
+* SELECT AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE KEY 1:      01256000
+*   THIS ROUTINE HANDLES ALTERNATE KEY 1 SEQUENTIAL CURSORS.            01257000
+**********************************************************************  01258000
+*                                                                       01259000
+SQL#0047 DS    0H                                                       01260000
+         USING SQL#0047,12             ESTABLISH BASE REGISTER          01261000
+         LA    15,255                  SET RETURN CODE                  01262000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01263000
+         BR    14                      RETURN TO CALLER                 01264000
+         LTORG                                                          01265000
+*                                                                       01266000
+*                                                                       01267000
+**********************************************************************  01268000
+* SELECT AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE KEY 2:      01269000
+*   THIS ROUTINE HANDLES ALTERNATE KEY 2 SEQUENTIAL CURSORS.            01270000
+**********************************************************************  01271000
+*                                                                       01272000
+SQL#0048 DS    0H                                                       01273000
+         USING SQL#0048,12             ESTABLISH BASE REGISTER          01274000
+         LA    15,255                  SET RETURN CODE                  01275000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01276000
+         BR    14                      RETURN TO CALLER                 01277000
+         LTORG                                                          01278000
+*                                                                       01279000
+*                                                                       01280000
+**********************************************************************  01281000
+* SELECT AND OPEN SEQUENTIAL CURSOR STATEMENTS BY ALTERNATE KEY 3:      01282000
+*   THIS ROUTINE HANDLES ALTERNATE KEY 3 SEQUENTIAL CURSORS.            01283000
+**********************************************************************  01284000
+*                                                                       01285000
+SQL#0049 DS    0H                                                       01286000
+         USING SQL#0049,12             ESTABLISH BASE REGISTER          01287000
+         LA    15,255                  SET RETURN CODE                  01288000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              01289000
+         BR    14                      RETURN TO CALLER                 01290000
+         LTORG                                                          01291000
+*                                                                       01292000
+         DS    0H                      END OF SQL STATEMENTS            01293000
+         DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'                   01294000
+*                                                                       01295000
+*                                                                       01296000
+**********************************************************************  01297000
+* DUMMY ENTRY POINT DSNHLI                                              01298000
+*   MUST NOT BE MODIFIED.                                               01299000
+**********************************************************************  01300000
+*                                                                       01301000
+         ENTRY DSNHLI                                                   01302000
+DSNHLI   DS    0H                                                       01303000
+         L     15,SQW@CAF              LOAD ENTRY POINT TO ATTACH       01304000
+         BR    15                      BRANCH TO ATTACH FACILITY        01305000
+*                                                                       01306000
+*                                                                       01307000
+**********************************************************************  01308000
+* CONVERSION ROUTINES INTO AND OUT OF ASSEMBLER HOST VARIABLES          01309000
+*   REQUIRED IF THE COBOL RECORD STRUCTURE IS NOT ALIGNED.              01310000
+*   MUST NOT BE MODIFIED.                                               01311000
+**********************************************************************  01312000
+*                                                                       01313000
+CONV#RTN CSECT                         CONVERSION ROUTINES SECTION      01314000
+CONV#RTN AMODE ANY                                                      01315000
+CONV#RTN RMODE ANY                                                      01316000
+IN#HOST  DS    0H                      MOVE INTO HOST VARIABLES         01317000
+         USING IN#HOST,5               ESTABLISH BASE REGISTER          01318000
+         LA    6,CONV#TAB              LOAD CONVERSION TABLE ADDRESS    01319000
+IN#HOST1 CLI   0(6),X'FF'              END OF TABLE?                    01320000
+         BER   4                         YES - RETURN TO SQL            01321000
+         LA    0,COBREC                LOAD RECORD AREA ADDRESS         01322000
+         AH    0,0(6)                  ADD OFFSET WITHIN RECORD AREA    01323000
+         LA    14,ASMREC               LOAD HOST VARIABLE AREA ADDRESS  01324000
+         AH    14,2(6)                 ADD OFFSET WITHIN HOST VARIABLES 01325000
+         LH    1,4(6)                  LOAD LENGTH TO MOVE              01326000
+         LR    15,1                    SET BOTH LENGTHS EQUAL           01327000
+         MVCL  14,0                    MOVE TO HOST VARIABLES           01328000
+         LA    6,8(6)                  INCREMENT TO NEXT ENTRY          01329000
+         B     IN#HOST1                LOOP UNTIL END OF TABLE          01330000
+*                                                                       01331000
+IN#KEY   DS    0H                      MOVE KEYS INTO HOST VARIABLES    01332000
+         USING IN#KEY,5                ESTABLISH BASE REGISTER          01333000
+         LA    6,CONV#TAB              LOAD CONVERSION TABLE ADDRESS    01334000
+IN#KEY1  CLI   0(6),X'FF'              END OF TABLE?                    01335000
+         BER   4                         YES - RETURN TO SQL            01336000
+         SLR   0,0                     CLEAR FOR INSERT                 01337000
+         IC    0,6(6)                  INSERT KEY FIELD ENTRY           01338000
+         NR    0,3                     FOR THE CURRENT KEY?             01339000
+         BZ    IN#KEY2                   NO - GO FOR NEXT ENTRY         01340000
+         LA    0,COBREC                LOAD RECORD AREA ADDRESS         01341000
+         AH    0,0(6)                  ADD OFFSET WITHIN RECORD AREA    01342000
+         LA    14,ASMREC               LOAD HOST VARIABLE AREA ADDRESS  01343000
+         AH    14,2(6)                 ADD OFFSET WITHIN HOST VARIABLES 01344000
+         LH    1,4(6)                  LOAD LENGTH TO MOVE              01345000
+         LR    15,1                    SET BOTH LENGTHS EQUAL           01346000
+         MVCL  14,0                    MOVE TO HOST VARIABLES           01347000
+         TM    7(6),X'80'              SIGNED DECIMAL FIELD?            01348000
+         BNO   IN#KEY2                   NO - GO FOR NEXT ENTRY         01349000
+         BCTR  14,0                    DECREMENT TO SIGN BYTE           01350000
+         TM    0(14),X'0A'             VALID SIGN BYTE?                 01351000
+         BO    IN#KEY2                   YES - GO FOR NEXT ENTRY        01352000
+         TM    0(14),X'0C'             VALID SIGN BYTE?                 01353000
+         BO    IN#KEY2                   YES - GO FOR NEXT ENTRY        01354000
+         OI    0(14),X'0F'               NO  - MAKE IT VALID            01355000
+IN#KEY2  LA    6,8(6)                  INCREMENT TO NEXT ENTRY          01356000
+         B     IN#KEY1                 LOOP UNTIL END OF TABLE          01357000
+*                                                                       01358000
+OUT#REC  DS    0H                      MOVE HOST VARIABLES INTO RECORD  01359000
+         USING OUT#REC,5               ESTABLISH BASE REGISTER          01360000
+         LA    6,CONV#TAB              LOAD CONVERSION TABLE ADDRESS    01361000
+OUT#REC1 CLI   0(6),X'FF'              END OF TABLE?                    01362000
+         BER   4                         YES - RETURN TO SQL            01363000
+         LA    0,COBREC                LOAD RECORD AREA ADDRESS         01364000
+         AH    0,0(6)                  ADD OFFSET WITHIN RECORD AREA    01365000
+         LA    14,ASMREC               LOAD HOST VARIABLE AREA ADDRESS  01366000
+         AH    14,2(6)                 ADD OFFSET WITHIN HOST VARIABLES 01367000
+         LH    1,4(6)                  LOAD LENGTH TO MOVE              01368000
+         LR    15,1                    SET BOTH LENGTHS EQUAL           01369000
+         MVCL  0,14                    MOVE TO RECORD AREA              01370000
+         LA    6,8(6)                  INCREMENT TO NEXT ENTRY          01371000
+         B     OUT#REC1                LOOP UNTIL END OF TABLE          01372000
+*                                                                       01373000
+OUT#KEY  DS    0H                      MOVE KEYS INTO RECORD            01374000
+         USING OUT#KEY,5               ESTABLISH BASE REGISTER          01375000
+         LA    6,CONV#TAB              LOAD CONVERSION TABLE ADDRESS    01376000
+OUT#KEY1 CLI   0(6),X'FF'              END OF TABLE?                    01377000
+         BER   4                         YES - RETURN TO SQL            01378000
+         TM    6(6),X'80'              FOR THE PRIMARY KEY?             01379000
+         BZ    OUT#KEY2                  NO - GO FOR NEXT ENTRY         01380000
+         LA    0,COBREC                LOAD RECORD AREA ADDRESS         01381000
+         AH    0,0(6)                  ADD OFFSET WITHIN RECORD AREA    01382000
+         LA    14,ASMREC               LOAD HOST VARIABLE AREA ADDRESS  01383000
+         AH    14,2(6)                 ADD OFFSET WITHIN HOST VARIABLES 01384000
+         LH    1,4(6)                  LOAD LENGTH TO MOVE              01385000
+         LR    15,1                    SET BOTH LENGTHS EQUAL           01386000
+         MVCL  0,14                    MOVE TO RECORD AREA              01387000
+OUT#KEY2 LA    6,8(6)                  INCREMENT TO NEXT ENTRY          01388000
+         B     OUT#KEY1                LOOP UNTIL END OF TABLE          01389000
+*                                                                       01390000
+*                                                                       01391000
+**********************************************************************  01392000
+* CONVERSION TABLE VALUES FOR ALL FIELDS IN THIS TABLE                  01393000
+*   MUST NOT BE MODIFIED.                                               01394000
+**********************************************************************  01395000
+*                                                                       01396000
+CONV#TAB DC    H'0000'                 COBOL RECORD AREA OFFSET         01397000
+         DC    H'0000'                 HOST VARIABLE AREA OFFSET        01398000
+         DC    H'0014'                 LENGTH TO MOVE                   01399000
+         DC    X'80'                   80 = KEY 0 FIELD                 01400000
+*                                      40 = KEY 1 FIELD                 01401000
+*                                      20 = KEY 2 FIELD                 01402000
+*                                      10 = KEY 3 FIELD                 01403000
+         DC    X'00'                   80 = SIGNED DECIMAL FIELD        01404000
+*                                                                       01405000
+*                                      REST OF FIELD ENTRIES            01406000
+         DC    H'0014',H'0014',H'0054',X'00',X'00'                      01407000
+         DC    8X'FF'                  END OF FIELD ENTRIES             01408000
+         LTORG                                                          01409000
+         END                                                            01410000

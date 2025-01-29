@@ -1,0 +1,12 @@
+002000 IDENTIFICATION DIVISION.
+       PROGRAM-ID. WCFD236.
+      ******************************************************************
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       DATA DIVISION.       
+       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
+
+       PROCEDURE DIVISION.
+
+021860     CALL "SYS_MSG_SUB_002" USING BY VALUE RETURN_STATUS

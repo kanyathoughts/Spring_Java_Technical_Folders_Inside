@@ -1,0 +1,8 @@
+<span [nzTooltipTitle]="getTooltipText()" nz-tooltip [nzTooltipPlacement]="defaultTooltipPlacement" 
+    *ngIf="isFeatureActive" (click)="reachable && onClick()">
+    <label *ngIf="label" class="eclipse-label" translate>{{label}}</label>
+    <button *ngIf="! label" nz-button nzType="default" [disabled]=" ! reachable">
+      <i aria-hidden="true" nz-icon [nzType]="getIconType()"></i>
+      <span *ngIf="isLabelVisible">{{'eclipse' | translate}}</span>
+    </button>
+</span>

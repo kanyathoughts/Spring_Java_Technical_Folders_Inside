@@ -1,0 +1,37 @@
+<nz-page-header class="mining__fixed-content__page-header" [nzTitle]="'manageClientAndProject.pageTitle' | translate">
+    <nz-page-header-extra>
+        <button nz-button nzType="primary" (click)="createOrUpdateClient()" *ngIf="authorizationService.isAdmin()">
+            <i nz-icon nzType="plus"></i>
+            {{ 'manageClientAndProject.addClient' | translate }}
+        </button>
+        <button nz-button nzType="primary" (click)="createOrUpdateProject()"
+            *ngIf="authorizationService.isAdmin() || authorizationService.isClientAdmin()">
+            <i nz-icon nzType="plus"></i>
+            {{ 'manageClientAndProject.addProject' | translate }}
+        </button>
+    </nz-page-header-extra>
+</nz-page-header>
+<nz-content class="mining__fixed-content">
+    <mn-table [config]="tableConfig" [value]="clientList" (optionSelected)="optionSelected($event)"
+        (optionHover)="optionSelected($event)"
+        [dataChangeEvent]="dataChangeEvent.asObservable()" [toolTipTemplate]="toolTipTemplate">
+    </mn-table>
+</nz-content>
+
+<ng-template #deleteClientTemplate>
+    <p>{{ 'deleteClientModal.modalText' | translate:{ clientName: selectedClient.name } }}</p>
+    <ul>
+        <li *ngFor="let project of projectToBeRemoved">{{ project.name }}</li>
+    </ul>
+</ng-template>
+
+<ng-template #deleteProjectTemplate>
+    <p>{{ 'deleteProjectModal.modalText' | translate:{ projectName: selectedProject.name } }}</p>
+</ng-template>
+
+<ng-template #toolTipTemplate let-row>
+    <nz-list nzSize="small">
+        <nz-list-item class="ant-helper__white-text" *ngFor="let member of row.members">{{ member }}</nz-list-item>
+        <nz-list-item class="ant-helper__white-text" *ngIf=" ! row.members.length">{{ 'manageClientAndProject.noMember' | translate}}</nz-list-item>
+    </nz-list>
+</ng-template>

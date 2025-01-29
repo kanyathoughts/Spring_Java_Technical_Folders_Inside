@@ -1,0 +1,1 @@
+       01 TESTFIELD  PIC S9(7)V99.

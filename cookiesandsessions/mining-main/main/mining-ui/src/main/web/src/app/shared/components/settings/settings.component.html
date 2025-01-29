@@ -1,0 +1,18 @@
+<nz-space nzDirection="vertical" nzSize="large">
+    <nz-content *nzSpaceItem translate>deepLink.serverPort</nz-content>
+    <nz-row *nzSpaceItem>
+        <nz-col nzSpan="12">
+            <p nz-typography nzEditable [(nzContent)]="newPort" (nzContentChange)="portChange()"></p>
+        </nz-col>
+        <span *ngIf="isPortInvalid" class="ant-helper_error">{{ invalidPortMessage }}</span>
+    </nz-row>
+    <nz-content *nzSpaceItem class="ant-helper_font-small">
+        <i nz-icon nzType="info-circle" nzTheme="outline" aria-hidden="true"></i>
+        <span nz-typography nzType="secondary" translate> deepLink.hint</span>
+        <span nz-typography><strong translate> deepLink.hintEclipseOption</strong></span>
+    </nz-content>
+</nz-space>
+<div *nzModalFooter>
+    <button nz-button nzType="default" (click)="onCancel()">{{'btnLabel.cancel' | translate }}</button>
+    <button nz-button nzType="primary" [disabled]="isPortInvalid || ! isPortChanged" (click)="onSubmit()" translate>{{'btnLabel.save' | translate}}</button>
+</div>

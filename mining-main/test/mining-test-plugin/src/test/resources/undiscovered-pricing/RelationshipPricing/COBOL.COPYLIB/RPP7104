@@ -1,0 +1,37 @@
+000010******************************************************************00001000
+000020* RPP7104  7104 - RP RELATIONSHIP CODES LOAD                     *00002000
+000030******************************************************************00003000
+000040*LOAD-RPS-7104-SECTION.                                           00004000
+000050 LR7104-START.                                                    00005000
+000060     MOVE HIGH-VALUES TO WS-7104-AREA.                            00006000
+000070     SET INDX-7104 TO +1.                                         00007000
+000080     MOVE SPACES TO MI7104-RECORD.                                00008000
+000090     MOVE WS-RPMIM7104INST TO MIM-7104KINST.                      00009000
+000100     MOVE +7104 TO MIM-7104KREC.                                  00010000
+000110     MOVE SPACES TO MIM-7104KRPREC.                               00011000
+000120     MOVE MIC-RPS-7104-PRI TO MIC-MST-REC-PRI.                    00012000
+000130     MOVE MI7104-RECORD TO MIMST-RECORD.                          00013000
+000140     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00014000
+000150     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00015000
+000160         GO TO LR7104-EXIT.                                       00016000
+000170     GO TO LR7104-RECCONT.                                        00017000
+000180 LR7104-RECREAD.                                                  00018000
+000190     PERFORM MIC-MST-GET-NEXT-REQUEST.                            00019000
+000200     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00020000
+000210         GO TO LR7104-EXIT.                                       00021000
+000220 LR7104-RECCONT.                                                  00022000
+000230     MOVE MIMST-RECORD TO MI7104-RECORD.                          00023000
+000240     IF MIM-7104KINST IS NOT EQUAL TO WS-RPMIM7104INST            00024000
+000250         GO TO LR7104-EXIT.                                       00025000
+000260     IF INDX-7104 IS GREATER THAN WS-RPMIM7104MAXSIZE             00026000
+000270         MOVE 'Y' TO WS-RPMIM7104ERROR                            00027000
+000280         GO TO LR7104-EXIT.                                       00028000
+000290     MOVE MIM-7104KRPREC TO WS-7104-RPREC (INDX-7104).            00029000
+000300     MOVE MIM-REC7104 TO WS-RPMIM7104 (INDX-7104).                00030000
+000310     SET INDX-7104 UP BY +1.                                      00031000
+000320     GO TO LR7104-RECREAD.                                        00032000
+000330 LR7104-EXIT.                                                     00033000
+000340      EXIT.                                                       00034000
+000350*----------------------------------------------------------------*00035000
+000360*     END OF RP RELATIONSHIP CODES 7104 MICM RECORD LOAD         *00036000
+000370*----------------------------------------------------------------*00037000

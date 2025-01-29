@@ -1,0 +1,16 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 DeclareStatement, FROM={#6}, TO={#39}
+  #39 GoToStatement, FROM={#15}, TO={#70(JUMP)}
+  #44 PutStatement
+  #59 EndStatement
+ #63 ProcedureBlock, FROM={TestEntryPoint}, TO={#67}
+  #67 ProcedureStatement, FROM={#63}, TO={#70}
+  #70 BeginBlock, FROM={#39(JUMP), #67}, TO={#74}
+   #74 BeginStatement, FROM={#70}, TO={#77}
+   #77 AssignmentStatement, FROM={#74}, TO={#115}
+     #83 BuiltInFunctionReference
+         #94 BuiltInFunctionReference
+   #115 PutStatement, FROM={#77}, TO={#136}
+   #136 EndStatement, FROM={#115}, TO={#139}
+  #139 EndStatement, FROM={#136}, TO={TestReturnPoint}

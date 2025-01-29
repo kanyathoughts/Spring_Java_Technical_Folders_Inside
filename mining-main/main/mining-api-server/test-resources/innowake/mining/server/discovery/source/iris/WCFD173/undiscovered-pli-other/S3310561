@@ -1,0 +1,274 @@
+ CKLSTPG: PROCEDURE(PARM)  OPTIONS(MAIN);
+ /*********************************************************************/
+ /*                                                                   */
+ /*                          MODULE ABSTRACT                          */
+ /*                                                                   */
+ /*********************************************************************/
+ /*   PROGRAM NAME:  CHECKLIST UPDATE (SUCCESSFUL AND UNSUCCESSFUL)   */
+ /*                                                                   */
+ /*   ENTRY NAME:    CKLSTPG                                          */
+ /*                                                                   */
+ /*   SOURCE MEMBER NAME:   S3310561                                  */
+ /*                                                                   */
+ /*   SYSTEM:  DATABASE UNIT DAILY PRODUCTION                         */
+ /*                                                                   */
+ /*   LINKAGE EDITOR LIST: NONE                                       */
+ /*                                                                   */
+ /*   LOAD MODULE NAME:   U/P 3310561                                 */
+ /*                                                                   */
+ /*   PURPOSE:  UPDATE PDS MEMBERS FOR JOB COMPLETION VERIFICATION    */
+ /*                                                                   */
+ /*   INCLUDED MEMBERS: NONE                                          */
+ /*                                                                   */
+ /*   PARAMETERS: "PARM=" FIELD ON JOB CARD MAY BE OMITTED (FOR THE   */
+ /*               SUCCESSFUL CHECKLIST STEP) OR MAY CONTAIN ONE OF    */
+ /*               THE FOLLOWING: 1) "/VALID"       <=====  SUCCESSFUL */
+ /*                              2) "/SUCCESSFUL"  <=====  SUCCESSFUL */
+ /*                              3) "/INVALID"     <===  UNSUCCESSFUL */
+ /*                              4) "/UNSUCCESSFUL"<===  UNSUCCESSFUL */
+ /*               CONSOLE REPLY OF "U" FOR WAIT STATE TERMINATION     */
+ /*                DUE TO BAD JOB CONDITION CODE                      */
+ /*                                                                   */
+ /*   CALLED PROGRAMS:  GETJOBNM                                      */
+ /*                     GETSTPNM                                      */
+ /*                                                                   */
+ /*   ABNORMAL TERMINATION:  ABEND VIA SYTEM DEFAULTS                 */
+ /*                                                                   */
+ /*   PROGRAM MODIFICATIONS: ( A LIST OF PROGRAM MODIFICATIONS        */
+ /*                            MADE IN PRODUCTION.  USE THE           */
+ /*                            FOLLOWING FORMAT:)                     */
+ /*                                                                   */
+ /*   REQUEST: 0001   DATE: 09/18/80  PROGRAMMER:  B. MOYER           */
+ /*                   DESCRIPTION:   FIRST DRAFT                      */
+ /*                                                                   */
+ /*   REQUEST: 0002   DATE: 03/17/92  PROGRAMMER:  G.SHEAFFER         */
+ /*                   DESCRIPTION:   SET RTNCODE=8 WHEN INVALID MSG   */
+ /*                   IS ISSUED.                                      */
+ /*                                                                   */
+ /*                                                                   */
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*            PROGRAM PRECOMPILED VARIABLES AND PROCEDURES           */
+ /*                                                                   */
+ /*********************************************************************/
+   DEFAULT RANGE(*) STATIC;
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                            PROGRAM FILES                          */
+ /*                                                                   */
+ /*********************************************************************/
+ %SKIP(2);
+   DECLARE  CKLIST              UPDATE RECORD FILE;
+   DECLARE  PLIRETC             BUILTIN;
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                BUILTIN FUNCTIONS AND ENTRY POINTS                 */
+ /*                                                                   */
+ /*********************************************************************/
+ %SKIP(2);
+   DECLARE (DATE,
+            INDEX,
+            LENGTH,
+            ONCODE,
+            SUBSTR,
+            TIME)               BUILTIN;
+   DECLARE (GETJOBNM,
+            GETSTPNM)           ENTRY OPTIONS(ASM,INTER);
+ %SKIP(3);
+ /*********************************************************************/
+ /*                                                                   */
+ /*                           PROGRAM POINTERS                        */
+ /*                                                                   */
+ /*********************************************************************/
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                          PROGRAM I/O AREAS                        */
+ /*                                                                   */
+ /*********************************************************************/
+   DECLARE  PARM                CHAR (40) VAR;
+   DECLARE  INPUT_RECORD        CHAR (80);
+   DECLARE  RESPONSE            CHAR (72);
+   DECLARE  WAIT_MESSAGE (11)   CHAR (57) INIT
+   ('#########################################################',
+    '##########        O P E R A T O R S            ##########',
+    '########   JOB ######## AT STEP ######## HAS     ########',
+    '#####        GONE INTO A WAIT STATE DUE TO          #####',
+    '###                                                   ###',
+    '#       B A D   C O N D I T I O N   C O D E S           #',
+    '###                                                   ###',
+    '#####     CONTACT DATA BASE PERSONNEL IF STANDARD   #####',
+    '########     RUNBOOK ACTIONS ALSO FAIL.          ########',
+    '##########                                     ##########',
+    '#########################################################');
+   DECLARE  MESSAGE_JOB_NAME    CHAR(8) DEFINED WAIT_MESSAGE(3) POS(16);
+   DECLARE  MESSAGE_JOB_STEP    CHAR(8) DEFINED WAIT_MESSAGE(3) POS(33);
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                          PROGRAM SWITCHES                         */
+ /*                                                                   */
+ /*********************************************************************/
+ %SKIP(3);
+   DECLARE  JOB_VALID           BIT (1) INIT ('1'B);
+ %SKIP(3);
+ /*********************************************************************/
+ /*                                                                   */
+ /*                           PROGRAM COUNTERS                        */
+ /*                                                                   */
+ /*********************************************************************/
+ %SKIP(3);
+   DECLARE  I                   FIXED BIN (15) INIT (0);
+   DECLARE  POSITION            FIXED BIN (15) INIT (0);
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                      MISCELLANEOUS WORK AREAS                     */
+ /*                                                                   */
+ /*********************************************************************/
+ %SKIP(3);
+   DECLARE  JOB_NAME            CHAR (8),
+            JOB_STEP            CHAR (8),
+            JOB_TIME            CHAR (8),
+            JOB_DATE            CHAR (8),
+            WORK_TIME           CHAR (9),
+            JOB_ONCODE          PIC '99999';
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                             CONSTANTS                             */
+ /*                                                                   */
+ /*********************************************************************/
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                             ON UNITS                              */
+ /*                                                                   */
+ /*********************************************************************/
+ ON ERROR BEGIN;
+          ON ERROR SYSTEM;
+          CALL GETJOBNM (JOB_NAME);
+          CALL GETSTPNM (JOB_STEP);
+
+          WORK_TIME = TIME;
+          JOB_TIME = SUBSTR(WORK_TIME,1,2) ³³ ':' ³³
+                      SUBSTR(WORK_TIME,3,2);
+
+          JOB_DATE = DATE;
+          JOB_DATE = SUBSTR(JOB_DATE,3,2) ³³ '-' ³³
+                      SUBSTR(JOB_DATE,5,2) ³³ '-' ³³
+                      SUBSTR(JOB_DATE,1,2);
+
+           JOB_ONCODE = ONCODE;
+
+           DISPLAY ('CHECKLIST JOB "' ³³ JOB_NAME ³³
+                    '" AT STEP "' ³³ JOB_STEP ³³ '" ' ³³
+                    'HAS ABENDED. ONCODE = ' ³³ JOB_ONCODE);
+           END;
+ %PAGE;
+ /*********************************************************************/
+ /*                                                                   */
+ /*                             MAIN LOGIC                            */
+ /*                                                                   */
+ /*********************************************************************/
+    OPEN FILE (CKLIST);
+
+    CALL GETJOBNM (JOB_NAME);
+    CALL GETSTPNM (JOB_STEP);
+
+    WORK_TIME = TIME;
+    JOB_TIME  = SUBSTR(WORK_TIME,1,2) ³³ ':' ³³
+                SUBSTR(WORK_TIME,3,2);
+
+    JOB_DATE  = DATE;
+    JOB_DATE  = SUBSTR(JOB_DATE,3,2) ³³ '-' ³³
+                SUBSTR(JOB_DATE,5,2) ³³ '-' ³³
+                SUBSTR(JOB_DATE,1,2);
+
+    IF LENGTH(PARM) = 0 THEN PARM = 'VALID';
+
+    SELECT (PARM);
+      WHEN ('VALID')        JOB_VALID = '1'B;/* SET TRUE */
+      WHEN ('SUCCESSFUL')   JOB_VALID = '1'B;
+      WHEN ('INVALID')      JOB_VALID = '0'B;/* SET FALSE */
+      WHEN ('UNSUCCESSFUL') JOB_VALID = '0'B;
+      WHEN ('ABEND')        PUT DATA;
+      OTHERWISE DO;
+                JOB_VALID = '0'B;
+                DISPLAY ('CHECKLIST FOR JOB "' ³³ JOB_NAME ³³
+                        '" AT STEP "' ³³ JOB_STEP ³³ '" ' ³³
+                        'HAS AN INVALID PARM, "UNSUCCESSFUL" ASSUMED.');
+                END;
+      END;
+
+ READ_FIRST_CARD:                    /* HEADER RECORD (NO PROCESSING) */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+
+ READ_SECOND_CARD:                   /* JOBNAME RECORD   (READ ONLY)  */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+    POSITION = INDEX(INPUT_RECORD,JOB_NAME);
+    IF POSITION = 0 ³ POSITION > 72
+       THEN DO;
+            CLOSE FILE (CKLIST);
+            GO TO JOBNAME_NOT_IN_MEMBER;
+            END;
+
+ READ_THIRD_CARD:                    /* TIME RECORD                   */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+    SUBSTR (INPUT_RECORD,POSITION,8) = JOB_TIME;
+    REWRITE FILE (CKLIST) FROM (INPUT_RECORD);
+
+ READ_FOURTH_CARD:                   /* DATE RECORD                   */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+    SUBSTR (INPUT_RECORD,POSITION,8) = JOB_DATE;
+    REWRITE FILE (CKLIST) FROM (INPUT_RECORD);
+
+ READ_FIFTH_CARD:                    /* COMPLETION STATUS RECORD      */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+    IF JOB_VALID
+       THEN SUBSTR (INPUT_RECORD,POSITION,8) = ' CC = 0 ';
+       ELSE SUBSTR (INPUT_RECORD,POSITION,8) = '******NE';
+    REWRITE FILE (CKLIST) FROM (INPUT_RECORD);
+
+ READ_SIXTH_CARD:                    /* STEP NAME ON INVALID RECORD   */
+    READ FILE (CKLIST) INTO (INPUT_RECORD);
+    IF JOB_VALID
+       THEN SUBSTR (INPUT_RECORD,POSITION,8) = '        ';
+       ELSE SUBSTR (INPUT_RECORD,POSITION,8) = JOB_STEP;
+    REWRITE FILE (CKLIST) FROM (INPUT_RECORD);
+
+    CLOSE FILE (CKLIST);
+
+    IF JOB_VALID THEN GO TO END_OF_PROGRAM;
+ %PAGE;
+ NOTIFY_OPERATOR_OF_JOB_FAILURE:
+
+    MESSAGE_JOB_NAME = JOB_NAME;
+    MESSAGE_JOB_STEP = JOB_STEP;
+
+ SEND_WAIT_MESSAGE:
+    DO I = 1 TO 11;
+    DISPLAY (WAIT_MESSAGE(I));
+    END;
+
+    DISPLAY ('ENTER ''U'' TO TERMINATE JOB ' ³³ JOB_NAME)
+      REPLY (RESPONSE);
+    IF RESPONSE = 'U' THEN DO;
+                           CALL PLIRETC (8);
+                           GO TO END_OF_PROGRAM;
+                           END;
+
+    DISPLAY ('INVALID RESPONSE FOR JOB ' ³³ JOB_NAME);
+    GO TO SEND_WAIT_MESSAGE;
+ %PAGE;
+ JOBNAME_NOT_IN_MEMBER:
+    DISPLAY ('****NF CHECKLIST COMPLETE FOR JOB: ' ³³ JOB_NAME ³³
+                                       '   STEP: ' ³³ JOB_STEP);
+    IF JOB_VALID THEN GO TO END_OF_PROGRAM;
+                 ELSE GO TO NOTIFY_OPERATOR_OF_JOB_FAILURE;
+
+
+ END_OF_PROGRAM: END;

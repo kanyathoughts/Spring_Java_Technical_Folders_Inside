@@ -1,0 +1,22 @@
+000010******************************************************************00001000
+000020*CALL-RPRPTS-SECTION.                                             00002000
+000030 RPRPTS-START.                                                    00003000
+000040     IF WS-RRPTSOPEN IS EQUAL TO SPACE                            00004000
+000050         OR WS-RRPTS1 IS EQUAL TO 'O'                             00005000
+000060         MOVE WS-RRPTS2 TO WS-RRPTSOPEN.                          00006000
+000070     IF WS-RRPTS2 IS EQUAL TO SPACE                               00007000
+000080         MOVE WS-RRPTSOPEN TO WS-RRPTS2.                          00008000
+000090     IF WS-RRPTS1 IS EQUAL TO 'C'                                 00009000
+000100         AND WS-RRPTSOPEN IS EQUAL TO WS-RRPTS2                   00010000
+000110         MOVE SPACE TO WS-RRPTSOPEN.                              00011000
+000000     CALL 'RPIRPTS' USING                                         00012000
+000130         WS-RRPTSAREA                                             00013000
+000140         RPRPTS-RECORD.                                           00014000
+000150     MOVE WS-RRPTS1 TO WS-FUNCTION.                               00015000
+000160     IF WS-RRPTS1 IS EQUAL TO SPACE                               00016000
+000170         MOVE SPACES TO WS-ABORTMSG                               00017000
+000180     ELSE                                                         00018000
+000190         MOVE WS-RRPTSAREA TO WS-ABORTMSG.                        00019000
+000200 RPRPTS-EXIT.                                                     00020000
+000210     EXIT.                                                        00021000
+000220******************************************************************00022000

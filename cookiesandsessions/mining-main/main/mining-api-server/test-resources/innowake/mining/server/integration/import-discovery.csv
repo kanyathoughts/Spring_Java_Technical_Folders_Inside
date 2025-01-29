@@ -1,0 +1,45 @@
+# Modules
+"Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements"
+1,"Foo","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+2,"IGYWCL","src/jcl/WMIN1214/procs/IGYWCL.proc","JCL","JCL_PROC","PHYSICAL",0,0,3,12,-1,0,0
+3,"IGYWCL.COBOL.IEFBR14","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+4,"IGYWCL.LKED.IEFBR14","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+5,"INNOWAK.A.LOADLIB","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+6,"INNOWAK.ABA.COBOL","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+12,"jclconfig","src/jcl/jclconfig.cfg","JCL","JCL_CFG","PHYSICAL",0,0,0,0,0,0,0
+7,"MEE5097","","JCL","JCL_CONTROLCARD","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+8,"TESTSQLC","src/cobol/WMIN1214/programs/TESTSQLC.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,16,0,-1,6,1
+9,"WMEE5097","src/jcl/WMIN1214/jobs/WMEE5097.job","JCL","JCL_JOB","PHYSICAL",1,0,8,2,-1,4,0
+10,"WMEE5097.STEP.IGYWCL","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+11,"WMEE5097.STEP2.MEE5097","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,-1,-1
+12,"TESTSQL1","src/cobol/WMIN1214/programs/TESTSQL1.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,16,0,123,6,1
+13,"TESTJCL1","src/jcl/WMIN1214/procs/TESTJCL1.proc","JCL","JCL_PROC","PHYSICAL",0,0,3,12,42,0,0
+21,"ExampleClass","src/java/com/example/ExampleClass.java","JAVA","JAVA_COMPILATION_UNIT","PHYSICAL",1,0,12,0,16,-1,0,-1,-1
+22,"com.example","","JAVA","JAVA_PACKAGE","VIRTUAL",-1,0,-1,-1,-1,-1,0,-1,-1
+23,"com.example.ExampleClass","","JAVA","JAVA_TYPE","VIRTUAL",-1,0,-1,-1,-1,-1,0,119,256
+24,"ExampleJsp","src/java/jsp/ExampleJsp.jsp","JAVA","JAVA_JSP","PHYSICAL",1,0,12,0,16,-1,0,-1,-1
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+8,"TESTSQLC","SELECT",49,1,1,2,0.7924812503605781,0.5,"SELECT ""OH NOES\\"" FROM Foo /*
+#this will break */"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Binding","Attributes"
+23,"com.example.ExampleClass",24,"ExampleJsp","JAVA","JAVA_JSP","EARLY","{}",343,8,28,56
+2,"IGYWCL",3,"IGYWCL.COBOL.IEFBR14","JCL","JCL_EXEC_PGM","LATE","{}"
+2,"IGYWCL",4,"IGYWCL.LKED.IEFBR14","JCL","JCL_EXEC_PGM","LATE","{}"
+3,"IGYWCL.COBOL.IEFBR14",0,"IEFBR14","UNKNOWN","UTILITY","LATE","{}"
+3,"IGYWCL.COBOL.IEFBR14",6,"INNOWAK.ABA.COBOL","RESOURCE","RESOURCE_FILE","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSIN""}]}"
+4,"IGYWCL.LKED.IEFBR14",0,"IEFBR14","UNKNOWN","UTILITY","LATE","{}"
+4,"IGYWCL.LKED.IEFBR14",5,"INNOWAK.A.LOADLIB","RESOURCE","RESOURCE_FILE","LATE","{""PROPERTIES"":[{""DISP"":""SHR"",""ID_NAME"":""SYSLMOD""}]}"
+8,"TESTSQLC",1,"Foo","SQL","SQL_TABLE","LATE","{}"
+9,"WMEE5097",10,"WMEE5097.STEP.IGYWCL","JCL","JCL_EXEC","LATE","{}"
+9,"WMEE5097",7,"MEE5097","JCL","JCL_CONTROLCARD","LATE","{}"
+9,"WMEE5097",11,"WMEE5097.STEP2.MEE5097","JCL","JCL_EXEC_PGM","LATE","{}"
+10,"WMEE5097.STEP.IGYWCL",2,"IGYWCL","JCL","JCL_PROC","LATE","{}"
+11,"WMEE5097.STEP2.MEE5097",-1,"MEE5097","COBOL","COBOL_PROGRAM","LATE","{}"
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

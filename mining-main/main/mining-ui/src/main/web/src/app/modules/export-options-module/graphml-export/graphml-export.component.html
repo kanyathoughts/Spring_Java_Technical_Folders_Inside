@@ -1,0 +1,24 @@
+<nz-space nzDirection="vertical" class="graph-ml-export-component">
+  <nz-content class="graph-ml-export-component__data-list">
+    <p class="graph-ml-export-component__title">{{ 'exportOptionsComponent.modulePropertiesToBeIncluded' | translate }}:
+    </p>
+    <ul class="reset-list-decorator" nz-row>
+      <li nz-col nzSpan="12">
+        <label nz-checkbox nzDisabled nzChecked>{{ 'name' | translate }}</label>
+      </li>
+      <li nz-col *ngFor="let dataPoint of dataPoints" nzSpan="12">
+        <label nz-checkbox [(ngModel)]="dataPoint.checked">{{ dataPoint.label }}</label>
+      </li>
+    </ul>
+  </nz-content>
+  <div nzJustify="end" nz-row class="graph-ml-export-component__button-bar">
+    <nz-divider></nz-divider>
+    <div nz-coll>
+      <nz-space>
+        <button *nzSpaceItem nz-button [disabled]="isDownloading" class="cancel_editor" nzType="default"
+          (click)="closeGraphMLdrawer()">{{ 'btnLabel.cancel' | translate }}</button>
+        <button *nzSpaceItem [nzLoading]="isDownloading" nz-button nzType="primary" (click)="downloadGraphML()">{{ 'btnLabel.download' | translate }}</button>
+      </nz-space>
+    </div>
+  </div>
+</nz-space>

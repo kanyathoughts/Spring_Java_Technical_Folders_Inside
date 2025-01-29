@@ -1,0 +1,344 @@
+<project name="Mining UI E2E Test" default="start-tests" basedir=".">
+	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+	<target name="set-dist" if="dist">
+		<property name="distSuffix" value="-dist"/>
+		<property name="distPom" value="-Ddist "/>
+		<echo>-Ddist is set, will do a dist build</echo>
+	</target>
+	
+	<target name="set-properties" depends="set-dist">
+		<property name="distSuffix" value=""/>
+		<property name="distPom" value=""/>
+		<property name="dbport" value="2407"/>
+		<property name="dbwebport" value="2470"/>
+		<property name="serverport" value="8070"/>
+		<property name="uiport" value="4224"/>
+		<property name="postgresDbPort" value="5431"/>
+		<property name="spring-profiles" value=""/>
+		<property name="test-target-dir" location="./target/" />
+		<property name="pomLocation" value="./pom.xml"/>
+		<xmlproperty file="${pomLocation}" prefix="pom" />
+		<property name="orientdb-version" value="3.1.6"/>
+		<property name="miningVersion" value ="99.9.99-TRUNK-MINING-SNAPSHOT"/>
+		<property name="flywayVersion" value="99.9.99-TRUNK-BASE-SNAPSHOT"/>
+		<property name="orientdbLocation" location="${test-target-dir}/orientdb-community-${orientdb-version}"/>
+		<property name="orientdbEnvironmentWin" value="cd ${orientdbLocation}\bin &amp;&amp; "/>
+		<property name="orientdbEnvironmentUnix" value="cd ${orientdbLocation}/bin &amp;&amp; chmod -R a+x ../bin &amp;&amp; "/>
+		<property name="flywayLocation" location="${test-target-dir}/flyway-${flywayVersion}"/>
+		<property name="flywayEnvironmentWin" value="cd ${flywayLocation} &amp;&amp; "/>
+		<property name="flywayEnvironmentUnix"  value="cd $flywayLocation} &amp;&amp; chmod -R a+x ./flyway &amp;&amp; "/>
+		<exec executable="cmd" outputproperty="repoLocation" failonerror="true" osfamily="windows">
+			<arg line="/c mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout" />
+		</exec>
+		<exec executable="sh" outputproperty="repoLocation" failonerror="true" osfamily="unix">
+			<arg line="-c &quot;mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout&quot;" />
+		</exec>
+		<echo>Repository location set to ${repoLocation}</echo>
+		<property name="miningRepoLocation" location="${repoLocation}/innowake/products/mining/"/>
+		<property name="miningDataPluginLocation" location="${miningRepoLocation}/mining-data-plugin${distSuffix}/${miningVersion}/mining-data-plugin${distSuffix}-${miningVersion}-bundle.jar"/>
+		<property name="miningDataDebugPluginLocation" location="${miningRepoLocation}/mining-data-debug-plugin${distSuffix}/${miningVersion}/mining-data-debug-plugin${distSuffix}-${miningVersion}-bundle.jar"/>
+		<property name="miningDatabaseScriptLocation" location="${miningRepoLocation}/mining-database/${miningVersion}/mining-database-${miningVersion}.sql"/>
+		<property name="miningDatabaseScript" location="${test-target-dir}/mining-database-${miningVersion}.sql"/>
+		<property name="miningPgDatabaseTestData1" location="../mining-api-server/src/test/resources/db/data/postgres/test-data-complete.sql"/>
+		<property name="miningPgDatabaseTestData2" location="../mining-api-server/src/test/resources/db/data/postgres/test-data-custom-properties.sql"/>
+		<property name="miningServerLocation" location="${miningRepoLocation}/mining-api-server${distSuffix}/${miningVersion}/mining-api-server${distSuffix}-${miningVersion}.jar"/>
+		<property name="miningDataLocation" location="${miningRepoLocation}/mining-data/${miningVersion}/mining-data-${miningVersion}.jar"/>
+		<property name="orientdbZipLocation" location="${repoLocation}/com/orientechnologies/orientdb-community/${orientdb-version}/orientdb-community-${orientdb-version}.zip"/>
+		<property name="flywayCommandlineZipLocation" location="${repoLocation}/innowake/lib/flyway/lib-flyway-commandline/${flywayVersion}/lib-flyway-commandline-${flywayVersion}.zip"/>
+		<property name="mining-server-executable-jar" location="${test-target-dir}/mining-api-server${distSuffix}-${miningVersion}.jar"/>
+		<property name="mining-server-executable-dir" location="${test-target-dir}" />
+		<property name="mining-ui-build-profile" value="e2e" />
+		<condition property="isMac">
+			<os family="mac" />
+		</condition>
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<condition property="isUnix">
+			<os family="unix" />
+		</condition>
+		<echo>All artifact locations set</echo>
+	</target>
+	
+	<target name="check-maven-repo" depends="set-properties">	
+		<fail message="FILE NOT FOUND: ${miningServerLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${miningServerLocation}" />
+				</not>
+			</condition>
+		</fail>
+				<fail message="FILE NOT FOUND: ${miningDataLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${miningDataLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="FILE NOT FOUND: ${miningDataPluginLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${miningDataPluginLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="FILE NOT FOUND: ${miningDataDebugPluginLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${miningDataDebugPluginLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="FILE NOT FOUND: ${miningDatabaseScriptLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${miningDatabaseScriptLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="FILE NOT FOUND: ${orientdbZipLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${orientdbZipLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="FILE NOT FOUND: ${flywayCommandlineZipLocation}. Please use dependency:resolve">
+			<condition>
+				<not>
+					<available file="${flywayCommandlineZipLocation}" />
+				</not>
+			</condition>
+		</fail>
+		<echo>All dependencies in maven repository</echo>
+	</target>
+	
+	<target name="clean-up">
+		<sleep seconds="15"/>
+		<delete dir="${orientdbLocation}"/>
+		<delete file="${mining-server-executable-jar}"/>
+		<delete file="${miningDatabaseScript}"/>
+	</target>
+	
+	<target name="setup-db" depends="check-maven-repo,kill-db-and-server">
+		<retry retrycount="12">
+			<antcall target="clean-up"/>
+		</retry>
+		<copy file="${miningServerLocation}" tofile="${mining-server-executable-jar}"/>
+		<copy file="${miningDatabaseScriptLocation}" tofile="${miningDatabaseScript}"/>
+		<unzip src="${orientdbZipLocation}" dest="${test-target-dir}"/>
+		<copy file="${miningDataPluginLocation}" todir="${orientdbLocation}/plugins"/>
+		<copy file="${miningDataDebugPluginLocation}" todir="${orientdbLocation}/plugins"/>
+		<replace file="${orientdbLocation}/config/orientdb-server-config.xml" token="2424-2430" value="${dbport}-${dbport}"/>
+		<replace file="${orientdbLocation}/config/orientdb-server-config.xml" token="2480-2490" value="${dbwebport}-${dbwebport}"/>
+		<replace file="${miningDatabaseScript}" token="remote:localhost/mining" value="remote:localhost:${dbport}/mining"/>
+		<replace file="${orientdbLocation}/config/orientdb-server-log.properties" token="java.util.logging.ConsoleHandler.level = INFO" value="java.util.logging.ConsoleHandler.level = SEVERE"/>
+	</target>
+
+	<target name="start-postgres">
+		<echo>Starting Postgres in Docker container</echo>
+		<property name="postgresDbReturnCode" value="0"/>
+		<exec executable="cmd" osfamily="windows">
+			<arg line="/c &quot;docker run --rm --name mining-postgres-${postgresDbPort} -p ${postgresDbPort}:5432 -e POSTGRES_USER=mining -e POSTGRES_PASSWORD=Worx2000 -e POSTGRES_DB=mining -d postgres:14.5 &quot;"/>
+		</exec>
+		<exec executable="sh" osfamily="unix">
+			<arg line="-c &quot;docker run --rm --name mining-postgres-${postgresDbPort} -p ${postgresDbPort}:5432 -e POSTGRES_USER=mining -e POSTGRES_PASSWORD=Worx2000 -e POSTGRES_DB=mining -d postgres:14.5 &quot;"/>
+		</exec>
+	</target>
+
+	<target name="start-db" depends="setup-db">
+		<parallel>
+			<antcallback target="start-postgres" />
+
+			<daemons>
+				<exec executable="cmd" osfamily="windows" resultproperty="orientdbReturnCode">
+					<arg line="/c &quot;${orientdbEnvironmentWin} server.bat &quot;"/>
+					<env key="ORIENTDB_HOME" value="${orientdbLocation}"/>
+					<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000"/>
+				</exec>
+				<exec executable="sh" osfamily="unix" resultproperty="orientdbReturnCode">
+					<arg line="-c &quot;${orientdbEnvironmentUnix} ./server.sh &quot;"/>
+					<env key="ORIENTDB_HOME" value="${orientdbLocation}"/>
+					<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000"/>
+				</exec>
+			</daemons>
+			<sequential>
+				<echo message="wait for database" />
+				<waitfor maxwait="10" maxwaitunit="minute" checkevery="2000">
+					<http url="http://localhost:${dbwebport}/studio/index.html"/>
+				</waitfor>
+			</sequential>
+		</parallel>
+	</target>
+
+	<target name="init-db" depends="start-db">
+		<echo>Executing CreateDatabase.sql</echo>
+		<exec executable="cmd" osfamily="windows">
+			<arg line="/c &quot;${orientdbEnvironmentWin} console.bat ${miningDatabaseScript}&quot;"/>
+			<env key="ORIENTDB_HOME" value="${orientdbLocation}"/>
+			<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000"/>
+		</exec>
+		<exec executable="sh" osfamily="unix">
+			<arg line="-c &quot;${orientdbEnvironmentUnix} ./console.sh ${miningDatabaseScript}&quot;"/>
+			<env key="ORIENTDB_HOME" value="${orientdbLocation}"/>
+			<env key="ORIENTDB_ROOT_PASSWORD" value="Worx2000"/>
+		</exec>
+	</target>
+	
+	<!-- Starting the api server will also automatically trigger the schema migration with flyway -->
+	<target name="start-api-server" depends="init-db">
+		<parallel>
+			<daemons>
+				<java dir="${mining-server-executable-dir}" 
+					jar="${mining-server-executable-jar}"
+					fork="true" 
+					failonerror="true" 
+					maxmemory="1024m">
+					<jvmarg value="--add-opens"/>
+					<jvmarg value="java.base/java.lang=ALL-UNNAMED"/>
+					<jvmarg value="--add-opens"/>
+					<jvmarg value="java.base/java.util=ALL-UNNAMED"/>
+					<sysproperty key="server.port" value="${serverport}"/>
+					<sysproperty key="spring.profiles.active" value="${spring-profiles}"/>
+					<sysproperty key="spring.datasource.url" value="jdbc:orient:remote:localhost:${dbport}/mining"/>
+					<sysproperty key="mining.cookieId" value="DISABLED"/>
+					<sysproperty key="cors.allowed-origins" value="http://localhost:${uiport},http://127.0.0.1:${uiport},http://localhost:${serverport},http://127.0.0.1:${serverport}"/>
+					<sysproperty key="postgres.datasource.jdbc-url" value="jdbc:postgresql://localhost:${postgresDbPort}/mining"/>
+				</java>
+			</daemons>
+			<sequential>
+				<waitfor maxwait="10" maxwaitunit="minute" checkevery="2000" timeoutproperty="start.api.server.timeout">
+					<http url="http://localhost:${serverport}/#/login"/>
+				</waitfor>
+				<echo message="Server started" />
+			</sequential>
+		</parallel>
+
+		<fail message="Timeout while waiting for api-server to start">
+			<condition>
+				<isset property="start.api.server.timeout"/>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="update-db" depends="start-api-server">
+		<echo>Copy test-data-complete.sql into Pg Docker container${line.separator}</echo>
+		<exec executable="cmd" osfamily="windows" resultproperty="copy.sql.result">
+			<arg line="/c &quot;docker cp ${miningPgDatabaseTestData1} mining-postgres-${postgresDbPort}:/test-data-complete.sql &quot;"/>
+		</exec>
+		<exec executable="sh" osfamily="unix" resultproperty="copy.sql.result">
+			<arg line="-c &quot;docker cp ${miningPgDatabaseTestData1} mining-postgres-${postgresDbPort}:/test-data-complete.sql &quot;"/>
+		</exec>
+		<fail message="Error when copying SQL update script">
+			<condition>
+				<not>
+					<equals arg1="${copy.sql.result}" arg2="0"/>
+				</not>
+			</condition>
+		</fail>
+
+		<echo>Update Postgres DB with test-data-complete.sql${line.separator}</echo>
+		<exec executable="cmd" osfamily="windows" resultproperty="update.postgres.result">
+			<arg line="/c &quot; docker exec mining-postgres-${postgresDbPort} psql -U mining -d mining -f /test-data-complete.sql &quot;"/>
+		</exec>
+		<exec executable="sh" osfamily="unix" resultproperty="update.postgres.result">
+			<arg line="-c &quot; docker exec mining-postgres-${postgresDbPort} psql -U mining -d mining -f /test-data-complete.sql &quot;"/>
+		</exec>
+		<fail message="Error when copying SQL update script">
+			<condition>
+				<not>
+					<equals arg1="${update.postgres.result}" arg2="0"/>
+				</not>
+			</condition>
+		</fail>
+
+		<echo>Copy test-data-custom-properties.sql into Pg Docker container${line.separator}</echo>
+				<exec executable="cmd" osfamily="windows" resultproperty="copy.sql.result">
+					<arg line="/c &quot;docker cp ${miningPgDatabaseTestData2} mining-postgres-${postgresDbPort}:/test-data-custom-properties.sql &quot;"/>
+				</exec>
+				<exec executable="sh" osfamily="unix" resultproperty="copy.sql.result">
+					<arg line="-c &quot;docker cp ${miningPgDatabaseTestData2} mining-postgres-${postgresDbPort}:/test-data-custom-properties.sql &quot;"/>
+				</exec>
+				<fail message="Error when copying SQL update script">
+					<condition>
+						<not>
+							<equals arg1="${copy.sql.result}" arg2="0"/>
+						</not>
+					</condition>
+				</fail>
+
+				<echo>Update Postgres DB with test-data-custom-properties.sql${line.separator}</echo>
+				<exec executable="cmd" osfamily="windows" resultproperty="update.postgres.result">
+					<arg line="/c &quot; docker exec mining-postgres-${postgresDbPort} psql -U mining -d mining -f /test-data-custom-properties.sql &quot;"/>
+				</exec>
+				<exec executable="sh" osfamily="unix" resultproperty="update.postgres.result">
+					<arg line="-c &quot; docker exec mining-postgres-${postgresDbPort} psql -U mining -d mining -f /test-data-custom-properties.sql &quot;"/>
+				</exec>
+				<fail message="Error when copying SQL update script">
+					<condition>
+						<not>
+							<equals arg1="${update.postgres.result}" arg2="0"/>
+						</not>
+					</condition>
+				</fail>
+	</target>
+
+	<target name="setup-e2e-test" depends="update-db">
+		<replace file="./src/main/web/e2e/protractor.conf.js" token="8080" value="${serverport}"/>
+		<replace file="./src/main/web/src/environments/environment.e2e-jenkins.ts" token="SERVER_PORT" value="${serverport}"/>
+	</target>
+	
+	<target name="start-tests" depends="setup-e2e-test">
+		<exec failonerror="true" dir="." executable="cmd" osfamily="windows">
+			<arg line="/c mvn install -P ${mining-ui-build-profile}" />
+		</exec>
+		<exec failonerror="true" dir="." executable="sh" osfamily="unix">
+			<arg line="-c 'mvn install -P ${mining-ui-build-profile}'" />
+		</exec>
+		<antcall target="kill-db-and-server"/>
+	</target>
+	
+	<target name="kill-db-and-server" depends="kill-db-and-server-win,kill-db-and-server-unix,kill-db-and-server-mac"/>
+	
+	<target name="kill-db-and-server-win" if="isWindows">
+		<exec executable="cmd">
+			<arg value="/c"/>
+			<arg value="for /F &quot;tokens=1-5&quot; %A in ('&quot;netstat -aon | find /i &quot;[::]:${serverport}&quot;&quot;') do taskkill /F /PID %E"/>
+		</exec>
+		<exec executable="cmd">
+			<arg value="/c"/>
+			<arg value="for /F &quot;tokens=1-5&quot; %A in ('&quot;netstat -aon | find /i &quot;[::]:${dbport}&quot;&quot;') do taskkill /F /PID %E"/>
+		</exec>
+		<exec executable="cmd">
+			<arg line="/c &quot;docker stop mining-postgres-${postgresDbPort} &quot;"/>
+		</exec>
+	</target>
+	
+	<target name="kill-db-and-server-mac" if="isMac">
+		<exec executable="bash">
+			<arg line="-c &quot;lsof -n -iTCP:${serverport} -sTCP:LISTEN -n -l -P | grep 'LISTEN' | awk '{print $2}' | xargs kill -9&quot;"/>
+		</exec>
+		<exec executable="bash">
+			<arg line="-c &quot;lsof -n -iTCP:${dbport} -sTCP:LISTEN -n -l -P | grep 'LISTEN' | awk '{print $2}' | xargs kill -9&quot;"/>
+		</exec>
+		<exec executable="bash">
+			<arg line="-c &quot;docker stop mining-postgres-${postgresDbPort} &quot;"/>
+		</exec>
+	</target>
+	
+	<!-- for Mac OS the isUnix property is also true-->
+	<target name="kill-db-and-server-unix" if="isUnix" unless="isMac">
+		<exec executable="sh">
+			<arg line="-c 'export PATH=$PATH:/usr/local/sbin:/usr/sbin:/root/bin &amp;&amp; fuser -k ${serverport}/tcp'"/>
+		</exec>
+		<exec executable="sh">
+			<arg line="-c 'export PATH=$PATH:/usr/local/sbin:/usr/sbin:/root/bin &amp;&amp; fuser -k ${dbport}/tcp'"/>
+		</exec>
+		<exec executable="sh">
+			<arg line="-c &quot;docker stop mining-postgres-${postgresDbPort} &quot;"/>
+		</exec>
+	</target>
+	
+</project>

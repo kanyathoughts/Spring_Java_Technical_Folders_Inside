@@ -1,0 +1,2257 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPLXXX03.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*    RPLXXX03 - RELATIONSHIP MAINTENANCE MODULE                  *00005000
+000060******************************************************************00006000
+000070 ENVIRONMENT DIVISION.                                            00007000
+000080 DATA DIVISION.                                                   00008000
+000090******************************************************************00009000
+000100 WORKING-STORAGE SECTION.                                         00010000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00011000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00011001
+000120 01  RPS-RLSELIT.                                                 00012000
+000000 COPY RPWRLSE.                                                    00013000
+000140 01  MIC-RLSELIT.                                                 00014000
+000000 COPY MIWRLSE.                                                    00015000
+000160 01  SRW079-AREAS.                                                00016000
+000000 COPY SRW079.                                                     00017000
+000180 01  SRW105-AREAS.                                                00018000
+000000 COPY SRW105.                                                     00019000
+000200*01  BICRSRB.                                                     00020000
+000000 COPY BICRSRB.                                                    00021000
+000220*01  BICRPSB.                                                     00022000
+000000 COPY BICRPSB.                                                    00023000
+000240*01  BICRVERB.                                                    00024000
+000000 COPY BICRVERB.                                                   00025000
+000260*01  BICRSTAT.                                                    00026000
+000000 COPY BICRSTAT.                                                   00027000
+000280*01  BICRDBS.                                                     00028000
+000000 COPY BICRDBS.                                                    00029000
+000300*01  BICRLOG.                                                     00030000
+000000 COPY BICRLOG.                                                    00031000
+000320 01  SRW710-AREAS.                                                00032000
+000000 COPY SRW710.                                                     00033000
+000340 01  WS-WORKAREAS.                                                00034000
+000350     03  WS-MAX-PANEL-ENTRIES    PIC S9(04)      COMP             00035000
+000360                                                 VALUE +0009.     00036000
+000370     03  COM-ABORT               PIC S9(04)      COMP.            00037000
+000380     03  WS-SUB1                 PIC S9(04)      COMP             00038000
+000390                                                 VALUE +0000.     00039000
+000400     03  WS-SUB2                 PIC S9(04)      COMP             00040000
+000410                                                 VALUE +0000.     00041000
+P0064      03  WS-NOTPRESENT           PIC X(30)       VALUE            00041300
+P0064          'NO CUSTOMER FOUND IN RCIF     '.                        00041600
+000420     03  WS-UPDATESW             PIC X(01)       VALUE SPACES.    00042000
+000430     03  WS-INTERFACE            PIC X(01)       VALUE SPACES.    00043000
+000440     03  WS-UPDATE-RP            PIC X(01)       VALUE SPACES.    00044000
+000450     03  WS-ACT-FLAG             PIC X(01)       VALUE SPACES.    00045000
+000460     03  WS-SEC-FLAG             PIC X(01)       VALUE SPACES.    00046000
+000470     03  WS-KEEP-FLAG            PIC X(01)       VALUE SPACES.    00047000
+000480     03  WS-CLOSE-FLAG           PIC X(01)       VALUE SPACES.    00048000
+P0107      03  WS-PRIM-RECORD          PIC X(01)       VALUE SPACES.    00048500
+000490     03  WS-ACCT-TYPE            PIC 9(03)       VALUE ZEROES.    00049000
+000500     03  WS-BRANCH               PIC 9(05)       VALUE ZEROES.    00050000
+000510     03  WS-SAVE-GROUP.                                           00051000
+000520         05  WS-SAVE-APPL        PIC 9(02).                       00052000
+000530         05  WS-SAVE-PRODCODE    PIC X(06).                       00053000
+000540         05  WS-SAVE-ACCT-TYPE   PIC 9(03).                       00054000
+000550         05  WS-SAVE-7104KRPREC  PIC X(06).                       00055000
+000560         05  WS-SAVE-7107KRPREC  PIC X(06).                       00056000
+000570     03  WS-ERROR-INDICATOR      PIC X(01)       VALUE SPACES.    00057000
+000580     03  WS-INF-KEY.                                              00058000
+000590         05  WS-INF-GRP-KEY.                                      00059000
+000600             07  WS-INF-INST     PIC 9(04).                       00060000
+000610             07  WS-INF-ACCOUNT  PIC 9(18).                       00061000
+000620         05  WS-INF-APPL-INFO.                                    00062000
+000630             07  WS-INF-PRODCODE PIC X(06).                       00063000
+000640             07  WS-INF-APPLR    PIC 9(02).                       00064000
+000650     03  WS-7101KEFFDT           PIC S9(09)      COMP-3           00065000
+000660                                                 VALUE ZERO.      00066000
+000670     03  WS-7102-FLAG            PIC X(01)       VALUE SPACES.    00067000
+000680     03  WS-7102-DEF-FLAG        PIC X(01)       VALUE 'N'.       00068000
+000690     03  WS-7102-DEF-RECORD      PIC X(125)      VALUE SPACES.    00069000
+000700     03  WS-CURDATE              PIC 9(08)       VALUE ZERO.      00070000
+000710     03  FILLER          REDEFINES WS-CURDATE.                    00071000
+000720         05  WS-CURMM            PIC 9(02).                       00072000
+000730         05  WS-CURDD            PIC 9(02).                       00073000
+000740         05  WS-CURYYYY          PIC 9(04).                       00074000
+000750     03  WS-PDATE                PIC 9(08)       VALUE ZERO.      00075000
+000760     03  FILLER          REDEFINES WS-PDATE.                      00076000
+000770         05  WS-PDATE-YYYY       PIC 9(04).                       00077000
+000780         05  WS-PDATE-MM         PIC 9(02).                       00078000
+000790         05  WS-PDATE-DD         PIC 9(02).                       00079000
+000800     03  WS-PDATE2               PIC 9(08)       VALUE ZERO.      00080000
+000810     03  FILLER          REDEFINES WS-PDATE2.                     00081000
+000820         05  WS-PDATE2-YYYY      PIC 9(04).                       00082000
+000830         05  WS-PDATE2-MM        PIC 9(02).                       00083000
+000840         05  WS-PDATE2-DD        PIC 9(02).                       00084000
+000850     03  WS-CURDT-YYYYMMDD       PIC S9(09)      COMP-3           00085000
+000860                                                 VALUE ZERO.      00086000
+000870     03  WS-LAST-GOOD-INST       PIC 9(04)       VALUE ZEROES.    00087000
+000880     03  WS-LAST-INST-TRIED      PIC 9(04)       VALUE ZEROES.    00088000
+000890     03  WS-ERRORMODEL           PIC X(01)       VALUE 'N'.       00089000
+000900     03  WS-SAVEMASTERGROUP.                                      00090000
+000910         05  WS-SAVEMSTINST      PIC 9(04).                       00091000
+000920         05  WS-SAVEMSTPRODCODE  PIC X(06).                       00092000
+000930         05  WS-SAVEMSTACCOUNT   PIC X(18).                       00093000
+000940         05  WS-SAVEMSTMODEL     PIC X(10).                       00094000
+000950* ** SECONDARY CUSTOMERS WORK AREAS                               00095000
+000960 01  RPW139-AREAS.                                                00096000
+000000 COPY RPW139.                                                     00097000
+P0107 ***************************************************************** 00097200
+P0107  01  WS-PRIMRELCD-WORKAREA.                                       00097400
+000000 COPY RPW008.                                                     00097600
+000980*----------------------------------------------------------------*00098000
+000990 01  MIWPRI-AREAS.                                                00099000
+000000 COPY MIWPRI.                                                     00100000
+001010 01  MIWMSTA-AREAS.                                               00101000
+000000 COPY MIWMSTA.                                                    00102000
+001030 01  MIMST-RECORD.                                                00103000
+000000 COPY MISMST.                                                     00104000
+001050 01  MI0237-RECORD.                                               00105000
+000000 COPY MIS0237A.                                                   00106000
+001070 01  MI2001-RECORD.                                               00107000
+000000 COPY MIS2001A.                                                   00108000
+001090 01  MI2023-RECORD.                                               00109000
+000000 COPY MIS2023A.                                                   00110000
+001110 01  MI2024-RECORD.                                               00111000
+000000 COPY MIS2024A.                                                   00112000
+001130 01  MI7100-RECORD.                                               00113000
+000000 COPY MIS7100.                                                    00114000
+001150 01  MI7101-RECORD.                                               00115000
+000000 COPY MIS7101.                                                    00116000
+001170 01  MI7102-RECORD.                                               00117000
+000000 COPY MIS7102.                                                    00118000
+001190 01  MI7104-RECORD.                                               00119000
+000000 COPY MIS7104.                                                    00120000
+001210 01  MI7106-RECORD.                                               00121000
+000000 COPY MIS7106.                                                    00122000
+001230 01  MI7107-RECORD.                                               00123000
+000000 COPY MIS7107.                                                    00124000
+001250*----------------------------------------------------------------*00125000
+001260 01  WS-RPMIM2001AREAS.                                           00126000
+000000 COPY RPW2001.                                                    00127000
+001280 01  WS-RPMIM7107AREAS.                                           00128000
+000000 COPY RPW7107.                                                    00129000
+001300*----------------------------------------------------------------*00130000
+001310 01  RPWPRI-AREAS.                                                00131000
+000000 COPY RPWPRI.                                                     00132000
+001330 01  RPWACT-AREA.                                                 00133000
+000000 COPY RPWACTA.                                                    00134000
+001350 01  RPACT-RECORD.                                                00135000
+000000 COPY RPSACT.                                                     00136000
+001370 01  RPWCRW-AREA.                                                 00137000
+000000 COPY RPWCRWA.                                                    00138000
+001390 01  RPCRW-RECORD.                                                00139000
+000000 COPY RPSCRW.                                                     00140000
+001410 01  RPWEVT-AREA.                                                 00141000
+000000 COPY RPWEVTA.                                                    00142000
+001430 01  RPEVT-RECORD.                                                00143000
+000000 COPY RPSEVT.                                                     00144000
+001450 01  RPWIDX-AREA.                                                 00145000
+000000 COPY RPWIDXA.                                                    00146000
+001470 01  RPIDX-RECORD.                                                00147000
+000000 COPY RPSIDX.                                                     00148000
+001490 01  RPWMST-AREA.                                                 00149000
+000000 COPY RPWMSTA.                                                    00150000
+001510 01  RPMST-RECORD.                                                00151000
+000000 COPY RPSMST.                                                     00152000
+001530 01  RPWQUA-AREA.                                                 00153000
+000000 COPY RPWQUAA.                                                    00154000
+001550 01  RPQUA-RECORD.                                                00155000
+000000 COPY RPSQUA.                                                     00156000
+001570 01  RPWREL-AREA.                                                 00157000
+000000 COPY RPWRELA.                                                    00158000
+001590 01  RPREL-RECORD.                                                00159000
+000000 COPY RPSREL.                                                     00160000
+001610 01  RPWSEC-AREA.                                                 00161000
+000000 COPY RPWSECA.                                                    00162000
+001630 01  RPSEC-RECORD.                                                00163000
+000000 COPY RPSSEC.                                                     00164000
+001650 01  RPWTRM-AREA.                                                 00165000
+000000 COPY RPWTRMA.                                                    00166000
+001670 01  RPTRM-RECORD.                                                00167000
+000000 COPY RPSTRM.                                                     00168000
+001690*----------------------------------------------------------------*00169000
+001700 01  RPRF21-MESSAGE.                                              00170000
+000000 COPY MISCNT00      REPLACING                                     00171000
+001720             ==:MICNT:== BY ==RPRF21==.                           00172000
+000000 COPY RPSRF21.                                                    00173000
+001740*----------------------------------------------------------------*00174000
+001750 01  RPINF00-MESSAGE.                                             00175000
+000000 COPY MISCNT00      REPLACING                                     00176000
+001770             ==:MICNT:== BY ==RPINF00==.                          00177000
+000000 COPY RPSINF00.                                                   00178000
+001790*----------------------------------------------------------------*00179000
+001800 01  RPUSER-MESSAGE.                                              00180000
+000000 COPY MISCNT00      REPLACING                                     00181000
+001820     ==:MICNT:== BY ==RPUSER==.                                   00182000
+000000 COPY RPWUSER.                                                    00183000
+001840***************************************************************** 00184000
+001850 01  WS-TRACECODES.                                               00185000
+001860     03  WS-TR0001               PIC S9(04)      COMP             00186000
+001870                                                 VALUE +0001.     00187000
+001880     03  WS-TR0002               PIC S9(04)      COMP             00188000
+001890                                                 VALUE +0002.     00189000
+001900     03  WS-TR0003               PIC S9(04)      COMP             00190000
+001910                                                 VALUE +0003.     00191000
+001920     03  WS-TR0004               PIC S9(04)      COMP             00192000
+001930                                                 VALUE +0004.     00193000
+001940     03  WS-TR0005               PIC S9(04)      COMP             00194000
+001950                                                 VALUE +0005.     00195000
+001960     03  WS-TR0006               PIC S9(04)      COMP             00196000
+001970                                                 VALUE +0006.     00197000
+001980     03  WS-TR0007               PIC S9(04)      COMP             00198000
+001990                                                 VALUE +0007.     00199000
+002000     03  WS-TR0008               PIC S9(04)      COMP             00200000
+002010                                                 VALUE +0008.     00201000
+002020     03  WS-TR0009               PIC S9(04)      COMP             00202000
+002030                                                 VALUE +0009.     00203000
+002040     03  WS-TR0010               PIC S9(04)      COMP             00204000
+002050                                                 VALUE +0010.     00205000
+002060     03  WS-TR0011               PIC S9(04)      COMP             00206000
+002070                                                 VALUE +0011.     00207000
+002080     03  WS-TR0012               PIC S9(04)      COMP             00208000
+002090                                                 VALUE +0012.     00209000
+002100     03  WS-TR0013               PIC S9(04)      COMP             00210000
+002110                                                 VALUE +0013.     00211000
+002120     03  WS-TR0014               PIC S9(04)      COMP             00212000
+002130                                                 VALUE +0014.     00213000
+002140     03  WS-TR0015               PIC S9(04)      COMP             00214000
+002150                                                 VALUE +0015.     00215000
+002160     03  WS-TR0016               PIC S9(04)      COMP             00216000
+002170                                                 VALUE +0016.     00217000
+002180     03  WS-TR0017               PIC S9(04)      COMP             00218000
+002190                                                 VALUE +0017.     00219000
+002200     03  WS-TR0018               PIC S9(04)      COMP             00220000
+002210                                                 VALUE +0018.     00221000
+002220     03  WS-TR0019               PIC S9(04)      COMP             00222000
+002230                                                 VALUE +0019.     00223000
+002240     03  WS-TR0020               PIC S9(04)      COMP             00224000
+002250                                                 VALUE +0020.     00225000
+002260     03  WS-TR0021               PIC S9(04)      COMP             00226000
+002270                                                 VALUE +0021.     00227000
+002280     03  WS-TR0022               PIC S9(04)      COMP             00228000
+002290                                                 VALUE +0022.     00229000
+002300     03  WS-TR0023               PIC S9(04)      COMP             00230000
+002310                                                 VALUE +0023.     00231000
+002320     03  WS-TR0024               PIC S9(04)      COMP             00232000
+002330                                                 VALUE +0024.     00233000
+002340     03  WS-TR0025               PIC S9(04)      COMP             00234000
+002350                                                 VALUE +0025.     00235000
+002360     03  WS-TR0026               PIC S9(04)      COMP             00236000
+002370                                                 VALUE +0026.     00237000
+002380     03  WS-TR0027               PIC S9(04)      COMP             00238000
+002390                                                 VALUE +0027.     00239000
+002400     03  WS-TR0028               PIC S9(04)      COMP             00240000
+002410                                                 VALUE +0028.     00241000
+002420     03  WS-TR0029               PIC S9(04)      COMP             00242000
+002430                                                 VALUE +0029.     00243000
+002440     03  WS-TR0030               PIC S9(04)      COMP             00244000
+002450                                                 VALUE +0030.     00245000
+002460     03  WS-TR0031               PIC S9(04)      COMP             00246000
+002470                                                 VALUE +0031.     00247000
+002480     03  WS-TR0032               PIC S9(04)      COMP             00248000
+002490                                                 VALUE +0032.     00249000
+002500     03  WS-TR0033               PIC S9(04)      COMP             00250000
+002510                                                 VALUE +0033.     00251000
+002520     03  WS-TR0034               PIC S9(04)      COMP             00252000
+002530                                                 VALUE +0034.     00253000
+002540     03  WS-TR0035               PIC S9(04)      COMP             00254000
+002550                                                 VALUE +0035.     00255000
+002560     03  WS-TR0036               PIC S9(04)      COMP             00256000
+002570                                                 VALUE +0036.     00257000
+002580     03  WS-TR0037               PIC S9(04)      COMP             00258000
+002590                                                 VALUE +0037.     00259000
+002600     03  WS-TR0038               PIC S9(04)      COMP             00260000
+002610                                                 VALUE +0038.     00261000
+002620     03  WS-TR0039               PIC S9(04)      COMP             00262000
+002630                                                 VALUE +0039.     00263000
+002640     03  WS-TR0040               PIC S9(04)      COMP             00264000
+002650                                                 VALUE +0040.     00265000
+002660     03  WS-TR0041               PIC S9(04)      COMP             00266000
+002670                                                 VALUE +0041.     00267000
+002680     03  WS-TR0042               PIC S9(04)      COMP             00268000
+002690                                                 VALUE +0042.     00269000
+002700     03  WS-TR0043               PIC S9(04)      COMP             00270000
+002710                                                 VALUE +0043.     00271000
+002720     03  WS-TR0044               PIC S9(04)      COMP             00272000
+002730                                                 VALUE +0044.     00273000
+002740     03  WS-TR0045               PIC S9(04)      COMP             00274000
+002750                                                 VALUE +0045.     00275000
+002760     03  WS-TR0046               PIC S9(04)      COMP             00276000
+002770                                                 VALUE +0046.     00277000
+002780     03  WS-TR0047               PIC S9(04)      COMP             00278000
+002790                                                 VALUE +0047.     00279000
+002800     03  WS-TR0048               PIC S9(04)      COMP             00280000
+002810                                                 VALUE +0048.     00281000
+002820     03  WS-TR0049               PIC S9(04)      COMP             00282000
+002830                                                 VALUE +0049.     00283000
+002840     03  WS-TR0050               PIC S9(04)      COMP             00284000
+002850                                                 VALUE +0050.     00285000
+002860     03  WS-TR0051               PIC S9(04)      COMP             00286000
+002870                                                 VALUE +0051.     00287000
+002880     03  WS-TR0052               PIC S9(04)      COMP             00288000
+002890                                                 VALUE +0052.     00289000
+002900     03  WS-TR0053               PIC S9(04)      COMP             00290000
+002910                                                 VALUE +0053.     00291000
+002920     03  WS-TR0054               PIC S9(04)      COMP             00292000
+002930                                                 VALUE +0054.     00293000
+002940     03  WS-TR0055               PIC S9(04)      COMP             00294000
+002950                                                 VALUE +0055.     00295000
+002960     03  WS-TR0056               PIC S9(04)      COMP             00296000
+002970                                                 VALUE +0056.     00297000
+002980     03  WS-TR0057               PIC S9(04)      COMP             00298000
+002990                                                 VALUE +0057.     00299000
+003000     03  WS-TR0058               PIC S9(04)      COMP             00300000
+003010                                                 VALUE +0058.     00301000
+003020 01  WS-ABORTCODES.                                               00302000
+003030     03  WS-AB0009               PIC S9(04)      COMP             00303000
+003040                                                 VALUE +0009.     00304000
+003050     03  WS-AB2000               PIC S9(04)      COMP             00305000
+003060                                                 VALUE +2000.     00306000
+003070     03  WS-AB2033               PIC S9(04)      COMP             00307000
+003080                                                 VALUE +2033.     00308000
+003090     03  WS-AB3051               PIC S9(04)      COMP             00309000
+003100                                                 VALUE +3051.     00310000
+003110     03  WS-AB6300               PIC S9(04)      COMP             00311000
+003120                                                 VALUE +6300.     00312000
+003130     03  WS-AB6310               PIC S9(04)      COMP             00313000
+003140                                                 VALUE +6310.     00314000
+003150     03  WS-AB6320               PIC S9(04)      COMP             00315000
+003160                                                 VALUE +6320.     00316000
+003170     03  WS-AB6325               PIC S9(04)      COMP             00317000
+003180                                                 VALUE +6325.     00318000
+003190     03  WS-AB6330               PIC S9(04)      COMP             00319000
+003200                                                 VALUE +6330.     00320000
+003210     03  WS-AB6335               PIC S9(04)      COMP             00321000
+003220                                                 VALUE +6335.     00322000
+003230     03  WS-AB6350               PIC S9(04)      COMP             00323000
+003240                                                 VALUE +6350.     00324000
+003250     03  WS-AB6355               PIC S9(04)      COMP             00325000
+003260                                                 VALUE +6355.     00326000
+003270     03  WS-AB6360               PIC S9(04)      COMP             00327000
+003280                                                 VALUE +6360.     00328000
+003290******************************************************************00329000
+003300 01  SLW096-AREAS.                                                00330000
+000000 COPY SLW096.                                                     00331000
+003320 01  SLS140-RECORD.                                               00332000
+000000 COPY SLS140.                                                     00333000
+003340******************************************************************00334000
+003350 LINKAGE SECTION.                                                 00335000
+003360 01  DFHCOMMAREA.                                                 00336000
+000000 COPY MISCNT00      REPLACING                                     00337000
+003380             ==:MICNT:== BY ==RPXXX03==.                          00338000
+000000 COPY RPSXXX03.                                                   00339000
+003400*01  SLW096-2023RECORDS.                                          00340000
+000000 COPY SLW096L.                                                    00341000
+003420******************************************************************00342000
+003430 PROCEDURE DIVISION.                                              00343000
+003440******************************************************************00344000
+003450 ENTRY-ROUTINE SECTION.                                           00345000
+003460 ER-START.                                                        00346000
+003470     MOVE 'RPLXXX03' TO SR-APIPROGLIT.                            00347000
+003480     MOVE 'RPLXXX03' TO RPXXX03-ABPROGID.                         00348000
+003490     PERFORM CICS-HANDLE-CONDITION.                               00349000
+003500     IF EIBCALEN IS EQUAL TO +0                                   00350000
+003510         MOVE WS-AB2000 TO RPXXX03-ABORT                          00351000
+003520         MOVE WS-TR0001 TO RPXXX03-ABTRACE                        00352000
+003530         GO TO CICS-RETURN.                                       00353000
+003540     MOVE ZERO TO RPXXX03-MSGNBR.                                 00354000
+003550     MOVE SPACE TO WS-FUNCTION.                                   00355000
+003560     MOVE RPXXX03-FILEOPTS TO WS-FILEOPTS.                        00356000
+003570     MOVE RPXXX03-OPERID TO WS-UPD-USER.                          00357000
+003580     MOVE RPXXX03-EXTERNALID TO LOG-PANELID.                      00358000
+003590     MOVE RPXXX03-TERMID TO LOG-TERMID.                           00359000
+003600     MOVE RPXXX03-WORKID TO LOG-WORKID.                           00360000
+003610     MOVE RPXXX03-TRANSTART TO LOG-TRANSTART.                     00361000
+003620     MOVE RPXXX03-APPLSEQ TO LOG-APPLSEQ.                         00362000
+003630     INITIALIZE RPRF21-MESSAGE.                                   00363000
+000000 COPY SLP094.                                                     00364000
+003650     GO TO VERIFY-KEY.                                            00365000
+003660 ER-EXIT.                                                         00366000
+003670     EXIT.                                                        00367000
+003680******************************************************************00368000
+003690 CICS-HANDLE-CONDITION SECTION.                                   00369000
+000000 COPY SLP702.                                                     00370000
+003710     MOVE WS-AB2033 TO RPXXX03-ABORT.                             00371000
+003720     MOVE WS-TR0002 TO RPXXX03-ABTRACE.                           00372000
+003730     GO TO CICS-RETURN.                                           00373000
+003740 CHC-EXIT.                                                        00374000
+003750     EXIT.                                                        00375000
+003760******************************************************************00376000
+003770 VERIFY-KEY SECTION.                                              00377000
+003780 VK-START.                                                        00378000
+003790     MOVE ZERO TO COM-ABORT.                                      00379000
+003800     MOVE ZERO TO RPXXX03-ABORT.                                  00380000
+003810     MOVE ZERO TO RPXXX03-MSGNBR.                                 00381000
+003820     MOVE ZERO TO WS-MSGNBR.                                      00382000
+003830     MOVE SPACES TO RPXXX03-FUNCTION.                             00383000
+003840     MOVE RPXXX03-DATE TO WS-CURDATE.                             00384000
+003850     MOVE WS-CURMM TO WS-PDATE-MM.                                00385000
+003860     MOVE WS-CURDD TO WS-PDATE-DD.                                00386000
+003870     MOVE WS-CURYYYY TO WS-PDATE-YYYY.                            00387000
+003880     MOVE WS-PDATE TO WS-CURDT-YYYYMMDD.                          00388000
+003890 VK-SECURITY.                                                     00389000
+003900     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     00390000
+003910         GO TO VK-MST.                                            00391000
+003920     MOVE RPXXX03-UPDATE TO SR-OPDUPDATE.                         00392000
+003930     MOVE RPXXX03-KEY-INST TO SR-OPDINST.                         00393000
+003940     MOVE RPXXX03-OPERID TO SR-OPDOPERID.                         00394000
+003950     MOVE RPXXX03-MODELID TO SR-OPDMODELID.                       00395000
+003960     MOVE RPXXX03-EXTERNALID TO SR-OPDTRANCODE.                   00396000
+003970     MOVE RPXXX03-APPL TO SR-OPDAPPL.                             00397000
+003980     MOVE RPXXX03-SECALT TO SR-OPDSECALT.                         00398000
+003990     MOVE RPXXX03-FUNC TO SR-OPDFUNC.                             00399000
+004000     PERFORM OPERATOR-DIALOG-SECURITY.                            00400000
+004010     MOVE SR-OPDUPDATE TO RPXXX03-UPDATE.                         00401000
+004020     IF SR-OPDMSGNBR IS NOT EQUAL TO ZEROS                        00402000
+004030         MOVE SR-OPDMSGNBR TO RPXXX03-MSGNBR                      00403000
+004040         GO TO VK-RETURN.                                         00404000
+004050     MOVE ZERO TO RPXXX03-OCCUR.                                  00405000
+004060 VK-IDX.                                                          00406000
+004070     INITIALIZE RPIDX-RECORD.                                     00407000
+004080     IF RPXXX03-KEY-IDNUMBER IS NOT GREATER THAN ZEROS            00408000
+004090         OR RPXXX03-KEY-IDNUMBER IS NOT NUMERIC                   00409000
+004100         MOVE ZEROS TO RPXXX03-KEY-IDNUMBER                       00410000
+004110         GO TO VK-MST.                                            00411000
+004120     PERFORM LOCATE-IDNUMBER-BY-APPL.                             00412000
+004130     IF WS-FUNCTION IS EQUAL TO 'N'                               00413000
+004140         MOVE 500004 TO RPXXX03-MSGNBR                            00414000
+004150         GO TO VK-RETURN.                                         00415000
+004160     MOVE ZEROS TO RPXXX03-KEY-IDNUMBER.                          00416000
+004170 VK-MST.                                                          00417000
+004180     IF RPXXX03-KEY-MODEL IS EQUAL TO SPACES                      00418000
+004190         OR RPXXX03-KEY-MODEL IS EQUAL TO LOW-VALUES              00419000
+004200         PERFORM FIND-DEFAULT-MODEL.                              00420000
+004210     IF WS-ERRORMODEL IS EQUAL TO 'Y'                             00421000
+004220         GO TO VK-RETURN.                                         00422000
+004230     MOVE RPXXX03-KEY-INST TO RPMST-INST.                         00423000
+004240     MOVE RPXXX03-KEY-PRODCODE TO RPMST-PRODCODE.                 00424000
+004250     MOVE RPXXX03-KEY-ACCOUNT TO RPMST-ACCOUNT.                   00425000
+004260     MOVE RPXXX03-KEY-MODEL TO RPMST-MODEL.                       00426000
+004270     PERFORM RPS-MST-GET-REQUEST.                                 00427000
+004280     IF WS-FUNCTION IS EQUAL TO 'N'                               00428000
+004290         AND RPIDX-IDNUMBER IS GREATER THAN SPACES                00429000
+004300         MOVE 500022 TO RPXXX03-MSGNBR                            00430000
+004310         GO TO VK-RETURN.                                         00431000
+004320     IF WS-FUNCTION IS EQUAL TO 'N'                               00432000
+004330         MOVE 500004 TO RPXXX03-MSGNBR                            00433000
+004340         GO TO VK-RETURN.                                         00434000
+004350     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00435000
+004360         MOVE WS-AB6320 TO RPXXX03-ABORT                          00436000
+004370         MOVE WS-TR0003 TO RPXXX03-ABTRACE                        00437000
+004380         GO TO VK-RETURN.                                         00438000
+004390     MOVE RPMST-IDNUMBER TO RPXXX03-IDNUMBER.                     00439000
+004400     MOVE RPMST-IDNUMBER TO RPXXX03-KEY-IDNUMBER.                 00440000
+004410     MOVE RPMST-REL-STAT TO RPXXX03-REL-STAT.                     00441000
+004420     MOVE RPMST-OUT-FLAG TO RPXXX03-OUT-FLAG.                     00442000
+004430 VK-7100.                                                         00443000
+004440     PERFORM READ-MICM-7100.                                      00444000
+004450     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00445000
+004460         MOVE 500005 TO RPXXX03-MSGNBR                            00446000
+004470         GO TO VK-RETURN.                                         00447000
+004480 VK-7101.                                                         00448000
+004490     MOVE SPACES TO MI7101-RECORD.                                00449000
+004500     MOVE RPXXX03-KEY-INST TO MIM-7101KINST.                      00450000
+004510     MOVE +7101 TO MIM-7101KREC.                                  00451000
+004520     MOVE RPMST-MODEL TO MIM-7101KMODEL.                          00452000
+004530     COMPUTE WS-7101KEFFDT = WS-CURDT-YYYYMMDD - 99999999.        00453000
+004540     MOVE WS-7101KEFFDT TO MIM-7101KEFFDT.                        00454000
+004550     MOVE MIC-RPS-7101-PRI TO MIC-MST-REC-PRI.                    00455000
+004560     MOVE MI7101-RECORD TO MIMST-RECORD.                          00456000
+004570     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00457000
+004580     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00458000
+004590         MOVE 500006 TO RPXXX03-MSGNBR                            00459000
+004600         GO TO VK-RETURN.                                         00460000
+004610     MOVE MIMST-RECORD TO MI7101-RECORD.                          00461000
+004620     IF MIM-7101KINST IS NOT EQUAL TO RPMST-INST                  00462000
+004630         OR MIM-7101KREC IS NOT EQUAL TO '7101'                   00463000
+004640         OR MIM-7101KMODEL IS NOT EQUAL TO RPMST-MODEL            00464000
+004650         MOVE 500006 TO RPXXX03-MSGNBR                            00465000
+004660         GO TO VK-RETURN.                                         00466000
+004670     MOVE MIM-7101KMODEL TO RPXXX03-KEY-MODEL.                    00467000
+004680     MOVE MIM-7101DESC TO RPXXX03-MODEL-DESC.                     00468000
+004720     IF WS-CURDT-YYYYMMDD IS GREATER THAN MIM-7101EXPDT           00472000
+004730         AND MIM-7101EXPDT IS GREATER THAN ZEROS                  00473000
+004740         MOVE 'E' TO RPXXX03-EXPIRE-FLAG.                         00474000
+004750     IF MIM-7101CUSTRELCD IS GREATER THAN SPACES                  00475000
+004760         AND (MIM-7101CUSTRELCD-Q IS EQUAL TO 'B'                 00476000
+004770         OR MIM-7101CUSTRELCD-Q IS EQUAL TO 'E')                  00477000
+004780         MOVE MIM-7101CUSTRELCD TO RPXXX03-7104-REL.              00478000
+P0107      IF MIM-7101PRIMRELCD IS NOT EQUAL TO SPACES                  00479000
+P0107          AND (MIM-7101PRIMRELCD-Q IS EQUAL TO 'B'                 00479690
+P0107          OR MIM-7101PRIMRELCD-Q IS EQUAL TO 'E')                  00480380
+004820         MOVE 'Y' TO WS-RELCHECK                                  00482000
+P0107          MOVE MIM-7101PRIMRELCD TO WS-RPMIM7104SC                 00483000
+004840         ELSE                                                     00484000
+004850         MOVE 'N' TO WS-RELCHECK                                  00485000
+004860         MOVE SPACES TO WS-RPMIM7104SC.                           00486000
+004870 VK-NAME.                                                         00487000
+P0107      MOVE ZEROS TO WS-RPW008-RELNBR.                              00487500
+004880     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     00488000
+004890         GO TO VK-EXIT.                                           00489000
+004900     MOVE 'A' TO RPRF21-FUNC.                                     00490000
+004910     MOVE RPMST-INST TO RPRF21-BASE-ACCT-INST.                    00491000
+004920     MOVE RPMST-PRODCODE TO RPRF21-BASE-ACCT-PRODCODE.            00492000
+004930     MOVE RPMST-ACCOUNT TO RPRF21-BASE-ACCT.                      00493000
+004940     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00494000
+004950         AND MIM-7100ENTERPRISEINST IS NOT EQUAL TO ZEROES        00495000
+004960         MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST.    00496000
+004970     PERFORM REQUEST-CUSTOMER.                                    00497000
+004980     MOVE WS-MSGNBR TO RPXXX03-MSGNBR.                            00498000
+004990     IF WS-FUNCTION IS EQUAL TO 'B'                               00499000
+005000         MOVE SPACES TO WS-FUNCTION                               00500000
+005010         MOVE 'Y' TO RPXXX03-CLOSE-FLAG.                          00501000
+P0064 * **                                                              00501070
+P0064      IF RPXXX03-MSGNBR IS EQUAL TO ZEROS                          00501140
+P0064          AND WS-FUNCTION IS EQUAL TO 'N'                          00501210
+P0064          MOVE SPACE TO WS-FUNCTION                                00501280
+P0064          MOVE 'N' TO WS-RELCHECK                                  00501350
+P0064          MOVE 'Y' TO RPXXX03-PRIM-ONLY                            00501420
+P0064          MOVE WS-NOTPRESENT TO RPXXX03-CUST-NAME                  00501490
+P0064          INITIALIZE RPXXX03-RCIF-KEY                              00501560
+P0064          INITIALIZE RPXXX03-FIRST-RCIF-KEY                        00501630
+P0064          INITIALIZE RPXXX03-DISP-DATA                             00501770
+P0064          GO TO VK-EXIT.                                           00501840
+P0064 * **                                                              00501910
+005020     IF WS-FUNCTION IS EQUAL TO SPACES                            00502000
+005030         MOVE RPRF21-BASE-RCIF-KEY TO RPXXX03-RCIF-KEY            00503000
+005040         MOVE RPRF21-BASE-RCIF-KEY TO RPXXX03-FIRST-RCIF-KEY      00504000
+005050         MOVE RPRF21-NAME TO RPXXX03-CUST-NAME                    00505000
+P0107          MOVE RPRF21-REL TO WS-RPW008-RELNBR                      00505500
+005060         PERFORM REQUEST-SECONDARY-CUSTOMER                       00506000
+005070         INITIALIZE RPXXX03-DISP-DATA                             00507000
+005080         GO TO VK-EXIT.                                           00508000
+005090     IF RPXXX03-MSGNBR IS EQUAL TO ZEROS                          00509000
+005100         MOVE 500016 TO RPXXX03-MSGNBR.                           00510000
+005110 VK-RETURN.                                                       00511000
+005120     MOVE 'E' TO RPXXX03-RETURN.                                  00512000
+005130     GO TO CICS-RETURN.                                           00513000
+005140 VK-EXIT.                                                         00514000
+005150     EXIT.                                                        00515000
+005160******************************************************************00516000
+005170 ROUTING-ROUTINE SECTION.                                         00517000
+005180 RR-START.                                                        00518000
+005190     IF RPXXX03-APIFUNC IS EQUAL TO 'VKL'                         00519000
+005200         GO TO RR-CONT.                                           00520000
+005210     PERFORM EDIT-MESSAGE.                                        00521000
+005220     IF RPXXX03-APIFUNC IS EQUAL TO 'EDT'                         00522000
+005230         OR RPXXX03-RETURN IS EQUAL TO 'E'                        00523000
+005240         GO TO RR-END.                                            00524000
+005250     IF RPXXX03-DELETE IS EQUAL TO 'D'                            00525000
+005260         MOVE ZEROS TO RPXXX03-OCCUR                              00526000
+005270         MOVE '1' TO RPXXX03-SELECT-RTN                           00527000
+005280         GO TO RR-RETURN.                                         00528000
+005290 RR-CONT.                                                         00529000
+005300     PERFORM INITIALIZE-MSG.                                      00530000
+005340     MOVE +0001 TO WS-SUB1.                                       00534000
+005350     IF RPXXX03-OUT-FLAG IS EQUAL TO 'Y'                          00535000
+005360         OR RPXXX03-CLOSE-FLAG IS EQUAL TO 'Y'                    00536000
+005370         OR RPXXX03-EXPIRE-FLAG IS EQUAL TO 'E'                   00537000
+005380         PERFORM LOAD-OUT-RECORDS                                 00538000
+005390     ELSE                                                         00539000
+005400         PERFORM LOAD-REL-RECORDS.                                00540000
+P0057      IF RPXXX03-MSGNBR IS NOT GREATER THAN ZEROS                  00541000
+005420         AND RPXXX03-OCCUR IS NOT GREATER THAN ZEROS              00542000
+005430         MOVE 'Y' TO RPXXX03-PRIM-ONLY                            00543000
+005440         MOVE +0001 TO RPXXX03-OCCUR.                             00544000
+005450 RR-END.                                                          00545000
+005460     IF RPXXX03-OCCUR IS EQUAL TO ZERO                            00546000
+005470         AND RPXXX03-IDNUMBER IS NOT EQUAL TO ZERO                00547000
+005480         MOVE '2' TO RPXXX03-SELECT-RTN                           00548000
+005490         GO TO RR-RETURN.                                         00549000
+005500     PERFORM SET-RPXXX03-RETURN.                                  00550000
+005510 RR-RETURN.                                                       00551000
+005520     GO TO CICS-RETURN.                                           00552000
+005530 RR-EXIT.                                                         00553000
+005540     EXIT.                                                        00554000
+005550******************************************************************00555000
+005560 INITIALIZE-MSG SECTION.                                          00556000
+005570 IM-START.                                                        00557000
+005580     MOVE ZEROS TO RPXXX03-MSGNBR.                                00558000
+005590     MOVE +0000 TO RPXXX03-ABORT.                                 00559000
+005600     MOVE +0000 TO RPXXX03-ERRCNT.                                00560000
+005610     MOVE +0000 TO RPXXX03-OCCUR.                                 00561000
+005620     MOVE +0000 TO RPXXX03-SCSUB.                                 00562000
+005630     MOVE SPACE TO RPXXX03-SELECT-RTN.                            00563000
+005640     INITIALIZE WS-SAVE-GROUP.                                    00564000
+005650 IM-LOOP-SET-UP.                                                  00565000
+005660     MOVE +0 TO WS-SUB1.                                          00566000
+005670 IM-LOOP.                                                         00567000
+005680     ADD +1 TO WS-SUB1.                                           00568000
+005690     IF WS-SUB1 IS GREATER THAN WS-MAX-PANEL-ENTRIES              00569000
+005700         GO TO IM-EXIT.                                           00570000
+005710     MOVE SPACE TO RPXXX03-RET-GRP-KEY (WS-SUB1).                 00571000
+005720     MOVE SPACE TO RPXXX03-RET-ACCT-STATUS (WS-SUB1).             00572000
+005730     MOVE SPACE TO RPXXX03-ACTION (WS-SUB1).                      00573000
+005740     MOVE ZEROS TO RPXXX03-RET-ACCT-TYPE (WS-SUB1).               00574000
+005750     MOVE ZEROS TO RPXXX03-RET-BRANCH (WS-SUB1).                  00575000
+005760     MOVE ZEROS TO RPXXX03-RET-APPL (WS-SUB1).                    00576000
+005770     GO TO IM-LOOP.                                               00577000
+005780 IM-EXIT.                                                         00578000
+005790     EXIT.                                                        00579000
+005800******************************************************************00580000
+005810 EDIT-MESSAGE SECTION.                                            00581000
+005820 EM-START.                                                        00582000
+005830     MOVE ZEROS TO WS-SUB1.                                       00583000
+005840     PERFORM CHECK-FOR-ERRORS.                                    00584000
+005850     IF WS-ERROR-INDICATOR IS EQUAL TO 'Y'                        00585000
+005860         OR RPXXX03-APIFUNC IS NOT EQUAL TO 'UPD'                 00586000
+005870         GO TO EM-EDIT-COMPLETE.                                  00587000
+005880     IF RPXXX03-DELETE IS EQUAL TO 'D'                            00588000
+005890         PERFORM DELETE-RELATIONSHIP                              00589000
+005900         GO TO EM-EDIT-COMPLETE.                                  00590000
+005910     IF WS-UPDATE-RP IS NOT EQUAL TO 'Y'                          00591000
+005920         GO TO EM-EDIT-COMPLETE.                                  00592000
+005930     MOVE RPXXX03-KEY-ACCT1-GRP TO RPMST-GRP-KEY.                 00593000
+005940     PERFORM RPS-MST-GET-REQUEST.                                 00594000
+005950     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00595000
+005960         MOVE WS-AB6320 TO RPXXX03-ABORT                          00596000
+005970         MOVE WS-TR0056 TO RPXXX03-ABTRACE                        00597000
+005980         GO TO CICS-RETURN.                                       00598000
+005990     MOVE ZEROS TO WS-SUB1.                                       00599000
+006000 EM-LOOP.                                                         00600000
+006010     ADD +0001 TO WS-SUB1.                                        00601000
+006020     IF RPXXX03-RETURN IS EQUAL TO 'E'                            00602000
+006030         PERFORM UPDATE-MASTER                                    00603000
+006040         GO TO EM-EXIT.                                           00604000
+006050     IF WS-SUB1 IS GREATER THAN +0008                             00605000
+006060         GO TO EM-EDIT-COMPLETE.                                  00606000
+006070     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO SPACE                00607000
+006080         GO TO EM-LOOP.                                           00608000
+006090     PERFORM UPDATE-RP-RECORDS.                                   00609000
+006100     GO TO EM-LOOP.                                               00610000
+006110 EM-EDIT-COMPLETE.                                                00611000
+006120     IF WS-ERROR-INDICATOR IS EQUAL TO 'Y'                        00612000
+006130         AND RPXXX03-MSGNBR IS EQUAL TO ZEROS                     00613000
+006140         MOVE 500035 TO RPXXX03-MSGNBR.                           00614000
+006150     IF WS-ERROR-INDICATOR IS EQUAL TO 'Y'                        00615000
+006160         OR RPXXX03-APIFUNC IS EQUAL TO 'EDT'                     00616000
+006170         MOVE 'EDT' TO RPXXX03-APIFUNC.                           00617000
+006180 EM-EXIT.                                                         00618000
+006190     EXIT.                                                        00619000
+006200******************************************************************00620000
+006210 CHECK-FOR-ERRORS SECTION.                                        00621000
+006220 CFE-START.                                                       00622000
+006230     IF RPXXX03-DELETE IS EQUAL TO SPACES                         00623000
+006240         OR RPXXX03-DELETE-DCHG IS EQUAL TO SPACES                00624000
+006250         GO TO CFE-CONT.                                          00625000
+006260     IF RPXXX03-DELETE IS EQUAL TO 'D'                            00626000
+006270         GO TO CFE-EXIT.                                          00627000
+006280     MOVE 'E' TO RPXXX03-DELETE-DCHG.                             00628000
+006290     MOVE 'Y' TO WS-ERROR-INDICATOR.                              00629000
+006300     GO TO CFE-EXIT.                                              00630000
+006310 CFE-CONT.                                                        00631000
+006320     MOVE +09 TO WS-SUB1.                                         00632000
+006330 CFE-EDIT-LIST-LOOP.                                              00633000
+006340     SUBTRACT +1 FROM WS-SUB1.                                    00634000
+006350     IF WS-SUB1 IS LESS THAN +1                                   00635000
+006360         GO TO CFE-EXIT.                                          00636000
+006370     IF RPXXX03-ACTION-DCHG (WS-SUB1) IS EQUAL TO SPACES          00637000
+006380         GO TO CFE-EDIT-LIST-LOOP.                                00638000
+006390     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO SPACES               00639000
+006400         GO TO CFE-EDIT-LIST-LOOP.                                00640000
+006410     IF RPXXX03-ACTION (WS-SUB1) IS NOT EQUAL TO 'A'              00641000
+006420         AND RPXXX03-ACTION (WS-SUB1) IS NOT EQUAL TO 'R'         00642000
+006430         MOVE 'E' TO RPXXX03-ACTION-DCHG (WS-SUB1)                00643000
+006440         MOVE 'Y' TO WS-ERROR-INDICATOR                           00644000
+006450         GO TO CFE-EDIT-LIST-LOOP.                                00645000
+006460     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO 'R'                  00646000
+006470         AND RPXXX03-RET-ACCT-STATUS (WS-SUB1) IS NOT EQUAL TO 'R'00647000
+006480         MOVE 'Y' TO WS-UPDATE-RP                                 00648000
+006490         GO TO CFE-EDIT-LIST-LOOP.                                00649000
+006500     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO 'A'                  00650000
+006510         AND RPXXX03-RET-ACCT-STATUS (WS-SUB1) IS NOT EQUAL TO 'A'00651000
+006520         MOVE 'Y' TO WS-UPDATE-RP                                 00652000
+006530         GO TO CFE-EDIT-LIST-LOOP.                                00653000
+006540     MOVE 'E' TO RPXXX03-ACTION-DCHG (WS-SUB1).                   00654000
+006550     MOVE 'Y' TO WS-ERROR-INDICATOR.                              00655000
+006560     GO TO CFE-EDIT-LIST-LOOP.                                    00656000
+006570 CFE-EXIT.                                                        00657000
+006580     EXIT.                                                        00658000
+006590******************************************************************00659000
+006600 LOAD-REL-RECORDS SECTION.                                        00660000
+006610 LRR-START.                                                       00661000
+P0107      MOVE SPACES TO WS-SAVE-7104KRPREC.                           00661500
+006620     MOVE RPXXX03-RCIF-KEY TO RPRF21-BASE-RCIF-KEY.               00662000
+006630     MOVE SPACES TO RPRF21-BASE-ACCOUNT.                          00663000
+006640     MOVE ZEROS TO RPRF21-BASE-ACCT-INST.                         00664000
+006650     INITIALIZE RPREL-RECORD.                                     00665000
+006660     MOVE RPMST-GRP-KEY TO RPREL-ACCT1-GRP.                       00666000
+006670     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     00667000
+006680         GO TO LRR-REL-GE.                                        00668000
+006690     MOVE ZEROS TO RPREL-INST2.                                   00669000
+006700     PERFORM RPS-REL-GET-REQUEST.                                 00670000
+006710     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00671000
+006720         MOVE WS-AB6330 TO RPXXX03-ABORT                          00672000
+006730         MOVE WS-TR0048 TO RPXXX03-ABTRACE                        00673000
+006740         GO TO CICS-ABORT-EXIT.                                   00674000
+006750     GO TO LRR-REL-NEXT.                                          00675000
+006760 LRR-REL-GE.                                                      00676000
+006770     MOVE RPXXX03-KEY-ACCT2-GRP TO RPREL-ACCT2-GRP.               00677000
+006780     PERFORM RPS-REL-GET-GE-REQUEST.                              00678000
+006790     GO TO LRR-REL-LOAD.                                          00679000
+006800 LRR-REL-NEXT.                                                    00680000
+006810     PERFORM RPS-REL-GET-NEXT-REQUEST.                            00681000
+006820 LRR-REL-LOAD.                                                    00682000
+006830     IF WS-FUNCTION IS EQUAL TO 'E'                               00683000
+006840         AND WS-SUB1 IS EQUAL TO +0001                            00684000
+006850         MOVE RPXXX03-KEY-ACCT2-GRP TO RPRF21-BASE-ACCOUNT        00685000
+006860         GO TO LRR-RCIF.                                          00686000
+006870     IF WS-FUNCTION IS EQUAL TO 'E'                               00687000
+006880         GO TO LRR-RCIF.                                          00688000
+006890     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00689000
+006900         MOVE WS-AB6330 TO RPXXX03-ABORT                          00690000
+006910         MOVE WS-TR0049 TO RPXXX03-ABTRACE                        00691000
+006920         GO TO CICS-ABORT-EXIT.                                   00692000
+006930     IF RPMST-GRP-KEY IS NOT EQUAL TO RPREL-ACCT1-GRP             00693000
+006940         AND WS-UPDATE-RP IS NOT EQUAL TO 'Y'                     00694000
+006950         AND WS-SUB1 IS EQUAL TO +0001                            00695000
+006960         MOVE RPXXX03-KEY-ACCT2-GRP TO RPRF21-BASE-ACCOUNT        00696000
+006970         GO TO LRR-RCIF.                                          00697000
+006980     IF RPMST-GRP-KEY IS NOT EQUAL TO RPREL-ACCT1-GRP             00698000
+006990         GO TO LRR-RCIF.                                          00699000
+007000     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     00700000
+007010         AND WS-SUB1 IS EQUAL TO +0001                            00701000
+007020         AND RPXXX03-KEY-ACCT2-GRP IS NOT EQUAL TO RPREL-ACCT2-GRP00702000
+007030         MOVE RPXXX03-KEY-ACCT2-GRP TO RPRF21-BASE-ACCOUNT        00703000
+007040         GO TO LRR-RCIF.                                          00704000
+007050     MOVE RPREL-GRP-KEY TO RPXXX03-RET-GRP-KEY (WS-SUB1).         00705000
+007060     MOVE RPREL-ACCT-STATUS TO RPXXX03-RET-ACCT-STATUS (WS-SUB1). 00706000
+007070     MOVE RPREL-ACCT-TYPE TO RPXXX03-RET-ACCT-TYPE (WS-SUB1).     00707000
+007080     MOVE RPREL-BRANCH TO RPXXX03-RET-BRANCH (WS-SUB1).           00708000
+007090     MOVE RPREL-APPL TO RPXXX03-RET-APPL (WS-SUB1).               00709000
+007100     ADD +0001 TO RPXXX03-OCCUR.                                  00710000
+007110     ADD +0001 TO WS-SUB1.                                        00711000
+007120     IF WS-SUB1 IS GREATER THAN WS-MAX-PANEL-ENTRIES              00712000
+007130         GO TO LRR-EXIT.                                          00713000
+007140     IF RPXXX03-ALL IS GREATER THAN +49                           00714000
+007150         MOVE +50 TO RPXXX03-ALL                                  00715000
+007160     ELSE                                                         00716000
+007170         ADD +0001 TO RPXXX03-ALL.                                00717000
+007180     MOVE RPREL-INST2 TO RPXXX03-DISP-INST (RPXXX03-ALL).         00718000
+007190     MOVE RPREL-PRODCODE2                                         00719000
+007200         TO RPXXX03-DISP-PRODCODE (RPXXX03-ALL).                  00720000
+007210     MOVE RPREL-ACCOUNT2                                          00721000
+007220         TO RPXXX03-DISP-ACCOUNT (RPXXX03-ALL).                   00722000
+007230     GO TO LRR-REL-NEXT.                                          00723000
+007240 LRR-RCIF.                                                        00724000
+P0107      IF RPXXX03-PRIM-ONLY IS EQUAL TO 'Y'                         00724300
+P0107          GO TO LRR-EXIT.                                          00724600
+007250     MOVE SPACES TO MIM-2023KPRODCODE.                            00725000
+007260     MOVE RPMST-INST TO WS-LAST-GOOD-INST.                        00726000
+007270     MOVE ZEROES TO WS-LAST-INST-TRIED.                           00727000
+007280     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     00728000
+007290         AND RPRF21-BASE-ACCT-INST IS NOT EQUAL TO ZEROS          00729000
+007300         GO TO LRR-PRODCODE.                                      00730000
+P0107      IF WS-RELCHECK IS NOT EQUAL TO 'Y'                           00730100
+P0107          GO TO LRR-RCIF-CONT.                                     00730200
+P0107      MOVE RPXXX03-KEY-INST TO WS-RPW008-INST.                     00730300
+P0107      MOVE WS-RPMIM7104SC TO WS-RPW008-RELCODE.                    00730400
+P0107      PERFORM VALIDATE-PRIM-RELCD.                                 00730500
+P0107      IF WS-PRIMRELCD-ERROR IS EQUAL TO 'Y'                        00730600
+P0107          GO TO LRR-ENDIT.                                         00730700
+P0107  LRR-RCIF-CONT.                                                   00730800
+007310     MOVE 'B' TO RPRF21-FUNC.                                     00731000
+007320     MOVE SPACES TO RPRF21-BASE-ACCOUNT.                          00732000
+007330     MOVE ZEROS TO RPRF21-BASE-ACCT-INST.                         00733000
+007340     GO TO LRR-LINK-RCIF.                                         00734000
+007350 LRR-LOOP.                                                        00735000
+007360     MOVE 'C' TO RPRF21-FUNC.                                     00736000
+007370     MOVE ZEROS TO WS-ACCT-TYPE.                                  00737000
+007380     MOVE ZEROS TO WS-BRANCH.                                     00738000
+007390     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     00739000
+007400         AND MIM-7100ENTERPRISEINST IS NOT EQUAL TO ZEROES        00740000
+007410         MOVE MIM-7100ENTERPRISEINST TO RPRF21-BASE-ACCT-INST.    00741000
+007420 LRR-LINK-RCIF.                                                   00742000
+007430     MOVE SPACE TO WS-CLOSE-FLAG.                                 00743000
+007440     PERFORM REQUEST-CUSTOMER.                                    00744000
+007450     IF WS-FUNCTION IS EQUAL TO 'N'                               00745000
+007460         AND RPRF21-FUNC IS EQUAL TO 'B'                          00746000
+007470         MOVE 'E' TO RPXXX03-RETURN                               00747000
+007480         MOVE 500013 TO RPXXX03-MSGNBR                            00748000
+007490         GO TO LRR-ENDIT.                                         00749000
+007500** ** ** MESSAGE IS NOT NEEDED *******                            00750000
+007510**   IF WS-FUNCTION IS EQUAL TO 'N'                               00751000
+007520**       AND WS-SUB1 IS EQUAL TO +0001                            00752000
+007530**       MOVE 500013 TO RPXXX03-MSGNBR                            00753000
+007540**       GO TO LRR-ENDIT.                                         00754000
+007550** ** ********************************                            00755000
+007560     IF WS-FUNCTION IS EQUAL TO 'N'                               00756000
+007570         GO TO LRR-ENDIT.                                         00757000
+007580     IF WS-FUNCTION IS EQUAL TO 'B'                               00758000
+007590         MOVE SPACE TO WS-FUNCTION                                00759000
+007600         MOVE 'Y' TO WS-CLOSE-FLAG                                00760000
+P0154          MOVE ZEROS TO WS-MSGNBR                                  00760500
+007610         GO TO LRR-PRODCODE.                                      00761000
+007620     IF WS-FUNCTION IS GREATER THAN SPACES                        00762000
+007630         MOVE 'E' TO RPXXX03-RETURN                               00763000
+007640         MOVE WS-MSGNBR TO RPXXX03-MSGNBR                         00764000
+007650         GO TO LRR-EXIT.                                          00765000
+007660     IF RPMST-INST IS EQUAL TO RPRF21-ACCT-ALT-INST               00766000
+007670         AND RPMST-PRODCODE IS EQUAL TO RPRF21-BASE-ACCT-PRODCODE 00767000
+007680         AND RPMST-ACCOUNT IS EQUAL TO RPRF21-BASE-ACCT           00768000
+007690         GO TO LRR-LOOP.                                          00769000
+007700 LRR-PRODCODE.                                                    00770000
+007710     IF RPRF21-BASE-ACCT-PRODCODE IS EQUAL TO MIM-2023KPRODCODE   00771000
+007720         GO TO LRR-2023.                                          00772000
+007730     PERFORM READ-MICM-2023.                                      00773000
+007740 LRR-2023.                                                        00774000
+007750     IF MIM-2023RPOPTION IS EQUAL TO ' '                          00775000
+007760         OR MIM-2023RPOPTION IS EQUAL TO 'N'                      00776000
+007770         MOVE 'N' TO MIM-2023RPOPTION.                            00777000
+007780     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'N'                     00778000
+007790         AND RPMST-INST IS NOT EQUAL TO RPRF21-ACCT-ALT-INST      00779000
+007800         GO TO LRR-LOOP.                                          00780000
+007810     IF RPRF21-ACCT-ALT-INST IS EQUAL TO RPMST-INST               00781000
+007820         MOVE RPMST-INST TO WS-LAST-GOOD-INST                     00782000
+007830         MOVE ZEROES TO WS-LAST-INST-TRIED                        00783000
+007840         GO TO LRR-REL.                                           00784000
+007850     IF RPRF21-ACCT-ALT-INST IS EQUAL TO WS-LAST-GOOD-INST        00785000
+007860         GO TO LRR-REL.                                           00786000
+007870     IF RPRF21-ACCT-ALT-INST IS EQUAL TO WS-LAST-INST-TRIED       00787000
+007880         GO TO LRR-LOOP.                                          00788000
+007890     MOVE RPRF21-ACCT-ALT-INST TO WS-LAST-INST-TRIED.             00789000
+007900     MOVE ZEROES TO MIM-2024KINST.                                00790000
+007910     MOVE 2024 TO MIM-2024KREC.                                   00791000
+007920     MOVE RPMST-INST TO MIM-2024KGROUP-INST.                      00792000
+007930     MOVE RPRF21-ACCT-ALT-INST TO MIM-2024KACCESS-INST.           00793000
+007940     MOVE MIC-MST-2024-PRI TO MIC-MST-REC-PRI.                    00794000
+007950     MOVE 50 TO MIM-2024KMANGER.                                  00795000
+007960     MOVE MI2024-RECORD TO MIMST-RECORD.                          00796000
+007970     PERFORM MIC-MST-GET-REQUEST.                                 00797000
+007980     IF WS-FUNCTION IS EQUAL TO 'N'                               00798000
+007990         GO TO LRR-LOOP.                                          00799000
+008000     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00800000
+008010         MOVE WS-TR0052 TO RPXXX03-ABTRACE                        00801000
+008020         MOVE WS-AB3051 TO RPXXX03-ABORT                          00802000
+008030         GO TO CICS-ABORT-EXIT.                                   00803000
+008040     MOVE MIMST-RECORD TO MI2024-RECORD.                          00804000
+008050     MOVE SPACES TO SLS140-MSGNBRG.                               00805000
+008060     MOVE SPACES TO SLS140-ABMSG.                                 00806000
+008070     MOVE 'X' TO SLS140-SECURITY-FUNC.                            00807000
+008080     MOVE RPMST-INST TO SLS140-INST.                              00808000
+008090     MOVE RPRF21-ACCT-ALT-INST TO SLS140-INST2.                   00809000
+008100     MOVE RPXXX03-OPERID TO SLS140-OPERID.                        00810000
+008110     MOVE RPXXX03-PROFILE TO SLS140-PROFILE.                      00811000
+008120     MOVE RPXXX03-EXTERNALID TO SLS140-EXTERNALID.                00812000
+008130     EXEC CICS LINK                                               00813000
+008140         PROGRAM('SSL140')                                        00814000
+008150         COMMAREA(SLS140-RECORD)                                  00815000
+008160         LENGTH(LENGTH OF SLS140-RECORD)                          00816000
+008170         NOHANDLE                                                 00817000
+008180         END-EXEC.                                                00818000
+008190     IF EIBRESP IS NOT EQUAL TO DFHRESP(NORMAL)                   00819000
+008200         MOVE 'PROGRAM ID = ' TO RPXXX03-ABMSG                    00820000
+008210         MOVE WS-PROGRAM TO RPXXX03-ABMSG (14:8)                  00821000
+008220         MOVE WS-TR0053 TO RPXXX03-ABTRACE                        00822000
+008230         MOVE WS-AB0009 TO RPXXX03-ABORT                          00823000
+008240         GO TO CICS-ABORT-EXIT.                                   00824000
+008250     IF SLS140-SECURITY-FUNC IS EQUAL TO 'A'                      00825000
+008260         MOVE SLS140-MSGNBRG TO RPXXX03-MSGNBRG                   00826000
+008270         MOVE SLS140-ABORT TO RPXXX03-ABORT                       00827000
+008280         MOVE SLS140-ABTRACE TO RPXXX03-ABTRACE                   00828000
+008290         MOVE SLS140-ABFUNCTION TO RPXXX03-FUNCTION               00829000
+008300         MOVE SLS140-ABPROGID TO RPXXX03-ABPROGID                 00830000
+008310         MOVE SLS140-ABMSG TO RPXXX03-ABMSG                       00831000
+008320         MOVE SLS140-ABEIBRESP TO EIBRESP                         00832000
+008330         MOVE SLS140-ABEIBRESP2 TO EIBRESP2                       00833000
+008340         MOVE SLS140-ABEIBFN TO EIBFN                             00834000
+008350         MOVE SLS140-ABEIBRCODE TO EIBRCODE                       00835000
+008360         MOVE SLS140-SRBMDB TO RPXXX03-SRBMDB                     00836000
+008370         GO TO CICS-ABORT-EXIT.                                   00837000
+008380     IF SLS140-SECURITY-FUNC IS NOT EQUAL TO 'G'                  00838000
+008390         GO TO LRR-LOOP.                                          00839000
+008400     MOVE RPRF21-ACCT-ALT-INST TO WS-LAST-GOOD-INST.              00840000
+008410 LRR-REL.                                                         00841000
+008420     INITIALIZE RPREL-RECORD.                                     00842000
+008430     MOVE RPMST-GRP-KEY TO RPREL-GRP-KEY.                         00843000
+008440     MOVE RPRF21-BASE-ACCOUNT TO RPREL-ACCT2-GRP.                 00844000
+008450     MOVE RPRF21-ACCT-ALT-INST TO RPREL-INST2.                    00845000
+008460     PERFORM RPS-REL-GET-REQUEST.                                 00846000
+008470     IF WS-FUNCTION IS EQUAL TO SPACE                             00847000
+008480         GO TO LRR-LOOP.                                          00848000
+008490     IF WS-FUNCTION IS EQUAL TO 'N'                               00849000
+008500         MOVE SPACE TO RPREL-ACCT-STATUS                          00850000
+008510         GO TO LRR-2023-CHECK.                                    00851000
+008520     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00852000
+008530         MOVE WS-AB6330 TO RPXXX03-ABORT                          00853000
+008540         MOVE WS-TR0004 TO RPXXX03-ABTRACE                        00854000
+008550         GO TO CICS-ABORT-EXIT.                                   00855000
+008560     IF RPREL-ACCT-STATUS IS EQUAL TO 'R'                         00856000
+008570         GO TO LRR-2023-CHECK.                                    00857000
+008580     MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE.                        00858000
+008590     MOVE RPREL-BRANCH TO WS-BRANCH.                              00859000
+008600     GO TO LRR-CONT.                                              00860000
+008610 LRR-2023-CHECK.                                                  00861000
+008620     IF MIM-2023RPOPTION IS EQUAL TO 'N'                          00862000
+008630         OR WS-CLOSE-FLAG IS EQUAL TO 'Y'                         00863000
+008640         GO TO LRR-LOOP.                                          00864000
+008650 LRR-ACT.                                                         00865000
+008660     MOVE SPACE TO WS-ACT-FLAG.                                   00866000
+008670     INITIALIZE RPACT-RECORD.                                     00867000
+008680     MOVE RPRF21-ACCT-ALT-INST TO RPACT-INST.                     00868000
+008690     MOVE RPRF21-BASE-ACCT-PRODCODE TO RPACT-PRODCODE.            00869000
+008700     MOVE RPRF21-BASE-ACCT TO RPACT-ACCOUNT.                      00870000
+008710     PERFORM RPS-ACT-GET-GE-REQUEST.                              00871000
+008720     GO TO LRR-ACT-CONT.                                          00872000
+008730 LRR-ACT-NEXT.                                                    00873000
+008740     PERFORM RPS-ACT-GET-NEXT-REQUEST.                            00874000
+008750 LRR-ACT-CONT.                                                    00875000
+008760     IF WS-FUNCTION IS EQUAL TO 'E'                               00876000
+008770         GO TO LRR-INTERFACE.                                     00877000
+008780     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00878000
+008790         MOVE WS-AB6300 TO RPXXX03-ABORT                          00879000
+008800         MOVE WS-TR0005 TO RPXXX03-ABTRACE                        00880000
+008810         GO TO CICS-ABORT-EXIT.                                   00881000
+008820     IF RPRF21-ACCT-ALT-INST IS NOT EQUAL TO RPACT-INST           00882000
+008830         OR RPRF21-BASE-ACCT-PRODCODE                             00883000
+008840             IS NOT EQUAL TO RPACT-PRODCODE                       00884000
+008850         OR RPRF21-BASE-ACCT IS NOT EQUAL TO RPACT-ACCOUNT        00885000
+008860         GO TO LRR-QUA.                                           00886000
+008870     IF MIM-7100ACCTLIMITOPT IS EQUAL TO 'Y'                      00887000
+008880         GO TO LRR-LOOP.                                          00888000
+008890     MOVE 'Y' TO WS-ACT-FLAG.                                     00889000
+008900     GO TO LRR-ACT-NEXT.                                          00890000
+008910 LRR-QUA.                                                         00891000
+008920     INITIALIZE RPQUA-RECORD.                                     00892000
+008930     MOVE RPRF21-ACCT-ALT-INST TO RPQUA-INST.                     00893000
+008940     MOVE RPRF21-BASE-ACCT-PRODCODE TO RPQUA-PRODCODE.            00894000
+008950     MOVE RPRF21-BASE-ACCT TO RPQUA-ACCOUNT.                      00895000
+008960     MOVE LOW-VALUES TO RPQUA-MODEL.                              00896000
+008970     PERFORM RPS-QUA-GET-GE-REQUEST.                              00897000
+008980     GO TO LRR-QUA-ACCT-CONT.                                     00898000
+008990 LRR-QUA-ACCT-NEXT.                                               00899000
+009000     PERFORM RPS-QUA-GET-NEXT-REQUEST.                            00900000
+009010 LRR-QUA-ACCT-CONT.                                               00901000
+009020     IF WS-FUNCTION IS EQUAL TO 'E'                               00902000
+009030         GO TO LRR-INTERFACE.                                     00903000
+009040     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00904000
+009050         MOVE WS-AB6325 TO RPXXX03-ABORT                          00905000
+009060         MOVE WS-TR0006 TO RPXXX03-ABTRACE                        00906000
+009070         GO TO CICS-ABORT-EXIT.                                   00907000
+009080     IF RPRF21-ACCT-ALT-INST IS NOT EQUAL TO RPQUA-INST           00908000
+009090         OR RPRF21-BASE-ACCT-PRODCODE                             00909000
+009100             IS NOT EQUAL TO RPQUA-PRODCODE                       00910000
+009110         OR RPRF21-BASE-ACCT IS NOT EQUAL TO RPQUA-ACCOUNT        00911000
+009120         GO TO LRR-INTERFACE.                                     00912000
+009130     IF MIM-7100ACCTLIMITOPT IS EQUAL TO 'Y'                      00913000
+009140         OR RPMST-MODEL IS EQUAL TO RPQUA-MODEL                   00914000
+009150         GO TO LRR-LOOP.                                          00915000
+009160     GO TO LRR-QUA-ACCT-NEXT.                                     00916000
+009170 LRR-INTERFACE.                                                   00917000
+009180     MOVE 'N' TO WS-INTERFACE.                                    00918000
+009190     IF MIM-2023RPOPTION IS NOT EQUAL TO 'Y'                      00919000
+009200         MOVE ZEROS TO WS-BRANCH                                  00920000
+009210         MOVE ZEROS TO WS-ACCT-TYPE                               00921000
+009220         GO TO LRR-7102.                                          00922000
+009230     PERFORM READ-MICM-0237.                                      00923000
+009240     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00924000
+009250         OR MIM-237OLINTFC IS NOT GREATER THAN SPACES             00925000
+009260         GO TO LRR-LOOP.                                          00926000
+009270     MOVE RPRF21-ACCT-ALT-INST TO WS-INF-INST.                    00927000
+009280     MOVE RPRF21-ACCT-ALT-INST TO WS-INF-INST.                    00928000
+009290     MOVE RPRF21-BASE-ACCT-PRODCODE TO WS-INF-PRODCODE.           00929000
+009300     MOVE RPRF21-BASE-ACCT TO WS-INF-ACCOUNT.                     00930000
+009310     MOVE MIM-2023INTAPPL211 TO WS-INF-APPLR.                     00931000
+009320     PERFORM LINK-INTERFACE.                                      00932000
+009330     IF WS-FUNCTION IS EQUAL TO 'N'                               00933000
+009340         OR WS-FUNCTION IS EQUAL TO 'D'                           00934000
+009350         GO TO LRR-LOOP.                                          00935000
+009360     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00936000
+009370         MOVE 'E' TO RPXXX03-RETURN                               00937000
+009380         MOVE WS-MSGNBR TO RPXXX03-MSGNBR                         00938000
+009390         GO TO LRR-EXIT.                                          00939000
+009400     MOVE RPINF00-BRANCH TO WS-BRANCH.                            00940000
+009410     MOVE RPINF00-ACCT-TYPE TO WS-ACCT-TYPE.                      00941000
+009420 LRR-7102.                                                        00942000
+009430     PERFORM READ-MICM-7102.                                      00943000
+009440     IF WS-7102-FLAG IS EQUAL TO 'N'                              00944000
+009450         GO TO LRR-LOOP.                                          00945000
+009460     IF RPINF00-TERM IS NOT NUMERIC                               00946000
+009470         MOVE ZEROS TO RPINF00-TERM.                              00947000
+009480 LRR-MIN-TERM.                                                    00948000
+009490     IF (MIM-7102MINTERM-Q IS NOT EQUAL TO 'B'                    00949000
+009500         AND MIM-7102MINTERM-Q IS NOT EQUAL TO 'E')               00950000
+009510         OR MIM-7102MINTERM IS NOT GREATER THAN ZERO              00951000
+009520         GO TO LRR-MAX-TERM.                                      00952000
+009530     IF RPINF00-TERM IS LESS THAN MIM-7102MINTERM                 00953000
+009540         GO TO LRR-LOOP.                                          00954000
+009550 LRR-MAX-TERM.                                                    00955000
+009560     IF (MIM-7102MAXTERM-Q IS NOT EQUAL TO 'B'                    00956000
+009570         AND MIM-7102MAXTERM-Q IS NOT EQUAL TO 'E')               00957000
+009580         OR MIM-7102MAXTERM IS NOT GREATER THAN ZERO              00958000
+009590         GO TO LRR-USER-OPTION-1.                                 00959000
+009600     IF RPINF00-TERM IS GREATER THAN MIM-7102MAXTERM              00960000
+009610         GO TO LRR-LOOP.                                          00961000
+009620 LRR-USER-OPTION-1.                                               00962000
+009630     IF MIM-7102USERTYPE1 IS EQUAL TO 'P'                         00963000
+009640         GO TO LRR-USER-OPTION-2.                                 00964000
+009650     IF (MIM-7102USEROPT1-Q IS NOT EQUAL TO 'B'                   00965000
+009660         AND MIM-7102USEROPT1-Q IS NOT EQUAL TO 'E')              00966000
+009670         GO TO LRR-USER-OPTION-2.                                 00967000
+009680     IF (MIM-7102USEROPTREL1 IS EQUAL TO 'EQ'                     00968000
+009690         AND RPINF00-USEROPT1 IS NOT EQUAL TO MIM-7102USEROPT1)   00969000
+009700         OR (MIM-7102USEROPTREL1 IS EQUAL TO 'NE'                 00970000
+009710         AND RPINF00-USEROPT1 IS EQUAL TO MIM-7102USEROPT1)       00971000
+009720         GO TO LRR-LOOP.                                          00972000
+009730 LRR-USER-OPTION-2.                                               00973000
+009740     IF MIM-7102USERTYPE2 IS EQUAL TO 'P'                         00974000
+009750         GO TO LRR-USER-OPTION-3.                                 00975000
+009760     IF (MIM-7102USEROPT2-Q IS NOT EQUAL TO 'B'                   00976000
+009770         AND MIM-7102USEROPT2-Q IS NOT EQUAL TO 'E')              00977000
+009780         GO TO LRR-USER-OPTION-3.                                 00978000
+009790     IF (MIM-7102USEROPTREL2 IS EQUAL TO 'EQ'                     00979000
+009800         AND RPINF00-USEROPT2 IS NOT EQUAL TO MIM-7102USEROPT2)   00980000
+009810         OR (MIM-7102USEROPTREL2 IS EQUAL TO 'NE'                 00981000
+009820         AND RPINF00-USEROPT2 IS EQUAL TO MIM-7102USEROPT2)       00982000
+009830         GO TO LRR-LOOP.                                          00983000
+009840 LRR-USER-OPTION-3.                                               00984000
+009850     IF MIM-7102USERTYPE3 IS EQUAL TO 'P'                         00985000
+009860         GO TO LRR-USER-OPTION-4.                                 00986000
+009870     IF (MIM-7102USEROPT3-Q IS NOT EQUAL TO 'B'                   00987000
+009880         AND MIM-7102USEROPT3-Q IS NOT EQUAL TO 'E')              00988000
+009890         GO TO LRR-USER-OPTION-4.                                 00989000
+009900     IF (MIM-7102USEROPTREL3 IS EQUAL TO 'EQ'                     00990000
+009910         AND RPINF00-USEROPT3 IS NOT EQUAL TO MIM-7102USEROPT3)   00991000
+009920         OR (MIM-7102USEROPTREL3 IS EQUAL TO 'NE'                 00992000
+009930         AND RPINF00-USEROPT3 IS EQUAL TO MIM-7102USEROPT3)       00993000
+009940         GO TO LRR-LOOP.                                          00994000
+009950 LRR-USER-OPTION-4.                                               00995000
+009960     IF MIM-7102USERTYPE4 IS EQUAL TO 'P'                         00996000
+009970         GO TO LRR-REL-CODE.                                      00997000
+009980     IF (MIM-7102USEROPT4-Q IS NOT EQUAL TO 'B'                   00998000
+009990         AND MIM-7102USEROPT4-Q IS NOT EQUAL TO 'E')              00999000
+010000         GO TO LRR-REL-CODE.                                      01000000
+010010     IF (MIM-7102USEROPTREL4 IS EQUAL TO 'EQ'                     01001000
+010020         AND RPINF00-USEROPT4 IS NOT EQUAL TO MIM-7102USEROPT4)   01002000
+010030         OR (MIM-7102USEROPTREL4 IS EQUAL TO 'NE'                 01003000
+010040         AND RPINF00-USEROPT4 IS EQUAL TO MIM-7102USEROPT4)       01004000
+010050         GO TO LRR-LOOP.                                          01005000
+010060 LRR-REL-CODE.                                                    01006000
+010070     IF RPRF21-REL IS EQUAL TO ZEROS                              01007000
+010080         OR RPXXX03-7104-REL IS NOT GREATER THAN SPACES           01008000
+010090         GO TO LRR-INCENTIVE.                                     01009000
+010100     PERFORM READ-MICM-7104.                                      01010000
+010110     IF WS-KEEP-FLAG IS NOT EQUAL TO 'Y'                          01011000
+010120         GO TO LRR-LOOP.                                          01012000
+010130 LRR-INCENTIVE.                                                   01013000
+010140     IF WS-ACT-FLAG IS NOT EQUAL TO 'Y'                           01014000
+010150         GO TO LRR-7107.                                          01015000
+010160     IF MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                     01016000
+010170         AND RPACT-RATE-INC-OPTION IS EQUAL TO 'Y'                01017000
+010180         GO TO LRR-LOOP.                                          01018000
+010190     IF MIM-7100DUPINCOPT IS EQUAL TO 'Y'                         01019000
+010200         GO TO LRR-7107.                                          01020000
+010210     IF MIM-7102SECSCINCOPT IS EQUAL TO 'Y'                       01021000
+010220         AND RPACT-SC-INC-OPTION IS EQUAL TO 'Y'                  01022000
+010230         GO TO LRR-LOOP.                                          01023000
+010240 LRR-7107.                                                        01024000
+010250     IF MIM-7102BRCHREGIONCD IS NOT GREATER THAN SPACES           01025000
+010260         OR (MIM-7102BRCHREGIONCD-Q IS NOT EQUAL TO 'B'           01026000
+010270         AND MIM-7102BRCHREGIONCD-Q IS NOT EQUAL TO 'E')          01027000
+010280         GO TO LRR-USER-EXIT.                                     01028000
+010290     IF WS-BRANCH IS EQUAL TO ZEROS                               01029000
+010300         GO TO LRR-USER-EXIT.                                     01030000
+010310     MOVE RPXXX03-KEY-INST TO WS-RPMIM7107INST.                   01031000
+010320     MOVE RPRF21-ACCT-ALT-INST TO WS-RPMIM7107INST2.              01032000
+010330     MOVE WS-BRANCH TO WS-RPMIM7107BRCHREGION.                    01033000
+010340     MOVE MIM-7102BRCHREGIONCD TO WS-RPMIM7107RPREC.              01034000
+010350     PERFORM VALIDATE-BRANCH.                                     01035000
+010360     IF WS-RPMIM7107ERROR IS NOT EQUAL TO SPACES                  01036000
+010370         GO TO LRR-LOOP.                                          01037000
+010380 LRR-USER-EXIT.                                                   01038000
+010390     IF MIM-7102USERRTN IS NOT EQUAL TO 'Y'                       01039000
+010400         OR (MIM-7102USERRTN-Q IS NOT EQUAL TO 'B'                01040000
+010410         AND MIM-7102USERRTN-Q IS NOT EQUAL TO 'E')               01041000
+010420         GO TO LRR-CONT.                                          01042000
+010430     PERFORM USER-EXIT.                                           01043000
+010440     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01044000
+010450         OR RPUSER-PASSED IS NOT EQUAL TO 'Y'                     01045000
+010460         GO TO LRR-LOOP.                                          01046000
+010470 LRR-CONT.                                                        01047000
+010480* * * ******************************************************      01048000
+010490     IF RPXXX03-SECCUSTNOW IS EQUAL TO 'Y'                        01049000
+010500         MOVE RPRF21-BASE-ACCT TO WS-DUPACCOUNT                   01050000
+010510         MOVE RPRF21-BASE-ACCT-PRODCODE TO WS-DUPPRODCD           01051000
+010520         MOVE RPRF21-ACCT-ALT-INST TO WS-DUPINST                  01052000
+010530         PERFORM GM-CHECKFORDUP                                   01053000
+010540         IF WS-DUPSECACCT IS EQUAL TO 'Y'                         01054000
+010550         GO TO LRR-LOOP.                                          01055000
+010560* * * ******************************************************      01056000
+010570     MOVE RPXXX03-KEY-ACCT1-GRP                                   01057000
+010580         TO RPXXX03-RET-ACCT1-GRP (WS-SUB1).                      01058000
+010590     MOVE RPRF21-BASE-ACCOUNT TO RPXXX03-RET-ACCT2-GRP (WS-SUB1). 01059000
+010600     MOVE RPRF21-ACCT-ALT-INST TO RPXXX03-RET-INST2 (WS-SUB1).    01060000
+010610     MOVE RPREL-ACCT-STATUS TO RPXXX03-RET-ACCT-STATUS (WS-SUB1). 01061000
+010620     MOVE WS-ACCT-TYPE TO RPXXX03-RET-ACCT-TYPE (WS-SUB1).        01062000
+010630     MOVE WS-BRANCH TO RPXXX03-RET-BRANCH (WS-SUB1).              01063000
+010640     MOVE MIM-2023INTAPPL211 TO RPXXX03-RET-APPL (WS-SUB1).       01064000
+010650     ADD +0001 TO RPXXX03-OCCUR.                                  01065000
+010660     ADD +0001 TO WS-SUB1.                                        01066000
+010670     IF WS-SUB1 IS GREATER THAN WS-MAX-PANEL-ENTRIES              01067000
+010680         GO TO LRR-ENDIT.                                         01068000
+010690* ** MAXIMUM 50 ACCOUNTS FROM RCIF                                01069000
+010700     IF RPXXX03-ALL IS GREATER THAN +49                           01070000
+010710         MOVE +50 TO RPXXX03-ALL                                  01071000
+010720         ELSE                                                     01072000
+010730         ADD +0001 TO RPXXX03-ALL.                                01073000
+010740     MOVE RPRF21-BASE-ACCT TO                                     01074000
+010750         RPXXX03-DISP-ACCOUNT (RPXXX03-ALL).                      01075000
+010760     MOVE RPRF21-BASE-ACCT-PRODCODE TO                            01076000
+010770         RPXXX03-DISP-PRODCODE (RPXXX03-ALL).                     01077000
+010780     MOVE RPRF21-ACCT-ALT-INST TO                                 01078000
+010790         RPXXX03-DISP-INST (RPXXX03-ALL).                         01079000
+010800                                                                  01080000
+010810     GO TO LRR-LOOP.                                              01081000
+010820 LRR-ENDIT.                                                       01082000
+010830     IF WS-SUB1 IS GREATER THAN WS-MAX-PANEL-ENTRIES              01083000
+010840         GO TO LRR-EXIT.                                          01084000
+010850     IF WS-RELCHECK IS NOT EQUAL TO 'Y'                           01085000
+010860         GO TO LRR-EXIT.                                          01086000
+010870     MOVE 'Y' TO RPXXX03-SECCUSTNOW.                              01087000
+010880     IF WS-NEED-SECONDARY IS NOT EQUAL TO 'Y'                     01088000
+010890         MOVE 'Y' TO WS-NEED-SECONDARY                            01089000
+010900         PERFORM GET-A-SECONDARY-CUSTOMER.                        01090000
+010910* ** CHECK FOR ANY SECONDARY CUSTOMERS                            01091000
+010920     IF RPXXX03-SECONDARY-CUST IS EQUAL TO ZERO                   01092000
+010930         GO TO LRR-EXIT.                                          01093000
+010940* **                                                              01094000
+010950     ADD +1 TO RPXXX03-SCSUB.                                     01095000
+010960     IF RPXXX03-SCSUB IS GREATER THAN RPXXX03-SECONDARY-CUST      01096000
+010970         GO TO LRR-EXIT.                                          01097000
+010980     MOVE WS-SEC-INST (RPXXX03-SCSUB) TO WS-NEW-INST.             01098000
+010990     MOVE WS-SEC-CUST-TYPE (RPXXX03-SCSUB) TO WS-NEW-CUST-TYPE.   01099000
+011000     MOVE WS-SEC-CUST (RPXXX03-SCSUB) TO WS-NEW-CUST.             01100000
+011010     MOVE WS-NEW-CUSTKEY TO RPRF21-BASE-CUSTOMER.                 01101000
+011020     MOVE 'B' TO RPRF21-FUNC.                                     01102000
+011030     MOVE SPACES TO RPRF21-BASE-ACCOUNT.                          01103000
+011040     MOVE ZEROS TO RPRF21-BASE-ACCT-INST.                         01104000
+011050     MOVE WS-NEW-CUSTKEY TO RPXXX03-RCIF-KEY.                     01105000
+011060     GO TO LRR-LINK-RCIF.                                         01106000
+011070 LRR-EXIT.                                                        01107000
+011080     EXIT.                                                        01108000
+011090******************************************************************01109000
+011100 LOAD-OUT-RECORDS SECTION.                                        01110000
+011110 LOR-START.                                                       01111000
+011120     MOVE +0001 TO RPREL-INST2.                                   01112000
+011130     INITIALIZE RPREL-RECORD.                                     01113000
+011140     MOVE RPMST-GRP-KEY TO RPREL-ACCT1-GRP.                       01114000
+011150     IF RPXXX03-APIFUNC IS NOT EQUAL TO 'VKL'                     01115000
+011160         GO TO LOR-REL-GE.                                        01116000
+011170     MOVE +0000 TO RPREL-INST2.                                   01117000
+011180     PERFORM RPS-REL-GET-REQUEST.                                 01118000
+011190     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01119000
+011200         MOVE WS-AB6330 TO RPXXX03-ABORT                          01120000
+011210         MOVE WS-TR0007 TO RPXXX03-ABTRACE                        01121000
+011220         GO TO CICS-ABORT-EXIT.                                   01122000
+011230     MOVE +0000 TO WS-SUB1.                                       01123000
+011240     GO TO LOR-NEXT.                                              01124000
+011250 LOR-REL-GE.                                                      01125000
+011260     MOVE RPXXX03-KEY-ACCT2-GRP TO RPREL-ACCT2-GRP.               01126000
+011270     PERFORM RPS-REL-GET-GE-REQUEST.                              01127000
+011280     GO TO LOR-REL.                                               01128000
+011290 LOR-NEXT.                                                        01129000
+011300     ADD +0001 TO WS-SUB1.                                        01130000
+011310 LOR-READ-NEXT.                                                   01131000
+011320     PERFORM RPS-REL-GET-NEXT-REQUEST.                            01132000
+011330 LOR-REL.                                                         01133000
+011340     IF WS-FUNCTION IS EQUAL TO 'E'                               01134000
+011350         AND WS-SUB1 IS EQUAL TO +0001                            01135000
+011360         MOVE 500013 TO RPXXX03-MSGNBR                            01136000
+011370         GO TO LOR-EXIT.                                          01137000
+011380     IF WS-FUNCTION IS EQUAL TO 'E'                               01138000
+011390         GO TO LOR-EXIT.                                          01139000
+011400     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01140000
+011410         MOVE WS-AB6330 TO RPXXX03-ABORT                          01141000
+011420         MOVE WS-TR0008 TO RPXXX03-ABTRACE                        01142000
+011430         GO TO CICS-ABORT-EXIT.                                   01143000
+011440     IF RPMST-GRP-KEY IS NOT EQUAL TO RPREL-ACCT1-GRP             01144000
+011450         AND WS-SUB1 IS EQUAL TO +0001                            01145000
+011460         MOVE 500013 TO RPXXX03-MSGNBR                            01146000
+011470         GO TO LOR-EXIT.                                          01147000
+011480     IF RPMST-GRP-KEY IS NOT EQUAL TO RPREL-ACCT1-GRP             01148000
+011490         GO TO LOR-EXIT.                                          01149000
+011500     IF RPREL-ACCT-STATUS IS NOT EQUAL TO 'R'                     01150000
+011510         GO TO LOR-CONT.                                          01151000
+011520 LOR-PRODCODE.                                                    01152000
+011530     MOVE RPREL-INST2 TO RPRF21-BASE-ACCT-INST.                   01153000
+011540     MOVE RPREL-PRODCODE2 TO RPRF21-BASE-ACCT-PRODCODE.           01154000
+011550     MOVE RPREL-ACCOUNT2 TO RPRF21-BASE-ACCT.                     01155000
+011560     IF RPRF21-BASE-ACCT-PRODCODE IS EQUAL TO MIM-2023KPRODCODE   01156000
+011570         GO TO LOR-2023.                                          01157000
+011580     PERFORM READ-MICM-2023.                                      01158000
+011590 LOR-2023.                                                        01159000
+011600     IF MIM-2023RPOPTION IS EQUAL TO ' '                          01160000
+011610         OR MIM-2023RPOPTION IS EQUAL TO 'N'                      01161000
+011620         MOVE 'N' TO MIM-2023RPOPTION.                            01162000
+011630     IF MIM-2023RPOPTION IS EQUAL TO 'N'                          01163000
+011640         OR WS-CLOSE-FLAG IS EQUAL TO 'Y'                         01164000
+011650         GO TO LOR-READ-NEXT.                                     01165000
+011660 LOR-RCIF-STATUS.                                                 01166000
+011670     MOVE 'F' TO RPRF21-FUNC.                                     01167000
+011680     PERFORM REQUEST-CUSTOMER.                                    01168000
+011690     IF WS-FUNCTION IS EQUAL TO 'N'                               01169000
+011700         OR WS-FUNCTION IS EQUAL TO 'B'                           01170000
+011710         GO TO LOR-READ-NEXT.                                     01171000
+011720     IF WS-FUNCTION IS GREATER THAN SPACES                        01172000
+011730         MOVE 'E' TO RPXXX03-RETURN                               01173000
+011740         MOVE WS-MSGNBR TO RPXXX03-MSGNBR                         01174000
+011750         GO TO LOR-EXIT.                                          01175000
+011760 LOR-ACT.                                                         01176000
+011770     MOVE SPACE TO WS-ACT-FLAG.                                   01177000
+011780     INITIALIZE RPACT-RECORD.                                     01178000
+011790     MOVE RPREL-INST2 TO RPACT-INST.                              01179000
+011800     MOVE RPREL-PRODCODE2 TO RPACT-PRODCODE.                      01180000
+011810     MOVE RPREL-ACCOUNT2 TO RPACT-ACCOUNT.                        01181000
+011820     PERFORM RPS-ACT-GET-GE-REQUEST.                              01182000
+011830     GO TO LOR-ACT-CONT.                                          01183000
+011840 LOR-ACT-NEXT.                                                    01184000
+011850     PERFORM RPS-ACT-GET-NEXT-REQUEST.                            01185000
+011860 LOR-ACT-CONT.                                                    01186000
+011870     IF WS-FUNCTION IS EQUAL TO 'E'                               01187000
+011880         GO TO LOR-QUA.                                           01188000
+011890     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01189000
+011900         MOVE WS-AB6300 TO RPXXX03-ABORT                          01190000
+011910         MOVE WS-TR0009 TO RPXXX03-ABTRACE                        01191000
+011920         GO TO CICS-ABORT-EXIT.                                   01192000
+011930     IF RPREL-INST2 IS NOT EQUAL TO RPACT-INST                    01193000
+011940         OR RPREL-PRODCODE2 IS NOT EQUAL TO RPACT-PRODCODE        01194000
+011950         OR RPREL-ACCOUNT2 IS NOT EQUAL TO RPACT-ACCOUNT          01195000
+011960         GO TO LOR-QUA.                                           01196000
+011970     IF MIM-7100ACCTLIMITOPT IS EQUAL TO 'Y'                      01197000
+011980         GO TO LOR-READ-NEXT.                                     01198000
+011990*    IF RPMST-RECTYPE IS EQUAL TO RPACT-RECTYPE                   01199000
+012000*        MOVE 'Y' TO WS-ACT-FLAG                                  01200000
+012010*        GO TO LOR-QUA.                                           01201000
+012020     GO TO LOR-ACT-NEXT.                                          01202000
+012030 LOR-QUA.                                                         01203000
+012040     INITIALIZE RPQUA-RECORD.                                     01204000
+012050     MOVE RPREL-INST2 TO RPQUA-INST.                              01205000
+012060     MOVE RPREL-PRODCODE2 TO RPQUA-PRODCODE.                      01206000
+012070     MOVE RPREL-ACCOUNT2 TO RPQUA-ACCOUNT.                        01207000
+012080     MOVE LOW-VALUES TO RPQUA-MODEL.                              01208000
+012090     PERFORM RPS-QUA-GET-GE-REQUEST.                              01209000
+012100     GO TO LOR-QUA-ACCT-CONT.                                     01210000
+012110 LOR-QUA-ACCT-NEXT.                                               01211000
+012120     PERFORM RPS-QUA-GET-NEXT-REQUEST.                            01212000
+012130 LOR-QUA-ACCT-CONT.                                               01213000
+012140     IF WS-FUNCTION IS EQUAL TO 'E'                               01214000
+012150         MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE                     01215000
+012160         MOVE RPREL-BRANCH TO WS-BRANCH                           01216000
+012170         GO TO LOR-CONT.                                          01217000
+012180     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01218000
+012190         MOVE WS-AB6325 TO RPXXX03-ABORT                          01219000
+012200         MOVE WS-TR0010 TO RPXXX03-ABTRACE                        01220000
+012210         GO TO CICS-ABORT-EXIT.                                   01221000
+012220     IF RPREL-INST2 IS NOT EQUAL TO RPQUA-INST                    01222000
+012230         OR RPREL-PRODCODE2 IS NOT EQUAL TO RPQUA-PRODCODE        01223000
+012240         OR RPREL-ACCOUNT2 IS NOT EQUAL TO RPQUA-ACCOUNT          01224000
+012250         MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE                     01225000
+012260         MOVE RPREL-BRANCH TO WS-BRANCH                           01226000
+012270         GO TO LOR-CONT.                                          01227000
+012280     IF MIM-7100ACCTLIMITOPT IS EQUAL TO 'Y'                      01228000
+012290         OR RPMST-MODEL IS EQUAL TO RPQUA-MODEL                   01229000
+012300         GO TO LOR-READ-NEXT.                                     01230000
+012310     GO TO LOR-QUA-ACCT-NEXT.                                     01231000
+012320 LOR-7102.                                                        01232000
+012330     MOVE RPREL-INST2 TO RPRF21-BASE-ACCT-INST.                   01233000
+012340     MOVE RPREL-PRODCODE2 TO RPRF21-BASE-ACCT-PRODCODE.           01234000
+012350     MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE.                        01235000
+012360     PERFORM READ-MICM-7102.                                      01236000
+012370     IF WS-7102-FLAG IS EQUAL TO 'N'                              01237000
+012380         GO TO LOR-READ-NEXT.                                     01238000
+012390     IF (MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                    01239000
+012400         AND RPACT-SC-INC-OPTION IS EQUAL TO 'Y')                 01240000
+012410         OR (MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                01241000
+012420         AND RPACT-RATE-INC-OPTION IS EQUAL TO 'Y')               01242000
+012430         GO TO LOR-READ-NEXT.                                     01243000
+012440 LOR-CONT.                                                        01244000
+012450     IF WS-SUB1 IS GREATER THAN WS-MAX-PANEL-ENTRIES              01245000
+012460         GO TO LOR-EXIT.                                          01246000
+012470     MOVE RPREL-GRP-KEY TO RPXXX03-RET-GRP-KEY (WS-SUB1).         01247000
+012480     MOVE RPREL-ACCT-STATUS TO RPXXX03-RET-ACCT-STATUS (WS-SUB1). 01248000
+012490     MOVE RPREL-ACCT-TYPE TO RPXXX03-RET-ACCT-TYPE (WS-SUB1).     01249000
+012500     MOVE RPREL-BRANCH TO RPXXX03-RET-BRANCH (WS-SUB1).           01250000
+012510     MOVE RPREL-APPL TO RPXXX03-RET-APPL (WS-SUB1).               01251000
+012520     ADD +1 TO RPXXX03-OCCUR.                                     01252000
+012530     GO TO LOR-NEXT.                                              01253000
+012540 LOR-EXIT.                                                        01254000
+012550     EXIT.                                                        01255000
+012560******************************************************************01256000
+012570 READ-MICM-0237 SECTION.                                          01257000
+012580 RM0237-START.                                                    01258000
+012590     MOVE SPACES TO WS-FUNCTION.                                  01259000
+012600     IF MIM-2023INTAPPL211 IS EQUAL TO WS-SAVE-APPL               01260000
+012610         GO TO RM0237-EXIT.                                       01261000
+012620     MOVE SPACES TO MI0237-RECORD.                                01262000
+012630     MOVE RPXXX03-KEY-INST TO MIM-0237KINST.                      01263000
+012640     MOVE +0237 TO MIM-0237KREC.                                  01264000
+012650     MOVE 50 TO MIM-0237KPROCMGR.                                 01265000
+012660     MOVE MIM-2023INTAPPL211 TO MIM-0237KINTAPPL.                 01266000
+012670     MOVE MIC-MST-0237-PRI TO MIC-MST-REC-PRI.                    01267000
+012680     MOVE MI0237-RECORD TO MIMST-RECORD.                          01268000
+012690     PERFORM MIC-MST-GET-REQUEST.                                 01269000
+012700     MOVE MIMST-RECORD TO MI0237-RECORD.                          01270000
+012710     MOVE MIM-0237KINTAPPL TO WS-SAVE-APPL.                       01271000
+012720     IF WS-FUNCTION IS EQUAL TO SPACES                            01272000
+012730         GO TO RM0237-EXIT.                                       01273000
+012740     MOVE SPACES TO MIM-237OLINTFC.                               01274000
+012750 RM0237-EXIT.                                                     01275000
+012760     EXIT.                                                        01276000
+012770******************************************************************01277000
+012780 READ-MICM-2023 SECTION.                                          01278000
+012790 RM2023-START.                                                    01279000
+012800     MOVE SPACES TO WS-FUNCTION.                                  01280000
+012810     MOVE SPACES TO MI2023-RECORD.                                01281000
+012820     IF RPXXX03-INST-OPT-1 IS NOT EQUAL TO 'Y'                    01282000
+012830         MOVE ZEROS TO MIM-2023KINST.                             01283000
+012840     MOVE RPXXX03-KEY-INST TO MIM-2023KINST.                      01284000
+012850     MOVE RPXXX03-INST-OPT-1 TO SLW096-BANKS.                     01285000
+012860     MOVE RPRF21-BASE-ACCT-PRODCODE TO MIM-2023KPRODCODE.         01286000
+012870     MOVE +2023 TO MIM-2023KREC.                                  01287000
+012880     MOVE MIC-MST-2023-PRI TO MIC-MST-REC-PRI.                    01288000
+012890 RM2023-INST-ZERO.                                                01289000
+012900     MOVE MI2023-RECORD TO MIMST-RECORD.                          01290000
+012910     MOVE SPACES TO WS-FUNCTION.                                  01291000
+012920     PERFORM MIC-MST-GET-REQUEST.                                 01292000
+012930     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01293000
+012940         AND MIM-2023KINST IS NOT EQUAL TO ZEROS                  01294000
+012950         MOVE ZEROS TO MIM-2023KINST                              01295000
+012960         GO TO RM2023-INST-ZERO.                                  01296000
+012970     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01297000
+012980         GO TO RM2023-END.                                        01298000
+012990     MOVE MIMST-RECORD TO MI2023-RECORD.                          01299000
+013000 RM2023-END.                                                      01300000
+013010     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01301000
+013020         MOVE 'N' TO MIM-2023RPOPTION.                            01302000
+013030 RM2023-EXIT.                                                     01303000
+013040     EXIT.                                                        01304000
+013050******************************************************************01305000
+013060 READ-MICM-7100 SECTION.                                          01306000
+013070 RM7100-START.                                                    01307000
+013080     MOVE SPACES TO WS-FUNCTION.                                  01308000
+013090     MOVE SPACES TO MI7100-RECORD.                                01309000
+013100     MOVE RPXXX03-KEY-INST TO MIM-7100KINST.                      01310000
+013110 RM7100-LOOP.                                                     01311000
+013120     MOVE +7100 TO MIM-7100KREC.                                  01312000
+013130     MOVE MIC-RPS-7100-PRI TO MIC-MST-REC-PRI.                    01313000
+013140     MOVE MI7100-RECORD TO MIMST-RECORD.                          01314000
+013150     PERFORM MIC-MST-GET-REQUEST.                                 01315000
+013160     MOVE MIMST-RECORD TO MI7100-RECORD.                          01316000
+013170     IF WS-FUNCTION IS EQUAL TO 'N'                               01317000
+013180         AND MIM-7100KINST IS GREATER THAN ZEROS                  01318000
+013190         GO TO RM7100-ZERO.                                       01319000
+013200     GO TO RM7100-EXIT.                                           01320000
+013210 RM7100-ZERO.                                                     01321000
+013220     MOVE SPACES TO MI7100-RECORD.                                01322000
+013230     MOVE ZEROS TO MIM-7100KINST.                                 01323000
+013240     GO TO RM7100-LOOP.                                           01324000
+013250 RM7100-EXIT.                                                     01325000
+013260     EXIT.                                                        01326000
+013270******************************************************************01327000
+013280 READ-MICM-7102 SECTION.                                          01328000
+013290 RM7102-START.                                                    01329000
+013300     MOVE SPACE TO WS-FUNCTION.                                   01330000
+013310     IF RPRF21-BASE-ACCT-PRODCODE IS EQUAL TO WS-SAVE-PRODCODE    01331000
+013320         AND WS-ACCT-TYPE IS EQUAL TO WS-SAVE-ACCT-TYPE           01332000
+013330         GO TO RM7102-EXIT.                                       01333000
+013340     MOVE RPRF21-BASE-ACCT-PRODCODE TO WS-SAVE-PRODCODE.          01334000
+013350     MOVE WS-ACCT-TYPE TO WS-SAVE-ACCT-TYPE.                      01335000
+013360     MOVE SPACES TO WS-7102-FLAG.                                 01336000
+013370 RM7102-LOOP.                                                     01337000
+013380     MOVE SPACE TO WS-FUNCTION.                                   01338000
+013390     MOVE SPACES TO MI7102-RECORD.                                01339000
+013400     MOVE RPXXX03-KEY-INST TO MIM-7102KINST.                      01340000
+013410     MOVE +7102 TO MIM-7102KREC.                                  01341000
+013420     MOVE RPMST-MODEL TO MIM-7102KMODEL.                          01342000
+013430     MOVE RPRF21-BASE-ACCT-PRODCODE TO MIM-7102KPRODCODE.         01343000
+013440     MOVE WS-ACCT-TYPE TO MIM-7102KACCTTYPE.                      01344000
+013450     MOVE MIC-RPS-7102-PRI TO MIC-MST-REC-PRI.                    01345000
+013460     MOVE MI7102-RECORD TO MIMST-RECORD.                          01346000
+013470     PERFORM MIC-MST-GET-REQUEST.                                 01347000
+013480     MOVE MIMST-RECORD TO MI7102-RECORD.                          01348000
+013490     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01349000
+013500         AND RPRF21-BASE-ACCT-PRODCODE IS EQUAL TO SPACES         01350000
+013510         AND WS-ACCT-TYPE IS EQUAL TO ZEROS                       01351000
+013520         MOVE 'N' TO WS-7102-FLAG                                 01352000
+013530         GO TO RM7102-END.                                        01353000
+013540     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01354000
+013550         AND WS-ACCT-TYPE IS EQUAL TO ZEROS                       01355000
+013560         AND WS-7102-DEF-FLAG IS EQUAL TO 'Y'                     01356000
+013570         MOVE SPACES TO WS-FUNCTION                               01357000
+013580         MOVE WS-7102-DEF-RECORD TO MI7102-RECORD                 01358000
+013590         GO TO RM7102-END.                                        01359000
+013600     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01360000
+013610         AND WS-ACCT-TYPE IS NOT EQUAL TO ZEROS                   01361000
+013620         MOVE ZEROS TO WS-ACCT-TYPE                               01362000
+013630         GO TO RM7102-LOOP.                                       01363000
+013640     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01364000
+013650         AND RPRF21-BASE-ACCT-PRODCODE IS NOT EQUAL TO SPACES     01365000
+013660         MOVE SPACES TO RPRF21-BASE-ACCT-PRODCODE                 01366000
+013670         GO TO RM7102-LOOP.                                       01367000
+013680     IF WS-FUNCTION IS EQUAL TO SPACES                            01368000
+013690         AND RPRF21-BASE-ACCT-PRODCODE IS EQUAL TO SPACES         01369000
+013700         AND WS-ACCT-TYPE IS EQUAL TO ZEROS                       01370000
+013710         MOVE 'Y' TO WS-7102-DEF-FLAG                             01371000
+013720         MOVE MI7102-RECORD TO WS-7102-DEF-RECORD.                01372000
+013730 RM7102-END.                                                      01373000
+013740     MOVE WS-SAVE-PRODCODE TO RPRF21-BASE-ACCT-PRODCODE.          01374000
+013750     MOVE WS-SAVE-ACCT-TYPE TO WS-ACCT-TYPE.                      01375000
+013760 RM7102-EXIT.                                                     01376000
+013770     EXIT.                                                        01377000
+013780******************************************************************01378000
+013790 READ-MICM-7104 SECTION.                                          01379000
+013800 RM7104-START.                                                    01380000
+013810     MOVE 'N' TO WS-KEEP-FLAG.                                    01381000
+P0107 *    IF RPXXX03-7104-REL IS EQUAL TO WS-SAVE-7104KRPREC           01382000
+P0107 *        GO TO RM7104-END.                                        01382590
+013840     MOVE SPACES TO MI7104-RECORD.                                01384000
+013850     MOVE RPXXX03-KEY-INST TO MIM-7104KINST.                      01385000
+013860     MOVE +7104 TO MIM-7104KREC.                                  01386000
+013870     MOVE RPXXX03-7104-REL TO MIM-7104KRPREC.                     01387000
+013880     MOVE MIC-RPS-7104-PRI TO MIC-MST-REC-PRI.                    01388000
+013890     MOVE MI7104-RECORD TO MIMST-RECORD.                          01389000
+013900     PERFORM MIC-MST-GET-REQUEST.                                 01390000
+013910     MOVE MIMST-RECORD TO MI7104-RECORD.                          01391000
+013920     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01392000
+013930         GO TO RM7104-EXIT.                                       01393000
+013940     MOVE MIM-7104KRPREC TO WS-SAVE-7104KRPREC.                   01394000
+013950 RM7104-END.                                                      01395000
+013960     PERFORM CHECK-REL-CODE.                                      01396000
+013970 RM7104-EXIT.                                                     01397000
+013980     EXIT.                                                        01398000
+013990******************************************************************01399000
+014000 CHECK-REL-CODE SECTION.                                          01400000
+014010 CRELCD-START.                                                    01401000
+014020     MOVE +0001 TO WS-SUB2.                                       01402000
+014030     IF MIM-7104OPT IS EQUAL TO 'E'                               01403000
+014040         GO TO CRELCD-EXCLUDE.                                    01404000
+014050 CRELCD-INCLUDE.                                                  01405000
+014060     IF WS-SUB2 IS GREATER THAN 0050                              01406000
+014070         GO TO CRELCD-EXIT.                                       01407000
+014080     IF MIM-7104RLSP (WS-SUB2) IS EQUAL TO ZEROS                  01408000
+014090         OR MIM-7104RLSP (WS-SUB2) IS EQUAL TO SPACES             01409000
+014100         GO TO CRELCD-EXIT.                                       01410000
+014110     IF RPRF21-REL IS EQUAL TO MIM-7104RLSP (WS-SUB2)             01411000
+014120         MOVE 'Y' TO WS-KEEP-FLAG                                 01412000
+014130         GO TO CRELCD-EXIT.                                       01413000
+014140     ADD +0001 TO WS-SUB2.                                        01414000
+014150     GO TO CRELCD-INCLUDE.                                        01415000
+014160 CRELCD-EXCLUDE.                                                  01416000
+014170     IF WS-SUB2 IS GREATER THAN 0050                              01417000
+014180         MOVE 'Y' TO WS-KEEP-FLAG                                 01418000
+014190         GO TO CRELCD-EXIT.                                       01419000
+014200     IF MIM-7104RLSP (WS-SUB2) IS EQUAL TO ZEROS                  01420000
+014210         OR MIM-7104RLSP (WS-SUB2) IS EQUAL TO SPACES             01421000
+014220         MOVE 'Y' TO WS-KEEP-FLAG                                 01422000
+014230         GO TO CRELCD-EXIT.                                       01423000
+014240     IF RPRF21-REL IS EQUAL TO MIM-7104RLSP (WS-SUB2)             01424000
+014250         GO TO CRELCD-EXIT.                                       01425000
+014260     ADD +0001 TO WS-SUB2.                                        01426000
+014270     GO TO CRELCD-EXCLUDE.                                        01427000
+014280 CRELCD-EXIT.                                                     01428000
+014290     EXIT.                                                        01429000
+014300******************************************************************01430000
+014310 LINK-INTERFACE SECTION.                                          01431000
+014320 LINT-START.                                                      01432000
+014330     MOVE SPACES TO RPINF00-MESSAGE.                              01433000
+014340     MOVE MIM-237OLINTFC TO WS-PROGRAM.                           01434000
+014350     MOVE WS-INF-KEY TO RPINF00-KEY-AREAS.                        01435000
+014360     MOVE MIM-7101CLOSEDACCTOPT TO RPINF00-CLOSEDACCTOPT.         01436000
+014370     MOVE RPXXX03-CONTROLS TO RPINF00-CONTROLS.                   01437000
+014380     IF MIM-7100ENTERPRISEOPT IS EQUAL TO 'Y'                     01438000
+014390         AND RPMST-INST IS NOT EQUAL TO RPINF00-INST              01439000
+014400         AND WS-LAST-GOOD-INST IS EQUAL TO RPINF00-INST           01440000
+014410         MOVE SLS140-FILEOPTS2 TO RPINF00-FILEOPTS.               01441000
+014420     MOVE 'N' TO RPINF00-GLOBAL-CLOSE.                            01442000
+014430     EXEC CICS LINK                                               01443000
+014440         PROGRAM(WS-PROGRAM)                                      01444000
+014450         COMMAREA(RPINF00-MESSAGE)                                01445000
+014460         LENGTH(LENGTH OF RPINF00-MESSAGE)                        01446000
+014470         RESP(WS-CICS-RESPONSE)                                   01447000
+014480         END-EXEC.                                                01448000
+014490     MOVE RPINF00-FUNCTION TO WS-FUNCTION.                        01449000
+014500     IF WS-CICS-RESPONSE IS NOT EQUAL TO ZERO                     01450000
+014510         MOVE 'L' TO WS-FUNCTION                                  01451000
+014520         MOVE 500039 TO WS-MSGNBR                                 01452000
+014530         GO TO LINT-EXIT.                                         01453000
+014540     IF WS-FUNCTION IS EQUAL TO 'L'                               01454000
+014550         MOVE 500040 TO WS-MSGNBR                                 01455000
+014560         GO TO LINT-EXIT.                                         01456000
+014570     IF WS-FUNCTION IS EQUAL TO 'C'                               01457000
+014580         MOVE 500041 TO WS-MSGNBR                                 01458000
+014590         GO TO LINT-EXIT.                                         01459000
+014600     MOVE 'Y' TO WS-INTERFACE.                                    01460000
+014610 LINT-EXIT.                                                       01461000
+014620     EXIT.                                                        01462000
+014630******************************************************************01463000
+014640 USER-EXIT SECTION.                                               01464000
+014650 UEXIT-START.                                                     01465000
+014660     MOVE SPACES TO RPUSER-MESSAGE.                               01466000
+014670     IF WS-INTERFACE IS NOT EQUAL TO 'Y'                          01467000
+014680         GO TO UEXIT-CONT.                                        01468000
+014690     MOVE RPINF00-KEY-AREAS TO RPUSER-KEY-AREAS.                  01469000
+014700     MOVE RPINF00-USER-INFO TO RPUSER-USER-INFO.                  01470000
+014710     MOVE RPINF00-MISC-INFO TO RPUSER-MISC-INFO.                  01471000
+014720     MOVE RPINF00-BAL-INFO TO RPUSER-BAL-INFO.                    01472000
+014730     GO TO UEXIT-CALL.                                            01473000
+014740 UEXIT-CONT.                                                      01474000
+014750     MOVE RPRF21-ACCT-ALT-INST TO RPUSER-INST.                    01475000
+014760     MOVE RPRF21-BASE-ACCT-PRODCODE TO RPUSER-PRODCODE.           01476000
+014770     MOVE RPRF21-BASE-ACCT TO RPUSER-ACCOUNT.                     01477000
+014780     MOVE MIM-2023INTAPPL211 TO RPUSER-APPLR.                     01478000
+014790     INITIALIZE RPUSER-GRP-DATA.                                  01479000
+014800 UEXIT-CALL.                                                      01480000
+000000     CALL 'RPBUSER' USING                                         01481000
+014820         RPUSER-MESSAGE                                           01482000
+014830         WS-FUNCTION.                                             01483000
+014840 UEXIT-EXIT.                                                      01484000
+014850     EXIT.                                                        01485000
+014860******************************************************************01486000
+014870 SET-RPXXX03-RETURN SECTION.                                      01487000
+014880 SCR-START.                                                       01488000
+014890     IF RPXXX03-OCCUR IS EQUAL TO ZERO                            01489000
+014900         MOVE '1' TO RPXXX03-SELECT-RTN                           01490000
+014910         GO TO SCR-EXIT.                                          01491000
+014920     IF RPXXX03-OCCUR IS LESS THAN WS-MAX-PANEL-ENTRIES           01492000
+014930         MOVE '2' TO RPXXX03-SELECT-RTN                           01493000
+014940         GO TO SCR-EXIT.                                          01494000
+014950     IF RPXXX03-OCCUR IS GREATER THAN WS-MAX-PANEL-ENTRIES        01495000
+014960         OR RPXXX03-OCCUR IS EQUAL TO WS-MAX-PANEL-ENTRIES        01496000
+014970         MOVE '3' TO RPXXX03-SELECT-RTN.                          01497000
+014980 SCR-EXIT.                                                        01498000
+014990     EXIT.                                                        01499000
+015000******************************************************************01500000
+015010 DELETE-RELATIONSHIP SECTION.                                     01501000
+015020 DREL-START.                                                      01502000
+P0107      MOVE 'Y' TO WS-PRIM-RECORD.                                  01502500
+015030     INITIALIZE RPREL-RECORD.                                     01503000
+015040 DREL-MST.                                                        01504000
+015050     MOVE RPXXX03-KEY-ACCT1-GRP TO RPMST-GRP-KEY.                 01505000
+015060     PERFORM RPS-MST-GET-LOCK-REQUEST.                            01506000
+015070     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01507000
+015080         MOVE WS-AB6320 TO RPXXX03-ABORT                          01508000
+015090         MOVE WS-TR0022 TO RPXXX03-ABTRACE                        01509000
+015100         GO TO CICS-RETURN.                                       01510000
+015110 DREL-REL-GET-GE.                                                 01511000
+015120     MOVE RPXXX03-KEY-ACCT1-GRP TO RPREL-ACCT1-GRP.               01512000
+015130     PERFORM RPS-REL-GET-GE-LOCK-REQUEST.                         01513000
+015140     GO TO DREL-REL-CONT.                                         01514000
+015150 DREL-REL-NEXT.                                                   01515000
+015160     PERFORM RPS-REL-GET-NEXT-LOCK-REQUEST.                       01516000
+015170 DREL-REL-CONT.                                                   01517000
+015180     IF WS-FUNCTION IS EQUAL TO 'E'                               01518000
+015190         GO TO DREL-IDX.                                          01519000
+015200     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01520000
+015210         MOVE WS-AB6330 TO RPXXX03-ABORT                          01521000
+015220         MOVE WS-TR0011 TO RPXXX03-ABTRACE                        01522000
+015230         GO TO CICS-RETURN.                                       01523000
+015240     IF RPREL-ACCT1-GRP IS NOT EQUAL TO RPXXX03-KEY-ACCT1-GRP     01524000
+015250         PERFORM RPS-REL-UNLOCK-REQUEST                           01525000
+015260         GO TO DREL-IDX.                                          01526000
+015270 DREL-REL-DELETE.                                                 01527000
+015280     PERFORM RPS-REL-DELETE-REQUEST.                              01528000
+015290     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01529000
+015300         MOVE WS-AB6330 TO RPXXX03-ABORT                          01530000
+015310         MOVE WS-TR0012 TO RPXXX03-ABTRACE                        01531000
+015320         GO TO CICS-RETURN.                                       01532000
+015330     MOVE 'Y' TO WS-UPDATESW.                                     01533000
+015340     IF RPREL-ACCT-STATUS IS EQUAL TO 'R'                         01534000
+015350         GO TO DREL-REL-NEXT.                                     01535000
+015360 DREL-EVT.                                                        01536000
+015370     IF MIM-7100EVENTHISTORYOPT IS NOT EQUAL TO 'Y'               01537000
+015380         GO TO DREL-SEC.                                          01538000
+P0107      IF WS-PRIM-RECORD IS EQUAL TO 'Y'                            01539000
+P0107          MOVE 'N' TO WS-PRIM-RECORD                               01539090
+P0107          MOVE 03 TO RPS-EVT-EVENT-CODE                            01539180
+P0107      ELSE                                                         01539270
+P0107          MOVE 08 TO RPS-EVT-EVENT-CODE.                           01539360
+015400     MOVE RPREL-ACCT1-GRP TO RPS-EVT-ACCT1-GRP.                   01540000
+015410     MOVE RPREL-ACCT2-GRP TO RPS-EVT-ACCT2-GRP.                   01541000
+015420     MOVE RPMST-IDNUMBER TO RPS-EVT-IDNUMBER.                     01542000
+015430     MOVE SR-APIPROGLIT TO RPS-EVT-MODULE.                        01543000
+015440     PERFORM ADD-EVENT-HISTORY.                                   01544000
+015450     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01545000
+015460         MOVE WS-AB6360 TO RPXXX03-ABORT                          01546000
+015470         MOVE WS-TR0057 TO RPXXX03-ABTRACE                        01547000
+015480         GO TO CICS-RETURN.                                       01548000
+015490 DREL-SEC.                                                        01549000
+015500     INITIALIZE RPSEC-RECORD.                                     01550000
+015510     MOVE RPREL-INST2 TO RPSEC-INST.                              01551000
+015520     MOVE RPREL-PRODCODE2 TO RPSEC-PRODCODE.                      01552000
+015530     MOVE RPREL-ACCOUNT2 TO RPSEC-ACCOUNT.                        01553000
+015540     MOVE RPREL-MODEL TO RPSEC-MODEL2.                            01554000
+015550     MOVE RPREL-INST TO RPSEC-INST2.                              01555000
+015560     MOVE RPREL-PRODCODE TO RPSEC-PRODCODE2.                      01556000
+015570     MOVE RPREL-ACCOUNT TO RPSEC-ACCOUNT2.                        01557000
+015580     IF RPREL-INST2 IS EQUAL TO ZEROS                             01558000
+015590         MOVE RPREL-INST TO RPSEC-INST                            01559000
+015600         MOVE RPREL-PRODCODE TO RPSEC-PRODCODE                    01560000
+015610         MOVE RPREL-ACCOUNT TO RPSEC-ACCOUNT                      01561000
+015620         MOVE RPREL-INST2 TO RPSEC-INST2                          01562000
+015630         MOVE RPREL-PRODCODE2 TO RPSEC-PRODCODE2                  01563000
+015640         MOVE RPREL-ACCOUNT2 TO RPSEC-ACCOUNT2                    01564000
+015650         MOVE RPREL-MODEL TO RPSEC-MODEL2.                        01565000
+015660     PERFORM RPS-SEC-GET-LOCK-REQUEST.                            01566000
+015670     IF WS-FUNCTION IS EQUAL TO 'N'                               01567000
+015680         AND RPREL-ACCT-STATUS IS EQUAL TO 'U'                    01568000
+015690         GO TO DREL-REL-NEXT.                                     01569000
+015700     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01570000
+015710         MOVE WS-AB6335 TO RPXXX03-ABORT                          01571000
+015720         MOVE WS-TR0013 TO RPXXX03-ABTRACE                        01572000
+015730         GO TO CICS-RETURN.                                       01573000
+015740     PERFORM RPS-SEC-DELETE-REQUEST.                              01574000
+015750     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01575000
+015760         MOVE WS-AB6335 TO RPXXX03-ABORT                          01576000
+015770         MOVE WS-TR0014 TO RPXXX03-ABTRACE                        01577000
+015780         GO TO CICS-RETURN.                                       01578000
+015790     MOVE 'Y' TO WS-UPDATESW.                                     01579000
+015800     MOVE SPACES TO WS-SEC-FLAG.                                  01580000
+015810     INITIALIZE RPACT-RECORD.                                     01581000
+015820     MOVE RPSEC-ACCT1-GRP TO RPACT-GRP-KEY.                       01582000
+015830     MOVE LOW-VALUES TO RPSEC-MODEL2.                             01583000
+015840     MOVE LOW-VALUES TO RPSEC-ACCT2-GRP.                          01584000
+015850     PERFORM RPS-SEC-GET-GE-REQUEST.                              01585000
+015860     IF WS-FUNCTION IS EQUAL TO 'E'                               01586000
+015870         GO TO DREL-7102.                                         01587000
+015880     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01588000
+015890         MOVE WS-AB6335 TO RPXXX03-ABORT                          01589000
+015900         MOVE WS-TR0015 TO RPXXX03-ABTRACE                        01590000
+015910         GO TO CICS-RETURN.                                       01591000
+015920     IF RPSEC-ACCT1-GRP IS EQUAL TO RPACT-GRP-KEY                 01592000
+015930         MOVE 'Y' TO WS-SEC-FLAG.                                 01593000
+015940 DREL-7102.                                                       01594000
+015950     MOVE RPREL-INST2 TO RPRF21-BASE-ACCT-INST.                   01595000
+015960     MOVE RPREL-PRODCODE2 TO RPRF21-BASE-ACCT-PRODCODE.           01596000
+015970     MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE.                        01597000
+015980     IF RPREL-INST2 IS EQUAL TO ZEROS                             01598000
+015990         MOVE RPREL-INST TO RPRF21-BASE-ACCT-INST                 01599000
+016000         MOVE RPREL-PRODCODE TO RPRF21-BASE-ACCT-PRODCODE.        01600000
+016010     PERFORM READ-MICM-7102.                                      01601000
+016020     IF WS-7102-FLAG IS EQUAL TO 'N'                              01602000
+016030         AND MIM-7100ACCTLIMITOPT IS NOT EQUAL TO 'Y'             01603000
+016040         MOVE SPACES TO WS-SEC-FLAG                               01604000
+016050         GO TO DREL-REL-NEXT.                                     01605000
+016060 DREL-ACT.                                                        01606000
+016070     PERFORM RPS-ACT-GET-LOCK-REQUEST.                            01607000
+016080     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01608000
+016090         MOVE WS-AB6300 TO RPXXX03-ABORT                          01609000
+016100         MOVE WS-TR0017 TO RPXXX03-ABTRACE                        01610000
+016110         GO TO CICS-RETURN.                                       01611000
+016120     IF WS-7102-FLAG IS EQUAL TO 'N'                              01612000
+016130         MOVE 'N' TO WS-SEC-FLAG                                  01613000
+016140         GO TO DREL-ACT-CONT.                                     01614000
+016150     IF RPREL-INST2 IS NOT EQUAL TO ZEROS                         01615000
+016160         AND MIM-7102SECSCINCOPT IS EQUAL TO 'Y'                  01616000
+016170         MOVE 'N' TO RPACT-SC-INC-OPTION.                         01617000
+016180     IF RPREL-INST2 IS NOT EQUAL TO ZEROS                         01618000
+016190         AND MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                01619000
+016200         MOVE 'N' TO RPACT-RATE-INC-OPTION.                       01620000
+016210     IF RPREL-INST2 IS NOT EQUAL TO ZEROS                         01621000
+016220         AND MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                01622000
+016230         AND MIM-7102TIMEPROCOPT IS EQUAL TO 'Y'                  01623000
+016240         MOVE 'Y' TO WS-SEC-FLAG                                  01624000
+016250         MOVE 'Y' TO RPACT-PROCOPT.                               01625000
+016260     IF RPREL-INST2 IS EQUAL TO ZEROS                             01626000
+016270         AND MIM-7102PRIMSCINCOPT IS EQUAL TO 'Y'                 01627000
+016280         MOVE 'N' TO RPACT-SC-INC-OPTION.                         01628000
+016290     IF RPREL-INST2 IS EQUAL TO ZEROS                             01629000
+016300         AND MIM-7102PRIMRATEINCOPT IS EQUAL TO 'Y'               01630000
+016310         MOVE 'N' TO RPACT-RATE-INC-OPTION.                       01631000
+016320     IF RPREL-INST2 IS EQUAL TO ZEROS                             01632000
+016330         AND MIM-7102PRIMRATEINCOPT IS EQUAL TO 'Y'               01633000
+016340         AND MIM-7102TIMEPROCOPT IS EQUAL TO 'Y'                  01634000
+016350         MOVE 'Y' TO WS-SEC-FLAG                                  01635000
+016360         MOVE 'Y' TO RPACT-PROCOPT.                               01636000
+016370 DREL-ACT-CONT.                                                   01637000
+016380     IF WS-SEC-FLAG IS EQUAL TO 'Y'                               01638000
+P0079          PERFORM ACT-UPDATE-TESTS                                 01638500
+016390         PERFORM RPS-ACT-REPUT-REQUEST                            01639000
+016400     ELSE                                                         01640000
+016410         PERFORM RPS-ACT-DELETE-REQUEST.                          01641000
+016420     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01642000
+016430         MOVE WS-AB6300 TO RPXXX03-ABORT                          01643000
+016440         MOVE WS-TR0018 TO RPXXX03-ABTRACE                        01644000
+016450         GO TO CICS-RETURN.                                       01645000
+016460     MOVE SPACES TO WS-SEC-FLAG.                                  01646000
+016470     MOVE 'Y' TO WS-UPDATESW.                                     01647000
+016480     GO TO DREL-REL-NEXT.                                         01648000
+016490 DREL-IDX.                                                        01649000
+016500     MOVE RPMST-IDNUMBER TO RPXXX03-KEY-IDNUMBER.                 01650000
+016510     PERFORM LOCATE-IDNUMBER-BY-APPL.                             01651000
+016520     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01652000
+016530         MOVE WS-AB3051 TO RPXXX03-ABORT                          01653000
+016540         MOVE WS-TR0019 TO RPXXX03-ABTRACE                        01654000
+016550         GO TO CICS-RETURN.                                       01655000
+016560     PERFORM RPS-IDX-GET-LOCK-REQUEST.                            01656000
+016570     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01657000
+016580         MOVE WS-AB6310 TO RPXXX03-ABORT                          01658000
+016590         MOVE WS-TR0020 TO RPXXX03-ABTRACE                        01659000
+016600         GO TO CICS-RETURN.                                       01660000
+016610     PERFORM RPS-IDX-DELETE-REQUEST.                              01661000
+016620     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01662000
+016630         MOVE WS-AB6310 TO RPXXX03-ABORT                          01663000
+016640         MOVE WS-TR0021 TO RPXXX03-ABTRACE                        01664000
+016650         GO TO CICS-RETURN.                                       01665000
+016660     MOVE 'Y' TO WS-UPDATESW.                                     01666000
+016670 DREL-CRW.                                                        01667000
+016680     INITIALIZE RPCRW-RECORD.                                     01668000
+016690     MOVE LOW-VALUES TO RPCRW-GRP-KEY.                            01669000
+016700     MOVE RPXXX03-KEY-ACCT1-GRP TO RPCRW-ACCT1-GRP.               01670000
+016710     PERFORM RPS-CRW-GET-GE-LOCK-REQUEST.                         01671000
+016720     IF WS-FUNCTION IS EQUAL TO 'E'                               01672000
+016730         GO TO DREL-TRM.                                          01673000
+016740     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01674000
+016750         MOVE WS-AB6350 TO RPXXX03-ABORT                          01675000
+016760         MOVE WS-TR0044 TO RPXXX03-ABTRACE                        01676000
+016770         GO TO CICS-RETURN.                                       01677000
+016780     IF RPCRW-ACCT1-GRP IS NOT EQUAL TO RPXXX03-KEY-ACCT1-GRP     01678000
+016790         PERFORM RPS-CRW-UNLOCK-REQUEST                           01679000
+016800         GO TO DREL-TRM.                                          01680000
+016810     PERFORM RPS-CRW-DELETE-REQUEST.                              01681000
+016820     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01682000
+016830         MOVE WS-AB6350 TO RPXXX03-ABORT                          01683000
+016840         MOVE WS-TR0045 TO RPXXX03-ABTRACE                        01684000
+016850         GO TO CICS-RETURN.                                       01685000
+016860     MOVE 'Y' TO WS-UPDATESW.                                     01686000
+016870 DREL-TRM.                                                        01687000
+016880     INITIALIZE RPTRM-RECORD.                                     01688000
+016890     MOVE LOW-VALUES TO RPTRM-GRP-KEY.                            01689000
+016900     MOVE RPXXX03-KEY-ACCT1-GRP TO RPTRM-GRP-KEY.                 01690000
+016910     PERFORM RPS-TRM-GET-LOCK-REQUEST.                            01691000
+016920     IF WS-FUNCTION IS EQUAL TO 'N'                               01692000
+016930         PERFORM RPS-TRM-UNLOCK-REQUEST                           01693000
+016940         GO TO DREL-MST1.                                         01694000
+016950     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01695000
+016960         MOVE WS-AB6355 TO RPXXX03-ABORT                          01696000
+016970         MOVE WS-TR0050 TO RPXXX03-ABTRACE                        01697000
+016980         GO TO CICS-RETURN.                                       01698000
+016990     PERFORM RPS-TRM-DELETE-REQUEST.                              01699000
+017000     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01700000
+017010         MOVE WS-AB6355 TO RPXXX03-ABORT                          01701000
+017020         MOVE WS-TR0051 TO RPXXX03-ABTRACE                        01702000
+017030         GO TO CICS-RETURN.                                       01703000
+017040     MOVE 'Y' TO WS-UPDATESW.                                     01704000
+017050 DREL-MST1.                                                       01705000
+017060     PERFORM RPS-MST-DELETE-REQUEST.                              01706000
+017070     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01707000
+017080         MOVE WS-AB6320 TO RPXXX03-ABORT                          01708000
+017090         MOVE WS-TR0023 TO RPXXX03-ABTRACE                        01709000
+017100         GO TO CICS-RETURN.                                       01710000
+017110     MOVE 'Y' TO WS-UPDATESW.                                     01711000
+017120 DREL-QUA.                                                        01712000
+017130     MOVE RPMST-GRP-KEY TO RPQUA-GRP-KEY.                         01713000
+017140     PERFORM RPS-QUA-GET-LOCK-REQUEST.                            01714000
+017150     IF WS-FUNCTION IS EQUAL TO 'N'                               01715000
+017160         GO TO DREL-EXIT.                                         01716000
+017170     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01717000
+017180         MOVE WS-AB6325 TO RPXXX03-ABORT                          01718000
+017190         MOVE WS-TR0046 TO RPXXX03-ABTRACE                        01719000
+017200         GO TO CICS-RETURN.                                       01720000
+017210     PERFORM RPS-QUA-DELETE-REQUEST.                              01721000
+017220     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01722000
+017230         MOVE WS-AB6325 TO RPXXX03-ABORT                          01723000
+017240         MOVE WS-TR0047 TO RPXXX03-ABTRACE                        01724000
+017250         GO TO CICS-RETURN.                                       01725000
+017260     MOVE 'Y' TO WS-UPDATESW.                                     01726000
+017270 DREL-EXIT.                                                       01727000
+017280     EXIT.                                                        01728000
+P0079  ACT-UPDATE-TESTS SECTION.                                        01728020
+P0079 * **                                                              01728040
+P0079      IF RPACT-RATE-MODEL IS EQUAL TO RPREL-MODEL                  01728060
+P0079          AND RPACT-RATE-INC-OPTION IS EQUAL TO 'Y'                01728080
+P0079          MOVE SPACES TO RPACT-RATE-MODEL                          01728100
+P0079          MOVE 'N' TO RPACT-RATE-INC-OPTION                        01728120
+P0079          MOVE 'N' TO RPACT-RATE-INC-QUAL                          01728140
+P0079          MOVE 'I' TO RPACT-RATE-TYPE                              01728160
+P0079          MOVE '1' TO RPACT-RATE-OPTION                            01728180
+P0079          MOVE ZEROS TO RPACT-RATE-PERCENT.                        01728200
+P0079      IF RPACT-RATE-MODEL IS EQUAL TO RPREL-MODEL                  01728220
+P0079          AND RPACT-RATE-INC-OPTION IS EQUAL TO 'N'                01728240
+P0079          MOVE SPACES TO RPACT-RATE-MODEL                          01728260
+P0079          MOVE 'N' TO RPACT-RATE-INC-QUAL                          01728280
+P0079          MOVE 'I' TO RPACT-RATE-TYPE                              01728300
+P0079          MOVE '1' TO RPACT-RATE-OPTION                            01728320
+P0079          MOVE ZEROS TO RPACT-RATE-PERCENT.                        01728340
+P0079      IF RPACT-SC-MODEL IS EQUAL TO RPREL-MODEL                    01728360
+P0079          AND RPACT-SC-INC-OPTION IS EQUAL TO 'Y'                  01728380
+P0079          MOVE SPACES TO RPACT-SC-MODEL                            01728400
+P0079          MOVE 'N' TO RPACT-SC-INC-OPTION                          01728420
+P0079          MOVE 'N' TO RPACT-SC-INC-QUAL                            01728440
+P0079          MOVE ZEROS TO RPACT-DISCOUNT-AMOUNT                      01728460
+P0079          MOVE ZEROS TO RPACT-DISCOUNT-PERCENT.                    01728480
+P0079      IF RPACT-SC-MODEL IS EQUAL TO RPREL-MODEL                    01728500
+P0079          AND RPACT-SC-INC-OPTION IS EQUAL TO 'N'                  01728520
+P0079          MOVE SPACES TO RPACT-SC-MODEL                            01728540
+P0079          MOVE 'N' TO RPACT-SC-INC-QUAL                            01728560
+P0079          MOVE ZEROS TO RPACT-DISCOUNT-AMOUNT                      01728580
+P0079          MOVE ZEROS TO RPACT-DISCOUNT-PERCENT.                    01728600
+P0079 * **                                                              01728620
+P0079  AUTS-EXIT.                                                       01728640
+P0079      EXIT.                                                        01728660
+017290******************************************************************01729000
+017300 UPDATE-RP-RECORDS SECTION.                                       01730000
+017310 URPR-START.                                                      01731000
+017320     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO 'R'                  01732000
+017330         GO TO URPR-REMOVE.                                       01733000
+017340     INITIALIZE RPREL-RECORD.                                     01734000
+017350     MOVE RPXXX03-RET-GRP-KEY (WS-SUB1) TO RPREL-GRP-KEY.         01735000
+017360     MOVE RPREL-INST2 TO RPRF21-BASE-ACCT-INST.                   01736000
+017370     MOVE RPREL-PRODCODE2 TO RPRF21-BASE-ACCT-PRODCODE.           01737000
+017380     MOVE RPXXX03-RET-ACCT-TYPE (WS-SUB1) TO WS-ACCT-TYPE.        01738000
+017390     PERFORM READ-MICM-7102.                                      01739000
+017400     IF WS-7102-FLAG IS EQUAL TO 'N'                              01740000
+017410         MOVE WS-AB3051 TO RPXXX03-ABORT                          01741000
+017420         MOVE WS-TR0029 TO RPXXX03-ABTRACE                        01742000
+017430         GO TO CICS-RETURN.                                       01743000
+017440     PERFORM RPS-REL-GET-LOCK-REQUEST.                            01744000
+017450     IF WS-FUNCTION IS EQUAL TO 'N'                               01745000
+017460         GO TO URPR-A-REL.                                        01746000
+017470     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01747000
+017480         MOVE WS-AB6330 TO RPXXX03-ABORT                          01748000
+017490         MOVE WS-TR0024 TO RPXXX03-ABTRACE                        01749000
+017500         GO TO CICS-RETURN.                                       01750000
+017510     MOVE 'A' TO RPREL-ACCT-STATUS.                               01751000
+017520     PERFORM RPS-REL-REPUT-REQUEST.                               01752000
+017530     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01753000
+017540         MOVE WS-AB6330 TO RPXXX03-ABORT                          01754000
+017550         MOVE WS-TR0025 TO RPXXX03-ABTRACE                        01755000
+017560         GO TO CICS-RETURN.                                       01756000
+017570     GO TO URPR-A-SEC.                                            01757000
+017580 URPR-A-REL.                                                      01758000
+017590     INITIALIZE RPREL-RECORD.                                     01759000
+017600     MOVE RPXXX03-RET-GRP-KEY (WS-SUB1) TO RPREL-GRP-KEY.         01760000
+017610     MOVE 'A' TO RPREL-ACCT-STATUS.                               01761000
+017620     MOVE RPXXX03-RET-ACCT-TYPE (WS-SUB1) TO RPREL-ACCT-TYPE.     01762000
+017630     MOVE RPXXX03-RET-BRANCH (WS-SUB1) TO RPREL-BRANCH.           01763000
+017640     MOVE RPXXX03-RET-APPL (WS-SUB1) TO RPREL-APPL.               01764000
+017650     MOVE RPMST-MODEL TO RPREL-MODEL.                             01765000
+017660     PERFORM RPS-REL-PUT-REQUEST.                                 01766000
+017670     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01767000
+017680         MOVE WS-AB6330 TO RPXXX03-ABORT                          01768000
+017690         MOVE WS-TR0026 TO RPXXX03-ABTRACE                        01769000
+017700         GO TO CICS-RETURN.                                       01770000
+017710     MOVE 'Y' TO WS-UPDATESW.                                     01771000
+017720 URPR-A-SEC.                                                      01772000
+017730     INITIALIZE RPSEC-RECORD.                                     01773000
+017740     MOVE RPREL-INST2 TO RPSEC-INST.                              01774000
+017750     MOVE RPREL-PRODCODE2 TO RPSEC-PRODCODE.                      01775000
+017760     MOVE RPREL-ACCOUNT2 TO RPSEC-ACCOUNT.                        01776000
+017770     MOVE RPREL-MODEL TO RPSEC-MODEL2.                            01777000
+017780     MOVE RPREL-INST TO RPSEC-INST2.                              01778000
+017790     MOVE RPREL-PRODCODE TO RPSEC-PRODCODE2.                      01779000
+017800     MOVE RPREL-ACCOUNT TO RPSEC-ACCOUNT2.                        01780000
+017810     MOVE RPSEC-INST TO RPSEC-ALT-INST.                           01781000
+017820     MOVE RPSEC-PRODCODE TO RPSEC-ALT-PRODCODE.                   01782000
+017830     MOVE RPSEC-ACCOUNT TO RPSEC-ALT-ACCOUNT.                     01783000
+017840     PERFORM RPS-SEC-PUT-REQUEST.                                 01784000
+017850     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01785000
+017860         MOVE WS-AB6335 TO RPXXX03-ABORT                          01786000
+017870         MOVE WS-TR0027 TO RPXXX03-ABTRACE                        01787000
+017880         GO TO CICS-RETURN.                                       01788000
+017890     MOVE SPACE TO WS-ACT-FLAG.                                   01789000
+017900     IF MIM-7100DUPINCOPT IS EQUAL TO 'Y'                         01790000
+017910         GO TO URPR-EVT.                                          01791000
+017920     INITIALIZE RPACT-RECORD.                                     01792000
+017930     MOVE RPSEC-ACCT1-GRP TO RPACT-GRP-KEY.                       01793000
+017940     PERFORM RPS-ACT-GET-LOCK-REQUEST.                            01794000
+017950     IF WS-FUNCTION IS EQUAL TO 'N'                               01795000
+017960         MOVE 'N' TO WS-ACT-FLAG                                  01796000
+017970         GO TO URPR-A-ACT.                                        01797000
+017980     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01798000
+017990         MOVE WS-AB6300 TO RPXXX03-ABORT                          01799000
+018000         MOVE WS-TR0028 TO RPXXX03-ABTRACE                        01800000
+018010         GO TO CICS-RETURN.                                       01801000
+018020     MOVE 'Y' TO WS-ACT-FLAG.                                     01802000
+018030 URPR-A-ACT.                                                      01803000
+018040     IF WS-ACT-FLAG IS EQUAL TO 'Y'                               01804000
+018050         GO TO URPR-A-ACT-CONT.                                   01805000
+018060     INITIALIZE RPACT-RECORD.                                     01806000
+018070     MOVE RPSEC-ACCT1-GRP TO RPACT-GRP-KEY.                       01807000
+018080     MOVE RPXXX03-RET-APPL (WS-SUB1) TO RPACT-APPL.               01808000
+018090     MOVE 'N' TO RPACT-SC-INC-QUAL.                               01809000
+018100     MOVE 'N' TO RPACT-SC-INC-OPTION.                             01810000
+018110     MOVE 'N' TO RPACT-RATE-INC-QUAL.                             01811000
+018120     MOVE 'N' TO RPACT-RATE-INC-OPTION.                           01812000
+018130     MOVE 'N' TO RPACT-PROCOPT.                                   01813000
+018140 URPR-A-ACT-CONT.                                                 01814000
+018150     IF MIM-7102SECSCINCOPT IS EQUAL TO 'Y'                       01815000
+018160         MOVE 'Y' TO RPACT-SC-INC-OPTION.                         01816000
+018170     IF MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                     01817000
+018180         MOVE 'Y' TO RPACT-RATE-INC-OPTION.                       01818000
+018190     IF WS-ACT-FLAG IS EQUAL TO 'Y'                               01819000
+018200         PERFORM RPS-ACT-REPUT-REQUEST                            01820000
+018210     ELSE                                                         01821000
+018220         PERFORM RPS-ACT-PUT-REQUEST.                             01822000
+018230     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01823000
+018240         MOVE WS-AB6300 TO RPXXX03-ABORT                          01824000
+018250         MOVE WS-TR0030 TO RPXXX03-ABTRACE                        01825000
+018260         GO TO CICS-RETURN.                                       01826000
+018270     MOVE SPACES TO WS-SEC-FLAG.                                  01827000
+018280     MOVE 'Y' TO WS-UPDATESW.                                     01828000
+018290     GO TO URPR-EVT.                                              01829000
+018300 URPR-REMOVE.                                                     01830000
+018310     INITIALIZE RPREL-RECORD.                                     01831000
+018320     MOVE RPXXX03-RET-GRP-KEY (WS-SUB1) TO RPREL-GRP-KEY.         01832000
+018330     PERFORM RPS-REL-GET-LOCK-REQUEST.                            01833000
+018340     IF WS-FUNCTION IS EQUAL TO 'N'                               01834000
+018350         GO TO URPR-R-REL.                                        01835000
+018360     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01836000
+018370         MOVE WS-AB6330 TO RPXXX03-ABORT                          01837000
+018380         MOVE WS-TR0031 TO RPXXX03-ABTRACE                        01838000
+018390         GO TO CICS-RETURN.                                       01839000
+018400     IF RPREL-ACCT-STATUS IS NOT EQUAL TO 'U'                     01840000
+018410         AND RPMST-OUT-FLAG IS EQUAL TO 'N'                       01841000
+018420         GO TO URPR-SET-R.                                        01842000
+018430     PERFORM RPS-REL-DELETE-REQUEST.                              01843000
+018440     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01844000
+018450         MOVE WS-AB6330 TO RPXXX03-ABORT                          01845000
+018460         MOVE WS-TR0043 TO RPXXX03-ABTRACE                        01846000
+018470         GO TO CICS-RETURN.                                       01847000
+018480     GO TO URPR-R-SEC.                                            01848000
+018490 URPR-SET-R.                                                      01849000
+018500     MOVE 'R' TO RPREL-ACCT-STATUS.                               01850000
+018510     PERFORM RPS-REL-REPUT-REQUEST.                               01851000
+018520     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01852000
+018530         MOVE WS-AB6330 TO RPXXX03-ABORT                          01853000
+018540         MOVE WS-TR0032 TO RPXXX03-ABTRACE                        01854000
+018550         GO TO CICS-RETURN.                                       01855000
+018560 URPR-R-SEC.                                                      01856000
+018570     INITIALIZE RPSEC-RECORD.                                     01857000
+018580     MOVE RPREL-INST2 TO RPSEC-INST.                              01858000
+018590     MOVE RPREL-PRODCODE2 TO RPSEC-PRODCODE.                      01859000
+018600     MOVE RPREL-ACCOUNT2 TO RPSEC-ACCOUNT.                        01860000
+018610     MOVE RPREL-MODEL TO RPSEC-MODEL2.                            01861000
+018620     MOVE RPREL-INST TO RPSEC-INST2.                              01862000
+018630     MOVE RPREL-PRODCODE TO RPSEC-PRODCODE2.                      01863000
+018640     MOVE RPREL-ACCOUNT TO RPSEC-ACCOUNT2.                        01864000
+018650     PERFORM RPS-SEC-GET-LOCK-REQUEST.                            01865000
+018660     IF WS-FUNCTION IS EQUAL TO 'N'                               01866000
+018670         AND RPREL-ACCT-STATUS IS EQUAL TO 'U'                    01867000
+018680         GO TO URPR-EVT.                                          01868000
+018690     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01869000
+018700         MOVE WS-AB6335 TO RPXXX03-ABORT                          01870000
+018710         MOVE WS-TR0033 TO RPXXX03-ABTRACE                        01871000
+018720         GO TO CICS-RETURN.                                       01872000
+018730     PERFORM RPS-SEC-DELETE-REQUEST.                              01873000
+018740     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01874000
+018750         MOVE WS-AB6335 TO RPXXX03-ABORT                          01875000
+018760         MOVE WS-TR0034 TO RPXXX03-ABTRACE                        01876000
+018770         GO TO CICS-RETURN.                                       01877000
+018780     MOVE 'Y' TO WS-UPDATESW.                                     01878000
+018790     MOVE 'N' TO WS-SEC-FLAG.                                     01879000
+018800     INITIALIZE RPACT-RECORD.                                     01880000
+018810     MOVE RPSEC-ACCT1-GRP TO RPACT-GRP-KEY.                       01881000
+018820     MOVE LOW-VALUES TO RPSEC-MODEL2.                             01882000
+018830     MOVE LOW-VALUES TO RPSEC-ACCT2-GRP.                          01883000
+018840     PERFORM RPS-SEC-GET-GE-REQUEST.                              01884000
+018850     IF WS-FUNCTION IS EQUAL TO 'E'                               01885000
+018860         GO TO URPR-R-7102.                                       01886000
+018870     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01887000
+018880         MOVE WS-AB6335 TO RPXXX03-ABORT                          01888000
+018890         MOVE WS-TR0035 TO RPXXX03-ABTRACE                        01889000
+018900         GO TO CICS-RETURN.                                       01890000
+018910     IF RPSEC-ACCT1-GRP IS EQUAL TO RPACT-GRP-KEY                 01891000
+018920         MOVE 'Y' TO WS-SEC-FLAG.                                 01892000
+018930 URPR-R-7102.                                                     01893000
+018940     MOVE RPREL-INST2 TO RPRF21-BASE-ACCT-INST.                   01894000
+018950     MOVE RPREL-PRODCODE2 TO RPRF21-BASE-ACCT-PRODCODE.           01895000
+018960     MOVE RPREL-ACCT-TYPE TO WS-ACCT-TYPE.                        01896000
+018970     PERFORM READ-MICM-7102.                                      01897000
+018980     IF WS-7102-FLAG IS EQUAL TO 'N'                              01898000
+018990         AND MIM-7100ACCTLIMITOPT IS NOT EQUAL TO 'Y'             01899000
+019000         MOVE SPACES TO WS-SEC-FLAG                               01900000
+019010         GO TO URPR-EVT.                                          01901000
+019020 URPR-R-ACT.                                                      01902000
+019030     PERFORM RPS-ACT-GET-LOCK-REQUEST.                            01903000
+019040     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01904000
+019050         MOVE WS-AB6300 TO RPXXX03-ABORT                          01905000
+019060         MOVE WS-TR0037 TO RPXXX03-ABTRACE                        01906000
+019070         GO TO CICS-RETURN.                                       01907000
+019080     IF WS-7102-FLAG IS EQUAL TO 'N'                              01908000
+019090         MOVE 'N' TO WS-SEC-FLAG                                  01909000
+019100         GO TO URPR-R-ACT-CONT.                                   01910000
+019110     MOVE 'Y' TO WS-SEC-FLAG.                                     01911000
+019120     IF MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                     01912000
+019130         MOVE 'N' TO RPACT-RATE-INC-OPTION.                       01913000
+019140     IF MIM-7102SECRATEINCOPT IS EQUAL TO 'Y'                     01914000
+019150         AND MIM-7102TIMEPROCOPT IS EQUAL TO 'Y'                  01915000
+019160         MOVE 'Y' TO RPACT-PROCOPT.                               01916000
+019170     IF MIM-7100DUPINCOPT IS EQUAL TO 'Y'                         01917000
+019180         GO TO URPR-R-ACT-CONT.                                   01918000
+019190     IF MIM-7102SECSCINCOPT IS EQUAL TO 'Y'                       01919000
+019200         MOVE 'N' TO RPACT-SC-INC-OPTION.                         01920000
+019210 URPR-R-ACT-CONT.                                                 01921000
+019220     IF WS-SEC-FLAG IS EQUAL TO 'Y'                               01922000
+019230         PERFORM RPS-ACT-REPUT-REQUEST                            01923000
+019240     ELSE                                                         01924000
+019250         PERFORM RPS-ACT-DELETE-REQUEST.                          01925000
+019260     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01926000
+019270         MOVE WS-AB6300 TO RPXXX03-ABORT                          01927000
+019280         MOVE WS-TR0038 TO RPXXX03-ABTRACE                        01928000
+019290         GO TO CICS-RETURN.                                       01929000
+019300     MOVE SPACES TO WS-SEC-FLAG.                                  01930000
+019310     MOVE 'Y' TO WS-UPDATESW.                                     01931000
+019320     GO TO URPR-EVT.                                              01932000
+019330 URPR-R-REL.                                                      01933000
+019340     INITIALIZE RPREL-RECORD.                                     01934000
+019350     MOVE RPXXX03-RET-GRP-KEY (WS-SUB1) TO RPREL-GRP-KEY.         01935000
+019360     MOVE 'R' TO RPREL-ACCT-STATUS.                               01936000
+019370     MOVE RPXXX03-RET-ACCT-TYPE (WS-SUB1) TO RPREL-ACCT-TYPE.     01937000
+019380     MOVE RPXXX03-RET-BRANCH (WS-SUB1) TO RPREL-BRANCH.           01938000
+019390     MOVE RPXXX03-RET-APPL (WS-SUB1) TO RPREL-APPL.               01939000
+019400     MOVE RPMST-MODEL TO RPREL-MODEL.                             01940000
+019410     PERFORM RPS-REL-PUT-REQUEST.                                 01941000
+019420     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01942000
+019430         MOVE WS-AB6330 TO RPXXX03-ABORT                          01943000
+019440         MOVE WS-TR0039 TO RPXXX03-ABTRACE                        01944000
+019450         GO TO CICS-RETURN.                                       01945000
+019460     MOVE 'Y' TO WS-UPDATESW.                                     01946000
+019470 URPR-EVT.                                                        01947000
+019480     IF MIM-7100EVENTHISTORYOPT IS NOT EQUAL TO 'Y'               01948000
+019490         GO TO URPR-EXIT.                                         01949000
+019500     IF RPXXX03-ACTION (WS-SUB1) IS EQUAL TO 'R'                  01950000
+019510         MOVE 08 TO RPS-EVT-EVENT-CODE                            01951000
+019520     ELSE                                                         01952000
+019530         MOVE 07 TO RPS-EVT-EVENT-CODE.                           01953000
+019540     MOVE RPREL-ACCT1-GRP TO RPS-EVT-ACCT1-GRP.                   01954000
+019550     MOVE RPREL-ACCT2-GRP TO RPS-EVT-ACCT2-GRP.                   01955000
+019560     MOVE RPMST-IDNUMBER TO RPS-EVT-IDNUMBER.                     01956000
+019570     MOVE SR-APIPROGLIT TO RPS-EVT-MODULE.                        01957000
+019580     PERFORM ADD-EVENT-HISTORY.                                   01958000
+019590     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        01959000
+019600         MOVE WS-AB6360 TO RPXXX03-ABORT                          01960000
+019610         MOVE WS-TR0058 TO RPXXX03-ABTRACE                        01961000
+019620         GO TO CICS-RETURN.                                       01962000
+019630 URPR-EXIT.                                                       01963000
+019640     EXIT.                                                        01964000
+019650******************************************************************01965000
+019660 UPDATE-MASTER SECTION.                                           01966000
+019670 UMST-START.                                                      01967000
+019680     PERFORM RPS-MST-GET-LOCK-REQUEST.                            01968000
+019690     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01969000
+019700         MOVE WS-AB6320 TO RPXXX03-ABORT                          01970000
+019710         MOVE WS-TR0040 TO RPXXX03-ABTRACE                        01971000
+019720         GO TO CICS-RETURN.                                       01972000
+019730     MOVE WS-CURDT-YYYYMMDD TO RPMST-LMNTDT.                      01973000
+019740     PERFORM RPS-MST-REPUT-REQUEST.                               01974000
+019750     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         01975000
+019760         MOVE WS-AB6320 TO RPXXX03-ABORT                          01976000
+019770         MOVE WS-TR0041 TO RPXXX03-ABTRACE                        01977000
+019780         GO TO CICS-RETURN.                                       01978000
+019790     MOVE 'Y' TO WS-UPDATESW.                                     01979000
+019800 UMST-EXIT.                                                       01980000
+019810     EXIT.                                                        01981000
+019820******************************************************************01982000
+019830 LOCATE-IDNUMBER-BY-APPL SECTION.                                 01983000
+019840 LIBA-START.                                                      01984000
+019850     MOVE RPXXX03-KEY-INST TO MIM-2023KINST.                      01985000
+019860     MOVE 'RP' TO MIM-2023KPRODCODE.                              01986000
+019870     MOVE RPXXX03-INST-OPT-1 TO SLW096-BANKS.                     01987000
+019880     PERFORM SLP096-GET-2023-RECORD.                              01988000
+019890     IF SLW096-FUNCTION IS EQUAL TO SPACES                        01989000
+019900         GO TO LIBA-READ-IDX.                                     01990000
+019910     MOVE ZERO TO WS-SUB1.                                        01991000
+019920 LIBA-FIND-ACT-LOOP.                                              01992000
+019930     ADD +1 TO WS-SUB1.                                           01993000
+019940     IF WS-SUB1 IS GREATER THAN SLW096-2023-COUNT                 01994000
+019950         MOVE 'N' TO WS-FUNCTION                                  01995000
+019960         GO TO LIBA-EXIT.                                         01996000
+019970     IF SLW096-2023INTAPPL211 (WS-SUB1)                           01997000
+019980         IS NOT EQUAL TO RPXXX03-APPL                             01998000
+019990         GO TO LIBA-FIND-ACT-LOOP.                                01999000
+020000     MOVE SLW096-2023KPRODCODE (WS-SUB1) TO MIM-2023KPRODCODE.    02000000
+020010 LIBA-READ-IDX.                                                   02001000
+020020     MOVE RPXXX03-KEY-INST TO RPIDX-INST.                         02002000
+020030     MOVE MIM-2023KPRODCODE TO RPIDX-PRODCODE.                    02003000
+020040     MOVE RPXXX03-KEY-IDNUMBER TO RPIDX-IDNUMBER.                 02004000
+020050     PERFORM RPS-IDX-GET-REQUEST.                                 02005000
+020060     IF WS-FUNCTION IS EQUAL TO 'N'                               02006000
+020070         GO TO LIBA-FIND-ACT-LOOP.                                02007000
+020080     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        02008000
+020090         MOVE WS-AB6310 TO RPXXX03-ABORT                          02009000
+020100         MOVE WS-TR0042 TO RPXXX03-ABTRACE                        02010000
+020110         GO TO CICS-ABORT-EXIT.                                   02011000
+020120     MOVE RPIDX-ACCT2-KEY TO RPXXX03-KEY-RECORD.                  02012000
+020130 LIBA-EXIT.                                                       02013000
+020140     EXIT.                                                        02014000
+020150******************************************************************02015000
+020160 REQUEST-CUSTOMER SECTION.                                        02016000
+020170 RC-START.                                                        02017000
+020180     MOVE SPACES TO RPRF21-FUNCTION.                              02018000
+020190     MOVE 'N' TO RPRF21-GLOBAL-CLOSE.                             02019000
+020200     MOVE WS-FILEOPTS TO RPRF21-FILEOPTS.                         02020000
+020210     MOVE MIM-7101CLOSEDACCTOPT TO RPRF21-CLOSEDACCTOPT.          02021000
+020220     EXEC CICS LINK                                               02022000
+020230         PROGRAM('RPO0RF21')                                      02023000
+020240         COMMAREA(RPRF21-MESSAGE)                                 02024000
+020250         LENGTH(LENGTH OF RPRF21-MESSAGE)                         02025000
+020260         RESP(WS-CICS-RESPONSE)                                   02026000
+020270         END-EXEC.                                                02027000
+020280     MOVE RPRF21-FUNCTION TO WS-FUNCTION.                         02028000
+020290     IF WS-CICS-RESPONSE IS NOT EQUAL TO ZERO                     02029000
+020300         MOVE 'L' TO WS-FUNCTION                                  02030000
+020310         MOVE 500036 TO WS-MSGNBR                                 02031000
+020320         GO TO RC-EXIT.                                           02032000
+020330     IF WS-FUNCTION IS EQUAL TO 'B'                               02033000
+020340         MOVE 500045 TO WS-MSGNBR                                 02034000
+020350         GO TO RC-EXIT.                                           02035000
+020360     IF WS-FUNCTION IS EQUAL TO 'C'                               02036000
+020370         MOVE 500037 TO WS-MSGNBR                                 02037000
+020380         GO TO RC-EXIT.                                           02038000
+020390     IF WS-FUNCTION IS EQUAL TO 'I'                               02039000
+020400         MOVE 500038 TO WS-MSGNBR.                                02040000
+020410 RC-EXIT.                                                         02041000
+020420     EXIT.                                                        02042000
+020430******************************************************************02043000
+020440 GET-A-SECONDARY-CUSTOMER SECTION.                                02044000
+000000 COPY RPP139.                                                     02045000
+020460******************************************************************02046000
+020470 FIND-DEFAULT-MODEL SECTION.                                      02047000
+020480 FDM-START.                                                       02048000
+020490     MOVE 'N' TO WS-ERRORMODEL.                                   02049000
+020500     MOVE RPXXX03-KEY-INST TO RPMST-INST.                         02050000
+020510     MOVE RPXXX03-KEY-PRODCODE TO RPMST-PRODCODE.                 02051000
+020520     MOVE RPXXX03-KEY-ACCOUNT TO RPMST-ACCOUNT.                   02052000
+020530     IF RPXXX03-KEY-MODEL IS EQUAL TO LOW-VALUE                   02053000
+020540         MOVE SPACES TO RPXXX03-KEY-MODEL.                        02054000
+020550     MOVE RPXXX03-KEY-MODEL TO RPMST-MODEL.                       02055000
+020560     PERFORM RPS-MST-GET-GE-REQUEST.                              02056000
+020570     IF WS-FUNCTION IS EQUAL TO 'N'                               02057000
+020580         OR WS-FUNCTION IS EQUAL TO 'E'                           02058000
+020590         GO TO FDM-RECORD-NOT-FOUND.                              02059000
+020600     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         02060000
+020610         MOVE WS-AB6320 TO RPXXX03-ABORT                          02061000
+020620         MOVE WS-TR0054 TO RPXXX03-ABTRACE                        02062000
+020630         MOVE 'Y' TO WS-ERRORMODEL                                02063000
+020640         GO TO FDM-EXIT.                                          02064000
+020650     IF RPMST-INST IS EQUAL TO RPXXX03-KEY-INST                   02065000
+020660         AND RPMST-PRODCODE IS EQUAL TO RPXXX03-KEY-PRODCODE      02066000
+020670         AND RPMST-ACCOUNT IS EQUAL TO RPXXX03-KEY-ACCOUNT        02067000
+020680         GO TO FDM-GET-NEXT-MST.                                  02068000
+020690     GO TO FDM-RECORD-NOT-FOUND.                                  02069000
+020700 FDM-GET-NEXT-MST.                                                02070000
+020710     MOVE RPMST-MODEL TO RPXXX03-KEY-MODEL.                       02071000
+020720     MOVE RPXXX03-KEY-INST TO WS-SAVEMSTINST.                     02072000
+020730     MOVE RPXXX03-KEY-PRODCODE TO WS-SAVEMSTPRODCODE.             02073000
+020740     MOVE RPXXX03-KEY-ACCOUNT TO WS-SAVEMSTACCOUNT.               02074000
+020750     MOVE RPXXX03-KEY-MODEL TO WS-SAVEMSTMODEL.                   02075000
+020760     PERFORM RPS-MST-GET-NEXT-REQUEST.                            02076000
+020770     IF WS-FUNCTION IS EQUAL TO 'E'                               02077000
+020780         GO TO FDM-GOOD-RECORD.                                   02078000
+020790     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         02079000
+020800         MOVE WS-AB6320 TO RPXXX03-ABORT                          02080000
+020810         MOVE WS-TR0055 TO RPXXX03-ABTRACE                        02081000
+020820         MOVE 'Y' TO WS-ERRORMODEL                                02082000
+020830         GO TO FDM-EXIT.                                          02083000
+020840     IF RPMST-INST IS EQUAL TO RPXXX03-KEY-INST                   02084000
+020850         AND RPMST-PRODCODE IS EQUAL TO RPXXX03-KEY-PRODCODE      02085000
+020860         AND RPMST-ACCOUNT IS EQUAL TO RPXXX03-KEY-ACCOUNT        02086000
+020870         GO TO FDM-MULTIPLE-PRIM.                                 02087000
+020880 FDM-GOOD-RECORD.                                                 02088000
+020890     MOVE WS-SAVEMSTINST TO RPXXX03-KEY-INST.                     02089000
+020900     MOVE WS-SAVEMSTPRODCODE TO RPXXX03-KEY-PRODCODE.             02090000
+020910     MOVE WS-SAVEMSTACCOUNT TO RPXXX03-KEY-ACCOUNT.               02091000
+020920     MOVE WS-SAVEMSTMODEL TO RPXXX03-KEY-MODEL.                   02092000
+020930     GO TO FDM-EXIT.                                              02093000
+020940 FDM-RECORD-NOT-FOUND.                                            02094000
+020950     MOVE 'Y' TO WS-ERRORMODEL.                                   02095000
+020960     MOVE 500004 TO RPXXX03-MSGNBR.                               02096000
+020970     GO TO FDM-EXIT.                                              02097000
+020980 FDM-MULTIPLE-PRIM.                                               02098000
+020990     MOVE 'Y' TO WS-ERRORMODEL.                                   02099000
+021000     MOVE 500090 TO RPXXX03-MSGNBR.                               02100000
+021010 FDM-EXIT.                                                        02101000
+021020     EXIT.                                                        02102000
+P0107 ******************************************************************02102200
+P0107  VALIDATE-PRIM-RELCD SECTION.                                     02102400
+000000 COPY RPP008.                                                     02102600
+021030******************************************************************02103000
+021040 VALIDATE-BRANCH SECTION.                                         02104000
+000000 COPY RPP7107A.                                                   02105000
+021060******************************************************************02106000
+021070 ADD-EVENT-HISTORY SECTION.                                       02107000
+000000 COPY RPPEVTD.                                                    02108000
+021090******************************************************************02109000
+000000 COPY RPPACTA.                                                    02110000
+021110******************************************************************02111000
+000000 COPY RPPCRWA.                                                    02112000
+021130******************************************************************02113000
+000000 COPY RPPEVTA.                                                    02114000
+021150******************************************************************02115000
+000000 COPY RPPIDXA.                                                    02116000
+021170******************************************************************02117000
+000000 COPY RPPMSTA.                                                    02118000
+021190******************************************************************02119000
+000000 COPY RPPQUAA.                                                    02120000
+021210******************************************************************02121000
+000000 COPY RPPRELA.                                                    02122000
+021230******************************************************************02123000
+000000 COPY RPPSECA.                                                    02124000
+021250******************************************************************02125000
+000000 COPY RPPTRMA.                                                    02126000
+021270******************************************************************02127000
+021280 MIC-MST-API SECTION.                                             02128000
+000000 COPY MIPMSTA.                                                    02129000
+021300******************************************************************02130000
+021310 SLP096-GET-2023-RECORD SECTION.                                  02131000
+000000 COPY SLP096.                                                     02132000
+021330******************************************************************02133000
+021340 OPERATOR-DIALOG-SECURITY SECTION.                                02134000
+000000 COPY SRP079.                                                     02135000
+021360******************************************************************02136000
+021370 CICS-ABORT-EXIT SECTION.                                         02137000
+021380 CAE-START.                                                       02138000
+021390     GO TO CICS-RETURN.                                           02139000
+021400 CAE-EXIT.                                                        02140000
+021410     EXIT.                                                        02141000
+021420******************************************************************02142000
+021430 CICS-RETURN SECTION.                                             02143000
+021440     IF COM-ABORT IS NOT EQUAL TO ZERO                            02144000
+021450         MOVE COM-ABORT TO RPXXX03-ABORT.                         02145000
+021460     IF RPXXX03-ABORT IS NOT EQUAL TO ZERO                        02146000
+021470         AND WS-UPDATESW IS EQUAL TO 'Y'                          02147000
+021480         MOVE 'Y' TO RPXXX03-ABTYPE.                              02148000
+021490     IF RPXXX03-ABORT IS NOT EQUAL TO ZERO                        02149000
+021500         MOVE WS-FUNCTION TO RPXXX03-FUNCTION                     02150000
+021510         MOVE SRB-BMDB TO RPXXX03-SRBMDB                          02151000
+021520         MOVE EIBFN TO RPXXX03-ABEIBFN                            02152000
+021530         MOVE EIBRESP TO RPXXX03-ABEIBRESP                        02153000
+021540         MOVE EIBRESP2 TO RPXXX03-ABEIBRESP2                      02154000
+021550         MOVE EIBRCODE TO RPXXX03-ABEIBRCODE.                     02155000
+021560     IF RPXXX03-ABTYPE IS NOT EQUAL TO 'Y'                        02156000
+021570         PERFORM GLOBAL-CLOSE.                                    02157000
+000000 COPY SLP709.                                                     02158000
+021590******************************************************************02159000
+021600 GLOBAL-CLOSE SECTION.                                            02160000
+021610 GC-START.                                                        02161000
+021620     IF RPXXX03-GLOBAL-CLOSE IS NOT EQUAL TO 'N'                  02162000
+021630         PERFORM RPS-MST-GLOBAL-CLOSE-REQUEST.                    02163000
+021640 GC-EXIT.                                                         02164000
+021650     EXIT.                                                        02165000
+021660******************************************************************02166000

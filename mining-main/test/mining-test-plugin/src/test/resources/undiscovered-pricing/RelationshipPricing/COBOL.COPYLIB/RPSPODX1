@@ -1,0 +1,49 @@
+000010******************************************************************00001000
+000020* RPSPODX1  POSTING/PODX RECORD FOR DEPOSITS 8.1                 *00002000
+000030******************************************************************00003000
+000040*01  RPPODX-RECORD.                                               00004000
+000050*----------------------------------------------------------------*00005000
+000060     03  RPPODX-ADES             PIC X(01).                       00006000
+000070     03  RPPODX-KEY.                                              00007000
+000080         05  RPPODX-INST         PIC 9(03).                       00008000
+000090         05  RPPODX-ACCOUNT      PIC 9(18)       COMP-3.          00009000
+000100*----------------------------------------------------------------*00010000
+000110     03  RPPODX-DATA.                                             00011000
+000120         05  RPPODX-ITC          PIC 9(04).                       00012000
+000130         05  RPPODX-DRCR         PIC X(01).                       00013000
+000140         05  RPPODX-EFFDT        PIC S9(07)      COMP-3.          00014000
+000150         05  RPPODX-AMT          PIC S9(11)V99   COMP-3.          00015000
+000160         05  RPPODX-SERIAL       PIC S9(11)      COMP-3.          00016000
+000170         05  RPPODX-LLINT        PIC S9(09)V99   COMP-3.          00017000
+000180         05  RPPODX-ORIGINALSOURCE                                00018000
+000190                         REDEFINES RPPODX-LLINT.                  00019000
+000200             07  FILLER          PIC X(01).                       00020000
+000210             07  RPPODX-ORGSOURCE                                 00021000
+000220                                 PIC S9(09)      COMP-3.          00022000
+000230         05  RPPODX-SEQ          PIC S9(13)      COMP-3.          00023000
+000240         05  RPPODX-EXTC         PIC 9(04).                       00024000
+000250         05  RPPODX-SOURCE       PIC S9(04)      COMP.            00025000
+000260         05  RPPODX-TOD          PIC S9(04)      COMP.            00026000
+000270         05  RPPODX-FDAYS        PIC S9(04)      COMP.            00027000
+000280         05  RPPODX-INIT         PIC S9(07)      COMP-3.          00028000
+000290         05  RPPODX-IDISP        PIC X(01).                       00029000
+000300         05  RPPODX-FITEM1       PIC S9(04)      COMP.            00030000
+000310         05  RPPODX-FITEM2       PIC S9(04)      COMP.            00031000
+000320         05  RPPODX-FITEM3       PIC S9(04)      COMP.            00032000
+000330         05  RPPODX-FITEM4       PIC S9(04)      COMP.            00033000
+000340         05  RPPODX-FITEM5       PIC S9(04)      COMP.            00034000
+000350         05  RPPODX-LITEMS       PIC S9(04)      COMP.            00035000
+000360         05  RPPODX-CASH         PIC S9(07)      COMP-3.          00036000
+000370         05  RPPODX-SEQ1         PIC S9(05)      COMP-3.          00037000
+000380         05  RPPODX-CODE         PIC X(01).                       00038000
+000390*----------------------------------------------------------------*00039000
+000400     03  RPPODX-DATAD1   REDEFINES RPPODX-DATA.                   00040000
+000410         05  RPPODX-DESC1        PIC X(30).                       00041000
+000420         05  FILLER              PIC X(40).                       00042000
+000430*----------------------------------------------------------------*00043000
+000440     03  RPPODX-DATAD2   REDEFINES RPPODX-DATA.                   00044000
+000450         05  RPPODX-DESC2        PIC X(30).                       00045000
+000460         05  FILLER              PIC X(40).                       00046000
+000470*----------------------------------------------------------------*00047000
+000480*            END OF POSTING TRANSACTION RECORD DESCRIPTION       *00048000
+000490*----------------------------------------------------------------*00049000

@@ -1,0 +1,18 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MIN516A.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 TESTFIELD  PIC 9.
+      * ENDLESS LOOP - DO NOT EXECUTE THIS PROGRAM
+       PROCEDURE DIVISION.
+                 MOVE 1 TO TESTFIELD.
+       LABEL2.
+                 DISPLAY ' --- ENDLESS LOOP --- '
+                 GO TO LABEL2.
+       LABEL3.
+               DISPLAY '--- UNREACHABLE --- '.
+           GOBACK.
+       END PROGRAM MIN516A.

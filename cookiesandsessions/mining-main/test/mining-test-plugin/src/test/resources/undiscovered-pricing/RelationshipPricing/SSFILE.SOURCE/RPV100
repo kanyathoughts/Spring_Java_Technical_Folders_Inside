@@ -1,0 +1,70 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . RPINQ1                                            *
+*   Description  . . Relationship Inquiry 1                            *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ RPINQ1    ________           Relationship Inquiry 1           ____  __________
+                                                                      _____ _ _
+
+ Product Code  : ______   Account Number : __________________
+ Customer Name : ________________________________________
+ Model . . . . : __________  ____________________  __________________________
+ ID Number . . : __________________
+
+ Enroll Date . : __________         Maint Date . . : __________
+ Expiration Dt : __________         VF Expire Date : __________
+ Status  . . . : __________         Qual Status  . : __________
+
+ CRW Inst . : ____  CRW Product . : ______  CRW Account . : __________________
+
+ Primary Bal . : _______________    Prim Bal Req . : _______________
+ Comb Bal 1  . : _______________    Comb Bal Req 1 : _______________
+ Comb Bal 2  . : _______________    Comb Bal Req 2 : _______________
+ Comb Bal 3  . : _______________    Comb Bal Req 3 : _______________
+ Comb Bal 4  . : _______________    Comb Bal Req 4 : _______________
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M
+FIELD=SYSDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=MORE,     PIC='X(05)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M, CASE=M
+FIELD=MINUS,    PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PLUS,     PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PRODCD,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HMST004S
+FIELD=ACCOUNT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST005S
+FIELD=CUSTNA,   PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001S
+FIELD=MODEL,    PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST006S
+FIELD=MODDESC,  PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HM01051S
+FIELD=RELTYPE,  PIC='X(26)', ATTR=(DISPLAY,IMPORTANT), HELP=HMST030S
+FIELD=IDNBR,    PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST024S
+FIELD=EROLLDT,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST021S
+FIELD=MAINTDT,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST017S
+FIELD=EXPREDT,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST022S
+FIELD=EXTENDT,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST032S
+FIELD=STATUS,   PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST014S
+FIELD=QSTATUS,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HMST015S
+FIELD=CRWINST,  PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HCRW010S
+FIELD=CRWPROD,  PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HCRW011S
+FIELD=CRWACCT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HCRW012S
+FIELD=PRIMBAL,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HREL028S
+FIELD=PRIBALR,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HM06053S
+FIELD=CMBBAL1,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HMST025S
+FIELD=CMBALR1,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HM06053S
+FIELD=CMBBAL2,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HMST026S
+FIELD=CMBALR2,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HM06053S
+FIELD=CMBBAL3,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HMST027S
+FIELD=CMBALR3,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HM06053S
+FIELD=CMBBAL4,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HMST028S
+FIELD=CMBALR4,  PIC='X(15)', ATTR=(DISPLAY,NORMAL), HELP=HM06053S
+FIELD=MSGLINE,  PIC='X(78)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

@@ -1,0 +1,23 @@
+//TESTJCL1 JOB (6,DE24A000,PDPB),'TCSES',                               00001000
+//             MSGLEVEL=(1,1),       TYPRUN=SCAN,                       00002000
+//             MSGCLASS=7,                                              00003000
+//             USER=DE01P01,                                            00006000
+//             REGION=128M                                              00007000
+//SQLEXEC  EXEC PGM=DBSQLPR,
+//       PARM='prtWidth=1500,inputWidth=80'
+//SYSUDUMP DD  SYSOUT=*
+//OPTIONS  DD  *
+AUTHID=CASWMGT
+//SYSIN    DD  *
+   SELECT MP_DATASET~
+   FROM MOUNTPOINT WHERE NOT MP_TYPE='PRODUCT' OR MP_TYPE IS NULL;
+   UPDATE MOUNTPOINT^
+   SET SALARY = SALARY;
+   INSERT INTO MOUNTPOINT VALUES ('abc', 10)'';
+   DELETE FROM MOUNTPOINT`
+   WHERE COMM >= :COMMISSION;
+
+
+
+   
+   

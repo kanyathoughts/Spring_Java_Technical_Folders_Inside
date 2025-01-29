@@ -1,0 +1,48 @@
+<div class="mining__content-margin semantic-search">
+    <form nz-form nzLayout="inline" [formGroup]="searchForm" (ngSubmit)="search()" class="semantic-search__centered semantic-search__searchbar">
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{ 'semanticSearch.errorTip' | translate }}">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input formControlName="query" type="text" nz-input placeholder="{{ 'semanticSearch.placeholder' | translate }}" [(ngModel)]="query" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                    <button nz-button nzType="primary" nzSize="small" nzSearch [nzLoading]="searchLoading"
+                        [disabled]="searchLoading || ! searchForm.valid"><span nz-icon nzType="search"></span></button>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+
+    <nz-card *ngIf="resultText" class="semantic-search__centered semantic-search__result-text">
+        <div [innerHTML]="resultText"></div>
+        <nz-space class="semantic-search__content-warning">
+            <div *nzSpaceItem class="gen-Ai__icon-color">
+                <span nz-icon nzType="mining-icons:gen-ai-stars" nzTheme="fill"></span>
+                <div class="gen-Ai__hint">{{ "genAI.hint" | translate }}</div>
+            </div>
+            <div *nzSpaceItem>{{ 'genAI.contentWarning' | translate }}</div>
+        </nz-space>
+    </nz-card>
+    <nz-list *ngIf="documents && documents.length > 0" class="semantic-search__centered semantic-search__result-list" nzItemLayout="vertical" nzHeader="{{ 'semanticSearch.sources' | translate }}">
+        <nz-list-item *ngFor="let document of documents">
+            <nz-list-item-meta>
+                <nz-list-item-meta-title>
+                    <nz-space class="semantic-search__title">
+                        <ng-container *ngIf="!document.meta?.moduleId">
+                            <span *nzSpaceItem nz-tooltip nzTooltipTitle="{{ 'semanticSearch.moduleNotFoundTooltip' | translate }}">{{ document.meta?.name }}</span>
+                        </ng-container>
+                        <ng-container *ngIf="document.meta?.moduleId">
+                            <a *nzSpaceItem href="{{ createLink(document) }}" rel="noreferrer noopener" target="_blank">{{ document.meta?.name }}</a>
+                        </ng-container>
+                        <div *nzSpaceItem class="semantic-search__tag">
+                            <nz-tag *ngIf="document.meta?.type">{{document.meta?.type}}</nz-tag>
+                        </div>
+                    </nz-space>
+                </nz-list-item-meta-title>
+                <nz-list-item-meta-description>
+                    {{ document.context }}
+                </nz-list-item-meta-description>
+            </nz-list-item-meta>
+        </nz-list-item>
+    </nz-list>
+</div>

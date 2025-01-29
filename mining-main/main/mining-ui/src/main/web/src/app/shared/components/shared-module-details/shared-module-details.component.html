@@ -1,0 +1,196 @@
+<nz-card
+    class="mining__card-drawer shared-side-viewer__drawer-editor shared-side-viewer__drawer-editor--open shared-module"
+    [nzTitle]="shellTitle" [ngClass]="moduleDetails.technology === 'SQL' && fromDL ? 'cfg-side-panel showHide' : showHide" [nzExtra]="extraTemplate">
+    <nz-tabset nzSize="small" *ngIf = "moduleDetails.technology === 'SQL' && fromDL; else moduleDetailsTab">
+        <nz-tab [nzTitle]="'moduleDetails' | translate">
+            <ng-container *ngTemplateOutlet="moduleDetailsTab"></ng-container>
+        </nz-tab>
+        <nz-tab [nzTitle]="'sqlDetails' | translate">
+            <div class="shared-module__table-container">
+                <div class="shared-module__table-title">{{'sqlTableSidePanelDescription' | translate}}</div>
+                <mn-module-schema-info [projectId]="moduleDetails.projectId" [moduleId]="moduleDetails.id" [isSqlFromDL]="true" [highlightedNodes]="highlightedNodes"></mn-module-schema-info>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</nz-card>
+<ng-template #shellTitle>
+    <app-shared-editor-header [moduleTitle]="moduleTitle" [modulePath]="modulePath">
+    </app-shared-editor-header>
+</ng-template>
+<ng-template #countAnnotation>
+    <nz-badge nzStandalone [nzCount]="(numberPerAnnoationType | keyvalue)?.length" class="side-panel_badge" nzShowZero></nz-badge>
+</ng-template>
+<ng-template #countTaxonomy>
+    <nz-badge nzStandalone [nzCount]="taxonomyTotalNumber" class="side-panel_badge" nzShowZero></nz-badge>
+</ng-template>
+<ng-template #countCustomProperty>
+    <nz-badge nzStandalone [nzCount]="customPropertiesDetails?.length" class="side-panel_badge" nzShowZero>
+    </nz-badge>
+</ng-template>
+<ng-template #extraTemplate>
+    <button nz-button nzType="text" (click)="closeEditDetails()">
+        <em nz-icon nzType="close" nzTheme="outline"></em>
+    </button>
+</ng-template>
+<ng-template #moduleDetailsTab>
+    <div class="shared-module__spaces">
+        <nz-space>
+            <label *nzSpaceItem nz-tooltip nzTooltipPlacement="top"
+                nzTooltipTitle="{{'iconToolTip.controlFlow' | translate}}">
+                <a nz-button nzType="default" (click)="openInNewBrowserTab('control-flow')"><em nz-icon
+                        nzType="apartment" nzTheme="outline"></em></a>
+            </label>
+            <label *nzSpaceItem nz-tooltip nzTooltipTitle="{{'iconToolTip.dependencyGraph' | translate}}"
+                nzTooltipPlacement="top">
+                <a nz-button nzType="default" (click)="openInNewBrowserTab('dependencies')"><em nz-icon
+                        nzType="branches" nzTheme="outline"></em></a>
+            </label>
+            <ng-container *ngIf="isEclipseLinkAvailable | async">
+                <mn-eclipse-button *nzSpaceItem (clicked)="openInEclipse()" tooltipPlacement="top"></mn-eclipse-button>
+            </ng-container>
+                <ng-container>
+                    <mn-code-viewer-button *nzSpaceItem [eclipseView]="isEclipseView" [moduleDetails]="moduleDetails" [projectId]="projectId"></mn-code-viewer-button>
+                    <label *nzSpaceItem nz-tooltip [nzTooltipTitle]="icons.name" nzTooltipPlacement="top">
+                        <a nz-button nzType="default" (click)="openInNewBrowserTab(icons.routePath)">
+                            <em aria-hidden="true" nz-icon [nzType]="icons.icon"></em>
+                        </a>
+                    </label>
+                </ng-container>
+        </nz-space>
+        <ng-template></ng-template>
+    </div>
+    <ng-container *ngFor="let item of showBarElement">
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+            <nz-collapse-panel [nzHeader]="item.characteristics[0].name" class="remove_padding"
+                [nzActive]="showDropDown.characteristics" (nzActiveChange)="toggelDropDown('characteristics')">
+                <p class="shared-module__remove_margin"><span class="shared-module__item-size"><strong>{{'technology' | translate
+                            }}</strong></span></p>
+                <p class="shared-module__remove_margin"><span
+                        class="shared-module__item-size">{{item.characteristics[0].technology}}</span></p>
+                <p class="shared-module__remove_margin"><span class="shared-module__item-size"><strong>{{'type' | translate
+                            }}</strong></span></p>
+                <span class="shared-module__item-size">{{item.characteristics[0].type}}</span>
+            </nz-collapse-panel>
+        </nz-collapse>
+        <hr class="side-panel__horizontal-line" />
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+            <nz-collapse-panel [nzHeader]="item.metrics[0].name" class="remove_padding"
+                [nzActive]="showDropDown.metrics" (click)="toggelDropDown('metrics')">
+                <p class="shared-module__remove_margin"><span
+                        class="shared-module__item-size"><strong>{{'projectDashboard.totalSourceLinesOfCodes' |
+                            translate}}</strong></span></p>
+                <p class="shared-module__remove_margin"> <span
+                        class="shared-module__item-size">{{formateNumber.transform(item.metrics[0].codeLines)}}</span>
+                </p>
+                <p class="shared-module__remove_margin"> <span class="shared-module__item-size"><strong>{{'commentLinesOfCode' |
+                            translate}}</strong></span>
+                </p>
+                <p class="shared-module__remove_margin"> <span
+                        class="shared-module__item-size">{{formateNumber.transform(item.metrics[0].commentLines)}}</span>
+                </p>
+                <p class="shared-module__remove_margin"> <span class="shared-module__item-size"><strong>{{'module.characteristics.complexity' | translate}}</strong></span>
+                </p>
+                <p class="shared-module__remove_margin">
+                    <span class="shared-module__item-size">
+                        <nz-badge *ngIf="moduleComplexity?.color; else plainText" [nzColor]="moduleComplexity.color" [nzText]="moduleComplexity.description"></nz-badge>
+                        <ng-template #plainText>
+                            <span>{{moduleComplexity.description}}</span>
+                        </ng-template>
+                    </span>
+                </p>
+            </nz-collapse-panel>
+        </nz-collapse>
+        <hr class="side-panel__horizontal-line" />
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+          <nz-collapse-panel [nzHeader]="item.description[0].name" class="remove_padding shared-module__edit-icon-position" [nzActive]="showDropDown.description"
+            (click)="toggelDropDown('description')">
+            <span class="shared-module__item-size shared-module__text-width">{{item.description[0].description}}</span>
+            <button *ngIf="isEditor" nz-button (click)="openDescriptionModal($event)">
+              <i nz-icon nzType="edit" aria-hidden="true"></i>
+            </button>
+          </nz-collapse-panel>
+        </nz-collapse>
+        <hr class="side-panel__horizontal-line" />
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+            <nz-collapse-panel [nzHeader]="item.customProperty[0].name" class="remove_padding shared-module__edit-icon-position"
+                [nzExtra]="countCustomProperty" [nzActive]="showDropDown.customProperty"
+                (click)="toggelDropDown('customProperty')">
+                <span class="shared-module__item-size" *ngIf="customPropertiesDetails.length === 0">{{'notAvailable' | translate}}</span>
+                <nz-space nzDirection="vertical" nzSize="large">
+                    <ng-container *ngFor="let element of customPropertiesDetails">
+                        <ng-container *nzSpaceItem>
+                            <p class="shared-module__title"><strong>{{element.label}}</strong></p>
+                            <app-display-value-as-per-type [displayAs]="element.fieldType | lowercase" [stringList]="element.value">
+                            </app-display-value-as-per-type>
+                        </ng-container>
+                    </ng-container>
+                </nz-space>
+                <button *ngIf="isEditor &&  moduleCustomProperties.length" nz-button (click)="editCustomProperties()">
+                    <i nz-icon nzType="edit" aria-hidden="true"></i>
+                </button>
+            </nz-collapse-panel>
+        </nz-collapse>
+        <hr class="side-panel__horizontal-line" />
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+            <nz-collapse-panel [nzHeader]="item.taxonomy[0].name" class="remove_padding shared-module__edit-icon-position" [nzExtra]="countTaxonomy"
+                [nzActive]="showDropDown.taxonomy" (click)="toggelDropDown('taxonomy')">
+                <ng-container>
+                    <span class="shared-module__item-size" *ngIf="taxonomyList.length == 0">{{'notAvailable' |
+                        translate}}</span>
+                </ng-container>
+                <nz-space nzDirection="vertical" nzSize="large">
+                    <ng-container *ngFor="let taxonomyCategory of taxonomyList">
+                        <span class="shared-module__item-size" *ngIf="taxonomyList.length == 0 ">{{'notAvailable' |
+                            translate}}</span>
+                        <ng-container *nzSpaceItem>
+                            <p class="shared-module__title"> <span class="shared-module__item-title">{{taxonomyCategory.name}}
+                                </span> 
+                            </p>
+                                <span class="shared-module__item-size" *ngFor="let taxonomyType of taxonomyCategory.type">
+                                    <strong> {{taxonomyType.name}}</strong>
+                                    <p class="shared-module__title">
+                                        <nz-tag *ngFor="let taxonomy of taxonomyType.taxonomies">
+                                            <span class="shared-module__item-size">{{ taxonomy.name }}</span>
+                                        </nz-tag>
+                                    </p>
+                                </span>
+                        </ng-container>
+                    </ng-container>
+                </nz-space>
+                <button *ngIf="isEditor" nz-button (click)="editTaxonomyDetails()">
+                    <i nz-icon nzType="edit" aria-hidden="true"></i>
+                </button>
+            </nz-collapse-panel>
+        </nz-collapse>
+        <hr class="side-panel__horizontal-line" />
+        <nz-collapse nzGhost nzExpandIconPosition="right">
+            <nz-collapse-panel [nzHeader]="item.annotation[0].name" [nzExtra]="countAnnotation" class="remove_padding"
+                [nzActive]="showDropDown.annotations" (click)="toggelDropDown('annotations')">
+                <p class="shared-module__remove_margin">
+                    <span class="shared-module__item-size" *ngIf="(numberPerAnnoationType | keyvalue)?.length === 0">{{'notAvailable' |
+                        translate}}</span>
+                </p>
+                <nz-list *ngIf="(numberPerAnnoationType | keyvalue)?.length" nzSize="small" nzBordered="false">
+                  <span class="shared-module__item-size"><strong>{{'NumberofAnnotationsperType' | translate}}</strong></span>
+                  <nz-list-item *ngFor="let type of numberPerAnnoationType | keyvalue; index as i" class="remove_padding">
+                    <nz-list-item-extra>
+                      <nz-badge nzStandalone [nzCount]="type.value" class="module-details__badge" [nzShowZero]="true">
+                      </nz-badge>
+                    </nz-list-item-extra>
+                    <nz-list-item-meta>
+                      <nz-list-item-meta-description>
+                        <p class="shared-module__remove_margin"><span class="shared-module__item-size">
+                            {{type.key}}
+                          </span>
+                        </p>
+                      </nz-list-item-meta-description>
+                    </nz-list-item-meta>
+                  </nz-list-item>
+                </nz-list>
+                <span class="shared-module__annotation" *ngIf=" ! isEclipseView">
+                    <a [routerLink]="annotationLink"> {{'annotationReporting.label' | translate}} </a>
+                </span>
+            </nz-collapse-panel>
+        </nz-collapse>
+    </ng-container>
+</ng-template>

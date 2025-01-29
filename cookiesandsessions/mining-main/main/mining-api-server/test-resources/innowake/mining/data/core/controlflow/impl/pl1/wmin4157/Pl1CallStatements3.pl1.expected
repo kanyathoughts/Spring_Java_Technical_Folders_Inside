@@ -1,0 +1,11 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 DeclareStatement, FROM={#6}, TO={#38}
+  #38 CallStatement, FROM={#15}, TO={#69(CALL)}
+  #50 PutStatement, FROM={#105}, TO={#65}
+  #65 EndStatement, FROM={#50}, TO={TestHaltPoint}
+ #69 ProcedureBlock, FROM={#38(CALL), TestEntryPoint}, TO={#73}
+  #73 ProcedureStatement, FROM={#69}, TO={#81}
+  #81 DeclareStatement, FROM={#73}, TO={#105}
+  #105 ReturnStatement, FROM={#81}, TO={#50, TestReturnPoint}
+  #108 EndStatement

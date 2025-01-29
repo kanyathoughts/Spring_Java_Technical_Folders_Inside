@@ -1,0 +1,26 @@
+<nz-content>
+    <mn-customizable-table-core-component [usage]="usage" [graphQlType]="graphQlType" [projectId]="projectId" [additionalTableConfig]="tableConfig"
+      [internalDataPoints]="internalDataPoints" [moduleIdForPreFiltering]="[module?.id]" [pageType]="pageType" [allowSelectDeselectRows]="allowSelectDeselectRows"
+      [refreshCoreTable]="refreshCoreTable" [enableOrderedBusinessRuleCsv]="enableOrderedBusinessRuleCsv" [rowActions]="rowActions"
+      (optionSelected)="editCodeAnnotation($event)" [entity]="entity">
+    </mn-customizable-table-core-component>
+</nz-content>
+
+<ng-template>
+  <app-shared-editor-header [modulePath]="module.path"></app-shared-editor-header>
+</ng-template>
+
+<ng-template #extraTemplate let-titleContent>
+  <div class="drawer-title">
+    <div class="drawer-title__content">{{ 'annotationReporting.sharedAnnotationEditorTitle' | translate:{moduleName: moduleName} }}</div>
+    <div class="drawer-title__close">
+      <button nz-button nzType="text" nz-popconfirm
+        nzPopconfirmTitle="{{ 'sharedAnnotationEditorComponent.popConfirmTitle' | translate }}"
+        nzPopconfirmPlacement="bottom" [nzCondition]="isFormDirty()"
+        nzOkText="{{ 'sharedAnnotationEditorComponent.popConfirmOk' | translate }}"
+        nzCancelText="{{ 'sharedAnnotationEditorComponent.popConfirmCancel' | translate }}" (nzOnConfirm)="onCancel()">
+        <i nz-icon nzType="close" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN537UI7.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+      * RECEIVE
+           EXEC CICS RECEIVE
+               LENGTH(WS-LENGTH)
+           END-EXEC
+
+           GOBACK.

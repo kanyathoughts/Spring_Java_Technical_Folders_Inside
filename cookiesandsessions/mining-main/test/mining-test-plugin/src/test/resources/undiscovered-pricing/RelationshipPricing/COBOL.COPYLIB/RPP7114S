@@ -1,0 +1,35 @@
+000010******************************************************************00001000
+000020* RPP7114S  7114 - RP TERM BALANCE RATE TABLE SEARCH             *00002000
+000030******************************************************************00003000
+000040*SEARCH-RPS-7114 SECTION.                                         00004000
+000050 SR7114-START.                                                    00005000
+000060     MOVE SPACES TO WS-7114-WORK-TABLE.                           00006000
+000070     MOVE 'N' TO WS-RPMIM7114FOUND.                               00007000
+000080     MOVE ZEROS TO WS-INDX-7114.                                  00008000
+000090     MOVE ZEROS TO WS-INDX2-7114.                                 00009000
+000100 SR7114-LOOP.                                                     00010000
+000110     ADD +1 TO WS-INDX-7114.                                      00011000
+000120     IF WS-INDX-7114 IS GREATER THAN WS-RPMIM7114MAXSIZE          00012000
+000130         GO SR7114-EXIT.                                          00013000
+000140     IF WS-7114-RATETABLE (WS-INDX-7114) IS EQUAL TO SPACES       00014000
+000150         GO SR7114-EXIT.                                          00015000
+000160     IF WS-7114-RATETABLE (WS-INDX-7114)                          00016000
+000170         IS LESS THAN WS-RPMIM7114RATETABLE                       00017000
+000180         GO TO SR7114-LOOP.                                       00018000
+000190     IF WS-7114-RATETABLE (WS-INDX-7114)                          00019000
+000200         IS GREATER THAN WS-RPMIM7114RATETABLE                    00020000
+000210         GO TO SR7114-EXIT.                                       00021000
+000220     MOVE 'Y' TO WS-RPMIM7114FOUND.                               00022000
+000230     ADD +1 TO WS-INDX2-7114.                                     00023000
+000240     MOVE WS-7114-RATETABLE (WS-INDX-7114)                        00024000
+000250         TO WS-7114-WORK-RATETABLE (WS-INDX2-7114).               00025000
+000260     MOVE WS-7114-TERM (WS-INDX-7114)                             00026000
+000270         TO WS-7114-WORK-TERM (WS-INDX2-7114).                    00027000
+000280     MOVE WS-RPMIM7114 (WS-INDX-7114)                             00028000
+000290         TO WS-7114-WORK-RPMIM7114 (WS-INDX2-7114).               00029000
+000300     GO TO SR7114-LOOP.                                           00030000
+000310 SR7114-EXIT.                                                     00031000
+000320     EXIT.                                                        00032000
+000330*----------------------------------------------------------------*00033000
+000340*     END OF RP TERM BALANCE RATE 7114 TABLE SEARCH              *00034000
+000350*----------------------------------------------------------------*00035000

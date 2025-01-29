@@ -1,0 +1,1 @@
+insert into student (id, name, age) values (1, 'kanya', 25), (2, 'akhil', 27);

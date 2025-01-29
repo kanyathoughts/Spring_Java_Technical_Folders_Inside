@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>innowake.release.base</groupId>
+		<artifactId>base-skeleton2</artifactId>
+		<version>2.0.10</version>
+	</parent>
+
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<toolchains.jdk.version>17</toolchains.jdk.version>
+		<toolchains.jdk.vendor>zulu</toolchains.jdk.vendor>
+		<toolchains.jdk.id>zulu 17</toolchains.jdk.id>
+		<parser.version>4.2.1</parser.version>
+	</properties>
+
+	<groupId>innowake.products.mining</groupId>
+	<artifactId>mining-api-server-deps</artifactId>
+	<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<profiles>
+		<!-- Does the install without the mining-ui dependency -->
+		<profile>
+			<id>nightly</id>
+			<properties>
+				<dist-suffix></dist-suffix>
+				<dist-only-install-or-deploy-phase>none</dist-only-install-or-deploy-phase>
+				<dist-only-install-phase>none</dist-only-install-phase>
+				<dist-only-deploy-phase>none</dist-only-deploy-phase>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>default-profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<dist-suffix></dist-suffix>
+				<dist-only-install-or-deploy-phase>none</dist-only-install-or-deploy-phase>
+				<dist-only-install-phase>none</dist-only-install-phase>
+				<dist-only-deploy-phase>none</dist-only-deploy-phase>
+			</properties>
+
+			<dependencies>
+				<dependency>
+					<groupId>innowake.products.mining</groupId>
+					<artifactId>mining-ui</artifactId>
+					<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>dist-profile</id>
+			<activation>
+				<property>
+					<name>dist</name>
+				</property>
+			</activation>
+			<properties>
+				<dist-suffix>-dist</dist-suffix>
+				<dist-only-install-or-deploy-phase>install</dist-only-install-or-deploy-phase>
+				<dist-only-install-phase>install</dist-only-install-phase>
+				<dist-only-deploy-phase>deploy</dist-only-deploy-phase>
+			</properties>
+
+			<dependencies>
+				<dependency>
+					<groupId>innowake.products.mining</groupId>
+					<artifactId>mining-ui</artifactId>
+					<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>innowake.release.build</groupId>
+				<artifactId>maven-innowake-plugin</artifactId>
+				<version>2.0.1</version>
+				<executions>
+					<execution>
+						<id>pack-licenses</id>
+						<phase>${dist-only-install-or-deploy-phase}</phase>
+						<goals>
+							<goal>pack-licenses</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>obfuscate-install</id>
+						<phase>${dist-only-install-phase}</phase>
+						<goals>
+							<goal>obfuscate-install</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>obfuscate-deploy</id>
+						<phase>${dist-only-deploy-phase}</phase>
+						<goals>
+							<goal>obfuscate-deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- !! All internal non third-party dependencies of mining-api-server must be listed here !! -->
+		
+		<dependency>
+			<groupId>innowake.products.mining</groupId>
+			<artifactId>mining-data</artifactId>
+			<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+			<!-- Exclude bcprov-jdk15on and HikariCP which contain Java11 and 15 class files that will let proguard fail -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.zaxxer</groupId>
+					<artifactId>HikariCP</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Repackaged bcprov-jdk15on and HikariCP without 15 class files -->
+		<dependency>
+			<groupId>org.bouncycastle-iw</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.69</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer-iw</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>4.0.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>innowake.products.mining</groupId>
+			<artifactId>mining-data-core</artifactId>
+			<version>99.9.99-TRUNK-MINING-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.lib.ff4j</groupId>
+			<artifactId>lib-ff4j-store-orientdb</artifactId>
+			<version>99.9.99-TRUNK-BASE-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.release.ndt.antlr</groupId>
+			<artifactId>ndt-easytrieve-antlr-parser</artifactId>
+			<version>${parser.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.release.ndt.mask</groupId>
+			<artifactId>ndt-mask</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.release.base.license</groupId>
+			<artifactId>base-license</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.release.ndt.mfsparser</groupId>
+			<artifactId>ndt-mfsparser</artifactId>
+			<version>${parser.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>innowake.products.ndt.fieldtracing</groupId>
+			<artifactId>ndt-fieldtracing-core</artifactId>
+			<version>99.9.99-TRUNK-NDT-SNAPSHOT</version>
+		</dependency>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>innowake.lib.flyway</groupId>
+			<artifactId>lib-flyway-commandline</artifactId>
+			<version>99.9.99-TRUNK-BASE-SNAPSHOT</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+</project>

@@ -1,0 +1,30 @@
+//* MGO short form of original example
+//*     original example causes unbalanced JCL statement error
+//MGOVAR1 PROC HOLD=S,
+//             MGTCL=PRODDFLT,
+//*-----PRODUCTION LIBRARY VERSIONS
+//*
+//        LOADB='MERP.ALL',
+//*-----DATASET QUALIFIERS
+//*
+//        PRTEDMA='PRTEDMA',
+//*-----PROGRAMS AND PARMS
+//*
+//        PROG05='IBA600A',
+//        MFSET='1',
+//*-----GDG NUMBERS AND CYCLES
+//*
+//        GENP01='(+1)',
+//        OCYCLE=DXYYDDD1
+//******
+//STEP05R  EXEC PGM=&PROG05,PARM=&MFSET,
+//         REGION=512M
+//*
+//STEPLIB  DD DISP=SHR,DSN=SYSE.TE.&LOADB..LOADB
+//*
+//SYSUDUMP DD  SYSOUT=&HOLD
+//IAMINFO  DD  SYSOUT=*
+//*
+//IB600A01 DD  DISP=SHR,
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.PART.PARTMSTR
+//*

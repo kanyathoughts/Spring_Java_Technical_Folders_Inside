@@ -1,0 +1,32 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . Relationship Master Record                        *
+*   Description  . . Qualification Status                              *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(19,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                   Qualification Status - Help
+
+    Qualified status of the relationship.  Valid entries are:
+
+      INC FAIL  Relationship failed the incentive qualification
+                requirements.
+      NONE      No validation has been done for incentive
+                qualification requirements.
+      PASS      Relationship passed the incentive qualification
+                requirements.
+      VAL FAIL  Relationship failed the relationship validation
+                requirements.  Status is retained until the
+                relationship passes relationship validation.
+                (RPR200).  This flag is then set to NONE.
+                                                                _
+    F12=Cancel                                            MST015S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

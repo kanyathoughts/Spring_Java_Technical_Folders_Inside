@@ -1,0 +1,173 @@
+000010******************************************************************00001000
+000020* RPP002   TRANSACTION VALIDATION ROUTINE                        *00002000
+000030******************************************************************00003000
+000040*  THE ROUTINE IS USED TO VALIDATE THE TRANSACTION ACCUMULATORS   00004000
+000050*  IF A VALID TRANSACTION PROFILE IS DEFINED AND THE TRANSACTION  00005000
+000060*  QUALIFICATIO FLAG IS TURNED ON IN THE MICM 7101 (MODEL         00006000
+000070*  DEFINITION).  THE WS-TRAN-VAL-SW IS USED TO DETERMINE IF THE   00007000
+000080*  TRANSACTION VALIDATION REQUIREMENTS ARE MET.  THIS FLAG IS     00008000
+000090*  SET TO '2' IF THE TRANSACTION REQUIREMENTS ARE NOT MET. WHILE  00009000
+000100*  THIS FLAG IS SET TO ZEROS IS THE TRANSACTION REQUIREMENTS ARE  00010000
+000110*  SUCCESSFULLY MET.  THE WS-TRAN-VAL-SW WILL BE SET TO '1'       00011000
+000120*  WHILE PROCESSING A SUCCESSFUL 'OR' CONDITIONAL GROUP OF        00012000
+000130*  REQUIREMENTS AND IS RESET TO ZEROS IN TV-END.                  00013000
+000140******************************************************************00014000
+000150 TRANSACTION-VALIDATION SECTION.                                  00015000
+000160 TV-START.                                                        00016000
+000170     MOVE ZERO TO WS-TRAN-VAL-SW.                                 00017000
+000180     MOVE ZERO TO WS-TASUB1.                                      00018000
+000190     MOVE ZERO TO WS-TASUB2.                                      00019000
+000200 TV-LOOP.                                                         00020000
+000210     ADD +1 TO WS-TASUB1.                                         00021000
+000220     IF WS-TASUB1 IS GREATER THAN WS-RPMIM7110MAXOCCURS           00022000
+000230         GO TO TV-END.                                            00023000
+000240     IF MIM-7110COND (WS-TASUB1) IS EQUAL TO 'N'                  00024000
+000250         GO TO TV-END.                                            00025000
+000260     MOVE MIM-7110ACCUM (WS-TASUB1) TO WS-TASUB2.                 00026000
+000270     IF MIM-7110COND (WS-TASUB1) IS EQUAL TO 'R'                  00027000
+000280         GO TO TV-COND-R.                                         00028000
+000290 TV-COND.                                                         00029000
+000300     IF MIM-7110COND (WS-TASUB1) IS EQUAL TO 'O'                  00030000
+000310         AND WS-TRAN-VAL-SW IS EQUAL TO 2                         00031000
+000320         MOVE ZEROS TO WS-TRAN-VAL-SW.                            00032000
+000330     IF MIM-7110COND (WS-TASUB1) IS EQUAL TO 'O'                  00033000
+000340         AND WS-TRAN-VAL-SW IS EQUAL TO 1                         00034000
+000350         MOVE ZEROS TO WS-TRAN-VAL-SW                             00035000
+000360         GO TO TV-EXIT.                                           00036000
+000370     IF MIM-7110COND (WS-TASUB1) IS EQUAL TO 'A'                  00037000
+000380         AND WS-TRAN-VAL-SW IS EQUAL TO 2                         00038000
+000390         GO TO TV-LOOP.                                           00039000
+000400 TV-CHECK-ACCUM.                                                  00040000
+000410     MOVE 1 TO WS-TRAN-VAL-SW.                                    00041000
+000420     IF MIM-7110OPTION (WS-TASUB1) IS EQUAL TO 'A'                00042000
+000430         GO TO TV-CHECK-ACCUM-AMOUNT.                             00043000
+000440     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GE'              00044000
+000450         GO TO TV-CHECK-ACCUM-GT.                                 00045000
+000460     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00046000
+000470         IS LESS THAN MIM-7110COUNT (WS-TASUB1)                   00047000
+000480         MOVE 2 TO WS-TRAN-VAL-SW                                 00048000
+000490         GO TO TV-LOOP.                                           00049000
+000500     GO TO TV-CHECK-ACCUM-B.                                      00050000
+000510 TV-CHECK-ACCUM-GT.                                               00051000
+000520     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GT'              00052000
+000530         GO TO TV-CHECK-ACCUM-LE.                                 00053000
+000540     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00054000
+000550         IS NOT GREATER THAN MIM-7110COUNT (WS-TASUB1)            00055000
+000560         MOVE 2 TO WS-TRAN-VAL-SW                                 00056000
+000570         GO TO TV-LOOP.                                           00057000
+000580     GO TO TV-CHECK-ACCUM-B.                                      00058000
+000590 TV-CHECK-ACCUM-LE.                                               00059000
+000600     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'LE'              00060000
+000610         GO TO TV-CHECK-ACCUM-LE.                                 00061000
+000620     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00062000
+000630         IS GREATER THAN MIM-7110COUNT (WS-TASUB1)                00063000
+000640         MOVE 2 TO WS-TRAN-VAL-SW                                 00064000
+000650         GO TO TV-LOOP.                                           00065000
+000660     GO TO TV-CHECK-ACCUM-B.                                      00066000
+000670 TV-CHECK-ACCUM-LT.                                               00067000
+000680     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00068000
+000690         IS NOT LESS THAN MIM-7110COUNT (WS-TASUB1)               00069000
+000700         MOVE 2 TO WS-TRAN-VAL-SW                                 00070000
+000710         GO TO TV-LOOP.                                           00071000
+000720 TV-CHECK-ACCUM-B.                                                00072000
+000730     IF MIM-7110OPTION (WS-TASUB1) IS NOT EQUAL TO 'B'            00073000
+000740         GO TO TV-LOOP.                                           00074000
+000750 TV-CHECK-ACCUM-AMOUNT.                                           00075000
+000760     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GE'              00076000
+000770         GO TO TV-CHECK-ACCUM-AMOUNT-GT.                          00077000
+000780     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00078000
+000790         IS LESS THAN MIM-7110AMOUNT (WS-TASUB1)                  00079000
+000800         MOVE 2 TO WS-TRAN-VAL-SW.                                00080000
+000810     GO TO TV-LOOP.                                               00081000
+000820 TV-CHECK-ACCUM-AMOUNT-GT.                                        00082000
+000830     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GT'              00083000
+000840         GO TO TV-CHECK-ACCUM-AMOUNT-LE.                          00084000
+000850     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00085000
+000860         IS NOT GREATER THAN MIM-7110AMOUNT (WS-TASUB1)           00086000
+000870         MOVE 2 TO WS-TRAN-VAL-SW.                                00087000
+000880     GO TO TV-LOOP.                                               00088000
+000890 TV-CHECK-ACCUM-AMOUNT-LE.                                        00089000
+000900     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'LE'              00090000
+000910         GO TO TV-CHECK-ACCUM-AMOUNT-LT.                          00091000
+000920     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00092000
+000930         IS GREATER THAN MIM-7110AMOUNT (WS-TASUB1)               00093000
+000940         MOVE 2 TO WS-TRAN-VAL-SW.                                00094000
+000950     GO TO TV-LOOP.                                               00095000
+000960 TV-CHECK-ACCUM-AMOUNT-LT.                                        00096000
+000970     IF MIM-7110REL (WS-TASUB1) IS EQUAL TO 'LT'                  00097000
+000980         AND RPTRM-TRAN-AMOUNT (WS-TASUB2)                        00098000
+000990             IS NOT LESS THAN MIM-7110AMOUNT (WS-TASUB1)          00099000
+001000         MOVE 2 TO WS-TRAN-VAL-SW.                                00100000
+001010     GO TO TV-LOOP.                                               00101000
+001020 TV-COND-R.                                                       00102000
+001030     IF MIM-7110OPTION (WS-TASUB1) IS EQUAL TO 'A'                00103000
+001040         GO TO TV-COND-R-AMOUNT.                                  00104000
+001050     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GE'              00105000
+001060         GO TO TV-COND-R-GT.                                      00106000
+001070     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00107000
+001080         IS LESS THAN MIM-7110COUNT (WS-TASUB1)                   00108000
+001090         MOVE 2 TO WS-TRAN-VAL-SW                                 00109000
+001100         GO TO TV-EXIT.                                           00110000
+001110     GO TO TV-COND-R-B.                                           00111000
+001120 TV-COND-R-GT.                                                    00112000
+001130     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GT'              00113000
+001140         GO TO TV-COND-R-LE.                                      00114000
+001150     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00115000
+001160         IS NOT GREATER THAN MIM-7110COUNT (WS-TASUB1)            00116000
+001170         MOVE 2 TO WS-TRAN-VAL-SW                                 00117000
+001180         GO TO TV-EXIT.                                           00118000
+001190     GO TO TV-COND-R-B.                                           00119000
+001200 TV-COND-R-LE.                                                    00120000
+001210     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'LE'              00121000
+001220         GO TO TV-COND-R-LT.                                      00122000
+001230     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00123000
+001240         IS GREATER THAN MIM-7110COUNT (WS-TASUB1)                00124000
+001250         MOVE 2 TO WS-TRAN-VAL-SW                                 00125000
+001260         GO TO TV-EXIT.                                           00126000
+001270     GO TO TV-COND-R-B.                                           00127000
+001280 TV-COND-R-LT.                                                    00128000
+001290     IF RPTRM-TRAN-COUNT (WS-TASUB2)                              00129000
+001300         IS NOT LESS THAN MIM-7110COUNT (WS-TASUB1)               00130000
+001310         MOVE 2 TO WS-TRAN-VAL-SW                                 00131000
+001320         GO TO TV-EXIT.                                           00132000
+001330 TV-COND-R-B.                                                     00133000
+001340     IF MIM-7110OPTION (WS-TASUB1) IS NOT EQUAL TO 'B'            00134000
+001350         GO TO TV-LOOP.                                           00135000
+001360 TV-COND-R-AMOUNT.                                                00136000
+001370     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GE'              00137000
+001380         GO TO TV-COND-R-AMOUNT-GT.                               00138000
+001390     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00139000
+001400         IS LESS THAN MIM-7110AMOUNT (WS-TASUB1)                  00140000
+001410         MOVE 2 TO WS-TRAN-VAL-SW                                 00141000
+001420         GO TO TV-EXIT.                                           00142000
+001430     GO TO TV-LOOP.                                               00143000
+001440 TV-COND-R-AMOUNT-GT.                                             00144000
+001450     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'GT'              00145000
+001460         GO TO TV-COND-R-AMOUNT-LE.                               00146000
+001470     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00147000
+001480         IS NOT GREATER THAN MIM-7110AMOUNT (WS-TASUB1)           00148000
+001490         MOVE 2 TO WS-TRAN-VAL-SW                                 00149000
+001500         GO TO TV-EXIT.                                           00150000
+001510     GO TO TV-LOOP.                                               00151000
+001520 TV-COND-R-AMOUNT-LE.                                             00152000
+001530     IF MIM-7110REL (WS-TASUB1) IS NOT EQUAL TO 'LE'              00153000
+001540         GO TO TV-COND-R-AMOUNT-LT.                               00154000
+001550     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00155000
+001560         IS GREATER THAN MIM-7110AMOUNT (WS-TASUB1)               00156000
+001570         MOVE 2 TO WS-TRAN-VAL-SW                                 00157000
+001580         GO TO TV-EXIT.                                           00158000
+001590     GO TO TV-LOOP.                                               00159000
+001600 TV-COND-R-AMOUNT-LT.                                             00160000
+001610     IF RPTRM-TRAN-AMOUNT (WS-TASUB2)                             00161000
+001620         IS NOT LESS THAN MIM-7110AMOUNT (WS-TASUB1)              00162000
+001630         MOVE 2 TO WS-TRAN-VAL-SW                                 00163000
+001640         GO TO TV-EXIT.                                           00164000
+001650     GO TO TV-LOOP.                                               00165000
+001660 TV-END.                                                          00166000
+001670     IF WS-TRAN-VAL-SW IS EQUAL TO 1                              00167000
+001680         MOVE ZEROS TO WS-TRAN-VAL-SW.                            00168000
+001690 TV-EXIT.                                                         00169000
+001700     EXIT.                                                        00170000
+001710*----------------------------------------------------------------*00171000
+001720*    END TRANSACTION VALIDATION SECTION                          *00172000
+001730*----------------------------------------------------------------*00173000

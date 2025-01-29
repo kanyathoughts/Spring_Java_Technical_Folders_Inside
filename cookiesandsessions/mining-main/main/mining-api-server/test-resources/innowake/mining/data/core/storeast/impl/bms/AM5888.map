@@ -1,0 +1,39 @@
+      /VERS 5IMS100 -- JUNE 12, 1997 -- GBR
+      1  DFHMSD TYPE=&SYSPARM,                                         X
+               LANG=COBOL,                                             X
+               MODE=INOUT,                                             X
+               STORAGE=AUTO,                                           X
+               TIOAPFX=YES,                                            X
+               EXTATT=YES,                                             X
+               TERM=ALL,                                               X
+               CTRL=(FREEKB,FRSET),                                    X
+               DATA=FIELD
+               TERM=3270,
+      1  DFHMDI SIZE=(24,80),                                          X
+               COLUMN=1,                                               X
+               LINE=1,                                                 X
+               DATA=FIELD
+         DFHMDF POS=(01,01),LENGTH=04,ATTRB=(ASKIP,BRT),INITIAL='EARI'
+         DFHMDF POS=(01,06),LENGTH=01,ATTRB=(ASKIP)
+         DFHMDF POS=(01,22),LENGTH=38,ATTRB=(ASKIP,BRT),               X
+               INITIAL='EARS - REFILING FILE CLOSURE INDICATOR'
+         DFHMDF POS=(01,61),LENGTH=01,ATTRB=(ASKIP)
+         DFHMDF POS=(03,01),LENGTH=70,ATTRB=(ASKIP,BRT),               X
+               INITIAL='THIS TRANSACTION FLAGS THE REFILING FILE AS CLOX
+               SED'
+         DFHMDF POS=(03,72),LENGTH=01,ATTRB=(ASKIP)
+         DFHMDF POS=(10,12),LENGTH=21,ATTRB=(ASKIP,BRT),               X
+               INITIAL='REFILING FILE CLOSED '
+         DFHMDF POS=(10,36),LENGTH=01,ATTRB=(BRT,FSET),COLOR=GREEN
+         DFHMDF POS=(10,38),LENGTH=01,ATTRB=(ASKIP)
+         DFHMDF POS=(13,12),LENGTH=21,ATTRB=(ASKIP,BRT),               X
+               INITIAL='DATE FILE WAS CLOSED '
+      T  DFHMDF POS=(13,36),LENGTH=06,ATTRB=(ASKIP),                   X
+               INITIAL='YYMMDD',COLOR=TURQUOISE
+      E  DFHMDF POS=(22,01),LENGTH=72,ATTRB=(BRT,PROT),COLOR=RED
+         DFHMDF POS=(22,74),LENGTH=01,ATTRB=(ASKIP)
+         DFHMDF POS=(24,01),LENGTH=16,ATTRB=(ASKIP,BRT),               X
+               INITIAL='PF1=MENU PF3=END'
+         DFHMDF POS=(24,18),LENGTH=01,ATTRB=(ASKIP)
+         DFHMSD TYPE=FINAL
+         END

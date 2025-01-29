@@ -1,0 +1,48 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3135,"","WDIS221A","src/cobol/WDIS221/programs/WDIS221A.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,12,0,15,0,1,-1,-1
+3141,"","WDIS221B","src/cobol/WDIS221/programs/WDIS221B.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,12,0,15,0,1,-1,-1
+3137,"","WDIS221C","src/cobol/WDIS221/programs/WDIS221C.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,2,12,0,15,0,1,-1,-1
+3136,"","WDIS221D","src/cobol/WDIS221/programs/WDIS221D.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,13,0,17,0,1,-1,-1
+3140,"","WDIS221E","src/cobol/WDIS221/programs/WDIS221E.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,15,0,19,0,1,-1,-1
+3142,"","WDIS221F","src/cobol/WDIS221/programs/WDIS221F.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,16,0,20,0,1,-1,-1
+3139,"","WDIS221G","src/cobol/WDIS221/programs/WDIS221G.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,17,0,21,1,1,-1,-1
+3138,"","WDIS221H","src/cobol/WDIS221/programs/WDIS221H.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,1,14,0,18,0,1,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3139,"WDIS221G","CONDITIONAL","IF true"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3135,"WDIS221A","CALL",56,0,0,0,0.00,0.00,"CALL MYPROC (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3141,"WDIS221B","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3137,"WDIS221C","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3136,"WDIS221D","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3140,"WDIS221E","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3142,"WDIS221F","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3139,"WDIS221G","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+3138,"WDIS221H","CALL",60,0,0,0,0.00,0.00,"CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3135,"WDIS221A",-1,"MYPROC","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",202,96,-1,-1
+3141,"WDIS221B",-1,"TEST-PROC","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",221,100,-1,-1
+3136,"WDIS221D",-1,"HELLO","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",248,100,-1,-1
+3140,"WDIS221E",-1,"HELLO","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",314,100,-1,-1
+3142,"WDIS221F",-1,"HELLO","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",351,100,-1,-1
+3142,"WDIS221F",-1,"WORLD","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",351,100,-1,-1
+3139,"WDIS221G",-1,"HELLO","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",347,100,-1,-1
+3139,"WDIS221G",-1,"WORLD","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",347,100,-1,-1
+3138,"WDIS221H",-1,"INIT","SQL","SQL_STORED_PROCEDURE","Calls","","LATE","{}",294,100,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+3141,"WDIS221B","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3137,"WDIS221C","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3137,"WDIS221C","WARNING","UNDISCOVERED_DEPENDENCY","Unable to determine name of dependency target. The target likely has the type SQL_STORED_PROCEDURE",-1,-1
+3136,"WDIS221D","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3140,"WDIS221E","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3142,"WDIS221F","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3139,"WDIS221G","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+3138,"WDIS221H","WARNING","PARSE_ERROR","SqlParseException while collecting SQL Metrics for SQL: CALL :PROC-NAME (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

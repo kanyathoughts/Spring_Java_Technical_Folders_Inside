@@ -1,0 +1,15 @@
+query FBTotalElementsCount(
+    $projectId: Long,
+    $page: Int,
+    $size: Int,
+    $filter: FilterObject_functionalBlocks
+) {
+    functionalBlocks(
+        projectId: $projectId,
+        page: $page,
+        size: $size,
+        filterObject: $filter
+    ) {
+        totalElements
+    }
+}

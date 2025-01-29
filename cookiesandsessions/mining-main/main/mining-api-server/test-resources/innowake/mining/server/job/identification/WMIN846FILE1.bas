@@ -1,0 +1,3 @@
+GET #Xfm_Age_Fl, REGARDLESS
+KILL "CLAIMS_WIP_SEQ"
+DELETE #Claims_Hist	! mod #2

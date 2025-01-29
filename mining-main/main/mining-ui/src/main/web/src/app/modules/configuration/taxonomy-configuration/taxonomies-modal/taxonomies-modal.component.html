@@ -1,0 +1,62 @@
+<ng-container *ngIf="showWarning">
+  <nz-alert class="taxonomies-modal" nzType="warning" nzMessage="{{ 'assignmentChanged' | translate }}"
+    nzDescription="{{ 'taxonomyWarningMsg' | translate }}" nzShowIcon>
+  </nz-alert>
+</ng-container>
+<div *ngIf=" ! showAll">
+  <nz-progress [nzPercent]="showPercent" nzSize="small"></nz-progress>
+  {{ fileList[0].name }}
+</div>
+  <nz-space nzDirection="vertical" *ngIf="showAll">
+    <nz-content *nzSpaceItem>
+      <nz-alert *ngIf="showMessage" [nzType]="alertType" [nzMessage]="errorAlert"></nz-alert>
+    </nz-content>
+    <ng-template #errorAlert>
+      <nz-space class="text-container-error-warning">
+        <div *nzSpaceItem>
+          <pre>{{ errorMessage }}</pre>
+        </div>
+      </nz-space>
+      <nz-divider></nz-divider>
+      <button nz-button nzType="text" nzSize="small" (click)="onDownloadLog()">
+        <i nz-icon nzType="download"></i>{{ 'taxonomyReportingComponent.downloadLog' | translate }}
+      </button>
+    </ng-template>
+    <p *nzSpaceItem>{{ 'taxonomyReportingComponent.taxonomiesImportModalContent' | translate }}
+      <a target="_blank" [href]="taxonomyImportLink"> {{ 'taxonomyReportingComponent.importLearnHowToWork' | translate}}
+      </a>
+    </p>
+  </nz-space>
+  <nz-space *ngIf="toggleContentSection" nzDirection="vertical">
+    <button *nzSpaceItem nz-button nzType="default" (click)="downloadTemplate()">
+      <i nz-icon nzType="download"></i>
+      {{ 'taxonomyReportingComponent.downloadTemplate' | translate }}
+    </button>
+    <nz-upload *nzSpaceItem [nzFileList]="$any(fileList)" [nzBeforeUpload]="$any(beforeUpload)" nzAccept=".csv">
+      <button nz-button nzType="primary" [disabled]="fileList.length > 0">
+        <i nz-icon nzType="upload"></i>
+        {{ 'taxonomyReportingComponent.selectFile' | translate }}
+      </button>
+    </nz-upload>
+  </nz-space>
+<div *nzModalFooter>
+  <button nz-button nzType="default" (click)="onCancel()" *ngIf="toggleCancelBtn">
+    {{ 'btnLabel.cancel' | translate }}
+  </button>
+  <button nz-button nzType="default" (click)="onValidationCancel()" *ngIf=" ! toggleCancelBtn && toggleImportBtn"
+    [disabled]="disableCancel">
+    {{ 'btnLabel.cancel' | translate }}
+  </button>
+  <button nz-button nzType="default" (click)="onStop()" *ngIf=" ! toggleImportBtn">
+    {{ 'btnLabel.stop' | translate }}
+  </button>
+  <button nz-button nzType="primary" (click)="onValidation()" *ngIf="toggleImportBtn" [disabled]="disableImportBtn()"
+    [nzLoading]="loadingStateValidation" id="taxonomies-validation">
+    <i class="import-icon" nz-icon nzType="import"></i>
+    {{ validationBtnTxt }}
+  </button>
+  <button nz-button nzType="primary" *ngIf=" ! toggleImportBtn" [nzLoading]="loadingStateValidation"
+    id="taxonomies-import">
+    {{ validationBtnTxt }}
+  </button>
+</div>

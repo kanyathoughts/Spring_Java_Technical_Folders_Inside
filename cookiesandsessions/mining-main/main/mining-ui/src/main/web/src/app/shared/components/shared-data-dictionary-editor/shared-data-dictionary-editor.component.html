@@ -1,0 +1,227 @@
+<div nz-row [nzGutter]="[30]" class="shared-dd-editor shared-dd-editor__scroll">
+  <div *ngIf="codeAnnotationEditorItems.length > 0" nz-col nzFlex="auto">
+    <nz-tabset>
+      <nz-tab translate [nzTitle]="'sharedDataDictionaryEditor.businessVariablesTabHeading' | translate">
+        <div *ngFor="let annotationElement of businessCodeAnnotationElements"
+          class="shared-dd-editor__annotationEditor-component">
+          <code-annotation-editor-component [data]="annotationElement" [annotationsOfModule]="codeAnnotationEditorItems" [projectId]="projectId"
+            (currentAnnotationElement)="handleAnnotationSelection($event)"></code-annotation-editor-component>
+        </div>
+      </nz-tab>
+      <nz-tab translate [nzTitle]="'sharedDataDictionaryEditor.nonBusinessVariablesTabHeading' | translate">
+        <div *ngFor="let annotationElement of nonBusinessCodeAnnotationElements"
+          class="shared-dd-editor__annotationEditor-component">
+          <code-annotation-editor-component [data]="annotationElement" [annotationsOfModule]="codeAnnotationEditorItems" [projectId]="projectId"
+            (currentAnnotationElement)="handleAnnotationSelection($event)"></code-annotation-editor-component>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div nz-col nzFlex="auto">
+    <form nz-form nzLayout="vertical" [formGroup]="dataDictionaryForm">
+      <div>
+        <nz-space nzDirection="vertical" nzSize="large">
+          <ng-container *ngIf="showButtons">
+            <div *nzSpaceItem nz-row [nzGutter]="24">
+              <div nz-col nzSpan="12">
+                <nz-space>
+                  <ng-container *ngIf="isEclipseLinkAvailable | async">
+                    <mn-eclipse-button *nzSpaceItem class="module-details__btn-icon"
+                      (clicked)="openInEclipse()"></mn-eclipse-button>
+                  </ng-container>
+                  <mn-code-viewer-button *nzSpaceItem label="module.codeViewer" [moduleDetails]="moduleDetails"
+                    [isDefaultTooltip]="true" [projectId]="projectId"></mn-code-viewer-button>
+                </nz-space>
+                <div>
+                  {{ 'sharedDataDictionaryEditor.entryId' | translate }}
+                  <div class="shared-dd-editor__descriptive-info">
+                    {{ dataDictionaryItem.id ? dataDictionaryItem.id : 'notAvailable' | translate }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div *nzSpaceItem nz-row [nzGutter]="24">
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.fieldName' | translate }}
+              <div class="shared-dd-editor__data-element">
+                {{ dataDictionaryItem.dataElementName ? dataDictionaryItem.dataElementName : 'notAvailable' | translate
+                }}
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.fieldFormat' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ dataDictionaryItem.format ? dataDictionaryItem.format : 'notAvailable' | translate }}
+              </div>
+            </div>
+          </div>
+          <div *nzSpaceItem nz-row [nzGutter]="24">
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.referenced' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ getReferenceValue() | translate }}
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.fieldSize' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ dataDictionaryItem.length ? dataDictionaryItem.length : 'notAvailable' | translate }}
+              </div>
+            </div>
+          </div>
+          <div *nzSpaceItem nz-row [nzGutter]="24">
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.entryScope' | translate }}
+              <div class="shared-dd-editor__descriptive-info">{{ scope }}</div>
+            </div>
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.fieldType' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ ! isElementary ? dataDictionaryItem.format : 'dataDictionary.elementary' | translate }}</div>
+            </div>
+          </div>
+          <div *nzSpaceItem nz-row [nzGutter]="24">
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.accessType' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ accessType ? accessType : 'notAvailable' | translate }}
+              </div>
+            </div>
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.definedLocation' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ dataDictionaryItem.definedLocation ? dataDictionaryItem.definedLocation : 'notAvailable' | translate
+                }}
+              </div>
+            </div>
+          </div>
+          <div *nzSpaceItem nz-row [nzGutter]="24">
+            <div nz-col nzSpan="12">
+              {{ 'sharedDataDictionaryEditor.fieldUsage' | translate }}
+              <div class="shared-dd-editor__descriptive-info">
+                {{ dataDictionaryItem.usage ? dataDictionaryItem.usage : 'notAvailable' | translate }}
+              </div>
+            </div>
+          </div>
+          <div *nzSpaceItem>
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label nzFor="ddDescription" nzRequired [nzNoColon]="true">{{ 'description' | translate }}
+              </nz-form-label>
+              <nz-form-control [nzErrorTip]="errorTip">
+                <textarea formControlName="ddDescription" nz-input class="shared-dd-editor__text-area-type"
+                  placeholder="{{ 'sharedDataDictionaryEditor.descPlaceholder' | translate }}"
+                  [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+                <ng-template #errorTip let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    {{ 'codeViewer.dictionaryDescriptionErr' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="control.hasError('pattern')">
+                    {{ 'sharedDataDictionaryEditor.ddDescPatternErrorMsg' | translate }}
+                  </ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label nzFor="ddBusinessRelated" [nzNoColon]="true">{{
+                'sharedDataDictionaryEditor.businessRelated' | translate }}</nz-form-label>
+              <nz-form-control>
+                <nz-radio-group formControlName="ddBusinessRelated" [(ngModel)]="isBusinessRelated">
+                  <label nz-radio [nzValue]="true">{{ 'sharedDataDictionaryEditor.yes' | translate }}</label>
+                  <label nz-radio [nzValue]="false">{{ 'sharedDataDictionaryEditor.no' | translate }}</label>
+                </nz-radio-group>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label nzFor="ddFieldTransformation" [nzNoColon]="true">{{
+                'sharedDataDictionaryEditor.fieldTransformation' | translate }}
+              </nz-form-label>
+              <nz-form-control>
+                <textarea *ngIf="isElementary; else groupTemplate" formControlName="ddFieldTransformation" nz-input
+                  class="shared-dd-editor__text-area-type"
+                  placeholder="{{ 'sharedDataDictionaryEditor.fieldTransformationPlaceHolder' | translate }}"
+                  [nzAutosize]="{ minRows: 1, maxRows: 15 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label nzFor="ddSourceInput" [nzNoColon]="true">{{
+                'sharedDataDictionaryEditor.sourceInput' | translate }}
+              </nz-form-label>
+              <nz-form-control>
+                <textarea formControlName="ddSourceInput" nz-input class="shared-dd-editor__text-area-type"
+                  placeholder="{{ 'sharedDataDictionaryEditor.sourceInputPlaceHolder' | translate }}"
+                  [nzAutosize]="{ minRows: 1, maxRows: 15 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label [nzTooltipTitle]="'dataDictionaryReporting.tooltip' | translate" nzTooltipIcon="info-circle">{{
+                'dataDictionaryReporting.translatedFieldName' | translate }}</nz-form-label>
+              <nz-form-control>
+                <textarea formControlName="ddTranslatedFieldName" nz-input
+                  class="shared-dd-editor__text-area-type"
+                  placeholder="{{ 'dataDictionaryReporting.placeholder' | translate }}"
+                  [nzAutosize]="{ minRows: 1, maxRows: 15 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="shared-dd-editor__form-item">
+              <nz-form-label nzFor="ddTargetOutput" [nzNoColon]="true">{{
+                'sharedDataDictionaryEditor.targetOutput' | translate }}
+              </nz-form-label>
+              <nz-form-control>
+                <textarea formControlName="ddTargetOutput" nz-input class="shared-dd-editor__text-area-type"
+                  placeholder="{{ 'sharedDataDictionaryEditor.targetOutputPlaceHolder' | translate }}"
+                  [nzAutosize]="{ minRows: 1, maxRows: 15 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </nz-space>
+        <app-custom-property-field-list className="DataDictionaryEntry" [projectId]="projectId"
+          [customProperties]="dataDictionaryItem.customProperties" [parentForm]="dataDictionaryForm">
+        </app-custom-property-field-list>
+        <nz-form-item>
+          <nz-form-label nzFor="state" nzRequired [nzNoColon]="true">{{ 'state' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-select nzPlaceHolder="{{'codeViewer.statusPlaceholder' | translate}}" formControlName="state">
+              <nz-option *ngFor="let statusOpt of statusList" [nzValue]="statusOpt" [nzLabel]="statusOpt"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <div nz-row [nzJustify]=" ! showDeleteButton ? 'end' : 'space-between'" class="shared-dd-editor__button-bar">
+      <div nz-coll>
+        <button type="button" *ngIf="showDeleteButton" nz-button nzType="default" nz-popconfirm
+          nzPopconfirmTitle="{{ 'sharedDataDictionaryEditor.popConfirmText' | translate }}"
+          nzPopconfirmPlacement="bottom" [nzLoading]="isDelete" [disabled]="isCancel || isSave"
+          (nzOnConfirm)="onDelete()" nzOkText="{{ 'btnLabel.delete' | translate }}" nzCancelText="Cancel" nzDanger>
+          {{ 'btnLabel.delete' | translate }}
+        </button>
+      </div>
+      <div nz-coll>
+        <nz-space>
+          <button *nzSpaceItem type="button" nz-button class="cancel_editor" nzType="default" (click)="onCancel()"
+            [disabled]="isDelete || isSave" [nzLoading]="isCancel">
+            {{ 'btnLabel.cancel' | translate }}</button>
+          <button type="button" *nzSpaceItem nz-button nzType="primary"
+            [disabled]=" ! canSubmitForm() || isCancel || isDelete" (click)="onSubmit()" [nzLoading]="isSave">
+            {{ 'btnLabel.save' | translate }}</button>
+        </nz-space>
+      </div>
+    </div>
+
+
+
+
+<ng-template #groupTemplate>
+  <div class="shared-dd-editor__descriptive-info">
+    {{ 'notAvailable' | translate }}
+  </div>
+</ng-template>

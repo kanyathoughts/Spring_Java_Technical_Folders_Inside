@@ -1,0 +1,51 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2069,"","EMPLOYEE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2067,"","FILM","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2066,2065,"MAX_SALARY","","SQL","SQL_STORED_PROCEDURE","VIRTUAL",-1,0,-1,-1,-1,0,0,0,79
+2068,"","SALES","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2065,"","SqlStatements","src/sql/WMIN2956/SqlStatements.sql","SQL","SQL_SCRIPT","PHYSICAL",-1,0,39,0,40,0,6,-1,-1
+2070,"","STAFF","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2065,"SqlStatements","CREATE_PROCEDURE",0,0,0,0,0.00,0.00,"CREATE PROCEDURE MAX_SALARY (OUT maxSalary DOUBLE)
+LANGUAGE SQL
+READS SQL DATA"
+2065,"SqlStatements","DELETE",40,1,1,2,2.32,1.00,"DELETE FROM staff
+WHERE WORKDEPT = 'D11'"
+2065,"SqlStatements","INSERT",100,2,2,7,6.64,2.00,"INSERT INTO staff
+(SELECT * FROM REMOTESYS.TESTSCHEMA.SALES WHERE SALES_DATE = CURRENT DATE - 1 DAY)"
+2065,"SqlStatements","SELECT",44,1,1,5,3.88,1.50,"SELECT MAX(salary) INTO maxSalary FROM staff"
+2065,"SqlStatements","UPDATE",119,2,2,7,5.19,1.50,"UPDATE staff
+SET DEPTNO =
+(SELECT WORKDEPT FROM EMPLOYEE
+WHERE PROJECT.RESPEMP = EMPLOYEE.EMPNO)
+WHERE RESPEMP='000030'"
+2065,"SqlStatements","SELECT",323,2,2,19,33.98,8.00,"WITH cte_film AS (
+    SELECT          film_id,          title,         (CASE  WHEN length < 30
+THEN 'Short'
+WHEN length >= 30 AND length < 90
+THEN 'Medium'
+WHEN length >= 90
+THEN 'Long'
+END) length
+    FROM         film )SELECT     film_id,     title,     length FROM      cte_film WHERE length = 'Long'
+ORDER BY
+    title"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2065,"SqlStatements",2069,"EMPLOYEE","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",294,142,-1,-1
+2065,"SqlStatements",2067,"FILM","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",444,428,-1,-1
+2065,"SqlStatements",2068,"SALES","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",183,109,-1,-1
+2065,"SqlStatements",2070,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""UPDATE""]}",294,142,-1,-1
+2065,"SqlStatements",2070,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""STORE""]}",183,109,-1,-1
+2065,"SqlStatements",2070,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""DELETE""]}",136,45,-1,-1
+2065,"SqlStatements",2070,"STAFF","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",88,44,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN539FILE1.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+           EXEC CICS DELETE
+             FILE('FILE')
+           END-EXEC.
+
+      
+           GOBACK.

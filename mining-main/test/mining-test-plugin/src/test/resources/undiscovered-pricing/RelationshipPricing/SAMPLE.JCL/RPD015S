@@ -1,0 +1,25 @@
+//RPD015S JOB
+//*    ************************************************                 00001000
+//*    * RPD015 - RPT INIT                            *                 00002000
+//*    ************************************************                 00003000
+//IDCAMS   EXEC PGM=IDCAMS,REGION=512K                                  00004000
+//SYSPRINT DD  SYSOUT=*                                                 00005000
+//SYSUDUMP DD  SYSOUT=*                                                 00006000
+//*                                                                     00007000
+//SYSIN    DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPRPTSA),DISP=SHR             00008000
+//         DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPRPTSC),DISP=SHR             00009000
+//*                                                                     00010000
+//*                                                                     00011000
+//RPD015   EXEC  PGM=RPD015,PARM='ORG=(1)',REGION=1024K                 00012000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00014000
+//SYSUDUMP DD  SYSOUT=*                                                 00015000
+//SYSOUT   DD  SYSOUT=*                                                 00016000
+//RPRPTSA  DD  DSN=BNKCAV.IN0.RP50.RPRPTSA,DISP=SHR                     00017000
+//RPRPTSC  DD  DSN=BNKCAV.IN0.RP50.RPRPTSC,DISP=SHR                     00018000
+//*                                                                     00019000
+//

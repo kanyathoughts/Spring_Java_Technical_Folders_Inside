@@ -1,0 +1,13 @@
+<nz-tree
+  [nzData]="columnData"
+  class="mining-setting-popover"
+  [nzCheckedKeys]="defaultCheckedKeys"
+  [nzSearchValue]="searchValue"
+  nzCheckable
+  nzMultiple
+  nzShowExpand="true"
+  (nzCheckBoxChange)="updateMiningTable($event)"
+  (nzClick)=" ! $event.node.origin.disableCheckbox && toggleNode($event)"
+  [nzExpandAll]="expandAll"
+  (nzSearchValueChange)="onSearchValueChange(searchValue)"
+></nz-tree>

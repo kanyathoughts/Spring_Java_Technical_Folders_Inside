@@ -1,0 +1,49 @@
+         TITLE 'MMRS-M01 - MMRS71A, Frame Map for dialogs '                          
+MMRS71A  DFHMSD EXTATT=YES,                                            -
+               LANG=COBOL,                                             -
+               MODE=INOUT,                                             -
+               STORAGE=AUTO,                                           -
+               TIOAPFX=YES,                                            -
+               TYPE=&&SYSPARM 
+         SPACE                                                         
+*              ** Headline **                                     
+MMRS71A  DFHMDI COLUMN=1,LINE=1,SIZE=(24,80)
+         SPACE                                                        
+HEAD001  DFHMDF ATTRB=(ASKIP,NORM),                                    -
+               LENGTH=16,                                              -
+               POS=(1,1),                                              -
+               INITIAL='MMRS-M01-MMRS71A' 
+LBL001   DFHMDF ATTRB=(ASKIP,BRT),                                     -
+               LENGTH=38,                                              -
+               POS=(1,18),                                             -
+               INITIAL='**** Frame ****' 
+DATE001  DFHMDF ATTRB=(ASKIP,NORM),                                    -
+               LENGTH=10,                                              -
+               POS=(1,57),                                             -
+               INITIAL='TT.MM.JJJJ' 
+TIME001  DFHMDF ATTRB=(ASKIP,NORM),                                    -
+               LENGTH=08,                                              -
+               POS=(1,68),                                             -
+               INITIAL='HH.MM.SS' 
+         SPACE                                                        
+*              ** actual Info **                                     
+ACTUAL02 DFHMDF ATTRB=(ASKIP,BRT),                                     -
+               LENGTH=78,                                              -
+               POS=(2,1),                                              -
+               INITIAL=' ' 
+*              ** Infotext **                                     
+INFOTXT  DFHMDF ATTRB=(ASKIP,BRT),                                     -
+               LENGTH=78,                                              -
+               POS=(22,1),                                             -
+               INITIAL=' ' 
+*              ** functionkeys **                                    
+PFKTXT1  DFHMDF ATTRB=(ASKIP,BRT),                                     -
+               LENGTH=35,                                              -
+               POS=(23,1),                                             -
+               INITIAL='PF01- PF02- PF03- PF04- PF05- PF06-'
+TXTPF01  DFHMDF ATTRB=(ASKIP,BRT),                                     -
+               LENGTH=5,                                               -
+               POS=(24,1),                                             -
+                
+         DFHMSD TYPE=FINAL
+         END

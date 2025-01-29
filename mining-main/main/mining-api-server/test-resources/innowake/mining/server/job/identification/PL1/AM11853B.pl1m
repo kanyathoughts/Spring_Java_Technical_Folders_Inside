@@ -1,0 +1,96 @@
+ PROGRAM: PROCEDURE OPTIONS(MAIN);
+
+  DCL
+   1 SQLCA  ,
+     2 SQLCAID     CHAR(8),
+     2 SQLCABC     FIXED BIN(31),
+     2 SQLCODE     FIXED BIN(31),
+     2 SQLERRM     CHAR(70) VAR,
+     2 SQLERRP     CHAR(8),
+     2 SQLERRD(6)  FIXED BIN(31),
+     2 SQLWARN,
+       3 SQLWARN0  CHAR(1),
+       3 SQLWARN1  CHAR(1),
+       3 SQLWARN2  CHAR(1),
+       3 SQLWARN3  CHAR(1),
+       3 SQLWARN4  CHAR(1),
+       3 SQLWARN5  CHAR(1),
+       3 SQLWARN6  CHAR(1),
+       3 SQLWARN7  CHAR(1),
+     2 SQLEXT,
+       3 SQLWARN8  CHAR(1),
+       3 SQLWARN9  CHAR(1),
+       3 SQLWARNA  CHAR(1),
+       3 SQLSTATE  CHAR(5);
+
+
+    EXEC SQL CONNECT TO DALLASC;
+
+    DECLARE TESTCASE CHAR(50);
+    DECLARE ALPHA CHAR(8);
+    DECLARE ALPHA_NULL FIXED BIN(15);
+
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    
+    TESTCASE = 'TEST1: NON-NULL VALUE';
+    ALPHA = 'NON-NULL';
+    ALPHA_NULL = 0;
+
+    EXEC SQL 
+        INSERT INTO IW_SQL_TEST ("ALPHA_SHORT", "ALPHA_LONG") 
+        VALUES (:ALPHA:ALPHA_NULL, :TESTCASE);
+    
+    TESTCASE = '';
+    ALPHA = '';
+    ALPHA_NULL = 0;
+
+    EXEC SQL SELECT ALPHA_SHORT, ALPHA_LONG 
+             INTO :ALPHA:ALPHA_NULL, :TESTCASE 
+             FROM IW_SQL_TEST
+             WHERE ALPHA_LONG LIKE 'TEST1%'
+             ORDER BY ALPHA_SHORT;   
+    put skip list(TESTCASE, ': ', ALPHA, ' ', ALPHA_NULL);
+    
+    TESTCASE = 'TEST2: NULL VALUE VIA IND';
+    ALPHA_NULL = -1;
+    ALPHA = 'NULL-VAL';
+    
+    EXEC SQL 
+        INSERT INTO IW_SQL_TEST ("ALPHA_SHORT", "ALPHA_LONG") 
+        VALUES (:ALPHA:ALPHA_NULL, :TESTCASE);
+        
+    TESTCASE = '';
+    ALPHA = '';
+    ALPHA_NULL = 0;
+
+    EXEC SQL SELECT ALPHA_SHORT, ALPHA_LONG 
+             INTO :ALPHA:ALPHA_NULL, :TESTCASE 
+             FROM IW_SQL_TEST
+             WHERE ALPHA_LONG LIKE 'TEST2%'
+             ORDER BY ALPHA_SHORT;  
+    put skip list(TESTCASE, ': ', ALPHA, ' ', ALPHA_NULL);
+             
+    TESTCASE = 'TEST3: EXPLICIT NULL';
+    ALPHA = '';
+    ALPHA_NULL = 0;
+
+    EXEC SQL 
+        INSERT INTO IW_SQL_TEST ("ALPHA_SHORT", "ALPHA_LONG") 
+        VALUES (NULL, :TESTCASE);
+        
+    TESTCASE = '';
+    ALPHA = '';
+    ALPHA_NULL = 0;
+
+    EXEC SQL SELECT ALPHA_SHORT, ALPHA_LONG 
+             INTO :ALPHA:ALPHA_NULL, :TESTCASE 
+             FROM IW_SQL_TEST
+             WHERE ALPHA_LONG LIKE 'TEST3%'
+             ORDER BY ALPHA_SHORT;
+    put skip list(TESTCASE, ': ', ALPHA, ' ', ALPHA_NULL);
+    
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+    
+    EXEC SQL COMMIT;
+
+ END PROGRAM;

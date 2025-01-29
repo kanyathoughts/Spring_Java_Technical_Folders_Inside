@@ -1,0 +1,125 @@
+<ng-container *ngIf="savedSearchList?.length > 0; else title">
+  <nz-select class="base-customizable-table__title" nzBorderless [nzDropdownMatchSelectWidth]="false"
+    [(ngModel)]="selectedSavedSearchName" nzDropdownClassName="base-customizable-table" ngDefaultControl
+    (ngModelChange)="onSavedSearchSelection()" [nzCustomTemplate]="savedSearchTemplate">
+    <nz-option nzCustomContent nzValue="">
+      <h4 class="base-customizable-table__saved-search">{{ 'savedSearch' | translate }}</h4>
+      <em aria-hidden="true" *ngIf="selectedSavedSearchName" nz-icon nzType="close-circle" nzTheme="fill"
+        class="base-customizable-table__close-icon"></em>
+    </nz-option>
+    <nz-option-group [nzLabel]="savedSearchDividerTemplate">
+      <nz-option nzCustomContent *ngFor="let option of savedSearchList" [nzValue]="option.name" [nzLabel]="option.name">
+        {{ option.name }}
+        <span nz-tooltip [nzTooltipTitle]="getTooltipContent(option.scope, option.createdByUserId)" *ngIf = "option.scope !== 'INDIVIDUAL'" nz-icon nzType="team" nzTheme="outline"></span>
+      </nz-option>
+    </nz-option-group>
+  </nz-select>
+  <button *ngIf="showDuplicateButton(); else createSavedSearch"
+    nzSize="small" nz-button nz-tooltip nzTooltipPlacement="bottom"
+    nzTooltipTitle="{{'savedSearchModal.DuplicateBtnToolTip' | translate}}"
+    (click)="saveAndUpdateSavedSearch(savedSearchMode.DUPLICATE)">
+    <em nz-icon nzType="copy" aria-hidden="true"></em>{{'btnLabel.duplicate' | translate}}
+  </button>
+  <ng-template #createSavedSearch>
+    <nz-button-group>
+      <button nzSize="small" [disabled]=" ! createNewSavedSearch" nz-button
+        (click)="saveAndUpdateSavedSearch(createSavedSearchTitle == 'save' ? savedSearchMode.RENAME : savedSearchMode.CREATE)">{{
+        createSavedSearchTitle }}</button>
+      <button *ngIf="createNewSavedSearch" (click)="resetSaveSearch()" nzSize="small" nz-button nzType="default"
+        nzPlacement="bottomRight">
+        <em nz-icon nzType="undo" aria-hidden="true"></em>
+      </button>
+      <button *ngIf=" ! createNewSavedSearch && selectedSavedSearchName !== ''" nzSize="small" nz-button nzType="default"
+        nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
+        <em nz-icon nzType="ellipsis" aria-hidden="true"></em>
+      </button>
+    </nz-button-group>
+  </ng-template>
+  <ng-template #savedSearchDividerTemplate>
+    <nz-divider class="base-customizable-table__save-search-divider"></nz-divider>
+  </ng-template>
+  <ng-template #savedSearchTemplate>
+    {{ selectedSavedSearchName ? selectedSavedSearchName : pageTitle }}
+    <span nz-tooltip [nzTooltipTitle]="getTooltipContent(selectedSavedSearch.scope, selectedSavedSearch.createdByUserName)" *ngIf = "selectedSavedSearch?.scope && selectedSavedSearch.scope !== 'INDIVIDUAL'" nz-icon nzType="team" nzTheme="outline"></span>
+  </ng-template>
+</ng-container>
+<ng-template #title>
+  {{ pageTitle }}
+  <nz-page-header-subtitle  *ngIf="modulesWithErrorsAndWarnings?.errors.length || modulesWithErrorsAndWarnings?.warnings.length">{{'reachability.moduleswith' | translate}}</nz-page-header-subtitle>
+      <nz-page-header-tags *ngIf="modulesWithErrorsAndWarnings?.errors.length">
+        <nz-tag  nzColor="error" class="block-card__title-pointer" (click)="openModulesTable('errors')">{{'reachability.errors' | translate}} 
+          <nz-badge class="block-card__badge-margin" [nzCount]="modulesWithErrorsAndWarnings?.errors.length" nzSize="small"></nz-badge>
+        </nz-tag>
+      </nz-page-header-tags>
+      <nz-page-header-tags *ngIf="modulesWithErrorsAndWarnings?.warnings.length">
+        <nz-tag  nzColor="warning" class="block-card__title-pointer" (click)="openModulesTable('warnings')">{{'reachability.warnings' | translate}} 
+          <nz-badge class="block-card__badge-margin block-card__warning-badge" [nzCount]="modulesWithErrorsAndWarnings?.warnings.length" nzSize="small"></nz-badge>
+        </nz-tag>
+      </nz-page-header-tags>
+</ng-template>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-submenu [nzTitle]="subMenuTemplate">
+      <ul>
+        <li nz-menu-item [nzSelected]="option.value == shareWith" *ngFor="let option of shareOptions" (click)="saveAndUpdateSavedSearch(savedSearchMode.CREATE, option.value)">{{option.label}}</li>
+      </ul>
+    </li>
+    <li nz-menu-item (click)="saveAndUpdateSavedSearch(savedSearchMode.DUPLICATE)">
+      <em nz-icon nzType="copy" class="base-customizable-table__danger-icon" aria-hidden="true"></em>
+      {{'btnLabel.duplicate' | translate}}
+    </li>
+    <li nz-menu-item (click)="saveAndUpdateSavedSearch(savedSearchMode.RENAME)">
+      <em nz-icon nzType="edit" class="base-customizable-table__danger-icon" aria-hidden="true"></em>
+      {{'btnLabel.rename' | translate}}
+    </li>
+    <li nzDanger nz-menu-item (click)="showDeleteConfirmationModal()">
+      <em nz-icon nztheme="outline" nzType="delete" aria-hidden="true"
+        class="base-customizable-table__danger-icon"></em>
+      {{'btnLabel.delete' | translate}}
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+<ng-template #subMenuTemplate>
+  <span class="save-search-modal__subMenuTemplate">
+    <em nz-icon nzType="team" class="save-search-modal__subMenuTemplate--icon-padding" aria-hidden="true"></em>
+    <span>{{ 'savedSearchModal.shareWith' | translate }}</span>
+  </span>
+</ng-template>
+
+<ng-template #saveSearchTemplate>
+  <form nz-form [formGroup]="savedSearchForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">{{ 'savedSearchModal.title' | translate }}</nz-form-label>
+      <nz-form-control [nzSpan]="24">
+        <input nz-input name="name" [placeholder]="'savedSearchModal.placeHolder' | translate" formControlName="name"
+          required />
+        <span class="custom-property-editor__error-msg"
+          *ngIf="savedSearchForm.get('name').hasError('duplicate') && (savedSearchForm.controls['name'].dirty || savedSearchForm.controls['name'].touched)">
+          {{ 'annotationFields.duplicateMsg' | translate }}</span>
+      </nz-form-control>
+    </nz-form-item>
+      <div *ngIf=" ! (checkText === savedSearchMode.RENAME)" nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">{{ 'savedSearchModal.shareWith' | translate }}
+            <em nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+              [nzTooltipTitle]="'savedSearchModal.shareWithToolTip' | translate"
+              class="save-search-modal__info-icon"></em>
+          </nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select class="member-modal__select-width" formControlName="shareWith">
+              <nz-option *ngFor="let option of shareOptions" [nzLabel]="option.label" [nzValue]="option.value">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </form>
+  </ng-template>
+
+<ng-template #nzFooter>
+  <button nz-button nzType="default" (click)="onCancel()">{{ 'btnLabel.cancel' | translate }}</button>
+  <button nz-button nzType="primary" (click)="onSubmit(checkText)" [disabled]="savedSearchForm?.invalid">{{
+    'btnLabel.save' | translate }}</button>
+</ng-template>

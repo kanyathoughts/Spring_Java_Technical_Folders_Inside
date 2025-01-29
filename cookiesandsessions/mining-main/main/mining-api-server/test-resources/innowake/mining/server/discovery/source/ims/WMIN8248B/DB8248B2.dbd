@@ -1,0 +1,47 @@
+DBD   NAME=DB8248B2,                                         
+      ACCESS=INDEX
+DATASET DD1=DB8248B2,                                    
+      DEVICE=3390,                                         
+      SIZE=(4096),                                         
+      SCAN=3
+SEGM  NAME=SEGM4,                                           
+      PARENT=0,                                         
+      BYTES=100,                                       
+      PTR=(T),                                           
+      RULES=(PLV,LAST)
+FIELD NAME=(SEQFLD,SEQ,U),                              
+      BYTES=3,                                            
+      START=1,                                            
+      TYPE=C
+LCHILD NAME=(SEGM3,DB8248B3),                               
+      POINTER=SNGL,                                       
+      PAIR=SEGM6,                                          
+      RULES=LAST
+SEGM  NAME=SEGM5,                                         
+      PARENT=SEGM4,                                             
+      BYTES=100,                                            
+      PTR=(T),                                               
+      RULES=(PLV,LAST)
+FIELD NAME=(SEQFLD,SEQ,U),                                  
+      BYTES=2,                                             
+      START=1,                                            
+      TYPE=C
+LCHILD NAME=(SEGM3,DB8248B1),                               
+      POINTER=SNGL,                                       
+      PAIR=SEGM6,                                          
+      RULES=LAST
+SEGM  NAME=SEGM6,                                         
+      PARENT=SEGM5,                                        
+      SOURCE=((SEGM3,DATA,DB8248B1)),                         
+      PTR=PAIRED                                            
+FIELD NAME=(SEQFLD,SEQ,M),                                 
+      BYTES=8,                                              
+      START=1,                                             
+      TYPE=C
+FIELD NAME=FLD2,                                           
+      BYTES=3,                                               
+      START=9,                                           
+      TYPE=C
+DBDGEN                                                                        
+FINISH                                                                        
+END

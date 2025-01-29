@@ -1,0 +1,41 @@
+ FILE TEST EXIT (MNO)                                                                
+ JOB INPUT NULL                                                         
+ 
+ SQL DECLARE SAMPLECURSOR CURSOR FOR                          +                              
+     SELECT P_ID                                              +
+           ,IO_KEY                                            +
+       FROM TABLE1                                            +
+       WHERE P_ID = :WS-JOBNAME                               +
+       FOR FETCH ONLY WITH UR                                 +
+ 
+GET-PARM-INFO. PROC
+   
+   CALL EZTPX01 USING (PARM-REGISTER PARM-INFO)
+   
+   IF PARM-LTH = 8
+   		MOVE PARM-DATA TO WS-JOBNAME
+   ELSE
+   WS-ERR = 'PARM'
+   END-IF
+   
+   CASE WS-JOBNAME
+   WHEN 'RJD'
+   		WS-PGMNAME = 'EAX'
+   OTHERWISE
+   		WS-ERR = 'EAMZ7852'
+   END-CASE
+END-PROC
+ 
+ UPDATE-TABLE.  PROC
+   SQL UPDATE TABLE2                                          +                              
+     SET IO_RCRD_KEY_TX = :WS-ROW-TEXT,                       +                          
+     	 LST_UPDTD_USER_ID = 'EAMZ4855'                       +                           
+     WHERE PGM_ID   = :WS-JOBNAME                             +                  
+ END-PROC
+ 
+ INSERT-TABLE. PROC  
+   SQL INSERT INTO TABLE3                                     +
+       VALUES (:WS-JOBNAME                                    +
+               ,0)
+ END-PROC
+    

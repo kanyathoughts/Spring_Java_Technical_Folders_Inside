@@ -1,0 +1,21 @@
+ BLK004B: Package exports(Main,Blk004b,Blk004c);
+
+ Main: proc options(main);
+  put skip list("In Main");
+  call Blk004b;
+ end Main;
+
+ Blk004b : proc;
+  put skip list("In exported Blk004b procedure");
+  call Blk004c;
+ end Blk004b;
+
+ Blk004c : proc;
+  put skip list("In exported Blk004c procedure");
+  call c;
+    c: proc;
+     put skip list("In Blk004c nested procedure");
+     end;
+ end Blk004c;
+
+ END BLK004B;

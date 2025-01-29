@@ -1,0 +1,33 @@
+DEFINE DATA
+LOCAL
+  1 A (A1)
+  1 GRP
+    2 B (A1)
+END-DEFINE
+
+* No candidate: only 1 FIELD_REFERENCE which is not from a Copybook
+IF A SPECIFIED
+    WRITE (1) NOTITLE '=' A
+END-IF
+
+* No candidate: only 1 FIELD_REFERENCE which is not from a Copybook
+IF GRP.B SPECIFIED
+    WRITE (1) NOTITLE '=' B
+END-IF
+
+* Candidate: at least two FIELD_REFERENCEs
+IF A = B
+    WRITE (1) NOTITLE '=' B
+END-IF
+
+* No candidate: only 1 FIELD_REFERENCE which is not from a Copybook
+IF SELECTION NOT UNIQUE A
+  REINPUT '1'
+END-IF
+
+* Candidate: at least two FIELD_REFERENCEs
+IF SELECTION NOT UNIQUE A B
+  REINPUT '2'
+END-IF
+
+END

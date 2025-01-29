@@ -1,0 +1,39 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3006,"","ABORT","src/cobol/WCFD902/programs/ABORT.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",5,1,73,25,116,7,0,-1,-1
+3008,"","QCU018","src/cobol/WCFD902/programs/QCU018.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",4,0,81,23,130,3,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+3006,"ABORT","CALL","CALL 'AIBTDLI' USING: ['ROLB', WS-AIB-MASK] {calltype : IMS-SYS-SERVICE}"
+3006,"ABORT","CALL","CALL 'CEE3ABD' USING: [WSP-ABORT-CODE]"
+3006,"ABORT","CALL","CALL 'CEE3DMP' USING: [WSP-ABORT-CODE]"
+3006,"ABORT","CONDITIONAL","IF WS-AIB-REASON-CODE NE SPACES"
+3006,"ABORT","CONDITIONAL","IF WS-AIB-RETURN-CODE NE SPACES"
+3006,"ABORT","CONDITIONAL","IF WSH-RETURN-CODE EQ ZEROES"
+3006,"ABORT","CONDITIONAL","IF WSH-RUN-TYPE EQ WSC-IMS"
+3008,"QCU018","CALL","CALL WSC-CBLTDLI USING: ['PURG', ] {calltype : IMS-TM-MSG}"
+3008,"QCU018","CALL","CALL WSC-CEE3ABD USING: [1018]"
+3008,"QCU018","CONDITIONAL","IF WQPCALT1-STAT-CODE EQ SPACES OR WQPCALT1-STAT-CODE EQ 'AZ'"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3006,"ABORT",0,"AIBTDLI","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",7395,41,-1,-1
+3006,"ABORT",0,"CEE3ABD","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8543,35,-1,-1
+3006,"ABORT",0,"CEE3ABD","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8789,35,-1,-1
+3006,"ABORT",0,"CEE3DMP","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8461,35,-1,-1
+3006,"ABORT",0,"CEE3DMP","UNKNOWN","UTILITY","Calls","","EARLY","{""CALL_TYPE"":[""CALL""]}",8707,35,-1,-1
+3008,"QCU018",-1,"ADDCABTA","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3008,"QCU018",0,"CBLTDLI","UNKNOWN","UTILITY","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",8047,117,-1,-1
+3008,"QCU018",0,"CEE3ABD","UNKNOWN","UTILITY","Calls","","LATE","{""CALL_TYPE"":[""CALL""]}",8625,39,-1,-1
+3008,"QCU018",-1,"QS00XFER","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3008,"QCU018",-1,"QS00XFFE","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3008,"QCU018",-1,"QS00XFHP","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+3008,"QCU018",-1,"WQPCALT1","COBOL","COBOL_COPYBOOK","Includes","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+3006,"ABORT","WARNING","UNDISCOVERED_DEPENDENCY","Unable to resolve file DFSVSAMP to actual data set.",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

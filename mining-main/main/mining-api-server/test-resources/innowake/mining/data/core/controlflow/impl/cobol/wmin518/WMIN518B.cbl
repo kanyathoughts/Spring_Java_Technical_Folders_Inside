@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN518B.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+           PERFORM TESTPARA
+           GOBACK.
+       TESTPARA.
+            RETURN SORT-FILE RECORD INTO  OUTPUT-RECORD
+            AT END
+            DISPLAY 'A'
+            NOT AT END
+            DISPLAY 'B'
+            END-RETURN.
+       UNREACHABLE.
+            DISPLAY 'UNREACHABLE'

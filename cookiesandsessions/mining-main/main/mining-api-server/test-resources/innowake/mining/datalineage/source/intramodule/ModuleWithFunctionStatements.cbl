@@ -1,0 +1,24 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. FUNCTION-DEMO.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 RESULT-A PIC 9(4) VALUE 10.
+       77 RESULT-B PIC 9(4) VALUE 20.
+       77 RESULT-C PIC 9(4) VALUE -30.
+       77 RESULT-D PIC X(10) VALUE 'Hello'.
+       77 RESULT-E PIC X(10).
+       77 RESULT-F PIC 9(4).
+       PROCEDURE DIVISION.
+           COMPUTE RESULT-B = FUNCTION SQRT (RESULT-A)
+           DISPLAY "ABS of RESULT-B: " FUNCTION ABS(RESULT-B).
+           IF FUNCTION UPPER-CASE (
+                          FUNCTION TRIM (RESULT-C))=
+                          FUNCTION UPPER-CASE (
+                          FUNCTION TRIM (RESULT-D))
+                DISPLAY "LENGTH of RESULT-D: " FUNCTION LENGTH(RESULT-D).
+           ELSE
+                MOVE FUNCTION LOWER-CASE(RESULT-D) TO RESULT-E.
+           END-IF
+           MOVE FUNCTION NUMVAL("123") TO RESULT-F.
+           DISPLAY "NUMVAL of '123': " RESULT-F.
+           STOP RUN.

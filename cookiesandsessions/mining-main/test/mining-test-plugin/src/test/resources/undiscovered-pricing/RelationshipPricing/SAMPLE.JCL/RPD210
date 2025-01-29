@@ -1,0 +1,40 @@
+//RPD210 JOB
+//*    ************************************************************     00001000
+//*    * RPD210 - RELATIONSHIP PRICING CASH REWARD UPDATE         *     00002000
+//*    ************************************************************     00006000
+//RPD210   EXEC PGM=RPD210,REGION=4096K                                 00017000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00019000
+//SYSUDUMP DD  SYSOUT=*                                                 00020000
+//SYSOUT   DD  SYSOUT=*                                                 00021000
+//MIFMST   DD  DSN=BNKCAV.IN0.MI51.MIFMST,DISP=SHR                      00035000
+//MIFCSR   DD  DSN=BNKCAV.IN0.MI51.MIFCSR,DISP=SHR                      00036000
+//*    *************************************************                00001000
+//*    * RPVSAMDD - REL PRICING VSAM API DD STATEMENTS *                00002000
+//*    *************************************************                00003000
+//RPFACT   DD  DSN=BNKCAV.IN0.RP50.RPFACT,DISP=SHR                      00004000
+//RPFBNK   DD  DSN=BNKCAV.IN0.RP50.RPFBNK,DISP=SHR                      00005000
+//RPFCRW   DD  DSN=BNKCAV.IN0.RP50.RPFCRW,DISP=SHR                      00006000
+//RPFENR   DD  DSN=BNKCAV.IN0.RP50.RPFENR,DISP=SHR                      00007000
+//RPFEVT   DD  DSN=BNKCAV.IN0.RP50.RPFEVT,DISP=SHR                      00008000
+//RPFIDX   DD  DSN=BNKCAV.IN0.RP50.RPFIDX,DISP=SHR                      00009000
+//RPFINT   DD  DSN=BNKCAV.IN0.RP50.RPFINT,DISP=SHR                      00010000
+//RPFLOG   DD  DSN=BNKCAV.IN0.RP50.RPFLOG,DISP=SHR                      00011000
+//RPFMST   DD  DSN=BNKCAV.IN0.RP50.RPFMST,DISP=SHR                      00012000
+//RPFQUA   DD  DSN=BNKCAV.IN0.RP50.RPFQUA,DISP=SHR                      00013000
+//RPFREL   DD  DSN=BNKCAV.IN0.RP50.RPFREL,DISP=SHR                      00014000
+//RPFSEC   DD  DSN=BNKCAV.IN0.RP50.RPFSEC,DISP=SHR                      00015000
+//RPFSYC   DD  DSN=BNKCAV.IN0.RP50.RPFSYC,DISP=SHR                      00016000
+//RPFTRM   DD  DSN=BNKCAV.IN0.RP50.RPFTRM,DISP=SHR                      00017000
+//RPCRWW   DD  DSN=BNKCA.IN0.RP50.RPCRWW,DISP=SHR                       00039000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00053000
+/*                                                                      00054000
+//

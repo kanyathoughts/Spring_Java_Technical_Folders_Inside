@@ -1,0 +1,39 @@
+<nz-card nzHoverable [nzCover]="coverTemplate" [nzActions]="authorizationService.isClientAdmin(client.id)? [$any(actionEllipsis)] : []" class="preview-card">
+    <nz-card-meta [nzTitle]="client.name" [nzDescription]="descriptionTemplate" (click)="onCardClick()"></nz-card-meta>
+</nz-card>
+
+<ng-template #coverTemplate>
+    <div *ngIf="clientLogo" class="client-card__logo-frame" (click)="onCardClick()">
+        <img  class="client-card__logo" [src]="clientLogo" alt="{{ 'selectClient.clientLogoAlt' | translate }}"/>
+    </div>
+    <mn-default-card-cover *ngIf="! clientLogo" (click)="onCardClick()" [title]="client.name"></mn-default-card-cover>
+</ng-template>
+
+<ng-template #descriptionTemplate>
+    <span nz-tooltip [nzTooltipTitle]="tooltipTemplate" nzTooltipPlacement="bottomLeft" (nzTooltipVisibleChange)="getProjectList()">{{ projectCount }} {{ 'selectClient.projects' | translate }}</span>
+</ng-template>
+
+<ng-template #tooltipTemplate>
+    <mn-loader *ngIf="loadingProject"></mn-loader>
+    <ul *ngIf="! loadingProject" class="reset-list-decorator">
+        <li *ngFor="let project of projectList">{{ project.name }}</li>
+    </ul>
+</ng-template>
+
+<ng-template #actionEllipsis>
+    <i class="preview-card__elipsis-action" nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu" [nzPlacement]="'bottomCenter'" nzTrigger="click"></i>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="onEditClient()" *ngIf="authorizationService.isAdmin()">{{ 'selectClient.editBtn' | translate }}</li>
+            <li nz-menu-item (click)="onEditClientAdmins()" *ngIf="keycloak.isAvailable || authorizationService.isClientAdmin(client.id)">{{ 'selectClient.editClientAdminsBtn' | translate }}</li>
+            <li nz-menu-item (click)="onDeleteClient()" *ngIf="authorizationService.isAdmin()" class="ant-helper__highlight-text">{{ 'selectClient.deleteBtn' | translate }}</li>
+        </ul>
+    </nz-dropdown-menu>
+</ng-template>
+
+<ng-template #deleteModalTemplate>
+    <p>{{ 'deleteClientModal.modalText' | translate:{ clientName: client.name } }}</p>
+    <ul>
+        <li *ngFor="let project of projectList">{{ project.name }}</li>
+    </ul>
+</ng-template>

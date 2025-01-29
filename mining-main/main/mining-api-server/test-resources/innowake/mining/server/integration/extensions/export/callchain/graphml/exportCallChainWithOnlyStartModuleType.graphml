@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/ID_ROOTJOB.STEPA/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.1/graphml.xsd">
+    <key attr.name="labelV" attr.type="string" for="node" id="labelV"/>
+    <key attr.name="tax_DataDomain" attr.type="string" for="node" id="tax_DataDomain"/>
+    <key attr.name="technology" attr.type="string" for="node" id="technology"/>
+    <key attr.name="type" attr.type="string" for="node" id="type"/>
+    <key attr.name="labelE" attr.type="string" for="edge" id="labelE"/>
+    <key attr.name="FILE_ACCESS_TYPE" attr.type="string" for="edge" id="FILE_ACCESS_TYPE"/>
+    <key attr.name="DB_ACCESS_TYPE" attr.type="string" for="edge" id="DB_ACCESS_TYPE"/>
+    <graph edgedefault="directed" id="G">
+        <node id="ID_COPYFILE">
+            <data key="labelV">COPYFILE</data>
+            <data key="technology">RESOURCE</data>
+            <data key="type">FILE</data>
+        </node>
+        <node id="ID_FILEA">
+            <data key="labelV">FILEA</data>
+            <data key="technology">RESOURCE</data>
+            <data key="type">FILE</data>
+        </node>
+        <node id="ID_PROGRAMA">
+            <data key="labelV">PROGRAMA</data>
+            <data key="tax_DataDomain">[Taxonomy A]</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_PROGRAMB">
+            <data key="labelV">PROGRAMB</data>
+            <data key="tax_DataDomain">[Taxonomy B]</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_PROGRAMC">
+            <data key="labelV">PROGRAMC</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <node id="ID_ROOTJOB.STEPA">
+            <data key="labelV">ROOTJOB.STEPA</data>
+            <data key="tax_DataDomain">[Taxonomy C]</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_ROOTJOB.STEPB">
+            <data key="labelV">ROOTJOB.STEPB</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_STEPCOPY">
+            <data key="labelV">STEPCOPY</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_STEPDEL">
+            <data key="labelV">STEPDEL</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_STEPDELE">
+            <data key="labelV">STEPDELE</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_STEPVSK">
+            <data key="labelV">STEPVSK</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_STEPVSKR">
+            <data key="labelV">STEPVSKR</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_UNLOAD">
+            <data key="labelV">UNLOAD</data>
+            <data key="technology">RESOURCE</data>
+            <data key="type">FILE</data>
+        </node>
+        <edge id="ID_PROGRAMA_ACCESSES_ID_FILEA" source="ID_PROGRAMA" target="ID_FILEA">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_PROGRAMB_ACCESSES_ID_FILEA" source="ID_PROGRAMB" target="ID_FILEA">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_PROGRAMB_CALLS_ID_PROGRAMC" source="ID_PROGRAMB" target="ID_PROGRAMC">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_ROOTJOB.STEPA_CALLS_ID_PROGRAMA" source="ID_ROOTJOB.STEPA" target="ID_PROGRAMA">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_ROOTJOB.STEPB_CALLS_ID_PROGRAMB" source="ID_ROOTJOB.STEPB" target="ID_PROGRAMB">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_STEPCOPY_ACCESSES_ID_COPYFILE" source="ID_STEPCOPY" target="ID_COPYFILE">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_STEPCOPY_ACCESSES_ID_UNLOAD" source="ID_STEPCOPY" target="ID_UNLOAD">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_STEPDEL_ACCESSES_ID_UNLOAD" source="ID_STEPDEL" target="ID_UNLOAD">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_STEPDELE_ACCESSES_ID_COPYFILE" source="ID_STEPDELE" target="ID_COPYFILE">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_STEPVSK_ACCESSES_ID_UNLOAD" source="ID_STEPVSK" target="ID_UNLOAD">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+        <edge id="ID_STEPVSKR_ACCESSES_ID_UNLOAD" source="ID_STEPVSKR" target="ID_UNLOAD">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+    </graph>
+</graphml>

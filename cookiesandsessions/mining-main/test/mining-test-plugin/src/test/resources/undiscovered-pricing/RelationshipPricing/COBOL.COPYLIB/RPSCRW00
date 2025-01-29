@@ -1,0 +1,233 @@
+000010*01  RPCRW00-MESSAGE.                                             00001000
+000020*----------------------------------------------------------------*00002000
+000030*    RPSCRW00 - RPS CASH REWARD NEW/MAINTENANCE MESSAGE AREA     *00003000
+000040******************************************************************00004000
+000050     03  RPCRW00-DCHG.                                            00005000
+000060         05  RPCRW00-KEY-ACCT-GRP-DCHG.                           00006000
+000070             07  RPCRW00-KEY-INST-DCHG                            00007000
+000080                                 PIC X(01).                       00008000
+000090             07  RPCRW00-KEY-PRODCODE-DCHG                        00009000
+000100                                 PIC X(01).                       00010000
+000110             07  RPCRW00-KEY-ACCOUNT-DCHG                         00011000
+000120                                 PIC X(01).                       00012000
+000130             07  RPCRW00-KEY-MODEL-DCHG                           00013000
+000140                                 PIC X(10).                       00014000
+000150         05  RPCRW00-KEY-IDNUMBER-DCHG                            00015000
+000160                                 PIC X(01).                       00016000
+000170         05  RPCRW00-RCIF-KEY-DCHG.                               00017000
+000180             07  RPCRW00-RCIF-CUST-INST-DCHG                      00018000
+000190                                 PIC X(01).                       00019000
+000200             07  RPCRW00-RCIF-CUST-TYPE-DCHG                      00020000
+000210                                 PIC X(01).                       00021000
+000220             07  RPCRW00-RCIF-CUST-DCHG.                          00022000
+000230                 09  RPCRW00-RCIF-ALPHA-DCHG                      00023000
+000240                                 PIC X(01).                       00024000
+000250                 09  RPCRW00-RCIF-ACCUM-DCHG                      00025000
+000260                                 PIC X(01).                       00026000
+000270                 09  RPCRW00-RCIF-TIEBRKR-DCHG                    00027000
+000280                                 PIC X(01).                       00028000
+000290         05  RPCRW00-CUST-NAME-DCHG                               00029000
+000300                                 PIC X(01).                       00030000
+000310         05  RPCRW00-REL-STAT-DCHG                                00031000
+000320                                 PIC X(01).                       00032000
+000330         05  RPCRW00-MST-IDNUMBER-DCHG                            00033000
+000340                                 PIC X(01).                       00034000
+000350         05  RPCRW00-MODEL-DESC-DCHG                              00035000
+000360                                 PIC X(01).                       00036000
+000370         05  RPCRW00-DELETE-DCHG PIC X(01).                       00037000
+000380         05  RPCRW00-GRP-KEY-DCHG.                                00038000
+000390             07  RPCRW00-ACCT1-GRP-DCHG.                          00039000
+000400                 09  RPCRW00-INST-DCHG                            00040000
+000410                                 PIC X(01).                       00041000
+000420                 09  RPCRW00-PRODCODE-DCHG                        00042000
+000430                                 PIC X(01).                       00043000
+000440                 09  RPCRW00-ACCOUNT-DCHG                         00044000
+000450                                 PIC X(01).                       00045000
+000460                 09  RPCRW00-MODEL-DCHG                           00046000
+000470                                 PIC X(01).                       00047000
+000480             07  RPCRW00-GRP-AIX1-DCHG.                           00048000
+000490                 09  RPCRW00-ACCT2-GRP-DCHG.                      00049000
+000500                     11  RPCRW00-INST2-DCHG                       00050000
+000510                                 PIC X(01).                       00051000
+000520                     11  RPCRW00-PRODCODE2-DCHG                   00052000
+000530                                 PIC X(01).                       00053000
+000540                     11  RPCRW00-ACCOUNT2-DCHG                    00054000
+000550                                 PIC X(01).                       00055000
+000560         05  RPCRW00-AUDIT-STAMP-DCHG.                            00056000
+000570             07  RPCRW00-UPD-DATE-DCHG                            00057000
+000580                                 PIC X(01).                       00058000
+000590             07  RPCRW00-UPD-TIME-DCHG                            00059000
+000600                                 PIC X(01).                       00060000
+000610             07  RPCRW00-UPD-USER-DCHG                            00061000
+000620                                 PIC X(01).                       00062000
+000630             07  RPCRW00-UPD-ORG-DCHG                             00063000
+000640                                 PIC X(01).                       00064000
+000650         05  RPCRW00-GRP-DATA-DCHG.                               00065000
+000660             07  RPCRW00-IDNUMBER-DCHG                            00066000
+000670                                 PIC X(01).                       00067000
+000680             07  RPCRW00-BALOPT-DCHG                              00068000
+000690                                 PIC X(01).                       00069000
+000700             07  RPCRW00-PCT-USED-DCHG                            00070000
+000710                                 PIC X(01).                       00071000
+000720             07  RPCRW00-LSTCOMBBALUSED-DCHG                      00072000
+000730                                 PIC X(01).                       00073000
+000740             07  RPCRW00-FREQ-DCHG                                00074000
+000750                                 PIC X(01).                       00075000
+000760             07  RPCRW00-TERM-DCHG                                00076000
+000770                                 PIC X(01).                       00077000
+000780             07  RPCRW00-DAY-DCHG                                 00078000
+000790                                 PIC X(01).                       00079000
+000800             07  RPCRW00-NXTDATE-DCHG                             00080000
+000810                                 PIC X(01).                       00081000
+000820             07  RPCRW00-LSTDATE-DCHG                             00082000
+000830                                 PIC X(01).                       00083000
+000840             07  RPCRW00-AMOUNT-DCHG                              00084000
+000850                                 PIC X(01).                       00085000
+000860             07  RPCRW00-LAST-AMT-DCHG                            00086000
+000870                                 PIC X(01).                       00087000
+000880             07  RPCRW00-AMT-YTD-DCHG                             00088000
+000890                                 PIC X(01).                       00089000
+000900             07  RPCRW00-MONTHLY-COMBBAL-DCHG.                    00090000
+000910                 09  RPCRW00-MCOMBBAL-1-DCHG                      00091000
+000920                                 PIC X(01).                       00092000
+000930                 09  RPCRW00-MCOMBBAL-2-DCHG                      00093000
+000940                                 PIC X(01).                       00094000
+000950                 09  RPCRW00-MCOMBBAL-3-DCHG                      00095000
+000960                                 PIC X(01).                       00096000
+000970                 09  RPCRW00-MCOMBBAL-4-DCHG                      00097000
+000980                                 PIC X(01).                       00098000
+000990                 09  RPCRW00-MCOMBBAL-5-DCHG                      00099000
+001000                                 PIC X(01).                       00100000
+001010                 09  RPCRW00-MCOMBBAL-6-DCHG                      00101000
+001020                                 PIC X(01).                       00102000
+001030                 09  RPCRW00-MCOMBBAL-7-DCHG                      00103000
+001040                                 PIC X(01).                       00104000
+001050                 09  RPCRW00-MCOMBBAL-8-DCHG                      00105000
+001060                                 PIC X(01).                       00106000
+001070                 09  RPCRW00-MCOMBBAL-9-DCHG                      00107000
+001080                                 PIC X(01).                       00108000
+001090                 09  RPCRW00-MCOMBBAL-10-DCHG                     00109000
+001100                                 PIC X(01).                       00110000
+001110                 09  RPCRW00-MCOMBBAL-11-DCHG                     00111000
+001120                                 PIC X(01).                       00112000
+001130                 09  RPCRW00-MCOMBBAL-12-DCHG                     00113000
+001140                                 PIC X(01).                       00114000
+001150             07  RPCRW00-MONTHLY-COMBBAL-R-DCHG                   00115000
+001160                         REDEFINES RPCRW00-MONTHLY-COMBBAL-DCHG.  00116000
+001170                 09  RPCRW00-MCOMBBAL-DCHG                        00117000
+001180                                 PIC X(01)       OCCURS 12.       00118000
+001190             07  RPCRW00-DATE-OPEN-DCHG                           00119000
+001200                                 PIC X(01).                       00120000
+001210             07  RPCRW00-RESERVED-AREA-DCHG                       00121000
+001220                                 PIC X(01).                       00122000
+001230     03  RPCRW00-MISC-DATA.                                       00123000
+001240         05  RPCRW00-KEY-ACCT-GRP.                                00124000
+001250             07  RPCRW00-KEY-INST                                 00125000
+001260                                 PIC 9(04).                       00126000
+001270             07  RPCRW00-KEY-PRODCODE                             00127000
+001280                                 PIC X(06).                       00128000
+001290             07  RPCRW00-KEY-ACCOUNT                              00129000
+001300                                 PIC X(18).                       00130000
+001310             07  RPCRW00-KEY-MODEL                                00131000
+001320                                 PIC X(10).                       00132000
+001330         05  RPCRW00-KEY-IDNUMBER                                 00133000
+001340                                 PIC 9(18).                       00134000
+001350         05  RPCRW00-RCIF-KEY.                                    00135000
+001360             07  RPCRW00-RCIF-CUST-INST                           00136000
+001370                                 PIC 9(04).                       00137000
+001380             07  RPCRW00-RCIF-CUST-TYPE                           00138000
+001390                                 PIC X(01).                       00139000
+001400             07  RPCRW00-RCIF-CUST.                               00140000
+001410                 09  RPCRW00-RCIF-ALPHA                           00141000
+001420                                 PIC X(14).                       00142000
+001430                 09  RPCRW00-RCIF-ACCUM                           00143000
+001440                                 PIC 9(03).                       00144000
+001450                 09  RPCRW00-RCIF-TIEBRKR                         00145000
+001460                                 PIC 9(04).                       00146000
+001470         05  RPCRW00-CUST-NAME   PIC X(40).                       00147000
+001480         05  RPCRW00-REL-STAT    PIC X(01).                       00148000
+001490         05  RPCRW00-MST-IDNUMBER                                 00149000
+001500                                 PIC X(18).                       00150000
+001510         05  RPCRW00-MODEL-DESC  PIC X(20).                       00151000
+001520         05  RPCRW00-DELETE      PIC X(01).                       00152000
+001530     03  RPCRW00-RECORD.                                          00153000
+001540         05  RPCRW00-GRP-KEY.                                     00154000
+001550             07  RPCRW00-ACCT1-GRP.                               00155000
+001560                 09  RPCRW00-INST                                 00156000
+001570                                 PIC 9(04).                       00157000
+001580                 09  RPCRW00-PRODCODE                             00158000
+001590                                 PIC X(06).                       00159000
+001600                 09  RPCRW00-ACCOUNT                              00160000
+001610                                 PIC X(18).                       00161000
+001620                 09  RPCRW00-MODEL                                00162000
+001630                                 PIC X(10).                       00163000
+001640             07  RPCRW00-GRP-AIX1.                                00164000
+001650                 09  RPCRW00-ACCT2-GRP.                           00165000
+001660                     11  RPCRW00-INST2                            00166000
+001670                                 PIC 9(04).                       00167000
+001680                     11  RPCRW00-PRODCODE2                        00168000
+001690                                 PIC X(06).                       00169000
+001700                     11  RPCRW00-ACCOUNT2                         00170000
+001710                                 PIC X(18).                       00171000
+001720         05  RPCRW00-AUDIT-STAMP.                                 00172000
+001730             07  RPCRW00-UPD-DATE                                 00173000
+001740                                 PIC S9(09)      COMP-3.          00174000
+001750             07  RPCRW00-UPD-TIME                                 00175000
+001760                                 PIC S9(09)      COMP-3.          00176000
+001770             07  RPCRW00-UPD-USER                                 00177000
+001780                                 PIC X(08).                       00178000
+001790             07  RPCRW00-UPD-ORG PIC X(06).                       00179000
+001800         05  RPCRW00-GRP-DATA.                                    00180000
+001810             07  RPCRW00-IDNUMBER                                 00181000
+001820                                 PIC X(18).                       00182000
+001830             07  RPCRW00-BALOPT  PIC X(01).                       00183000
+001840             07  RPCRW00-PCT-USED                                 00184000
+001850                                 PIC SV9(09)     COMP-3.          00185000
+001860             07  RPCRW00-LSTCOMBBALUSED                           00186000
+001870                                 PIC S9(13)V99   COMP-3.          00187000
+001880             07  RPCRW00-FREQ    PIC X(01).                       00188000
+001890             07  RPCRW00-TERM    PIC S9(03)      COMP-3.          00189000
+001900             07  RPCRW00-DAY     PIC 9(02).                       00190000
+001910             07  RPCRW00-NXTDATE PIC S9(09)      COMP-3.          00191000
+001920             07  RPCRW00-LSTDATE PIC S9(09)      COMP-3.          00192000
+001930             07  RPCRW00-AMOUNT  PIC S9(09)V99   COMP-3.          00193000
+001940             07  RPCRW00-LAST-AMT                                 00194000
+001950                                 PIC S9(09)V99   COMP-3.          00195000
+001960             07  RPCRW00-AMT-YTD PIC S9(13)V99   COMP-3.          00196000
+001970             07  RPCRW00-MONTHLY-COMBBAL.                         00197000
+001980                 09  RPCRW00-MCOMBBAL-1                           00198000
+001990                                 PIC S9(13)V99   COMP-3.          00199000
+002000                 09  RPCRW00-MCOMBBAL-2                           00200000
+002010                                 PIC S9(13)V99   COMP-3.          00201000
+002020                 09  RPCRW00-MCOMBBAL-3                           00202000
+002030                                 PIC S9(13)V99   COMP-3.          00203000
+002040                 09  RPCRW00-MCOMBBAL-4                           00204000
+002050                                 PIC S9(13)V99   COMP-3.          00205000
+002060                 09  RPCRW00-MCOMBBAL-5                           00206000
+002070                                 PIC S9(13)V99   COMP-3.          00207000
+002080                 09  RPCRW00-MCOMBBAL-6                           00208000
+002090                                 PIC S9(13)V99   COMP-3.          00209000
+002100                 09  RPCRW00-MCOMBBAL-7                           00210000
+002110                                 PIC S9(13)V99   COMP-3.          00211000
+002120                 09  RPCRW00-MCOMBBAL-8                           00212000
+002130                                 PIC S9(13)V99   COMP-3.          00213000
+002140                 09  RPCRW00-MCOMBBAL-9                           00214000
+002150                                 PIC S9(13)V99   COMP-3.          00215000
+002160                 09  RPCRW00-MCOMBBAL-10                          00216000
+002170                                 PIC S9(13)V99   COMP-3.          00217000
+002180                 09  RPCRW00-MCOMBBAL-11                          00218000
+002190                                 PIC S9(13)V99   COMP-3.          00219000
+002200                 09  RPCRW00-MCOMBBAL-12                          00220000
+002210                                 PIC S9(13)V99   COMP-3.          00221000
+002220             07  RPCRW00-MONTHLY-COMBBAL-R                        00222000
+002230                         REDEFINES RPCRW00-MONTHLY-COMBBAL.       00223000
+002240                 09  RPCRW00-MCOMBBAL                             00224000
+002250                                 PIC S9(13)V99   COMP-3           00225000
+002260                                                 OCCURS 12.       00226000
+002270             07  RPCRW00-DATE-OPEN                                00227000
+002280                                 PIC S9(09)      COMP-3.          00228000
+002290             07  RPCRW00-RESERVED-AREA                            00229000
+002300                                 PIC X(45).                       00230000
+002310******************************************************************00231000
+002320*       END RPS CASH REWARD RECORD MESSAGE AREA (00)             *00232000
+002330******************************************************************00233000

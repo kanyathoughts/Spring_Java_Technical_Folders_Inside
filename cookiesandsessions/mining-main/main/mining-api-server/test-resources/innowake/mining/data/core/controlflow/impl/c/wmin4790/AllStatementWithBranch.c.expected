@@ -1,0 +1,18 @@
+  #4 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#17}
+   #17 CIfElseStatement, Label: if (i > 15) { printf("10 is less than 15"); } else { printf("I am Not in if"); }, FROM={#4}, TO={#24(TRUE), #30(FALSE)}
+     #24 CExpressionStatement, FROM={#17(TRUE)}, TO={#35}
+       #26 CFunctionReference
+     #30 CExpressionStatement, FROM={#17(FALSE)}, TO={#35}
+       #32 CFunctionReference
+   #35 CSwitchStatement, Label: switch(a) { case a: printf("This is the branch for case A" ); case b: printf("This is the branch for case B" ); default : printf("This is the default Branch"); }, FROM={#24, #30}, TO={#41(a), #48(b), #54(DEFAULT)}
+     #41 CExpressionStatement, FROM={#35(a)}, TO={#59}
+       #43 CFunctionReference
+     #48 CExpressionStatement, FROM={#35(b)}, TO={#59}
+       #50 CFunctionReference
+     #54 CExpressionStatement, FROM={#35(DEFAULT)}, TO={#59}
+       #56 CFunctionReference
+   #59 CIfElseStatement, Label: if (i > 13) { printf("10 is less than 15"); } else { printf("I am Not in if"); }, FROM={#41, #48, #54}, TO={#66(TRUE), #72(FALSE)}
+     #66 CExpressionStatement, FROM={#59(TRUE)}, TO={TestReturnPoint}
+       #68 CFunctionReference
+     #72 CExpressionStatement, FROM={#59(FALSE)}, TO={TestReturnPoint}
+       #74 CFunctionReference

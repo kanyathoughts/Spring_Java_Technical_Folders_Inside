@@ -1,0 +1,13 @@
+ #2 DefineDataStmt
+ #8 DecideOnStmt, Label: DECIDE ON EVERY VALUE OF #VAR1, FROM={TestEntryPoint}, TO={#15('1'), #46('2'), #53('3'), #59(NONE)}
+   #15 WRITE NOTITLE '1', FROM={#8('1')}, TO={#19}
+   #19 WRITE NOTITLE '1', FROM={#15}, TO={#23}
+   #23 WRITE NOTITLE '1', FROM={#19}, TO={#27}
+   #27 WRITE NOTITLE '1', FROM={#23}, TO={#31}
+   #31 WRITE NOTITLE '1', FROM={#27}, TO={#35}
+   #35 WRITE NOTITLE '1', FROM={#31}, TO={#39}
+   #39 WRITE NOTITLE '1', FROM={#35}, TO={#46('2'), #53('3'), #60}
+   #46 WRITE NOTITLE '2', FROM={#39('2'), #8('2')}, TO={#53('3'), #60}
+   #53 WRITE NOTITLE '3', FROM={#39('3'), #46('3'), #53('3'), #8('3')}, TO={#53('3'), #60}
+   #59 IgnoreStmt, FROM={#8(NONE)}, TO={#60}
+ #60 EndStmt, FROM={#39, #46, #53, #59}, TO={TestReturnPoint}

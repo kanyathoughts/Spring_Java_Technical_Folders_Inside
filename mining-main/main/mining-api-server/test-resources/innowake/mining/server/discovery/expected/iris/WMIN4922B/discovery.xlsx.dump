@@ -1,0 +1,30 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2557,2553,"M10414I","","IMS","IMS_MFS_MID","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2555,2553,"M10414O","","IMS","IMS_MFS_MOD","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2553,"","MFS10414","src/ims/WMIN4922B/maps/MFS10414.mfs","IMS","IMS_MFS","PHYSICAL",0,1,28,0,29,0,0,-1,-1
+2554,"","PL1PROG","src/pl1/WMIN4922B/programs/PL1PROG.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",1,0,12,0,13,0,0,-1,-1
+2552,2550,"PL1PROG","","IMS","IMS_SYSGEN_APPLICATION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2556,2554,"PL1PROG","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,12,0,-1,0,0,1,363
+2550,"","SYSGEN1","src/ims/WMIN4922B/SYSGEN1.sysgen","IMS","IMS_SYSGEN_EXPORT","PHYSICAL",0,0,-1,-1,12,0,0,-1,-1
+2551,2550,"T10414","","IMS","IMS_SYSGEN_TRANSACTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2554,"PL1PROG",-1,"EXTPRC12","PL1","PL1_SUBROUTINE","Calls","","LATE","{}",43,52,-1,-1
+2552,"PL1PROG",-1,"PL1PROG","IMS","IMS_PSB","References","","EARLY","{}",-1,-1,-1,-1
+2552,"PL1PROG",2554,"PL1PROG","PL1","PL1_MAINPROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2556,"PL1PROG",-1,"EXTPRC12","PL1","PL1_SUBROUTINE","Calls","","LATE","{}",43,52,-1,-1
+2550,"SYSGEN1",-1,"PL1PROG","IMS","IMS_PSB","References","","EARLY","{}",-1,-1,-1,-1
+2550,"SYSGEN1",2554,"PL1PROG","PL1","PL1_MAINPROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2551,"T10414",2552,"PL1PROG","IMS","IMS_SYSGEN_APPLICATION","References","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+2553,"MFS10414","WARNING","UNDISCOVERED_DEPENDENCY","Unable to determine transaction name for M10414I",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

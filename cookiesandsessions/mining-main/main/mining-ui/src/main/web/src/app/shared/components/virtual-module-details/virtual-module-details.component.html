@@ -1,0 +1,20 @@
+<nz-card nzTitle="{{ title }}">
+  <nz-space nzSize="middle" nzDirection="vertical">
+    <p *nzSpaceItem class="module-details__card-description">{{ description }}</p>
+    <nz-tree-view *nzSpaceItem nzNoAnimation [nzTreeControl]="treeControl" [nzDataSource]="dataSource">
+      <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodeIndentLine>
+        <nz-tree-node-option>
+          <span nzType="text"
+            *ngIf="node?.key === selectedModule.id;else treeTemplate">
+            {{ node.name }}
+          </span>
+          <ng-template #treeTemplate>
+            <a [routerLink]="node.hyperlink" nzType="link">
+              {{ node.name }}
+            </a>
+          </ng-template>
+        </nz-tree-node-option>
+      </nz-tree-node>
+    </nz-tree-view>
+  </nz-space>
+</nz-card>

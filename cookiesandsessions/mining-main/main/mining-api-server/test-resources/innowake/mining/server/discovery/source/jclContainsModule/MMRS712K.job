@@ -1,0 +1,34 @@
+//MMRS712K JOB 'MMRS00C',CLASS=A,TIME=(1),LINES=1,REGION=0M,
+//            MSGLEVEL=(2,1),MSGCLASS=A
+//*************************************************************************
+//***** MMRS-M01  mainframe modernization reference system
+//*************************************************************************
+//***** MMRS712K  IEBGENER to copy seq.files using jcl-procedure
+//*************************************************************************
+//LIB  JCLLIB ORDER=(MMRS00C.A.PROC)
+//*
+//    SET F=MMRS00C.AWA.MMRS0111.FIX
+//    SET FB=MMRS00C.AWA.MMRS0111.FIX.BLK
+//    SET V=MMRS00C.AWA.MMRS0111.VAR
+//    SET VB=MMRS00C.AWA.MMRS0111.VAR.BLK
+//    SET VSAMK=MMRS00C.AWA.VSAMK
+//    SET VSAMR=MMRS00C.AWA.VSAMR
+//    SET VSAME=MMRS00C.AWA.VSAME
+//    SET VSAMKUNL=MMRS00C.AWA.VSAMK.UNLOAD
+//    SET VSAMRUNL=MMRS00C.AWA.VSAMR.UNLOAD
+//    SET VSAMEUNL=MMRS00C.AWA.VSAME.UNLOAD
+//    SET VSAMKRAW=MMRS00C.AWA.VSAMK.RAW
+//    SET VSAMRRAW=MMRS00C.AWA.VSAMR.RAW
+//    SET VSAMERAW=MMRS00C.AWA.VSAME.RAW
+//*
+//    SET LOADFROM=&VSAMKUNL
+//    SET COPYDCB=(RECFM=U,BLKSIZE=560)
+//*
+//*************************************************************************
+//***** MMRS712J  IEBGENER to copy seq.files (jcl via procedure)
+//*************************************************************************
+//STEPCP  EXEC PROC=MMRS712P,
+//    SRC=&LOADFROM,
+//    DEST=MMRS00C.AWA.MMRS712K.COPYFILE,
+//    MYDCB=&COPYDCB
+//*

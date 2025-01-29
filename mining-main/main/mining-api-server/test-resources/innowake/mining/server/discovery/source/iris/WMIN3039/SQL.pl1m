@@ -1,0 +1,41 @@
+main: PROCEDURE OPTIONS(MAIN);
+ 
+EXEC SQL INCLUDE SQLCA;
+EXEC SQL INCLUDE SQLDA;
+    IF( ISFINITE(FLOAT_A) | (RESULT = ISFIN()) )
+    THEN
+       EXEC SQL INCLUDE DSFLVSA;
+    ELSE
+       EXEC SQL INCLUDE GETPRML;   
+ 
+DCL FIRSTNME CHAR(30) var init('NOVAL');
+ 
+EXEC SQL SELECT firstnme
+          INTO :FIRSTNME
+          FROM tableOne
+          WHERE empno = '000010';
+ 
+ 
+call sub1 ('a', 'b');
+ 
+END main;
+ 
+sub1: proc (U,V);
+   dcl (U,V) character (20);
+    
+   EXEC SQL SELECT firstnme
+          INTO :FIRSTNME
+          FROM tableTwo
+          WHERE empno = '000010';
+ 
+end sub1;
+ 
+sub2: proc (U,V);
+   dcl (U,V) character (20);
+    
+   EXEC SQL SELECT firstnme
+          INTO :FIRSTNME
+          FROM tableThree
+          WHERE empno = '000010';
+ 
+end sub2;

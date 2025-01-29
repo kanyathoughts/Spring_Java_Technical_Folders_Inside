@@ -1,0 +1,60 @@
+query Modules($projectId: Long, $page: Int, $size: Int, $filterObject: FilterObject_modules) {
+  modules(
+    projectId: $projectId,
+    page: $page,
+    size: $size,
+    sortObject: {
+      content_name: ASC
+    },
+    filterObject: $filterObject
+  ) {
+    content {
+      uid
+      id
+      customProperties
+      project
+      name
+      path
+      technology
+      type
+      storage
+      origin
+      creator
+      identification
+      info {
+        key
+      }
+      inCodebase
+      description
+      source
+      contentHash
+      linkHash
+      location {
+        offset
+        length
+      }
+      representation
+      requiresReview
+      modifiedDate
+      metricsDate
+      sourceMetrics {
+        codeLines
+        physicalLines
+        commentLines
+        complexityMcCabe
+        deadCodeLines
+      }
+      complexityLevel
+      content
+      errors
+      statements
+      sqlStatements
+      sourceCodeAvailable
+      parent
+      parentPath
+      projectId
+    }
+    totalElements
+    size
+  }
+}

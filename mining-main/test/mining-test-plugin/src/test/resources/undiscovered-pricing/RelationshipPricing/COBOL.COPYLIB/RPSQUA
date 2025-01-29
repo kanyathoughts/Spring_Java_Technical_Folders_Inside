@@ -1,0 +1,52 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=RELATIONSHIP QUALIFICATION                              00002000
+000030*    PROD=RPS WU=QUA0                                             00003000
+000040*    LDB=BKI136                                                   00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPQUA-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSQUA - RP RELATIONSHIP QUALIFICATION RECORD         -QUA- *00010000
+000110******************************************************************00011000
+000120     03  RPQUA-GRP-KEY.                                           00012000
+000130         05  RPQUA-INST          PIC 9(04).                       00013000
+000140         05  RPQUA-PRODCODE      PIC X(06).                       00014000
+000150         05  RPQUA-ACCOUNT       PIC X(18).                       00015000
+000160         05  RPQUA-MODEL         PIC X(10).                       00016000
+000170*----------------------------------------------------------------*00017000
+000180     03  RPQUA-AUDIT-STAMP.                                       00018000
+000190         05  RPQUA-UPD-DATE      PIC S9(09)      COMP-3.          00019000
+000200         05  RPQUA-UPD-TIME      PIC S9(09)      COMP-3.          00020000
+000210         05  RPQUA-UPD-USER      PIC X(08).                       00021000
+000220         05  RPQUA-UPD-ORG       PIC X(06).                       00022000
+000230*----------------------------------------------------------------*00023000
+000240     03  RPQUA-GRP-DATA.                                          00024000
+000250         05  RPQUA-RCIF-KEY.                                      00025000
+000260             07  RPQUA-RCIF-INST PIC 9(04).                       00026000
+000270             07  RPQUA-RCIF-TYPE PIC X(01).                       00027000
+000280             07  RPQUA-RCIF-CUST.                                 00028000
+000290                 09  RPQUA-ALPHA PIC X(14).                       00029000
+000300                 09  RPQUA-ACCUM PIC 9(03).                       00030000
+000310                 09  RPQUA-TIEBRKR                                00031000
+000320                                 PIC 9(04).                       00032000
+000330         05  RPQUA-CUST-NAME     PIC X(40).                       00033000
+000340         05  RPQUA-DATE-OPENED   PIC S9(09)      COMP-3.          00034000
+000350         05  RPQUA-IDNUMBER      PIC X(18).                       00035000
+000360         05  RPQUA-BRANCH        PIC S9(05)      COMP-3.          00036000
+000370         05  RPQUA-ACCT-TYPE     PIC S9(03)      COMP-3.          00037000
+000380         05  RPQUA-ADDON-ACCTS   PIC S9(03)      COMP-3.          00038000
+000390         05  RPQUA-CASH-RW-KEY.                                   00039000
+000400             07  RPQUA-CRW-INST  PIC 9(04).                       00040000
+000410             07  RPQUA-CRW-PRODCODE                               00041000
+000420                                 PIC X(06).                       00042000
+000430             07  RPQUA-CRW-ACCOUNT                                00043000
+000440                                 PIC X(18).                       00044000
+000450         05  RPQUA-ENROLLATTEMPTS                                 00045000
+000460                                 PIC 9(02).                       00046000
+P0068          05  RPQUA-EXPIRATION-DATE                                00047000
+P0068                                  PIC S9(09)      COMP-3.          00047190
+P0068          05  RPQUA-RESERVED      PIC X(39).                       00047380
+000480***************************************************************** 00048000
+000490*        END  RP RELATIONSHIP QUALIFICATION RECORD (QUA)          00049000
+000500***************************************************************** 00050000

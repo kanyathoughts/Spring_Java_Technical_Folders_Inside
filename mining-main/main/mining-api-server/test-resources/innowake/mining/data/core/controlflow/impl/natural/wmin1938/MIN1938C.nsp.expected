@@ -1,0 +1,36 @@
+ #2 DefineDataStmt
+ #92 FormatStmt
+ #95 SetControlStmt, FROM={TestEntryPoint}, TO={#97}
+ #97 WRITE (1) NOTITLE *PROGRAM, FROM={#95}, TO={#101}
+ #101 PerformStmt, FROM={#97}, TO={#105}
+ #102 PerformStmt, FROM={#168, #171}, TO={#200}
+ #103 PerformStmt, FROM={#294}, TO={#381}
+ #104 DefineSubroutineStmt
+  #105 WRITE (1) NOTITLE 'ALPHANUMERIC-TEST', FROM={#101, #466}, TO={#109}
+  #109 StackStmt, FROM={#105}, TO={#119}
+  #119 InputStmt, FROM={#109}, TO={#134}
+  #134 WRITE (1) NOTITLE 'to stack:  ' '=' #A8 '=' #A9 '=' #A8-N '=' #A9-N, FROM={#119}, TO={#162}
+  #162 IfStmt, Label: IF #I EQ 0, FROM={#134}, TO={#168(TRUE), #171(FALSE)}
+    #168 EscapeStmt, FROM={#162(TRUE)}, TO={#102, #467}
+  #171 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N, FROM={#162(FALSE)}, TO={#102, #467}
+ #199 DefineSubroutineStmt
+  #200 WRITE (1) NOTITLE 'NUMERIC-TEST', FROM={#102, #467}, TO={#204}
+  #204 StackStmt, FROM={#200}, TO={#214}
+  #214 InputStmt, FROM={#204}, TO={#229}
+  #229 WRITE (1) NOTITLE 'to stack:  ' '=' #O-N5 '=' #O-N52 '=' #O-N5-N '=' #O-N52-N, FROM={#214}, TO={#257}
+  #257 IfStmt, Label: IF #I EQ 0, FROM={#229}, TO={#263(TRUE), #266(FALSE)}
+    #263 EscapeStmt, FROM={#257(TRUE)}, TO={TestReturnPoint}
+  #266 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N, FROM={#257(FALSE)}, TO={#294}
+  #294 EscapeStmt, FROM={#266}, TO={#103, #468}
+  #296 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N
+  #324 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N
+  #352 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N
+ #380 DefineSubroutineStmt
+  #381 WRITE (1) NOTITLE 'PACKED-TEST', FROM={#103}, TO={#385}
+  #385 StackStmt, FROM={#381}, TO={#395}
+  #395 InputStmt, FROM={#385}, TO={#410}
+  #410 WRITE (1) NOTITLE 'to stack:  ' '=' #O-P5 '=' #O-P52 '=' #O-P5-N '=' #O-P52-N, FROM={#395}, TO={#438}
+  #438 WRITE (1) NOTITLE 'from stack:' '=' #I-N5 '=' #I-N52 '=' #I-N5-N '=' #I-N52-N, FROM={#410}, TO={#466}
+  #466 PerformStmt, FROM={#438}, TO={#105}
+  #467 PerformStmt, FROM={#168, #171}, TO={#200}
+ #468 EndStmt, FROM={#294}, TO={TestReturnPoint}

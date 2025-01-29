@@ -1,0 +1,54 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+146,"","DB8248A1","src/ims/WMIN8248A/dbd/DB8248A1.dbd","IMS","IMS_DBD","PHYSICAL",0,0,36,0,36,1,0,-1,-1
+147,"","DB8248A2","src/ims/WMIN8248A/dbd/DB8248A2.dbd","IMS","IMS_DBD","PHYSICAL",0,0,43,0,43,1,0,-1,-1
+148,"","DB8248A3","src/ims/WMIN8248A/dbd/DB8248A3.dbd","IMS","IMS_DBD","PHYSICAL",0,0,38,0,38,1,0,-1,-1
+144,"","DB8248A4","src/ims/WMIN8248A/dbd/DB8248A4.dbd","IMS","IMS_DBD","PHYSICAL",0,0,31,0,31,1,0,-1,-1
+134,146,"SEGM1","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+135,148,"SEGM1","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+142,146,"SEGM2","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+143,148,"SEGM2","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+140,146,"SEGM3","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+141,148,"SEGM3","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+137,144,"SEGM4","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+138,147,"SEGM4","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+139,144,"SEGM5","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+145,147,"SEGM5","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+136,147,"SEGM6","","IMS","IMS_DBD_SEGMENT","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+146,"DB8248A1","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""INDEX"",""IMS_DBD_DATASET"":""DB8248A1""}"
+147,"DB8248A2","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""INDEX"",""IMS_DBD_DATASET"":""DB8248A2""}"
+148,"DB8248A3","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""INDEX"",""IMS_DBD_DATASET"":""DB8248A3""}"
+144,"DB8248A4","DB_ACCESS_TYPE","{""IMS_ACCESS_TYPE"":""INDEX"",""IMS_DBD_DATASET"":""DB8248A4""}"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+147,"DB8248A2",146,"DB8248A1","IMS","IMS_DBD","References","","EARLY","{""IMS_REFERENCE_TYPE"":""LCHILD""}",-1,-1,-1,-1
+147,"DB8248A2",146,"DB8248A1","IMS","IMS_DBD","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+148,"DB8248A3",146,"DB8248A1","IMS","IMS_DBD","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+144,"DB8248A4",146,"DB8248A1","IMS","IMS_DBD","References","","EARLY","{""IMS_REFERENCE_TYPE"":""LCHILD""}",-1,-1,-1,-1
+148,"DB8248A3",-1,"DB8248B9","IMS","IMS_DBD","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+146,"DB8248A1",134,"SEGM1","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+148,"DB8248A3",135,"SEGM1","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+146,"DB8248A1",142,"SEGM2","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""SEGM1""}",-1,-1,-1,-1
+148,"DB8248A3",143,"SEGM2","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""SEGM1""}",-1,-1,-1,-1
+146,"DB8248A1",140,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""[[SEGM2, SNGL], [SEGM5, P, DB8248A2]]""}",-1,-1,-1,-1
+148,"DB8248A3",141,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""[[SEGM2, SNGL], [SEGM5, P, DB8248A2]]""}",-1,-1,-1,-1
+135,"SEGM1",-1,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+143,"SEGM2",140,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+139,"SEGM5",140,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_REFERENCE_TYPE"":""LCHILD""}",-1,-1,-1,-1
+145,"SEGM5",140,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_REFERENCE_TYPE"":""LCHILD""}",-1,-1,-1,-1
+136,"SEGM6",140,"SEGM3","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_REFERENCE_TYPE"":""VIRTUAL""}",-1,-1,-1,-1
+147,"DB8248A2",138,"SEGM4","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+144,"DB8248A4",137,"SEGM4","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""0""}",-1,-1,-1,-1
+147,"DB8248A2",145,"SEGM5","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""SEGM4""}",-1,-1,-1,-1
+144,"DB8248A4",139,"SEGM5","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""SEGM4""}",-1,-1,-1,-1
+147,"DB8248A2",136,"SEGM6","IMS","IMS_DBD_SEGMENT","References","","EARLY","{""IMS_DBD_SEGMENT_PARENT"":""SEGM5""}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

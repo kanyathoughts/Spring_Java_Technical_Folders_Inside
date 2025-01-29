@@ -1,0 +1,39 @@
+package practice;
+
+public class WrapperClass_Doubts {
+	
+	public static void main(String[] args) {
+		
+		Integer num1 = 100;
+		Integer num2 = 100;
+		
+		Integer num3 = 1000;
+		Integer num4 = 1000;
+		
+		
+		System.out.println((num1 == num2) + " " + (num1.equals(num2))); //true true
+		System.out.println((num3 == num4) + " " + (num3.equals(num4))); //false true
+		
+		/*
+		 * The output for the first System.out.println is true true. 
+		 * This is because both num1 and num2 are assigned the value 100, 
+		 * which falls within the range of Java’s integer cache (-128 to 127). 
+		 * Java utilizes this cache for autoboxing of integer values within this range, 
+		 * so both num1 and num2 point to the same cached Integer object.
+		 * 
+		 * The output for the second System.out.println is false true. 
+		 * The values 1000 assigned to num3 and num4 do not fall within the cached range, 
+		 * so they are stored as separate Integer objects. Therefore, num3 == num4 is false (different memory addresses), 
+		 * but num3.equals(num4) is true (same integer value).
+		 */
+		
+		/*
+		 * == operator is used for primitive data types and object references
+		 * so in primitive data types, 5 == 5 returns true which checks for the content
+		 * in object references, it checks for memory address, if memory address is true then it will return true otherwise false
+		 * 
+		 * .equals() basically used for checking contents of objects instead of memory address.
+		 */
+	}
+
+}

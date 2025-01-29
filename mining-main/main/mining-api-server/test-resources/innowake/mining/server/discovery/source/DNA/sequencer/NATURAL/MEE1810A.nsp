@@ -1,0 +1,43 @@
+DEFINE DATA
+LOCAL
+1 #I (I1)
+1 FIELD#1 (A007)
+END-DEFINE
+
+  AT TOP OF PAGE
+     MOVE *PF-KEY TO FIELD#1
+     WRITE NOTITLE USING MAP 'MAP1810A' FIELD#1
+     MOVE *PF-KEY TO FIELD#1
+  END-TOPPAGE
+
+  SET KEY ALL
+  FORMAT (0) PS=4 LS=80
+
+  REPEAT
+
+    INPUT 'Press ENTR to start' /
+          'Press PF3 to cancel'
+
+    DECIDE ON FIRST VALUE OF *PF-KEY
+    
+      VALUE 'ENTR'
+        RESET #I
+        REPEAT
+          ADD 1 TO #I
+          WRITE NOTITLE #I *PF-KEY
+          IF *PF-KEY EQ 'PF3'
+            ESCAPE BOTTOM
+          END-IF
+        END-REPEAT
+
+      VALUE 'PF3'
+        ESCAPE BOTTOM
+        
+      NONE VALUE
+        ESCAPE BOTTOM
+        
+    END-DECIDE
+
+  END-REPEAT
+
+END

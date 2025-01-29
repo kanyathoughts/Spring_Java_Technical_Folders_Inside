@@ -1,0 +1,5 @@
+ #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
+  #6 ProcedureStatement, FROM={#2}, TO={#15}
+  #15 IfStatement, Label: if (x>2) then put skip list("main procedure");, FROM={#6}, TO={#31(TRUE), #46(FALSE)}
+    #31 PutStatement, FROM={#15(TRUE)}, TO={#46}
+  #46 EndStatement, FROM={#15(FALSE), #31}, TO={TestHaltPoint}

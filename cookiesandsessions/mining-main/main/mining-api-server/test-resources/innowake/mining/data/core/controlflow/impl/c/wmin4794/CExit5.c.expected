@@ -1,0 +1,16 @@
+  #5 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#19}
+   #19 CExpressionStatement, FROM={#5}, TO={#24}
+     #21 CFunctionReference
+   #24 CIfElseStatement, Label: if(a > b) { if(c > d) { _Exit(exit_code); } else { exit(exit_code); } } else { printf("Did not exit"); }, FROM={#19}, TO={#31(TRUE), #50(FALSE)}
+     #31 CIfElseStatement, Label: if(c > d) { _Exit(exit_code); } else { exit(exit_code); }, FROM={#24(TRUE)}, TO={#38(TRUE), #44(FALSE)}
+       #38 CLibraryFunction, FROM={#31(TRUE)}, TO={TestHaltPoint}
+         #40 CFunctionReference
+       #44 CLibraryFunction, FROM={#31(FALSE)}, TO={TestHaltPoint}
+         #46 CFunctionReference
+     #50 CExpressionStatement, FROM={#24(FALSE)}, TO={#55}
+       #52 CFunctionReference
+   #55 CIfElseStatement, Label: if(b > d) { abort(); }, FROM={#50}, TO={#62(TRUE), #66(FALSE)}
+     #62 CLibraryFunction, FROM={#55(TRUE)}, TO={TestHaltPoint}
+       #64 CFunctionReference
+   #66 CExpressionStatement, FROM={#55(FALSE)}, TO={TestReturnPoint}
+     #68 CFunctionReference

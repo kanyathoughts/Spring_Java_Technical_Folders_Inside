@@ -1,0 +1,874 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPK0DP85.                                00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*   RPK0DP85 - RELATIONSHIP PRICING / DEPOSITS 8.5                00005000
+000060*              BATCH INTERFACE FOR DEPOSITS 8.5                   00006000
+000070*                                                                 00007000
+000080*   THIS MODULE IS CALLED BY RP 5.0 TO ACCESS DDM, SVM AND CLM    00008000
+000090*   RECORDS. THE MODULE IS PASSED THE FOLLOWING MESSAGE AREAS:    00009000
+000100*        MISCNT00 - STANDARD FUNCTION MESSAGE                     00010000
+000110*                   AREA CONTROL BLOCK                            00011000
+000120*        RPSINF00 - APPLICATION INFERFACE AREA                    00012000
+000130*                                                                 00013000
+000140*    IF RPINF00-FUNC IS EQUAL TO 'O'                              00014000
+000150*        DO OPEN-ROUTINE TO OPEN FILES                            00015000
+000160*           RETURN                                                00016000
+000170*        ENDO                                                     00017000
+000180*    IF RPINF00-FUNC IS EQUAL TO 'B'                              00018000
+000190*        DO READ-FIRST                                            00019000
+000200*           RETURN                                                00020000
+000210*        ENDO                                                     00021000
+000220*    IF RPINF00-FUNC IS EQUAL TO 'N'                              00022000
+000230*        DO READ-NEXT.                                            00023000
+000240*           RETURN                                                00024000
+000250*        ENDO                                                     00025000
+000260*    IF RPINF00-FUNC IS EQUAL TO 'R'                              00026000
+000270*        DO READ-RANDOM.                                          00027000
+000280*           RETURN                                                00028000
+000290*        ENDO                                                     00029000
+000300*    IF RPINF00-FUNC IS EQUAL TO 'C'                              00030000
+000310*        DO CLOSE-ROUTINE.                                        00031000
+000320*           RETURN                                                00032000
+000330*        ENDO                                                     00033000
+000340*                                                                 00034000
+000350*    THE RPINF00-APPLR MUST BE A '01', '03' OR '04'               00035000
+000360*                                                                 00036000
+000370*    RPINF00-FUNCTION WILL BE RETURNED WITH THE ACTUAL API        00037000
+000380*    RESULTS OF THE I/O FUNCTION (REFER TO DPPDDMA, DPPSVMA,      00038000
+000390*    AND DPPCLMA FOR FUNCTION VALUES).                            00039000
+000400*                                                                 00040000
+000410*    CHECK RPINF00-RETURN VALUES RETURNED:                        00041000
+000420*    'X' - INVALID RPINF00-FUNC                                   00042000
+000430*    'O' - OPEN FILE ERROR                                        00043000
+000440*    'R' - RANDOM READ ERROR                                      00044000
+000450*    'C' - CLOSE FILE ERROR                                       00045000
+000460*    'B' - I/O READ ERROR READ                                    00046000
+000470*    'N' - RECORD NOT FOUND ERROR                                 00047000
+000480*                                                                 00048000
+000490*    CHECK RPINF00-ABTRACE VALUES TO DETERMINE THE ACTUAL CAUSE   00049000
+000500*    VALUES OF RPINF00-ABTRACE ARE 0000 TO 0024                   00050000
+000510*                                                                 00051000
+000520******************************************************************00052000
+000530 ENVIRONMENT DIVISION.                                            00053000
+000540 CONFIGURATION SECTION.                                           00054000
+000550 DATA DIVISION.                                                   00055000
+000560 FILE SECTION.                                                    00056000
+000570******************************************************************00057000
+000580 WORKING-STORAGE SECTION.                                         00058000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00059000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00059001
+000600 01  RPS-RLSELIT.                                                 00060000
+000000 COPY RPWRLSE.                                                    00061000
+000620 01  DEP-RLSELIT.                                                 00062000
+000000 COPY DPWRLSE.                                                    00063000
+000640 01  SRW000-AREAS.                                                00064000
+000000 COPY SRW000.                                                     00065000
+000660 01  SRW009-AREAS.                                                00066000
+000000 COPY SRW009.                                                     00067000
+000680 01  SRW105-AREAS.                                                00068000
+000000 COPY SRW105.                                                     00069000
+000700*01  BICPBPRM.                                                    00070000
+000000 COPY BICPBPRM.                                                   00071000
+000720*01  BICRSRB.                                                     00072000
+000000 COPY BICRSRB.                                                    00073000
+000740*01  BICRPSB.                                                     00074000
+000000 COPY BICRPSB.                                                    00075000
+000760*01  BICRVERB.                                                    00076000
+000000 COPY BICRVERB.                                                   00077000
+000780*01  BICRSTAT.                                                    00078000
+000000 COPY BICRSTAT.                                                   00079000
+000800*01  BICRDBS.                                                     00080000
+000000 COPY BICRDBS.                                                    00081000
+000820*01  BICRLOG.                                                     00082000
+000000 COPY BICRLOG.                                                    00083000
+000840 01  WS-01                       PIC X(06)       VALUE 'DPDDM '.  00084000
+000850 01  DPDDM-RECORD.                                                00085000
+000000 COPY DPSDDM.                                                     00086000
+000870 01  DPWDDM-AREAS.                                                00087000
+000000 COPY DPWDDMA.                                                    00088000
+000890 01  WS-02                       PIC X(06)       VALUE 'DPSVM '.  00089000
+000900 01  DPSVM-RECORD.                                                00090000
+000000 COPY DPSSVM.                                                     00091000
+000920 01  DPWSVM-AREAS.                                                00092000
+000000 COPY DPWSVMA.                                                    00093000
+000940 01  WS-03                       PIC X(06)       VALUE 'DPCLM '.  00094000
+000950 01  DPCLM-RECORD.                                                00095000
+000000 COPY DPSCLM.                                                     00096000
+000970 01  DPWCLM-AREAS.                                                00097000
+000000 COPY DPWCLMA.                                                    00098000
+000990 01  WS-04                       PIC X(06)       VALUE 'DPBNK '.  00099000
+001000 01  DPBNK-RECORD.                                                00100000
+000000 COPY DPSBNK.                                                     00101000
+001020 01  DPWBNK-AREAS.                                                00102000
+000000 COPY DPWBNKA.                                                    00103000
+001040 01  WS-05                       PIC X(06)       VALUE 'MIMST '.  00104000
+001050 01  MIWMSTA-AREAS.                                               00105000
+000000 COPY MIWMSTA.                                                    00106000
+001070 01  WS-WORKAREAS.                                                00107000
+001080     03  WS-FILESTATUS.                                           00108000
+001090         05  WS-FSKEY1           PIC X(01)       VALUE SPACES.    00109000
+001100         05  WS-FSKEY2           PIC X(01)       VALUE SPACES.    00110000
+001110     03  WS-DDMOPEN              PIC X(01)       VALUE SPACES.    00111000
+001120     03  WS-SAVOPEN              PIC X(01)       VALUE SPACES.    00112000
+001130     03  WS-CLMOPEN              PIC X(01)       VALUE SPACES.    00113000
+001140     03  WS-BNKOPEN              PIC X(01)       VALUE SPACES.    00114000
+001150     03  WS-UPD-USER             PIC X(08)       VALUE SPACES.    00115000
+001160     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00116000
+001170     03  WS-READ-SW              PIC X(01)       VALUE SPACES.    00117000
+001180     03  WS-DAYS-FROM-SC         PIC S9(07)      COMP-3.          00118000
+001190     03  WS-SUB1                 PIC S9(04)      COMP.            00119000
+001200     03  WS-BAL                  PIC S9(11)V99   COMP-3.          00120000
+001210     03  WS-NPROCDTA             PIC S9(07)      COMP-3.          00121000
+001220     03  WS-LASTDATE             PIC S9(07)      COMP-3.          00122000
+001230     03  WS-FIRSTDOM             PIC S9(07)      COMP-3.          00123000
+001240     03  WS-FROM-DATE            PIC 9(08)       VALUE ZERO.      00124000
+001250     03  WS-BAL-MAX              PIC S9(04)      COMP             00125000
+001260                                                 VALUE +20.       00126000
+001270     03  WS-8THISMON             PIC S9(04)      COMP             00127000
+001280                                                 VALUE ZEROS.     00128000
+001290     03  WS-CURYR                PIC S9(04)      COMP-3           00129000
+001300                                                 VALUE ZEROS.     00130000
+001310     03  WS-8SUB1                PIC S9(04)      COMP             00131000
+001320                                                 VALUE ZEROS.     00132000
+001330     03  WS-AGR-ENDDATE          PIC S9(07)      COMP-3           00133000
+001340                                                 VALUE ZEROS.     00134000
+001350     03  WS-FILEOPTIONS          PIC X(25)       VALUE SPACES.    00135000
+001360     03  WS-FILEOPTS     REDEFINES WS-FILEOPTIONS.                00136000
+001370         05  WS-FILEOPT          PIC X(01)       OCCURS 25.       00137000
+001380******************************************************************00138000
+001390 LINKAGE SECTION.                                                 00139000
+001400 01  WS-LINKDATA.                                                 00140000
+000000 COPY MISCNT00      REPLACING                                     00141000
+001420     ==:MICNT:== BY ==RPINF00==.                                  00142000
+000000 COPY RPSINF00.                                                   00143000
+001440******************************************************************00144000
+001450 PROCEDURE DIVISION                                               00145000
+001460         USING                                                    00146000
+001470         WS-LINKDATA.                                             00147000
+001480******************************************************************00148000
+001490 INITIALIZATION SECTION.                                          00149000
+001500 IN-START.                                                        00150000
+001510     MOVE 'RPK0DP85' TO SR-APIPROGLIT.                            00151000
+001520     MOVE 'RPK0DP85' TO WS-UPD-USER.                              00152000
+001530     MOVE SPACES TO WS-FUNCTION.                                  00153000
+001540     MOVE ZEROS TO RPINF00-ABTRACE.                               00154000
+001550     IF RPINF00-FUNC IS NOT EQUAL TO 'O'                          00155000
+001560         GO TO IN-FUNCB.                                          00156000
+001570     PERFORM OPEN-ROUTINE.                                        00157000
+001580     GO TO RETURN-ROUTINE.                                        00158000
+001590 IN-FUNCB.                                                        00159000
+001600     IF RPINF00-FUNC IS EQUAL TO 'B'                              00160000
+001610         GO TO READ-FIRST.                                        00161000
+001620     IF RPINF00-FUNC IS EQUAL TO 'N'                              00162000
+001630         GO TO READ-NEXT.                                         00163000
+001640     IF RPINF00-FUNC IS EQUAL TO 'R'                              00164000
+001650         GO TO READ-RANDOM.                                       00165000
+001660     IF RPINF00-FUNC IS EQUAL TO 'C'                              00166000
+001670         GO TO CLOSE-ROUTINE.                                     00167000
+001680     MOVE 'X' TO WS-FUNCTION.                                     00168000
+001690     MOVE 'X' TO RPINF00-RETURN.                                  00169000
+001700     MOVE 0001 TO RPINF00-ABTRACE.                                00170000
+001710     GO TO RETURN-ROUTINE.                                        00171000
+001720 IN-EXIT.                                                         00172000
+001730     EXIT.                                                        00173000
+001740******************************************************************00174000
+001750 OPEN-ROUTINE SECTION.                                            00175000
+001760 OR-OPEN.                                                         00176000
+001770     MOVE 'N' TO WS-READ-SW.                                      00177000
+001780     IF WS-BNKOPEN IS EQUAL TO 'Y'                                00178000
+001790         GO TO OR-OPENDEP.                                        00179000
+001800     MOVE 'Y' TO WS-BNKOPEN.                                      00180000
+001810     PERFORM GET-FILE-ORGANIZATION.                               00181000
+001820     MOVE 'N' TO DEP-DDM-LOG.                                     00182000
+001830     MOVE 'N' TO DEP-SVM-LOG.                                     00183000
+001840     MOVE 'N' TO DEP-CLM-LOG.                                     00184000
+001850     MOVE RPINF00-INST TO DPBNK-INST.                             00185000
+001860     PERFORM DEP-BNK-OPEN-REQUEST.                                00186000
+001870     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00187000
+001880         MOVE 'O' TO RPINF00-RETURN                               00188000
+001890         MOVE 0002 TO RPINF00-ABTRACE                             00189000
+001900         GO TO OR-END.                                            00190000
+001910     MOVE RPINF00-INST TO DPBNK-INST.                             00191000
+001920     PERFORM DEP-BNK-GET-REQUEST.                                 00192000
+001930     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00193000
+001940         MOVE 'R' TO RPINF00-RETURN                               00194000
+001950         MOVE 0003 TO RPINF00-ABTRACE                             00195000
+001960         GO TO OR-END.                                            00196000
+001970     MOVE DPBNK-NPROCDTA TO WS-NPROCDTA.                          00197000
+001980     MOVE DPBNK-FIRSTDOM TO WS-FIRSTDOM.                          00198000
+001990 OR-OPENDEP.                                                      00199000
+002000     IF WS-DDMOPEN IS EQUAL TO 'Y'                                00200000
+002010         OR RPINF00-APPLR IS NOT EQUAL TO '01'                    00201000
+002020         GO TO OR-OPENCLM.                                        00202000
+002030     MOVE 'Y' TO WS-DDMOPEN.                                      00203000
+002040     MOVE RPINF00-INST TO DPDDM-INST.                             00204000
+002050     MOVE RPINF00-ACCOUNT TO DPDDM-ACCOUNT.                       00205000
+002060     PERFORM DEP-DDM-OPEN-REQUEST.                                00206000
+002070     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00207000
+002080         MOVE 'O' TO RPINF00-RETURN                               00208000
+002090         MOVE 0004 TO RPINF00-ABTRACE                             00209000
+002100         GO TO OR-END.                                            00210000
+002110     GO TO OR-END.                                                00211000
+002120 OR-OPENCLM.                                                      00212000
+002130     IF WS-CLMOPEN IS EQUAL TO 'Y'                                00213000
+002140         OR RPINF00-APPLR IS NOT EQUAL TO '03'                    00214000
+002150         GO TO OR-OPENSAV.                                        00215000
+002160     MOVE 'Y' TO WS-CLMOPEN.                                      00216000
+002170     MOVE RPINF00-INST TO DPCLM-INST.                             00217000
+002180     MOVE RPINF00-ACCOUNT TO DPCLM-ACCOUNT.                       00218000
+002190     PERFORM DEP-CLM-OPEN-REQUEST.                                00219000
+002200     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00220000
+002210         MOVE 'O' TO RPINF00-RETURN                               00221000
+002220         MOVE 0005 TO RPINF00-ABTRACE.                            00222000
+002230     GO TO OR-END.                                                00223000
+002240 OR-OPENSAV.                                                      00224000
+002250     IF WS-SAVOPEN IS EQUAL TO 'Y'                                00225000
+002260         GO TO OR-END.                                            00226000
+002270     IF RPINF00-APPLR IS NOT EQUAL TO '04'                        00227000
+002280         MOVE 'X' TO RPINF00-RETURN                               00228000
+002290         MOVE 'X' TO WS-FUNCTION                                  00229000
+002300         MOVE 0006 TO RPINF00-ABTRACE                             00230000
+002310         GO TO OR-END.                                            00231000
+002320     MOVE 'Y' TO WS-SAVOPEN.                                      00232000
+002330     MOVE RPINF00-INST TO DPSVM-INST.                             00233000
+002340     MOVE RPINF00-ACCOUNT TO DPSVM-ACCOUNT.                       00234000
+002350     PERFORM DEP-SVM-OPEN-REQUEST.                                00235000
+002360     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00236000
+002370         MOVE 'O' TO RPINF00-RETURN                               00237000
+002380         MOVE 0007 TO RPINF00-ABTRACE                             00238000
+002390         GO TO OR-END.                                            00239000
+002400 OR-END.                                                          00240000
+002410     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00241000
+002420     IF RPINF00-RETURN IS EQUAL TO 'O'                            00242000
+002430         OR RPINF00-RETURN IS EQUAL TO 'X'                        00243000
+002440         GO TO RETURN-ROUTINE.                                    00244000
+002450 OR-EXIT.                                                         00245000
+002460     EXIT.                                                        00246000
+002470******************************************************************00247000
+002480 CLOSE-ROUTINE SECTION.                                           00248000
+002490 CR-START.                                                        00249000
+002500     IF WS-BNKOPEN IS NOT EQUAL TO 'Y'                            00250000
+002510         GO TO CR-CLOSEDEP.                                       00251000
+002520     PERFORM DEP-BNK-CLOSE-REQUEST.                               00252000
+002530     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00253000
+002540         MOVE 'C' TO RPINF00-RETURN                               00254000
+002550         MOVE 0008 TO RPINF00-ABTRACE                             00255000
+002560         GO TO CR-END.                                            00256000
+002570     MOVE SPACES TO WS-BNKOPEN.                                   00257000
+002580 CR-CLOSEDEP.                                                     00258000
+002590     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00259000
+002600         OR RPINF00-APPLR IS NOT EQUAL TO '01'                    00260000
+002610         GO TO CR-CLOSESVM.                                       00261000
+002620     PERFORM DEP-DDM-CLOSE-REQUEST.                               00262000
+002630     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00263000
+002640         MOVE 'C' TO RPINF00-RETURN                               00264000
+002650         MOVE 0009 TO RPINF00-ABTRACE                             00265000
+002660         GO TO CR-END.                                            00266000
+002670     MOVE SPACES TO WS-DDMOPEN.                                   00267000
+002680     GO TO CR-END.                                                00268000
+002690 CR-CLOSESVM.                                                     00269000
+002700     IF WS-SAVOPEN IS NOT EQUAL TO 'Y'                            00270000
+002710         OR RPINF00-APPLR IS NOT EQUAL TO '04'                    00271000
+002720         GO TO CR-CLOSECLM.                                       00272000
+002730     PERFORM DEP-CLM-CLOSE-REQUEST.                               00273000
+002740     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00274000
+002750         MOVE 'C' TO RPINF00-RETURN                               00275000
+002760         MOVE 0010 TO RPINF00-ABTRACE                             00276000
+002770         GO TO CR-END.                                            00277000
+002780     MOVE SPACES TO WS-CLMOPEN.                                   00278000
+002790     GO TO CR-END.                                                00279000
+002800 CR-CLOSECLM.                                                     00280000
+002810     IF WS-CLMOPEN IS NOT EQUAL TO 'Y'                            00281000
+002820         GO TO CR-END.                                            00282000
+002830     IF RPINF00-APPLR IS NOT EQUAL TO '03'                        00283000
+002840         MOVE 'X' TO RPINF00-RETURN                               00284000
+002850         MOVE 'X' TO WS-FUNCTION                                  00285000
+002860         MOVE 0011 TO RPINF00-ABTRACE                             00286000
+002870         GO TO CR-END.                                            00287000
+002880     PERFORM DEP-SVM-CLOSE-REQUEST.                               00288000
+002890     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00289000
+002900         MOVE 'C' TO RPINF00-RETURN                               00290000
+002910         MOVE 0012 TO RPINF00-ABTRACE                             00291000
+002920         GO TO CR-END.                                            00292000
+002930     MOVE SPACES TO WS-SAVOPEN.                                   00293000
+002940 CR-END.                                                          00294000
+002950     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00295000
+002960     GO TO RETURN-ROUTINE.                                        00296000
+002970 CR-EXIT.                                                         00297000
+002980     EXIT.                                                        00298000
+002990******************************************************************00299000
+003000 READ-FIRST SECTION.                                              00300000
+003010 RF-START.                                                        00301000
+003020     IF WS-BNKOPEN IS NOT EQUAL TO 'Y'                            00302000
+003030         PERFORM OPEN-ROUTINE.                                    00303000
+003040     IF RPINF00-APPLR IS NOT EQUAL TO '01'                        00304000
+003050         GO TO RF-READCLM.                                        00305000
+003060     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00306000
+003070         PERFORM OPEN-ROUTINE.                                    00307000
+003080 RF-READDEP.                                                      00308000
+003090     MOVE RPINF00-INST TO DPDDM-INST.                             00309000
+003100     MOVE RPINF00-ACCOUNT TO DPDDM-ACCOUNT.                       00310000
+003110     PERFORM DEP-DDM-GET-EQUAL-REQUEST.                           00311000
+003120     IF WS-FUNCTION IS EQUAL TO 'E'                               00312000
+003130         OR WS-FUNCTION IS EQUAL TO 'N'                           00313000
+003140         GO TO RF-END.                                            00314000
+003150     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00315000
+003160         MOVE 'B' TO RPINF00-RETURN                               00316000
+003170         MOVE 0013 TO RPINF00-ABTRACE                             00317000
+003180         GO TO RF-END.                                            00318000
+003190     IF RPINF00-INST IS NOT EQUAL TO DPDDM-INST                   00319000
+003200         OR RPINF00-ACCOUNT IS NOT EQUAL TO DPDDM-ACCOUNT         00320000
+003210         MOVE 'Y' TO WS-READ-SW                                   00321000
+003220         MOVE 'N' TO WS-FUNCTION                                  00322000
+003230         GO TO RF-END.                                            00323000
+003240     IF DPDDM-MSTATUS IS EQUAL TO SPACES                          00324000
+003250         GO TO RF-MOVEDDM.                                        00325000
+003260     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00326000
+003270         AND DPDDM-MSTATUS IS NOT EQUAL TO 'P'                    00327000
+003280         MOVE SPACES TO DPDDM-MSTATUS                             00328000
+003290         GO TO RF-MOVEDDM.                                        00329000
+003300     IF DPDDM-MSTATUS IS EQUAL TO 'C'                             00330000
+003310         MOVE 'D' TO WS-FUNCTION                                  00331000
+003320         GO TO RF-END.                                            00332000
+003330     IF DPDDM-MSTATUS IS EQUAL TO 'P'                             00333000
+003340         MOVE 'P' TO WS-FUNCTION                                  00334000
+003350         GO TO RF-END.                                            00335000
+003360     MOVE 'N' TO WS-FUNCTION.                                     00336000
+003370     GO TO RF-END.                                                00337000
+003380 RF-MOVEDDM.                                                      00338000
+003390     PERFORM MOVE-DEP-TO-INF.                                     00339000
+003400     GO TO RF-END.                                                00340000
+003410 RF-READCLM.                                                      00341000
+003420     IF RPINF00-APPLR IS NOT EQUAL TO '03'                        00342000
+003430         GO TO RF-READSAV.                                        00343000
+003440     IF WS-CLMOPEN IS NOT EQUAL TO 'Y'                            00344000
+003450         PERFORM OPEN-ROUTINE.                                    00345000
+003460     MOVE RPINF00-INST TO DPCLM-INST.                             00346000
+003470     MOVE RPINF00-ACCOUNT TO DPCLM-ACCOUNT.                       00347000
+003480     PERFORM DEP-CLM-GET-EQUAL-REQUEST.                           00348000
+003490     IF WS-FUNCTION IS EQUAL TO 'E'                               00349000
+003500         OR WS-FUNCTION IS EQUAL TO 'N'                           00350000
+003510         GO TO RF-END.                                            00351000
+003520     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00352000
+003530         MOVE 'B' TO RPINF00-RETURN                               00353000
+003540         MOVE 0014 TO RPINF00-ABTRACE                             00354000
+003550         GO TO RF-END.                                            00355000
+003560     IF RPINF00-INST IS NOT EQUAL TO DPCLM-INST                   00356000
+003570         OR RPINF00-ACCOUNT IS NOT EQUAL TO DPCLM-ACCOUNT         00357000
+003580         MOVE 'Y' TO WS-READ-SW                                   00358000
+003590         MOVE 'N' TO WS-FUNCTION                                  00359000
+003600         GO TO RF-END.                                            00360000
+003610     IF DPCLM-MSTATUS IS EQUAL TO SPACES                          00361000
+003620         GO TO RF-MOVECLM.                                        00362000
+003630     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00363000
+003640         AND DPCLM-MSTATUS IS NOT EQUAL TO 'P'                    00364000
+003650         MOVE SPACES TO DPCLM-MSTATUS                             00365000
+003660         GO TO RF-MOVECLM.                                        00366000
+003670     IF DPCLM-MSTATUS IS EQUAL TO 'C'                             00367000
+003680         MOVE 'D' TO WS-FUNCTION                                  00368000
+003690         GO TO RF-END.                                            00369000
+003700     IF DPCLM-MSTATUS IS EQUAL TO 'P'                             00370000
+003710         MOVE 'P' TO WS-FUNCTION                                  00371000
+003720         GO TO RF-END.                                            00372000
+003730     MOVE 'N' TO WS-FUNCTION.                                     00373000
+003740     GO TO RF-END.                                                00374000
+003750 RF-MOVECLM.                                                      00375000
+003760     PERFORM MOVE-CLM-TO-INF.                                     00376000
+003770     GO TO RF-END.                                                00377000
+003780 RF-READSAV.                                                      00378000
+003790     IF RPINF00-APPLR IS NOT EQUAL TO '04'                        00379000
+003800         MOVE 'X' TO RPINF00-RETURN                               00380000
+003810         MOVE 'X' TO WS-FUNCTION                                  00381000
+003820         MOVE 0015 TO RPINF00-ABTRACE                             00382000
+003830         GO TO RF-END.                                            00383000
+003840     IF WS-SAVOPEN IS NOT EQUAL TO 'Y'                            00384000
+003850         PERFORM OPEN-ROUTINE.                                    00385000
+003860     MOVE RPINF00-INST TO DPSVM-INST.                             00386000
+003870     MOVE RPINF00-ACCOUNT TO DPSVM-ACCOUNT.                       00387000
+003880     PERFORM DEP-SVM-GET-EQUAL-REQUEST.                           00388000
+003890     IF WS-FUNCTION IS EQUAL TO 'E'                               00389000
+003900         OR WS-FUNCTION IS EQUAL TO 'N'                           00390000
+003910         GO TO RF-END.                                            00391000
+003920     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00392000
+003930         MOVE 'B' TO RPINF00-RETURN                               00393000
+003940         MOVE 0016 TO RPINF00-ABTRACE                             00394000
+003950         GO TO RF-END.                                            00395000
+003960     IF RPINF00-INST IS NOT EQUAL TO DPSVM-INST                   00396000
+003970         OR RPINF00-ACCOUNT IS NOT EQUAL TO DPSVM-ACCOUNT         00397000
+003980         MOVE 'Y' TO WS-READ-SW                                   00398000
+003990         MOVE 'N' TO WS-FUNCTION                                  00399000
+004000         GO TO RF-END.                                            00400000
+004010     IF DPSVM-MSTATUS IS EQUAL TO SPACES                          00401000
+004020         GO TO RF-MOVESVM.                                        00402000
+004030     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00403000
+004040         AND DPSVM-MSTATUS IS NOT EQUAL TO 'P'                    00404000
+004050         MOVE SPACES TO DPSVM-MSTATUS                             00405000
+004060         GO TO RF-MOVESVM.                                        00406000
+004070     IF DPSVM-MSTATUS IS EQUAL TO 'C'                             00407000
+004080         MOVE 'D' TO WS-FUNCTION                                  00408000
+004090         GO TO RF-END.                                            00409000
+004100     IF DPSVM-MSTATUS IS EQUAL TO 'P'                             00410000
+004110         MOVE 'P' TO WS-FUNCTION                                  00411000
+004120         GO TO RF-END.                                            00412000
+004130     MOVE 'N' TO WS-FUNCTION.                                     00413000
+004140     GO TO RF-END.                                                00414000
+004150 RF-MOVESVM.                                                      00415000
+004160     PERFORM MOVE-SVM-TO-INF.                                     00416000
+004170 RF-END.                                                          00417000
+004180     GO TO RETURN-ROUTINE.                                        00418000
+004190 RF-EXIT.                                                         00419000
+004200     EXIT.                                                        00420000
+004210******************************************************************00421000
+004220 READ-NEXT SECTION.                                               00422000
+004230 RN-START.                                                        00423000
+004240     IF WS-BNKOPEN IS NOT EQUAL TO 'Y'                            00424000
+004250         PERFORM OPEN-ROUTINE.                                    00425000
+004260     IF RPINF00-APPLR IS NOT EQUAL TO '01'                        00426000
+004270         GO TO RN-CLM.                                            00427000
+004280     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00428000
+004290         PERFORM OPEN-ROUTINE.                                    00429000
+004300 RN-DEP.                                                          00430000
+004310     IF WS-READ-SW IS EQUAL TO 'Y'                                00431000
+004320         MOVE 'N' TO WS-READ-SW                                   00432000
+004330         GO TO RN-CHECK-DEP.                                      00433000
+004340 RN-READNEXT-DEP.                                                 00434000
+004350     PERFORM DEP-DDM-GET-NEXT-REQUEST.                            00435000
+004360     IF WS-FUNCTION IS EQUAL TO 'E'                               00436000
+004370         OR WS-FUNCTION IS EQUAL TO 'N'                           00437000
+004380         GO TO RN-END.                                            00438000
+004390     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00439000
+004400         MOVE 'N' TO RPINF00-RETURN                               00440000
+004410         MOVE 0017 TO RPINF00-ABTRACE                             00441000
+004420         GO TO RN-END.                                            00442000
+004430 RN-CHECK-DEP.                                                    00443000
+004440     IF DPDDM-INST IS LESS THAN RPINF00-INST                      00444000
+004450         OR DPDDM-ACCOUNT IS LESS THAN RPINF00-ACCOUNT            00445000
+004460         GO TO RN-READNEXT-DEP.                                   00446000
+004470     IF DPDDM-INST IS GREATER THAN RPINF00-INST                   00447000
+004480         OR DPDDM-ACCOUNT IS GREATER THAN RPINF00-ACCOUNT         00448000
+004490         MOVE 'Y' TO WS-READ-SW                                   00449000
+004500         MOVE 'N' TO WS-FUNCTION                                  00450000
+004510         GO TO RN-END.                                            00451000
+004520     IF DPDDM-MSTATUS IS EQUAL TO SPACES                          00452000
+004530         GO TO RN-MOVEDDM.                                        00453000
+004540     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00454000
+004550         AND DPDDM-MSTATUS IS NOT EQUAL TO 'P'                    00455000
+004560         MOVE SPACES TO DPDDM-MSTATUS                             00456000
+004570         GO TO RN-MOVEDDM.                                        00457000
+004580     IF DPDDM-MSTATUS IS EQUAL TO 'C'                             00458000
+004590         MOVE 'D' TO WS-FUNCTION                                  00459000
+004600         GO TO RN-END.                                            00460000
+004610     IF DPDDM-MSTATUS IS EQUAL TO 'P'                             00461000
+004620         MOVE 'P' TO WS-FUNCTION                                  00462000
+004630         GO TO RN-END.                                            00463000
+004640     MOVE 'N' TO WS-FUNCTION.                                     00464000
+004650     GO TO RN-END.                                                00465000
+004660 RN-MOVEDDM.                                                      00466000
+004670     PERFORM MOVE-DEP-TO-INF.                                     00467000
+004680     GO TO RN-END.                                                00468000
+004690 RN-CLM.                                                          00469000
+004700     IF RPINF00-APPLR IS NOT EQUAL TO '03'                        00470000
+004710         GO TO RN-SVM.                                            00471000
+004720     IF WS-CLMOPEN IS NOT EQUAL TO 'Y'                            00472000
+004730         PERFORM OPEN-ROUTINE.                                    00473000
+004740     IF WS-READ-SW IS EQUAL TO 'Y'                                00474000
+004750         MOVE 'N' TO WS-READ-SW                                   00475000
+004760         GO TO RN-CHECK-CLM.                                      00476000
+004770 RN-READNEXT-CLM.                                                 00477000
+004780     PERFORM DEP-CLM-GET-NEXT-REQUEST.                            00478000
+004790     IF WS-FUNCTION IS EQUAL TO 'E'                               00479000
+004800         OR WS-FUNCTION IS EQUAL TO 'N'                           00480000
+004810         GO TO RN-END.                                            00481000
+004820     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00482000
+004830         MOVE 'N' TO RPINF00-RETURN                               00483000
+004840         MOVE 0018 TO RPINF00-ABTRACE                             00484000
+004850         GO TO RN-END.                                            00485000
+004860 RN-CHECK-CLM.                                                    00486000
+004870     IF DPCLM-INST IS LESS THAN RPINF00-INST                      00487000
+004880         OR DPCLM-ACCOUNT IS LESS THAN RPINF00-ACCOUNT            00488000
+004890         GO TO RN-READNEXT-CLM.                                   00489000
+004900     IF DPCLM-INST IS GREATER THAN RPINF00-INST                   00490000
+004910         OR DPCLM-ACCOUNT IS GREATER THAN RPINF00-ACCOUNT         00491000
+004920         MOVE 'Y' TO WS-READ-SW                                   00492000
+004930         MOVE 'N' TO WS-FUNCTION                                  00493000
+004940         GO TO RN-END.                                            00494000
+004950     IF DPCLM-MSTATUS IS EQUAL TO SPACES                          00495000
+004960         GO TO RN-MOVECLM.                                        00496000
+004970     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00497000
+004980         AND DPCLM-MSTATUS IS NOT EQUAL TO 'P'                    00498000
+004990         MOVE SPACES TO DPCLM-MSTATUS                             00499000
+005000         GO TO RN-MOVECLM.                                        00500000
+005010     IF DPCLM-MSTATUS IS EQUAL TO 'C'                             00501000
+005020         MOVE 'D' TO WS-FUNCTION                                  00502000
+005030         GO TO RN-END.                                            00503000
+005040     IF DPCLM-MSTATUS IS EQUAL TO 'P'                             00504000
+005050         MOVE 'P' TO WS-FUNCTION                                  00505000
+005060         GO TO RN-END.                                            00506000
+005070     MOVE 'N' TO WS-FUNCTION.                                     00507000
+005080     GO TO RN-END.                                                00508000
+005090 RN-MOVECLM.                                                      00509000
+005100     PERFORM MOVE-CLM-TO-INF.                                     00510000
+005110     GO TO RN-END.                                                00511000
+005120 RN-SVM.                                                          00512000
+005130     IF RPINF00-APPLR IS NOT EQUAL TO '04'                        00513000
+005140         MOVE 'X' TO RPINF00-RETURN                               00514000
+005150         MOVE 'X' TO WS-FUNCTION                                  00515000
+005160         MOVE 0019 TO RPINF00-ABTRACE                             00516000
+005170         GO TO RN-END.                                            00517000
+005180     IF WS-SAVOPEN IS NOT EQUAL TO 'Y'                            00518000
+005190         PERFORM OPEN-ROUTINE.                                    00519000
+005200     IF WS-READ-SW IS EQUAL TO 'Y'                                00520000
+005210         MOVE 'N' TO WS-READ-SW                                   00521000
+005220         GO TO RN-CHECK-SVM.                                      00522000
+005230 RN-READNEXT-SVM.                                                 00523000
+005240     PERFORM DEP-SVM-GET-NEXT-REQUEST.                            00524000
+005250     IF WS-FUNCTION IS EQUAL TO 'E'                               00525000
+005260         OR WS-FUNCTION IS EQUAL TO 'N'                           00526000
+005270         GO TO RN-END.                                            00527000
+005280     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00528000
+005290         MOVE 'N' TO RPINF00-RETURN                               00529000
+005300         MOVE 0020 TO RPINF00-ABTRACE                             00530000
+005310         GO TO RN-END.                                            00531000
+005320 RN-CHECK-SVM.                                                    00532000
+005330     IF DPSVM-INST IS LESS THAN RPINF00-INST                      00533000
+005340         OR DPSVM-ACCOUNT IS LESS THAN RPINF00-ACCOUNT            00534000
+005350         GO TO RN-READNEXT-SVM.                                   00535000
+005360     IF DPSVM-INST IS GREATER THAN RPINF00-INST                   00536000
+005370         OR DPSVM-ACCOUNT IS GREATER THAN RPINF00-ACCOUNT         00537000
+005380         MOVE 'Y' TO WS-READ-SW                                   00538000
+005390         MOVE 'N' TO WS-FUNCTION                                  00539000
+005400         GO TO RN-END.                                            00540000
+005410     IF DPSVM-MSTATUS IS EQUAL TO SPACES                          00541000
+005420         GO TO RN-MOVESVM.                                        00542000
+005430     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00543000
+005440         AND DPSVM-MSTATUS IS NOT EQUAL TO 'P'                    00544000
+005450         MOVE SPACES TO DPSVM-MSTATUS                             00545000
+005460         GO TO RN-MOVESVM.                                        00546000
+005470     IF DPSVM-MSTATUS IS EQUAL TO 'C'                             00547000
+005480         MOVE 'D' TO WS-FUNCTION                                  00548000
+005490         GO TO RN-END.                                            00549000
+005500     IF DPSVM-MSTATUS IS EQUAL TO 'P'                             00550000
+005510         MOVE 'P' TO WS-FUNCTION                                  00551000
+005520         GO TO RN-END.                                            00552000
+005530     MOVE 'N' TO WS-FUNCTION.                                     00553000
+005540     GO TO RN-END.                                                00554000
+005550 RN-MOVESVM.                                                      00555000
+005560     PERFORM MOVE-SVM-TO-INF.                                     00556000
+005570 RN-END.                                                          00557000
+005580     GO TO RETURN-ROUTINE.                                        00558000
+005590 RN-EXIT.                                                         00559000
+005600     EXIT.                                                        00560000
+005610******************************************************************00561000
+005620 READ-RANDOM SECTION.                                             00562000
+005630 RR-START.                                                        00563000
+005640     IF WS-BNKOPEN IS NOT EQUAL TO 'Y'                            00564000
+005650         PERFORM OPEN-ROUTINE.                                    00565000
+005660     IF RPINF00-APPLR IS NOT EQUAL TO '01'                        00566000
+005670         GO TO RR-READCLM.                                        00567000
+005680     IF WS-DDMOPEN IS NOT EQUAL TO 'Y'                            00568000
+005690         PERFORM OPEN-ROUTINE.                                    00569000
+005700     MOVE RPINF00-INST TO DPDDM-INST.                             00570000
+005710     MOVE RPINF00-ACCOUNT TO DPDDM-ACCOUNT.                       00571000
+005720     PERFORM DEP-DDM-GET-REQUEST.                                 00572000
+005730     IF WS-FUNCTION IS EQUAL TO 'N'                               00573000
+005740         GO TO RR-END.                                            00574000
+005750     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00575000
+005760         MOVE 'R' TO RPINF00-RETURN                               00576000
+005770         MOVE 0021 TO RPINF00-ABTRACE                             00577000
+005780         GO TO RR-END.                                            00578000
+005790     IF DPDDM-MSTATUS IS EQUAL TO SPACES                          00579000
+005800         GO TO RR-MOVEDDM.                                        00580000
+005810     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00581000
+005820         AND DPDDM-MSTATUS IS NOT EQUAL TO 'P'                    00582000
+005830         MOVE SPACES TO DPDDM-MSTATUS                             00583000
+005840         GO TO RR-MOVEDDM.                                        00584000
+005850     IF DPDDM-MSTATUS IS EQUAL TO 'C'                             00585000
+005860         MOVE 'D' TO WS-FUNCTION                                  00586000
+005870         GO TO RR-END.                                            00587000
+005880     IF DPDDM-MSTATUS IS EQUAL TO 'P'                             00588000
+005890         MOVE 'P' TO WS-FUNCTION                                  00589000
+005900         GO TO RR-END.                                            00590000
+005910     MOVE 'N' TO WS-FUNCTION.                                     00591000
+005920     GO TO RR-END.                                                00592000
+005930 RR-MOVEDDM.                                                      00593000
+005940     PERFORM MOVE-DEP-TO-INF.                                     00594000
+005950     GO TO RR-END.                                                00595000
+005960 RR-READCLM.                                                      00596000
+005970     IF RPINF00-APPLR IS NOT EQUAL TO '03'                        00597000
+005980         GO TO RR-READSAV.                                        00598000
+005990     IF WS-CLMOPEN IS NOT EQUAL TO 'Y'                            00599000
+006000         PERFORM OPEN-ROUTINE.                                    00600000
+006010     MOVE RPINF00-INST TO DPCLM-INST.                             00601000
+006020     MOVE RPINF00-ACCOUNT TO DPCLM-ACCOUNT.                       00602000
+006030     PERFORM DEP-CLM-GET-REQUEST.                                 00603000
+006040     IF WS-FUNCTION IS EQUAL TO 'N'                               00604000
+006050         GO TO RR-END.                                            00605000
+006060     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00606000
+006070         MOVE 'R' TO RPINF00-RETURN                               00607000
+006080         MOVE 0022 TO RPINF00-ABTRACE                             00608000
+006090         GO TO RR-END.                                            00609000
+006100     IF DPCLM-MSTATUS IS EQUAL TO SPACES                          00610000
+006110         GO TO RR-MOVECLM.                                        00611000
+006120     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00612000
+006130         AND DPCLM-MSTATUS IS NOT EQUAL TO 'P'                    00613000
+006140         MOVE SPACES TO DPCLM-MSTATUS                             00614000
+006150         GO TO RR-MOVECLM.                                        00615000
+006160     IF DPCLM-MSTATUS IS EQUAL TO 'C'                             00616000
+006170         MOVE 'D' TO WS-FUNCTION                                  00617000
+006180         GO TO RR-END.                                            00618000
+006190     IF DPCLM-MSTATUS IS EQUAL TO 'P'                             00619000
+006200         MOVE 'P' TO WS-FUNCTION                                  00620000
+006210         GO TO RR-END.                                            00621000
+006220     MOVE 'N' TO WS-FUNCTION.                                     00622000
+006230     GO TO RR-END.                                                00623000
+006240 RR-MOVECLM.                                                      00624000
+006250     PERFORM MOVE-CLM-TO-INF.                                     00625000
+006260     GO TO RR-END.                                                00626000
+006270 RR-READSAV.                                                      00627000
+006280     IF RPINF00-APPLR IS NOT EQUAL TO '04'                        00628000
+006290         MOVE 'X' TO RPINF00-RETURN                               00629000
+006300         MOVE 'X' TO WS-FUNCTION                                  00630000
+006310         MOVE 0023 TO RPINF00-ABTRACE                             00631000
+006320         GO TO RR-END.                                            00632000
+006330     IF WS-SAVOPEN IS NOT EQUAL TO 'Y'                            00633000
+006340         PERFORM OPEN-ROUTINE.                                    00634000
+006350     MOVE RPINF00-INST TO DPSVM-INST.                             00635000
+006360     MOVE RPINF00-ACCOUNT TO DPSVM-ACCOUNT.                       00636000
+006370     PERFORM DEP-SVM-GET-REQUEST.                                 00637000
+006380     IF WS-FUNCTION IS EQUAL TO 'N'                               00638000
+006390         GO TO RR-END.                                            00639000
+006400     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00640000
+006410         MOVE 'R' TO RPINF00-RETURN                               00641000
+006420         MOVE 0024 TO RPINF00-ABTRACE                             00642000
+006430         GO TO RR-END.                                            00643000
+006440     IF DPSVM-MSTATUS IS EQUAL TO SPACES                          00644000
+006450         GO TO RR-MOVESVM.                                        00645000
+006460     IF RPINF00-CLOSEDACCTOPT IS EQUAL TO 'Y'                     00646000
+006470         AND DPSVM-MSTATUS IS NOT EQUAL TO 'P'                    00647000
+006480         MOVE SPACES TO DPSVM-MSTATUS                             00648000
+006490         GO TO RR-MOVESVM.                                        00649000
+006500     IF DPSVM-MSTATUS IS EQUAL TO 'C'                             00650000
+006510         MOVE 'D' TO WS-FUNCTION                                  00651000
+006520         GO TO RR-END.                                            00652000
+006530     IF DPSVM-MSTATUS IS EQUAL TO 'P'                             00653000
+006540         MOVE 'P' TO WS-FUNCTION                                  00654000
+006550         GO TO RR-END.                                            00655000
+006560     MOVE 'N' TO WS-FUNCTION.                                     00656000
+006570     GO TO RR-END.                                                00657000
+006580 RR-MOVESVM.                                                      00658000
+006590     PERFORM MOVE-SVM-TO-INF.                                     00659000
+006600 RR-END.                                                          00660000
+006610     GO TO RETURN-ROUTINE.                                        00661000
+006620 RR-EXIT.                                                         00662000
+006630     EXIT.                                                        00663000
+006640******************************************************************00664000
+006650 MOVE-DEP-TO-INF SECTION.                                         00665000
+006660 MDTI-START.                                                      00666000
+006670     MOVE SPACES TO RPINF00-GRP-DATA.                             00667000
+006680     MOVE DPDDM-MSTATUS TO RPINF00-APPL-STATUS.                   00668000
+006690     MOVE DPDDM-MNEWBRANCH TO RPINF00-BRANCH.                     00669000
+006700     MOVE DPDDM-MNEWTYPE TO RPINF00-ACCT-TYPE.                    00670000
+006710     MOVE ZEROS TO RPINF00-TERM.                                  00671000
+006720     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00672000
+006730     MOVE DPDDM-MDORM TO RPINF00-MDORM.                           00673000
+006740     MOVE ZEROS TO RPINF00-COSTC.                                 00674000
+006750     MOVE 'A' TO RPINF00-USEROPT1.                                00675000
+006760     MOVE 'B' TO RPINF00-USEROPT2.                                00676000
+006770     MOVE 'C' TO RPINF00-USEROPT3.                                00677000
+006780     MOVE 'D' TO RPINF00-USEROPT4.                                00678000
+006790     MOVE DPDDM-SCNXT TO SR-FROMJUL.                              00679000
+006800     PERFORM CALENDAR-365.                                        00680000
+006810     MOVE SR-TCMON TO SR-CMM.                                     00681000
+006820     MOVE SR-TCDAY TO SR-CDD.                                     00682000
+006830     MOVE SR-TCYR TO SR-CYYYY.                                    00683000
+006840     MOVE SR-CYEAR-FIRST TO RPINF00-SCNXT.                        00684000
+006850     MOVE DPDDM-BALCUR TO RPINF00-CURBAL.                         00685000
+006860     MOVE DPDDM-BALCUR TO WS-BAL.                                 00686000
+006870     MOVE +0 TO WS-SUB1.                                          00687000
+006880 MDTI-CURCUSTCOL-LOOP.                                            00688000
+006890     ADD +1 TO WS-SUB1.                                           00689000
+006900     SUBTRACT DPDDM-MFCAMT (WS-SUB1) FROM WS-BAL.                 00690000
+006910     IF WS-SUB1 IS LESS THAN +9                                   00691000
+006920         GO TO MDTI-CURCUSTCOL-LOOP.                              00692000
+006930     MOVE WS-BAL TO RPINF00-CURCUSTCOL.                           00693000
+006940     MOVE DPDDM-BALCUR TO WS-BAL.                                 00694000
+006950     MOVE +0 TO WS-SUB1.                                          00695000
+006960 MDTI-CURBANKCOL-LOOP.                                            00696000
+006970     ADD +1 TO WS-SUB1.                                           00697000
+006980     SUBTRACT DPDDM-MFBAMT (WS-SUB1) FROM WS-BAL.                 00698000
+006990     IF WS-SUB1 IS LESS THAN +9                                   00699000
+007000         GO TO MDTI-CURBANKCOL-LOOP.                              00700000
+007010     MOVE WS-BAL TO RPINF00-CURBANKCOL.                           00701000
+007020     MOVE DPDDM-SCLOWBAL TO RPINF00-LOWBAL.                       00702000
+007030     MOVE DPDDM-SCDL TO WS-LASTDATE.                              00703000
+007040     PERFORM COMPUTE-DAYS-IN-CYCLE.                               00704000
+007050     IF DPDDM-SCAGRBAL IS EQUAL TO ZERO                           00705000
+007060         MOVE RPINF00-CURBAL TO RPINF00-AVGBAL                    00706000
+007070     ELSE                                                         00707000
+007080         DIVIDE DPDDM-SCAGRBAL BY WS-DAYS-FROM-SC                 00708000
+007090         GIVING RPINF00-AVGBAL.                                   00709000
+007100     IF DPDDM-SCCAGR IS EQUAL TO ZERO                             00710000
+007110         MOVE RPINF00-CURBANKCOL TO RPINF00-AVGCOLBAL             00711000
+007120     ELSE                                                         00712000
+007130         DIVIDE DPDDM-SCCAGR BY WS-DAYS-FROM-SC                   00713000
+007140         GIVING RPINF00-AVGCOLBAL.                                00714000
+007150     MOVE ZEROS TO RPINF00-COMMAMT.                               00715000
+007160     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00716000
+007170     MOVE +8 TO WS-SUB1.                                          00717000
+007180 MDTI-LOOP.                                                       00718000
+007190     ADD +1 TO WS-SUB1.                                           00719000
+007200     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00720000
+007210     IF WS-SUB1 IS LESS THAN WS-BAL-MAX                           00721000
+007220         GO TO MDTI-LOOP.                                         00722000
+007230 MDTI-EXIT.                                                       00723000
+007240     EXIT.                                                        00724000
+007250******************************************************************00725000
+007260 MOVE-CLM-TO-INF SECTION.                                         00726000
+007270 MCTI-START.                                                      00727000
+007280     MOVE SPACES TO RPINF00-GRP-DATA.                             00728000
+007290     MOVE DPCLM-MSTATUS TO RPINF00-APPL-STATUS.                   00729000
+007300     MOVE DPCLM-MBRANCH TO RPINF00-BRANCH.                        00730000
+007310     MOVE DPCLM-MTYPE TO RPINF00-ACCT-TYPE.                       00731000
+007320     MOVE ZEROS TO RPINF00-TERM.                                  00732000
+007330     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00733000
+007340     MOVE SPACES TO RPINF00-MDORM.                                00734000
+007350     MOVE ZEROS TO RPINF00-COSTC.                                 00735000
+007360     MOVE ZEROS TO RPINF00-SCNXT.                                 00736000
+007370     MOVE DPCLM-BALCUR TO RPINF00-CURBAL.                         00737000
+007380     MOVE ZEROS TO RPINF00-CURCUSTCOL.                            00738000
+007390     MOVE ZEROS TO RPINF00-CURBANKCOL.                            00739000
+007400     MOVE DPCLM-BALCUR TO RPINF00-LOWBAL.                         00740000
+007410     MOVE DPCLM-STMCODLS TO WS-LASTDATE.                          00741000
+007420     PERFORM COMPUTE-DAYS-IN-CYCLE.                               00742000
+007430     DIVIDE DPCLM-INTAGR BY WS-DAYS-FROM-SC                       00743000
+007440         GIVING RPINF00-AVGBAL.                                   00744000
+007450     DIVIDE DPCLM-INTAGR BY WS-DAYS-FROM-SC                       00745000
+007460         GIVING RPINF00-AVGCOLBAL.                                00746000
+007470     MOVE ZEROS TO RPINF00-COMMAMT.                               00747000
+007480     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00748000
+007490     MOVE +8 TO WS-SUB1.                                          00749000
+007500 MCTI-LOOP.                                                       00750000
+007510     ADD +1 TO WS-SUB1.                                           00751000
+007520     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00752000
+007530     IF WS-SUB1 IS LESS THAN WS-BAL-MAX                           00753000
+007540         GO TO MCTI-LOOP.                                         00754000
+007550 MCTI-EXIT.                                                       00755000
+007560     EXIT.                                                        00756000
+007570******************************************************************00757000
+007580 MOVE-SVM-TO-INF SECTION.                                         00758000
+007590 MSTI-START.                                                      00759000
+007600     MOVE SPACES TO RPINF00-GRP-DATA.                             00760000
+007610     MOVE DPSVM-MSTATUS TO RPINF00-APPL-STATUS.                   00761000
+007620     MOVE DPSVM-MNEWBRANCH TO RPINF00-BRANCH.                     00762000
+007630     MOVE DPSVM-MNEWTYPE TO RPINF00-ACCT-TYPE.                    00763000
+007640     MOVE ZEROS TO RPINF00-TERM.                                  00764000
+007650     MOVE ZEROS TO RPINF00-DEL-DAYS.                              00765000
+007660     MOVE DPSVM-MDORM TO RPINF00-MDORM.                           00766000
+007670     MOVE ZEROS TO RPINF00-COSTC.                                 00767000
+007680     MOVE DPSVM-SCNXT TO SR-FROMJUL.                              00768000
+007690     PERFORM CALENDAR-365.                                        00769000
+007700     MOVE SR-TCMON TO SR-CMM.                                     00770000
+007710     MOVE SR-TCDAY TO SR-CDD.                                     00771000
+007720     MOVE SR-TCYR TO SR-CYYYY.                                    00772000
+007730     MOVE SR-CYEAR-FIRST TO RPINF00-SCNXT.                        00773000
+007740     MOVE DPSVM-BALCUR TO RPINF00-CURBAL.                         00774000
+007750     MOVE DPSVM-BALCUR TO WS-BAL.                                 00775000
+007760     MOVE +0 TO WS-SUB1.                                          00776000
+007770 MSTI-CURCUSTCOL-LOOP.                                            00777000
+007780     ADD +1 TO WS-SUB1.                                           00778000
+007790     SUBTRACT DPSVM-MFCAMT (WS-SUB1) FROM WS-BAL.                 00779000
+007800     IF WS-SUB1 IS LESS THAN +9                                   00780000
+007810         GO TO MSTI-CURCUSTCOL-LOOP.                              00781000
+007820     MOVE WS-BAL TO RPINF00-CURCUSTCOL.                           00782000
+007830     MOVE DPSVM-BALCUR TO WS-BAL.                                 00783000
+007840     MOVE +0 TO WS-SUB1.                                          00784000
+007850 MSTI-CURBANKCOL-LOOP.                                            00785000
+007860     ADD +1 TO WS-SUB1.                                           00786000
+007870     SUBTRACT DPSVM-MFBAMT (WS-SUB1) FROM WS-BAL.                 00787000
+007880     IF WS-SUB1 IS LESS THAN +9                                   00788000
+007890         GO TO MSTI-CURBANKCOL-LOOP.                              00789000
+007900     MOVE WS-BAL TO RPINF00-CURBANKCOL.                           00790000
+007910     MOVE DPSVM-SCLOWBAL TO RPINF00-LOWBAL.                       00791000
+007920     MOVE DPSVM-SCDL TO WS-LASTDATE.                              00792000
+007930     PERFORM COMPUTE-DAYS-IN-CYCLE.                               00793000
+007940     DIVIDE DPSVM-SCAGRBAL BY WS-DAYS-FROM-SC                     00794000
+007950         GIVING RPINF00-AVGBAL.                                   00795000
+007960     DIVIDE DPSVM-SCCAGR BY WS-DAYS-FROM-SC                       00796000
+007970         GIVING RPINF00-AVGCOLBAL.                                00797000
+007980     MOVE ZEROS TO RPINF00-COMMAMT.                               00798000
+007990     MOVE ZEROS TO RPINF00-CREDIT-LIMIT.                          00799000
+008000     MOVE +8 TO WS-SUB1.                                          00800000
+008010 MSTI-LOOP.                                                       00801000
+008020     ADD +1 TO WS-SUB1.                                           00802000
+008030     MOVE ZEROS TO RPINF00-BAL (WS-SUB1).                         00803000
+008040     IF WS-SUB1 IS LESS THAN WS-BAL-MAX                           00804000
+008050         GO TO MSTI-LOOP.                                         00805000
+008060 MSTI-EXIT.                                                       00806000
+008070     EXIT.                                                        00807000
+008080***************************************************************** 00808000
+008090 COMPUTE-DAYS-IN-CYCLE SECTION.                                   00809000
+008100 CDIC-START.                                                      00810000
+008110     MOVE WS-NPROCDTA TO SR-FROMJUL.                              00811000
+008120     MOVE 'D' TO SR-PERIOD.                                       00812000
+008130     MOVE 1 TO SR-FREQ.                                           00813000
+008140     MOVE ZEROS TO SR-DAY.                                        00814000
+008150     PERFORM LAST-DATE-365.                                       00815000
+008160     MOVE WS-LASTDATE TO SR-FROMJUL.                              00816000
+008170     PERFORM ELAPSED-DAYS-365.                                    00817000
+008180     MOVE SR-RESULT TO WS-DAYS-FROM-SC.                           00818000
+008190     IF WS-DAYS-FROM-SC IS NOT GREATER THAN ZERO                  00819000
+008200         MOVE +1 TO WS-DAYS-FROM-SC.                              00820000
+008210 CDIC-EXIT.                                                       00821000
+008220     EXIT.                                                        00822000
+008230******************************************************************00823000
+008240 GET-FILE-ORGANIZATION SECTION.                                   00824000
+000000 COPY SRP093.                                                     00825000
+008260******************************************************************00826000
+000000 COPY DPPDDMA.                                                    00827000
+008280******************************************************************00828000
+000000 COPY DPPCLMA.                                                    00829000
+008300******************************************************************00830000
+000000 COPY DPPSVMA.                                                    00831000
+008320******************************************************************00832000
+000000 COPY DPPBNKA.                                                    00833000
+008340******************************************************************00834000
+008350 JULIAN-365 SECTION.                                              00835000
+000000 COPY SRP001.                                                     00836000
+008370******************************************************************00837000
+008380 CALENDAR-365 SECTION.                                            00838000
+000000 COPY SRP003.                                                     00839000
+008400******************************************************************00840000
+008410 ELAPSED-DAYS-365 SECTION.                                        00841000
+000000 COPY SRP005.                                                     00842000
+008430******************************************************************00843000
+008440 LAST-DATE-365 SECTION.                                           00844000
+000000 COPY SRP019.                                                     00845000
+008460******************************************************************00846000
+008470 RETURN-ROUTINE SECTION.                                          00847000
+008480 RT-START.                                                        00848000
+008490     MOVE WS-FUNCTION TO RPINF00-FUNCTION.                        00849000
+008500     GOBACK.                                                      00850000
+008510******************************************************************00851000

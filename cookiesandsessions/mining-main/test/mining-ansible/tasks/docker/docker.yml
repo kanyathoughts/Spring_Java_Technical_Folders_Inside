@@ -1,0 +1,11 @@
+# This task script handles docker-compose related steps.
+---
+- name: Process and upload docker-compose template
+  template:
+    src: docker-compose.yml.j2
+    dest: "/data/{{ansible_user}}/docker-compose.yml"
+    owner: "{{ansible_user}}"
+    mode: 0775
+
+- name: Build images and run containers
+  command: docker-compose -f /data/{{ansible_user}}/docker-compose.yml up --build -d

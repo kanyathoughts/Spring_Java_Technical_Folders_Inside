@@ -1,0 +1,237 @@
+**& AAA1  - AD HOC TO WRITE REPORT USING REGIS SNAPSHOT:
+**& AAA1  / ZREGIS
+**            ===>   USE JCL REGISAAA   <===
+**          REQUESTOR: JENNIFER STUART - AAA
+**          407-444-7682
+**
+**  NOTE:   CY 2005 -AND- 2004 REPORT(S) WERE RUN ON 01/04/07, FOR:
+**  'PASSENGER VEHICLE REGISTRATIONS BY COUNTY, REG. CLASSES 25 & 35'
+**  (SPOKE TO JENNIFER TO CLARIFY WHICH REGCLASSCD'S SHE NEEDS)
+**  * ALSO PROVIDED CY 2003, REGCLASSCD'S 25 & 35 *
+**
+**  NOTE:  A CY 2004 REPORT RUN ON 10/12/05, WAS FOR:
+**  'PASSENGER VEHICLE REGISTRATIONS BY COUNTY, REG. CLASSES 25 & 26'
+**
+**        DIANE E. DODSON CHARGES HER $48.50 PER REPORT.
+** --------------------------------------------------------------------
+**                PROGRAM NAME: AAA1
+**                  PROGRAMMER: JIM ELIZALDE
+**                        USER: VTR-PDC
+**            LANGUAGE VERSION: NATURAL V2.1
+**                   MODE USED: BATCH
+**        PROD NATURAL LIBRARY: RTS
+**              FILES ACCESSED: NONE
+**               FILES UPDATED: NONE
+**               REPORT NUMBER: NONE
+**   PARAMETER DATA AREAS USED: NONE
+**      GLOBAL DATA AREAS USED: NONE
+**       LOCAL DATA AREAS USED: L446000  - COMMON FIELDS
+**                              LRTS003Q - REGIS SNAPSHOT
+**          SUBPROGRAMS CALLED: NONE
+**                   MAPS USED: NONE
+**           HELPROUTINES USED: NONE
+**               COPYCODE USED: CRTSERRB - ON ERROR ROUTINE
+**                 ESIZE/USIZE: STD
+**
+** --------------------------------------------------------------------
+** PROCESSING OVERVIEW:
+**
+**   READ RTS REGIS ANNUAL SNAPSHOT AND PRINT REPORT.
+**
+** --------------------------------------------------------------------
+** SPECIAL NOTES:
+**
+**    CMWKF02 -  INPUT - REGIS SNAP
+**
+** --------------------------------------------------------------------
+**  MAINTENANCE HISTORY:
+**
+**  LEVEL   PGMR   PROJECT  WK REQ #    DATE        DESCRIPTION
+**  -----   ----  --------- --------  --------  ---------------------
+**   001    JE                        10/12/05  CY 2004 RPT,REG. 25 & 26
+**   002    JE                        01/04/07  CY 2004 RPT,REG. 25 & 35
+**   003    JE                        01/04/07  CY 2005 RPT,REG. 25 & 35
+**   004    JE                        01/11/07  CY 2003 RPT,REG. 25 & 35
+**   005    JE                        02/20/08  CY 2007 RPT,REG. 25 & 35
+**   006    JLO                       01/27/09  CY 2008 RPT,REG. 25 & 35
+**
+** --------------------------------------------------------------------
+**                D A T A    S E C T I O N
+** --------------------------------------------------------------------
+DEFINE DATA
+*
+LOCAL USING L446000     /*   COMMON FIELDS
+LOCAL USING LRTS003Q    /*   REGIS 315 #REGXTR (LRTS003Q OK FOR 2004 UP)
+* OCAL USING LRTS003X    /*   REGIS 315 #REGXTR (USE FOR 2003 & EARLIER)
+LOCAL USING LRTS103     /*   COUNTY DESCRIPTION
+LOCAL
+*
+* ** PROGRAM ACCUMULATORS
+* 1 #DUMPDATE                  (A8) INIT<'10/08/11'> /*<== SET PARM #1
+* 1 #COMPARISION-DATE-YYYYMMDD (N8) INIT<20111008>   /*<== SET PARM #2
+* 1 #COMPARISION-DATE-YYYYMM   (N8) INIT<201110>     /*<== SET PARM #3
+1 #CY                        (N4) INIT<2011>      /* SET PARM #1
+1 #COMPARISION-DATE-YYYYMMDD (N8) INIT<20111008>  /* SET PARM #2
+1 #COMPARISION-DATE-YYYYMM   (N8) INIT<201110>    /* SET PARM #3 (LAST)
+1 #REGEXP-YYYYMM             (N6)
+1 REDEFINE #REGEXP-YYYYMM
+  2 #REGEXP-YYYY             (N4)
+  2 #REGEXP-MM               (N2)
+1 #J                   (N3)
+1 #I                   (N3)
+1 C                    (A13/1:254)
+1 T                    (N7/254) (EM=Z,ZZZ,ZZ9)    /* COUNTY TOTAL
+1 #REC-FOUND           (P8)  (EM=ZZ,ZZZ,ZZ9)
+1 #1                   (N1) INIT<1>
+*
+END-DEFINE
+*
+** ---------------------------------------------------------------
+**               F O R M A T   S E C T I O N
+** ---------------------------------------------------------------
+*  PS=61 BUT PHYSICALLY 63 LINES GET PRINTED
+*
+FORMAT (0) LS=133 PS=62
+FORMAT (1) LS=133 PS=62
+FORMAT (2) LS=133 PS=63
+FORMAT (3) LS=133 PS=63
+*
+** ---------------------------------------------------------------
+**           M A I N   L O G I C    S E C T I O N
+** ---------------------------------------------------------------
+*
+FOR #J 1 TO 254
+  FIND OFFICE_IDS
+      WITH OFCISSUANCENO = #J
+    MOVE OFCNAME TO C(#J)
+  END-FIND
+END-FOR
+*
+RESET INITIAL #REGXTR
+*
+READ   WORK FILE 2   RECORD #REGXTR
+*
+  MOVE REGEXPYR TO #REGEXP-YYYY      /* #REGEXP-YYYYMM
+  MOVE REGEXPMO TO #REGEXP-MM        /* #REGEXP-YYYYMM
+*
+  REJECT IF (RESCOMPTCNTYNO EQ 0
+         OR RESCOMPTCNTYNO  GT 254)
+* REJECT IF JNKINDI    EQ  1         /* N/A REGIS SNAP
+*        OR TTLPROCSCD EQ 'S'
+*        OR TTLPROCSCD EQ 'I'
+*
+  ACCEPT IF
+       ((REGEFFDATE    LE #COMPARISION-DATE-YYYYMMDD
+    AND #REGEXP-YYYYMM GE #COMPARISION-DATE-YYYYMM)
+    AND REGCLASSCD     EQ 25 OR= 35)   /* PASSENGER VEHICLE REGIS
+*
+  PERFORM TOTALS-BY-COUNTY
+*
+  MOVE #REGXTR.RESCOMPTCNTYNO TO #J
+*
+END-WORK
+*
+END TRANSACTION
+*
+WRITE (1) NOTITLE //
+ C(1) T(1)  4XC(52)T(52)   4XC(103)T(103) 4XC(154)T(154) 4XC(205)T(205)/
+ C(2) T(2)  4XC(53)T(53)   4XC(104)T(104) 4XC(155)T(155) 4XC(206)T(206)/
+ C(3) T(3)  4XC(54)T(54)   4XC(105)T(105) 4XC(156)T(156) 4XC(207)T(207)/
+ C(4) T(4)  4XC(55)T(55)   4XC(106)T(106) 4XC(157)T(157) 4XC(208)T(208)/
+ C(5) T(5)  4XC(56)T(56)   4XC(107)T(107) 4XC(158)T(158) 4XC(209)T(209)/
+ C(6) T(6)  4XC(57)T(57)   4XC(108)T(108) 4XC(159)T(159) 4XC(210)T(210)/
+ C(7) T(7)  4XC(58)T(58)   4XC(109)T(109) 4XC(160)T(160) 4XC(211)T(211)/
+ C(8) T(8)  4XC(59)T(59)   4XC(110)T(110) 4XC(161)T(161) 4XC(212)T(212)/
+ C(9) T(9)  4XC(60)T(60)   4XC(111)T(111) 4XC(162)T(162) 4XC(213)T(213)/
+ C(10)T(10) 4XC(61)T(61)   4XC(112)T(112) 4XC(163)T(163) 4XC(214)T(214)/
+ C(11)T(11) 4XC(62)T(62)   4XC(113)T(113) 4XC(164)T(164) 4XC(215)T(215)/
+ C(12)T(12) 4XC(63)T(63)   4XC(114)T(114) 4XC(165)T(165) 4XC(216)T(216)/
+ C(13)T(13) 4XC(64)T(64)   4XC(115)T(115) 4XC(166)T(166) 4XC(217)T(217)/
+ C(14)T(14) 4XC(65)T(65)   4XC(116)T(116) 4XC(167)T(167) 4XC(218)T(218)/
+ C(15)T(15) 4XC(66)T(66)   4XC(117)T(117) 4XC(168)T(168) 4XC(219)T(219)/
+ C(16)T(16) 4XC(67)T(67)   4XC(118)T(118) 4XC(169)T(169) 4XC(220)T(220)/
+ C(17)T(17) 4XC(68)T(68)   4XC(119)T(119) 4XC(170)T(170) 4XC(221)T(221)/
+ C(18)T(18) 4XC(69)T(69)   4XC(120)T(120) 4XC(171)T(171) 4XC(222)T(222)/
+ C(19)T(19) 4XC(70)T(70)   4XC(121)T(121) 4XC(172)T(172) 4XC(223)T(223)/
+ C(20)T(20) 4XC(71)T(71)   4XC(122)T(122) 4XC(173)T(173) 4XC(224)T(224)/
+ C(21)T(21) 4XC(72)T(72)   4XC(123)T(123) 4XC(174)T(174) 4XC(225)T(225)/
+C(22)T(22) 4XC(73)T(73)   4XC(124)T(124) 4XC(175)T(175) 4XC(226)T(226) /
+C(23)T(23) 4XC(74)T(74)   4XC(125)T(125) 4XC(176)T(176) 4XC(227)T(227) /
+C(24)T(24) 4XC(75)T(75)   4XC(126)T(126) 4XC(177)T(177) 4XC(228)T(228) /
+C(25)T(25) 4XC(76)T(76)   4XC(127)T(127) 4XC(178)T(178) 4XC(229)T(229) /
+C(26)T(26) 4XC(77)T(77)   4XC(128)T(128) 4XC(179)T(179) 4XC(230)T(230) /
+C(27)T(27) 4XC(78)T(78)   4XC(129)T(129) 4XC(180)T(180) 4XC(231)T(231) /
+C(28)T(28) 4XC(79)T(79)   4XC(130)T(130) 4XC(181)T(181) 4XC(232)T(232) /
+C(29)T(29) 4XC(80)T(80)   4XC(131)T(131) 4XC(182)T(182) 4XC(233)T(233) /
+C(30)T(30) 4XC(81)T(81)   4XC(132)T(132) 4XC(183)T(183) 4XC(234)T(234) /
+C(31)T(31) 4XC(82)T(82)   4XC(133)T(133) 4XC(184)T(184) 4XC(235)T(235) /
+C(32)T(32) 4XC(83)T(83)   4XC(134)T(134) 4XC(185)T(185) 4XC(236)T(236) /
+C(33)T(33) 4XC(84)T(84)   4XC(135)T(135) 4XC(186)T(186) 4XC(237)T(237) /
+C(34)T(34) 4XC(85)T(85)   4XC(136)T(136) 4XC(187)T(187) 4XC(238)T(238) /
+C(35)T(35) 4XC(86)T(86)   4XC(137)T(137) 4XC(188)T(188) 4XC(239)T(239) /
+C(36)T(36) 4XC(87)T(87)   4XC(138)T(138) 4XC(189)T(189) 4XC(240)T(240) /
+C(37)T(37) 4XC(88)T(88)   4XC(139)T(139) 4XC(190)T(190) 4XC(241)T(241) /
+C(38)T(38) 4XC(89)T(89)   4XC(140)T(140) 4XC(191)T(191) 4XC(242)T(242) /
+C(39)T(39) 4XC(90)T(90)   4XC(141)T(141) 4XC(192)T(192) 4XC(243)T(243) /
+C(40)T(40) 4XC(91)T(91)   4XC(142)T(142) 4XC(193)T(193) 4XC(244)T(244) /
+C(41)T(41) 4XC(92)T(92)   4XC(143)T(143) 4XC(194)T(194) 4XC(245)T(245) /
+C(42)T(42) 4XC(93)T(93)   4XC(144)T(144) 4XC(195)T(195) 4XC(246)T(246) /
+C(43)T(43) 4XC(94)T(94)   4XC(145)T(145) 4XC(196)T(196) 4XC(247)T(247) /
+C(44)T(44) 4XC(95)T(95)   4XC(146)T(146) 4XC(197)T(197) 4XC(248)T(248) /
+C(45)T(45) 4XC(96)T(96)   4XC(147)T(147) 4XC(198)T(198) 4XC(249)T(249) /
+C(46)T(46) 4XC(97)T(97)   4XC(148)T(148) 4XC(199)T(199) 4XC(250)T(250) /
+C(47)T(47) 4XC(98)T(98)   4XC(149)T(149) 4XC(200)T(200) 4XC(251)T(251) /
+C(48)T(48) 4XC(99)T(99)   4XC(150)T(150) 4XC(201)T(201) 4XC(252)T(252) /
+C(49)T(49) 4XC(100)T(100) 4XC(151)T(151) 4XC(202)T(202) 4XC(253)T(253) /
+C(50)T(50) 4XC(101)T(101) 4XC(152)T(152) 4XC(203)T(203) 4XC(254)T(254) /
+C(51)T(51) 4XC(102)T(102) 4XC(153)T(153) 4XC(204)T(204) /
+*
+PERFORM PRNT-STATISTICS
+*
+** ---------------------------------------------------------------
+**             S U B R O U T I N E    S E C T I O N
+** ---------------------------------------------------------------
+DEFINE SUBROUTINE PRNT-STATISTICS
+*
+SKIP (1) 2
+WRITE (1) NOTITLE
+  'PASSENGER VEHICLE REGISTRATIONS BY COUNTY, REG. CLASSES 25 & 35'   /
+  'FOR CY' #CY '- TEXAS STATEWIDE TOTAL..............................:'
+  #REC-FOUND ///
+  'RUN DATE:' *DATU
+**71T *DATX (EM=N(9)', 'L(9)' 'ZD', 'YYYY)
+  23T 'SOURCE: TEXAS-DOT, VTR/TSB <JLO> ; ADHOC: AAA1'
+*
+END-SUBROUTINE  /* PRNT-STATISTICS
+*
+** ---------------------------------------------------------------
+DEFINE SUBROUTINE TOTALS-BY-COUNTY
+** ---------------------------------------------------------------
+*
+MOVE #REGXTR.RESCOMPTCNTYNO TO #I
+*
+DECIDE ON FIRST VALUE OF #REGXTR.RESCOMPTCNTYNO
+*
+  VALUE #I
+    ADD 1 TO T(#I)
+*
+  ANY VALUE
+    ADD 1 TO #REC-FOUND
+*   IF #REC-FOUND GT 1000
+*     ESCAPE BOTTOM      /* TEST .............
+*   END-IF
+*
+  NONE VALUE
+    IGNORE
+*
+END-DECIDE
+*
+END-SUBROUTINE  /* TOTALS-BY-COUNTY
+*
+** ---------------------------------------------------------------
+**            O N - E R R O R    S E C T I O N
+** ---------------------------------------------------------------
+** ON ERROR ROUTINE
+*
+INCLUDE CRTSERRB
+END

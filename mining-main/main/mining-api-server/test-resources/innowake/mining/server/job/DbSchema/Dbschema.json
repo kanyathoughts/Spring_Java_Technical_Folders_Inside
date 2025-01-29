@@ -1,0 +1,880 @@
+{
+  "name": "jdbc:db2://localhost:50001/vanguard",
+  "schemes": [
+    {
+      "name": "AACH00",
+      "tables": [
+        {
+          "name": "TDD_COMP_ENT_XREF",
+          "columns": [
+            {
+              "name": "CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "CO_PO_ID",
+              "dataType": "INTEGER",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 4
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 20
+            },
+            {
+              "name": "CO_NM",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            }
+          ],
+          "indices": [
+            {
+              "name": "SQL220225120710020",
+              "columns": ["AACH00.TDD_COMP_ENT_XREF.CO_ID"],
+              "indexType": "other",
+              "unique": true
+            }
+          ],
+          "primaryKey": null,
+          "foreignKeys": []
+        },
+        {
+          "name": "TDD_OPT_ENT_XREF",
+          "columns": [
+            {
+              "name": "CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "INDIV_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "SSN",
+              "dataType": "INTEGER",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 4
+            },
+            {
+              "name": "DDP_ID",
+              "dataType": "DECIMAL",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 8
+            },
+            {
+              "name": "DDP_PLN_NO",
+              "dataType": "DECIMAL",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 8
+            },
+            {
+              "name": "INIT_PO_ID",
+              "dataType": "INTEGER",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 4
+            },
+            {
+              "name": "LST_UPDT_SYS_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LST_UPDT_SYS_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "ADP_CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "INDIV_NM",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            }
+          ],
+          "indices": [
+            {
+              "name": "PDD00040",
+              "columns": [
+                "AACH00.TDD_OPT_ENT_XREF.CO_ID",
+                "AACH00.TDD_OPT_ENT_XREF.INDIV_ID"
+              ],
+              "indexType": "other",
+              "unique": true
+            }
+          ],
+          "primaryKey": null,
+          "foreignKeys": []
+        },
+        {
+          "name": "TDDCOMP",
+          "columns": [
+            {
+              "name": "CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "CO_NM",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LONG_CO_NM",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false
+            },
+            {
+              "name": "LAST_UPDT_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 20
+            },
+            {
+              "name": "LAST_UPDT_USER",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 20
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "dataType": "DATE",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LST_UPDT_SYS_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false
+            },
+            {
+              "name": "LST_UPDT_SYS_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 20
+            }
+          ],
+          "indices": [
+            {
+              "name": "CO_ID",
+              "columns": ["AACH00.TDDCOMP.CO_ID"],
+              "indexType": "other",
+              "unique": true
+            }
+          ],
+          "primaryKey": null,
+          "foreignKeys": []
+        },
+        {
+          "name": "TDDXREF",
+          "columns": [
+            {
+              "name": "INDIV_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "FND_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "ACCT_NO",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "INDIV_NM",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "ENTRY_DT",
+              "dataType": "DATE",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "PNOT_RCVD_DT",
+              "dataType": "DATE",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "INDIV_PRCNT",
+              "dataType": "DECIMAL",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LAST_UPDT_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LAST_UPDT_USER",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "dataType": "DATE",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "SSN",
+              "dataType": "INTEGER",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LST_UPDT_SYS_ID",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            },
+            {
+              "name": "LST_UPDT_SYS_TS",
+              "dataType": "TIMESTAMP",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 20
+            },
+            {
+              "name": "ADP_CO_ID",
+              "dataType": "CHAR",
+              "defaultValue": "' '",
+              "autoIncremented": false,
+              "size": 10
+            }
+          ],
+          "indices": [],
+          "primaryKey": null,
+          "foreignKeys": []
+        },
+        {
+          "name": "TTIMES",
+          "columns": [
+            {
+              "name": "CURR_TS",
+              "dataType": "CHAR",
+              "defaultValue": null,
+              "autoIncremented": false,
+              "size": 10
+            }
+          ],
+          "indices": [],
+          "primaryKey": null,
+          "foreignKeys": []
+        }
+      ],
+      "views": [
+        {
+          "name": "VDDCOMP1",
+          "viewColumns": [
+            {
+              "name": "CO_ID",
+              "targetColumn": "AACH00.TDDCOMP.CO_ID"
+            },
+            {
+              "name": "CO_NM",
+              "targetColumn": "AACH00.TDDCOMP.CO_NM"
+            },
+            {
+              "name": "LONG_CO_NM",
+              "targetColumn": "AACH00.TDDCOMP.LONG_CO_NM"
+            },
+            {
+              "name": "LAST_UPDT_TS",
+              "targetColumn": "AACH00.TDDCOMP.LAST_UPDT_TS"
+            },
+            {
+              "name": "LAST_UPDT_USER",
+              "targetColumn": "AACH00.TDDCOMP.LAST_UPDT_USER"
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "targetColumn": "AACH00.TDDCOMP.EFFTV_END_DT"
+            },
+            {
+              "name": "LST_UPDT_SYS_ID",
+              "targetColumn": "AACH00.TDDCOMP.LST_UPDT_SYS_ID"
+            },
+            {
+              "name": "LST_UPDT_SYS_TS",
+              "targetColumn": "AACH00.TDDCOMP.LST_UPDT_SYS_TS"
+            }
+          ]
+        },
+        {
+          "name": "VDDXREF1",
+          "viewColumns": [
+            {
+              "name": "INDIV_ID",
+              "targetColumn": "AACH00.TDDXREF.INDIV_ID"
+            },
+            {
+              "name": "CO_ID",
+              "targetColumn": "AACH00.TDDXREF.CO_ID"
+            },
+            {
+              "name": "FND_ID",
+              "targetColumn": "AACH00.TDDXREF.FND_ID"
+            },
+            {
+              "name": "ACCT_NO",
+              "targetColumn": "AACH00.TDDXREF.ACCT_NO"
+            },
+            {
+              "name": "INDIV_NM",
+              "targetColumn": "AACH00.TDDXREF.INDIV_NM"
+            },
+            {
+              "name": "ENTRY_DT",
+              "targetColumn": "AACH00.TDDXREF.ENTRY_DT"
+            },
+            {
+              "name": "PNOT_RCVD_DT",
+              "targetColumn": "AACH00.TDDXREF.PNOT_RCVD_DT"
+            },
+            {
+              "name": "INDIV_PRCNT",
+              "targetColumn": "AACH00.TDDXREF.INDIV_PRCNT"
+            },
+            {
+              "name": "LAST_UPDT_TS",
+              "targetColumn": "AACH00.TDDXREF.LAST_UPDT_TS"
+            },
+            {
+              "name": "LAST_UPDT_USER",
+              "targetColumn": "AACH00.TDDXREF.LAST_UPDT_USER"
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "targetColumn": "AACH00.TDDXREF.EFFTV_END_DT"
+            },
+            {
+              "name": "SSN",
+              "targetColumn": "AACH00.TDDXREF.SSN"
+            },
+            {
+              "name": "LST_UPDT_SYS_ID",
+              "targetColumn": "AACH00.TDDXREF.LST_UPDT_SYS_ID"
+            },
+            {
+              "name": "LST_UPDT_SYS_TS",
+              "targetColumn": "AACH00.TDDXREF.LST_UPDT_SYS_TS"
+            },
+            {
+              "name": "ADP_CO_ID",
+              "targetColumn": "AACH00.TDDXREF.ADP_CO_ID"
+            }
+          ]
+        },
+        {
+          "name": "VTIMES1",
+          "viewColumns": [
+            {
+              "name": "CURR_TS",
+              "targetColumn": "AACH00.TTIMES.CURR_TS"
+            }
+          ]
+        }
+      ],
+      "routines": [],
+      "triggers": []
+    },
+    {
+      "name": "AARS00",
+      "tables": [],
+      "views": [
+        {
+          "name": "VCIN0210",
+          "viewColumns": [
+            {
+              "name": "PGM_ID",
+              "targetColumn": "ACIN00.TCIN021.PGM_ID"
+            },
+            {
+              "name": "VGI_ORG_ID",
+              "targetColumn": "ACIN00.TCIN021.VGI_ORG_ID"
+            },
+            {
+              "name": "STRT_TM",
+              "targetColumn": "ACIN00.TCIN021.STRT_TM"
+            },
+            {
+              "name": "END_TM",
+              "targetColumn": "ACIN00.TCIN021.END_TM"
+            },
+            {
+              "name": "LST_TJR_USER_TM",
+              "targetColumn": "ACIN00.TCIN021.LST_TJR_USER_TM"
+            },
+            {
+              "name": "LST_RLTV_RCRD_NO",
+              "targetColumn": "ACIN00.TCIN021.LST_RLTV_RCRD_NO"
+            },
+            {
+              "name": "IO_RCRD_KEY_TX",
+              "targetColumn": "ACIN00.TCIN021.IO_RCRD_KEY_TX"
+            },
+            {
+              "name": "ERR_MSG_TX",
+              "targetColumn": "ACIN00.TCIN021.ERR_MSG_TX"
+            },
+            {
+              "name": "VST_ASSET_UPDTD_TS",
+              "targetColumn": "ACIN00.TCIN021.VST_ASSET_UPDTD_TS"
+            },
+            {
+              "name": "OTH_ASSET_UPDTD_TS",
+              "targetColumn": "ACIN00.TCIN021.OTH_ASSET_UPDTD_TS"
+            },
+            {
+              "name": "VAST_MA_TYP_CD",
+              "targetColumn": "ACIN00.TCIN021.VAST_MA_TYP_CD"
+            },
+            {
+              "name": "MIN_VAST_MA_NO",
+              "targetColumn": "ACIN00.TCIN021.MIN_VAST_MA_NO"
+            },
+            {
+              "name": "MAX_VAST_MA_NO",
+              "targetColumn": "ACIN00.TCIN021.MAX_VAST_MA_NO"
+            },
+            {
+              "name": "NXT_VAST_MA_NO",
+              "targetColumn": "ACIN00.TCIN021.NXT_VAST_MA_NO"
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "targetColumn": "ACIN00.TCIN021.LST_UPDTD_USER_ID"
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "targetColumn": "ACIN00.TCIN021.LST_UPDTD_TS"
+            },
+            {
+              "name": "LST_PRC_TS",
+              "targetColumn": "ACIN00.TCIN021.LST_PRC_TS"
+            }
+          ]
+        },
+        {
+          "name": "VPLNTR1",
+          "viewColumns": [
+            {
+              "name": "PLN_ID",
+              "targetColumn": "AINS00.TPLNTR.PLN_ID"
+            },
+            {
+              "name": "DIVSN_ID",
+              "targetColumn": "AINS00.TPLNTR.DIVSN_ID"
+            },
+            {
+              "name": "TXN_ID",
+              "targetColumn": "AINS00.TPLNTR.TXN_ID"
+            },
+            {
+              "name": "TXN_OPT_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_CD"
+            },
+            {
+              "name": "CUSTM_TXN_DESC_TX",
+              "targetColumn": "AINS00.TPLNTR.CUSTM_TXN_DESC_TX"
+            },
+            {
+              "name": "CUSTM_TXN_MONIC_CD",
+              "targetColumn": "AINS00.TPLNTR.CUSTM_TXN_MONIC_CD"
+            },
+            {
+              "name": "TXN_MTHLY_VOL_AM",
+              "targetColumn": "AINS00.TPLNTR.TXN_MTHLY_VOL_AM"
+            },
+            {
+              "name": "INSURN_CARR_ID",
+              "targetColumn": "AINS00.TPLNTR.INSURN_CARR_ID"
+            },
+            {
+              "name": "UPDT_ID",
+              "targetColumn": "AINS00.TPLNTR.UPDT_ID"
+            },
+            {
+              "name": "UPDT_TS",
+              "targetColumn": "AINS00.TPLNTR.UPDT_TS"
+            },
+            {
+              "name": "TXN_OPT_TYP_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_TYP_CD"
+            },
+            {
+              "name": "TXN_OPT_OTH_TYP_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_OTH_TYP_CD"
+            }
+          ]
+        }
+      ],
+      "routines": [],
+      "triggers": []
+    },
+    {
+      "name": "AARS90",
+      "tables": [],
+      "views": [
+        {
+          "name": "VPLNTR1",
+          "viewColumns": [
+            {
+              "name": "PLN_ID",
+              "targetColumn": "AINS00.TPLNTR.PLN_ID"
+            },
+            {
+              "name": "DIVSN_ID",
+              "targetColumn": "AINS00.TPLNTR.DIVSN_ID"
+            },
+            {
+              "name": "TXN_ID",
+              "targetColumn": "AINS00.TPLNTR.TXN_ID"
+            },
+            {
+              "name": "TXN_OPT_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_CD"
+            },
+            {
+              "name": "CUSTM_TXN_DESC_TX",
+              "targetColumn": "AINS00.TPLNTR.CUSTM_TXN_DESC_TX"
+            },
+            {
+              "name": "CUSTM_TXN_MONIC_CD",
+              "targetColumn": "AINS00.TPLNTR.CUSTM_TXN_MONIC_CD"
+            },
+            {
+              "name": "TXN_MTHLY_VOL_AM",
+              "targetColumn": "AINS00.TPLNTR.TXN_MTHLY_VOL_AM"
+            },
+            {
+              "name": "INSURN_CARR_ID",
+              "targetColumn": "AINS00.TPLNTR.INSURN_CARR_ID"
+            },
+            {
+              "name": "UPDT_ID",
+              "targetColumn": "AINS00.TPLNTR.UPDT_ID"
+            },
+            {
+              "name": "UPDT_TS",
+              "targetColumn": "AINS00.TPLNTR.UPDT_TS"
+            },
+            {
+              "name": "TXN_OPT_TYP_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_TYP_CD"
+            },
+            {
+              "name": "TXN_OPT_OTH_TYP_CD",
+              "targetColumn": "AINS00.TPLNTR.TXN_OPT_OTH_TYP_CD"
+            }
+          ]
+        }
+      ],
+      "routines": [],
+      "triggers": []
+    },
+    {
+      "name": "AATT00",
+      "tables": [],
+      "views": [
+        {
+          "name": "ASAG",
+          "viewColumns": [
+            {
+              "name": "SAG_ID",
+              "targetColumn": "EVGI00.TSAG.SAG_ID"
+            },
+            {
+              "name": "SAG_APPLN_CD",
+              "targetColumn": "EVGI00.TSAG.SAG_APPLN_CD"
+            },
+            {
+              "name": "VGI_CLNT_ID",
+              "targetColumn": "EVGI00.TSAG.VGI_CLNT_ID"
+            },
+            {
+              "name": "SAG_NM_TX",
+              "targetColumn": "EVGI00.TSAG.SAG_NM_TX"
+            },
+            {
+              "name": "SERV_ID",
+              "targetColumn": "EVGI00.TSAG.SERV_ID"
+            },
+            {
+              "name": "EFFTV_BGN_DT",
+              "targetColumn": "EVGI00.TSAG.EFFTV_BGN_DT"
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "targetColumn": "EVGI00.TSAG.EFFTV_END_DT"
+            },
+            {
+              "name": "LST_SIGN_DT",
+              "targetColumn": "EVGI00.TSAG.LST_SIGN_DT"
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "targetColumn": "EVGI00.TSAG.LST_UPDTD_USER_ID"
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "targetColumn": "EVGI00.TSAG.LST_UPDTD_TS"
+            },
+            {
+              "name": "CREATD_CREW_PO_ID",
+              "targetColumn": "EVGI00.TSAG.CREATD_CREW_PO_ID"
+            },
+            {
+              "name": "CREATD_COMM_CHNL",
+              "targetColumn": "EVGI00.TSAG.CREATD_COMM_CHNL"
+            }
+          ]
+        },
+        {
+          "name": "VAVT_PO_ROLE",
+          "viewColumns": [
+            {
+              "name": "PO_ROLE_CD",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.PO_ROLE_CD"
+            },
+            {
+              "name": "EFFTV_BGN_DT",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.EFFTV_BGN_DT"
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.EFFTV_END_DT"
+            },
+            {
+              "name": "AVT_ABBRV_NM",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.AVT_ABBRV_NM"
+            },
+            {
+              "name": "AVT_NM",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.AVT_NM"
+            },
+            {
+              "name": "AVT_DESC_TX",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.AVT_DESC_TX"
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.LST_UPDTD_USER_ID"
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "targetColumn": "EVGI00.TAVT_PO_ROLE.LST_UPDTD_TS"
+            }
+          ]
+        },
+        {
+          "name": "VAVT_ROLE_MODFR",
+          "viewColumns": [
+            {
+              "name": "ROLE_MODFR_CD",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.ROLE_MODFR_CD"
+            },
+            {
+              "name": "AVT_ABBRV_NM",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.AVT_ABBRV_NM"
+            },
+            {
+              "name": "AVT_NM",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.AVT_NM"
+            },
+            {
+              "name": "AVT_DESC_TX",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.AVT_DESC_TX"
+            },
+            {
+              "name": "EFFTV_BGN_DT",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.EFFTV_BGN_DT"
+            },
+            {
+              "name": "EFFTV_END_DT",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.EFFTV_END_DT"
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.LST_UPDTD_USER_ID"
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "targetColumn": "EVGI00.TAVT_ROLE_MODFR.LST_UPDTD_TS"
+            }
+          ]
+        },
+        {
+          "name": "VCIN0310",
+          "viewColumns": [
+            {
+              "name": "CLNT_GR_ID",
+              "targetColumn": "ACIN00.TCIN031.CLNT_GR_ID"
+            },
+            {
+              "name": "CLNT_GR_TYP_CD",
+              "targetColumn": "ACIN00.TCIN031.CLNT_GR_TYP_CD"
+            },
+            {
+              "name": "SGMNTN_TYP_CD",
+              "targetColumn": "ACIN00.TCIN031.SGMNTN_TYP_CD"
+            },
+            {
+              "name": "CLNT_GR_SENS",
+              "targetColumn": "ACIN00.TCIN031.CLNT_GR_SENS"
+            },
+            {
+              "name": "GR_EFFTV_DT",
+              "targetColumn": "ACIN00.TCIN031.GR_EFFTV_DT"
+            },
+            {
+              "name": "VAST_MSTR_ACCT_NO",
+              "targetColumn": "ACIN00.TCIN031.VAST_MSTR_ACCT_NO"
+            },
+            {
+              "name": "NM_TX",
+              "targetColumn": "ACIN00.TCIN031.NM_TX"
+            },
+            {
+              "name": "GR_VAST_ASSET_AM",
+              "targetColumn": "ACIN00.TCIN031.GR_VAST_ASSET_AM"
+            },
+            {
+              "name": "GR_OTH_ASSET_AM",
+              "targetColumn": "ACIN00.TCIN031.GR_OTH_ASSET_AM"
+            },
+            {
+              "name": "MULT_SYS_FL",
+              "targetColumn": "ACIN00.TCIN031.MULT_SYS_FL"
+            },
+            {
+              "name": "LST_UPDTD_USER_ID",
+              "targetColumn": "ACIN00.TCIN031.LST_UPDTD_USER_ID"
+            },
+            {
+              "name": "LST_UPDTD_TS",
+              "targetColumn": "ACIN00.TCIN031.LST_UPDTD_TS"
+            },
+            {
+              "name": "MIXD_MAIL_1_NM",
+              "targetColumn": "ACIN00.TCIN031.MIXD_MAIL_1_NM"
+            },
+            {
+              "name": "MIXD_MAIL_2_NM",
+              "targetColumn": "ACIN00.TCIN031.MIXD_MAIL_2_NM"
+            },
+            {
+              "name": "CLNT_GR_REJ_CD",
+              "targetColumn": "ACIN00.TCIN031.CLNT_GR_REJ_CD"
+            },
+            {
+              "name": "MSTR_ACCT_TYP_CD",
+              "targetColumn": "ACIN00.TCIN031.MSTR_ACCT_TYP_CD"
+            },
+            {
+              "name": "SENS_TRNS_RSN_CD",
+              "targetColumn": "ACIN00.TCIN031.SENS_TRNS_RSN_CD"
+            },
+            {
+              "name": "SENS_EFFTV_BGN_DT",
+              "targetColumn": "ACIN00.TCIN031.SENS_EFFTV_BGN_DT"
+            },
+            {
+              "name": "SENS_EFFTV_END_DT",
+              "targetColumn": "ACIN00.TCIN031.SENS_EFFTV_END_DT"
+            },
+            {
+              "name": "FRQNT_TRDG_EXCL_CD",
+              "targetColumn": "ACIN00.TCIN031.FRQNT_TRDG_EXCL_CD"
+            },
+            {
+              "name": "OMBS_CD",
+              "targetColumn": "ACIN00.TCIN031.OMBS_CD"
+            }
+          ]
+        }
+      ],
+      "routines": [],
+      "triggers": []
+    }
+  ],
+  "crawlDate": "02/25/2022 14:58:19"
+}

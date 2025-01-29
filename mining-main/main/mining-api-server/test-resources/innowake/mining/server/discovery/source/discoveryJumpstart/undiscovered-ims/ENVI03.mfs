@@ -1,0 +1,173 @@
+*****************************************************************
+         PRINT ON,NOGEN
+********************************************************************
+ENVI03   FMT
+         DEV   TYPE=(3270,2),                                          X
+               FEAT=IGNORE,                                            X
+               DSCA=X'00F0',                                           X
+               PFK=(PFKFLD,                                            X
+               1='INQ3    01')
+         DIV   TYPE=INOUT
+         DPAGE CURSOR=((5,11)),                                        X
+               FILL=PT
+         DFLD  'EXECUTION ENVIRONMENT INFORMATION',                    X
+               POS=(2,25),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         DFLD  'DATE: ',                                               X
+               POS=(3,65),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+CURDATE  DFLD  POS=(3,72),                                             X
+               LTH=9,                                                  X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         DFLD  'IMS ID: ',                                             X
+               POS=(5,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+IMSID    DFLD  POS=(5,11),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'IMS REL LEV: ',                                        X
+               POS=(5,45),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+RELLEV   DFLD  POS=(5,61),                                             X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'CONTROL REGION: ',                                     X
+               POS=(6,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+CONREG   DFLD  POS=(6,21),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'APPLIC REGION: ',                                      X
+               POS=(6,45),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+APPLREG  DFLD  POS=(6,63),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'REGION ID: ',                                          X
+               POS=(7,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+REGID    DFLD  POS=(7,16),                                             X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'PROGRAM NAME: ',                                       X
+               POS=(7,45),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+PROGN    DFLD  POS=(7,62),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'PSB: ',                                                X
+               POS=(8,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+PSB      DFLD  POS=(8,10),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'TRANSACTION: ',                                        X
+               POS=(8,45),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+TRAN     DFLD  POS=(8,61),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'USER ID: ',                                            X
+               POS=(9,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+UID      DFLD  POS=(9,14),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'GROUP NAME: ',                                         X
+               POS=(9,45),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+GNAME    DFLD  POS=(9,60),                                             X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'GROUP INDICATOR: ',                                    X
+               POS=(10,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+GIND     DFLD  POS=(10,22),                                            X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'RECORVERY TOKEN: ',                                    X
+               POS=(10,45),                                            X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+RECT     DFLD  POS=(10,65),                                            X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'APPLICATION PARAM: ',                                  X
+               POS=(11,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+APPLP    DFLD  POS=(11,24),                                            X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'SHARED QUEUES: ',                                      X
+               POS=(11,45),                                            X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+SHQUE    DFLD  POS=(11,63),                                            X
+               LTH=4,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'USER ID ADDR SPACE: ',                                 X
+               POS=(12,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+UIDAD    DFLD  POS=(12,25),                                            X
+               LTH=8,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'USER ID INDICATOR: ',                                  X
+               POS=(12,45),                                            X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+UIDIND   DFLD  POS=(12,67),                                            X
+               LTH=1,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'RESOURCE RECOVERY: ',                                  X
+               POS=(13,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+RESREC   DFLD  POS=(13,25),                                            X
+               LTH=3,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'CATALOG ENABLE: ',                                     X
+               POS=(13,45),                                            X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+CATEN    DFLD  POS=(13,63),                                            X
+               LTH=7,                                                  X
+               ATTR=(PROT,ALPHA,NORM,NOMOD)
+         DFLD  'PF1:MENU',                                             X
+               POS=(20,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+ERRMSG   DFLD  POS=(22,2),                                             X
+               LTH=79,                                                 X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         FMTEND
+********************************************************************
+********************************************************************
+ENV03    MSG   TYPE=OUTPUT,                                            X
+               SOR=(ENVI03,IGNORE),                                    X
+               NXT=ENV03I
+         SEG
+         MFLD (CURDATE,DATE2)
+         MFLD IMSID,LTH=8
+         MFLD RELLEV,LTH=4
+         MFLD CONREG,LTH=8
+         MFLD APPLREG,LTH=8
+         MFLD REGID,LTH=4
+         MFLD PROGN,LTH=8
+         MFLD PSB,LTH=8
+         MFLD TRAN,LTH=8
+         MFLD UID,LTH=8
+         MFLD GNAME,LTH=8
+         MFLD GIND,LTH=4
+         MFLD RECT,LTH=4
+         MFLD APPLP,LTH=4
+         MFLD SHQUE,LTH=4
+         MFLD UIDAD,LTH=8
+         MFLD UIDIND,LTH=1
+         MFLD RESREC,LTH=3
+         MFLD CATEN,LTH=7
+         MFLD ERRMSG,LTH=79
+         MSGEND
+********************************************************************
+ENV03I   MSG   TYPE=INPUT,                                             X
+               SOR=(ENVI03,IGNORE),                                    X
+               NXT=ENV03
+         SEG
+         MFLD  PFKFLD,                                                 X
+               LTH=10,FILL=NULL
+         MSGEND
+********************************************************************
+         END

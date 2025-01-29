@@ -1,0 +1,20 @@
+/* Read in a line, which contains a string,
+/* and then print every subsequent line that contains that string. */
+
+find_strings: procedure options (main);
+   declare pattern character (100) varying;
+   declare line character (100) varying;
+   declare line_no fixed binary;
+
+   on endfile (sysin) stop;
+
+   get edit (pattern) (L);
+   line_no = 1;
+   do forever;
+      get edit (line) (L);
+      if index(line, pattern) > 0 then
+         put skip list (line_no, line);
+      line_no = line_no + 1;
+   end;
+
+end find_strings;

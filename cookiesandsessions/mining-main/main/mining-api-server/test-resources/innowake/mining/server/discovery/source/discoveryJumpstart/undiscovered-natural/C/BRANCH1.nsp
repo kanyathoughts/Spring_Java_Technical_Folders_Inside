@@ -1,0 +1,17 @@
+DEFINE DATA         
+  LOCAL 
+    1 #PARAM1 (A1)
+    1 #PARAM2 (A1)
+END-DEFINE
+
+IF #PARAM1 EQ ' '
+	ESCAPE TOP
+ELSE 
+	WRITE 'something else'
+END-IF 
+
+IF SELECTION NOT UNIQUE #PARAM1 #PARAM2
+	REINPUT 'Enter new input.'
+END-IF
+
+END

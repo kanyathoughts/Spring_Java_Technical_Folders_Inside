@@ -1,0 +1,42 @@
+//MYPROC99 PROC                                                                 
+//IEXU0001 EXEC PGM=IEXUNCAT                                                    
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSIN    DD SUBSYS=(CCSS,                                                     
+//            '&HIGHQUAL..MYPROC99.SETCARD.ABNDRPT',                            
+//            '&HIGHQUAL..CTL.MYPROC99.JES.JCLLIB ')                            
+//*---------------------------------------------------------------------        
+//** PROGRAM              : MYPROC99                                 **         
+//** PARAMETERS PASSED    : HIGH LEVEL QUALIFIER                     **         
+//** UPDATES DONE         : NONE                                     **         
+//** DESCRIPTION          : THIS PROGRAM BULIDS THE SET CARD REQUIRED**         
+//**                        FOR THE CYBERFUSION JOBs UTCF241W,       **         
+//**                                                 UTCF241M,       **         
+//**                                                 UTCF241Q,       **         
+//**                                                 UTCF241A        **         
+//*---------------------------------------------------------------------        
+//MYSTEP99 EXEC PGM=IKJEFT01,DYNAMNBR=20                                        
+//STEPLIB  DD DSN=&DB2HLQ..DB2.SDSNLOAD,DISP=SHR                                
+//         DD DSN=&LOADLIB,DISP=SHR                                             
+//*                                                                             
+//SETRPT   DD DSN=&HIGHQUAL..CTL.MYPROC99.JES.JCLLIB(FIRMCODE),                 
+//            DISP=(NEW,CATLG),                                                 
+//            UNIT=DASD,SPACE=(TRK,(100,50,1),RLSE),                            
+//            LABEL=RETPD=7,                                                    
+//            DCB=(BLKSIZE=8000,LRECL=80,RECFM=FB)                              
+//*                                                                             
+//ABNDRPT  DD DSN=&HIGHQUAL..MYPROC99.SETCARD.ABNDRPT,                          
+//            DISP=(NEW,CATLG),                                                 
+//            UNIT=DASD,SPACE=(CYL,(3,6),RLSE),                                 
+//            LABEL=RETPD=3,                                                    
+//            DCB=(BLKSIZE=8500,LRECL=85,RECFM=FB)                              
+//*                                                                             
+//SYSTSPRT DD SYSOUT=*                                                          
+//SYSPRINT DD SYSOUT=*                                                          
+//SYSUDUMP DD SYSOUT=*                                                          
+//SYSOUT   DD SYSOUT=*                                                          
+//SYSTSIN  DD SUBSYS=(CCSS,                                                     
+//            '   DSN SYSTEM(&SYSTEM)    ',                                     
+//            '   RUN PROG(&PROGRAM) -   ',                                     
+//            '   PLAN (&PLAN)           ')                                     
+//*---------------------------------------------------------------------        
+//ENDPROC PEND                                                                  

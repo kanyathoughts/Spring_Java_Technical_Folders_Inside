@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.1/graphml.xsd">
+    <key attr.name="labelV" attr.type="string" for="node" id="labelV"/>
+    <key attr.name="technology" attr.type="string" for="node" id="technology"/>
+    <key attr.name="type" attr.type="string" for="node" id="type"/>
+    <key attr.name="labelE" attr.type="string" for="edge" id="labelE"/>
+    <key attr.name="FILE_ACCESS_TYPE" attr.type="string" for="edge" id="FILE_ACCESS_TYPE"/>
+    <key attr.name="DB_ACCESS_TYPE" attr.type="string" for="edge" id="DB_ACCESS_TYPE"/>
+    <graph edgedefault="directed" id="G">
+        <node id="ID_ConditionalFile">
+            <data key="labelV">ConditionalFile</data>
+            <data key="technology">RESOURCE</data>
+            <data key="type">FILE</data>
+        </node>
+        <node id="ID_JOB_A">
+            <data key="labelV">JOB_A</data>
+            <data key="technology">JCL</data>
+            <data key="type">JOB</data>
+        </node>
+        <node id="ID_JOB_A.step01">
+            <data key="labelV">JOB_A.step01</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_JOB_B">
+            <data key="labelV">JOB_B</data>
+            <data key="technology">JCL</data>
+            <data key="type">JOB</data>
+        </node>
+        <node id="ID_JOB_B.step01">
+            <data key="labelV">JOB_B.step01</data>
+            <data key="technology">JCL</data>
+            <data key="type">EXEC_PGM</data>
+        </node>
+        <node id="ID_PROG_A">
+            <data key="labelV">PROG_A</data>
+            <data key="technology">COBOL</data>
+            <data key="type">PROGRAM</data>
+        </node>
+        <edge id="ID_JOB_A.step01_CALLS_ID_PROG_A" source="ID_JOB_A.step01" target="ID_PROG_A">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_JOB_A_CALLS_ID_JOB_A.step01" source="ID_JOB_A" target="ID_JOB_A.step01">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_JOB_B.step01_CALLS_ID_PROG_A" source="ID_JOB_B.step01" target="ID_PROG_A">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_JOB_B_CALLS_ID_JOB_B.step01" source="ID_JOB_B" target="ID_JOB_B.step01">
+            <data key="labelE">CALLS</data>
+        </edge>
+        <edge id="ID_PROG_A_ACCESSES_ID_ConditionalFile" source="ID_PROG_A" target="ID_ConditionalFile">
+            <data key="labelE">ACCESSES</data>
+        </edge>
+    </graph>
+</graphml>

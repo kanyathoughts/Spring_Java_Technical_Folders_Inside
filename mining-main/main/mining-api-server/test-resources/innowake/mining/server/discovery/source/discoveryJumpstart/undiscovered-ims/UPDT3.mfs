@@ -1,0 +1,57 @@
+*****************************************************************
+         PRINT ON,NOGEN
+********************************************************************
+UPDT3    FMT
+         DEV   TYPE=(3270,2),                                          X
+               FEAT=IGNORE,                                            X
+               DSCA=X'00F0',                                           X
+               PFK=(PFKFLD,                                            X
+               1='INQ3    01',                                         X
+               2='TRAN1UP   ')
+         DIV   TYPE=INOUT
+         DPAGE CURSOR=((5,11)),                                        X
+               FILL=PT
+         DFLD  'CHOOSE THE MEMBER YOU WANT TO UPDATE',                 X
+               POS=(2,25),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         DFLD  'DATE: ',                                               X
+               POS=(3,65),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+CURDATE  DFLD  POS=(3,72),                                             X
+               LTH=9,                                                  X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         DFLD  'MEM ID: ',                                             X
+               POS=(5,2),                                              X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+MEMID    DFLD  POS=(5,11),                                             X
+               LTH=8,                                                  X
+               ATTR=(NOPROT,ALPHA,NORM,MOD)
+         DFLD  'PF1:MENU  PF2:SEARCH',                                 X
+               POS=(20,2),                                             X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+ERRMSG   DFLD  POS=(22,2),                                             X
+               LTH=79,                                                 X
+               ATTR=(PROT,ALPHA,HI,NOMOD)
+         FMTEND
+********************************************************************
+********************************************************************
+UPDT3    MSG   TYPE=OUTPUT,                                            X
+               SOR=(UPDT3,IGNORE),                                     X
+               NXT=UPDT3I
+         SEG
+         MFLD (CURDATE,DATE2)
+         MFLD MEMID,LTH=8
+         MFLD ERRMSG,LTH=79
+         MSGEND
+********************************************************************
+UPDT3I   MSG   TYPE=INPUT,                                             X
+               SOR=(UPDT3,IGNORE),                                     X
+               NXT=UPDT3
+         SEG
+         MFLD  PFKFLD,                                                 X
+               LTH=10,FILL=NULL
+         MFLD  MEMID,                                                  X
+               LTH=8,FILL=NULL
+         MSGEND
+********************************************************************
+         END

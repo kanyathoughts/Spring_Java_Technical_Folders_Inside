@@ -1,0 +1,37 @@
+ #2 $DefineDataStmt
+ #14 WRITE NOTITLE  *PROGRAM 'START', FROM={TestEntryPoint}, TO={#21}
+ #21 $ResetStmt, FROM={#14}, TO={#24}
+ #24 $MoveStmt, FROM={#21}, TO={#28}
+ #28 WRITE NOTITLE *PROGRAM 'Vor REPEAT loop. Naechster Index #I01:' #I01, FROM={#24}, TO={#38}
+ #38 $RepeatStmt, FROM={#178, #28, #79}, TO={#182(LOOP END), #47(LOOP BODY)}
+  #47 $SubtractStmt, FROM={#38(LOOP BODY)}, TO={#52}
+  #52 WRITE NOTITLE 'START LOOP 1', FROM={#47}, TO={#56}
+  #56 $IfStmt, FROM={#52}, TO={#62(TRUE), #69(FALSE)}
+    #62 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 1', FROM={#56(TRUE)}, TO={#66}
+    #66 $EscapeStmt, FROM={#62}, TO={#182}
+  #69 $IfStmt, FROM={#56(FALSE)}, TO={#75(TRUE), #82(FALSE)}
+    #75 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 1', FROM={#69(TRUE)}, TO={#79}
+    #79 $EscapeStmt, FROM={#75}, TO={#38}
+  #82 $RepeatStmt, FROM={#171, #174, #69(FALSE)}, TO={#178(LOOP END), #91(LOOP BODY)}
+   #91 $SubtractStmt, FROM={#82(LOOP BODY)}, TO={#96}
+   #96 WRITE NOTITLE 'START LOOP 2', FROM={#91}, TO={#100}
+   #100 $RepeatStmt, FROM={#141, #144, #96}, TO={#109(LOOP BODY), #148(LOOP END)}
+    #109 $SubtractStmt, FROM={#100(LOOP BODY)}, TO={#114}
+    #114 WRITE NOTITLE 'START LOOP 3', FROM={#109}, TO={#118}
+    #118 $IfStmt, FROM={#114}, TO={#124(TRUE), #131(FALSE)}
+      #124 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 3', FROM={#118(TRUE)}, TO={#128}
+      #128 $EscapeStmt, FROM={#124}, TO={#148}
+    #131 $IfStmt, FROM={#118(FALSE)}, TO={#137(TRUE), #144(FALSE)}
+      #137 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 3', FROM={#131(TRUE)}, TO={#141}
+      #141 $EscapeStmt, FROM={#137}, TO={#100}
+    #144 WRITE NOTITLE 'END LOOP 3', FROM={#131(FALSE)}, TO={#100}
+   #148 $IfStmt, FROM={#100(LOOP END), #128}, TO={#154(TRUE), #161(FALSE)}
+     #154 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 2', FROM={#148(TRUE)}, TO={#158}
+     #158 $EscapeStmt, FROM={#154}, TO={#178}
+   #161 $IfStmt, FROM={#148(FALSE)}, TO={#167(TRUE), #174(FALSE)}
+     #167 WRITE NOTITLE 'ESCAPE BOTTOM LOOP 2', FROM={#161(TRUE)}, TO={#171}
+     #171 $EscapeStmt, FROM={#167}, TO={#82}
+   #174 WRITE NOTITLE 'END LOOP 2', FROM={#161(FALSE)}, TO={#82}
+  #178 WRITE NOTITLE 'END LOOP 1', FROM={#158, #82(LOOP END)}, TO={#38}
+ #182 WRITE (1) NOTITLE  *PROGRAM 'ENDE', FROM={#38(LOOP END), #66}, TO={#189}
+ #189 $EndStmt, FROM={#182}, TO={TestReturnPoint}

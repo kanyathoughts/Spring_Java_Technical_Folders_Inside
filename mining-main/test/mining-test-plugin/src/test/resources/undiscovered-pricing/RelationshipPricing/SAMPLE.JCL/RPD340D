@@ -1,0 +1,28 @@
+//RPD340D JOB
+//*    ***********************************                              00001000
+//*    * RPD340 - STOCK FORM REPORT SORT *                              00002000
+//*    ***********************************                              00003000
+//SCRATCH  EXEC PGM=IEFBR14                                             00004000
+//RPRPT3   DD  DSN=BNKCA.IN0.RP50.RPRPT3,DISP=(MOD,DELETE,DELETE),      00005000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00006000
+//*                                                                     00007000
+//RPD340   EXEC PGM=RPD340,REGION=3096K                                 00008000
+//STEPLIB  DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//SYSPRINT DD  SYSOUT=*                                                 00010000
+//SYSUDUMP DD  SYSOUT=*                                                 00011000
+//SYSOUT   DD  SYSOUT=*                                                 00012000
+//RPRPT3   DD  DSN=BNKCA.IN0.RP50.RPRPT3,DISP=(NEW,CATLG,DELETE),       00013000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0421,BLKSIZE=27786),      00014000
+//             SPACE=(CYL,(2,1),RLSE)                                   00015000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00017000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPD340),DISP=SHR              00018000
+//*                                                                     00019000
+//

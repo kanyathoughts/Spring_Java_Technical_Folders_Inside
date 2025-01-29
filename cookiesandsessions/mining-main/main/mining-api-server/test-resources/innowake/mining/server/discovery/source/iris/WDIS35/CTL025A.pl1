@@ -1,0 +1,29 @@
+  /* Manual test file for Control flow GOTO statement  */ 
+ CTL025A: PROC OPTIONS(MAIN);
+ 
+    DECLARE I FIXED DECIMAL(1) INIT(1) STATIC;
+ 
+    CALL PROC_A; /* FIRST INVOCATION OF A */
+    
+ PROC_A: PROC RECURSIVE;
+       PUT SKIP LIST('INSIDE PROC_A WITH VALUE I AS', I);    
+       IF (I = 1)
+       THEN
+          BEGIN;
+           I = 2;
+           CALL PROC_A;
+           GO TO LABEL1;
+          END;    
+       ELSE
+          BEGIN;
+           IF (I < 10)
+           THEN
+              BEGIN;
+               PUT SKIP LIST(' I IS', I);
+               I = I + 1;
+              END;
+          END;           
+
+ LABEL1: END PROC_A;
+
+ END CTL025A;

@@ -1,0 +1,44 @@
+000010******************************************************************00001000
+000020* RPP7111  7111 - RP TRANSACTION PLAN LOAD                       *00002000
+000030******************************************************************00003000
+000040*LOAD-RPS-7111-SECTION.                                           00004000
+000050 LR7111-START.                                                    00005000
+000060     MOVE HIGH-VALUES TO WS-7111-AREA.                            00006000
+000070     SET INDX-7111 TO +1.                                         00007000
+000080     MOVE SPACES TO MI7111-RECORD.                                00008000
+000090     MOVE WS-RPMIM7111INST TO MIM-7111KINST.                      00009000
+000100     MOVE +7111 TO MIM-7111KREC.                                  00010000
+000110     MOVE SPACES TO MIM-7111KTRANPROFILE.                         00011000
+000120     MOVE ZEROES TO MIM-7111KTRANPLAN.                            00012000
+000130     MOVE ZEROS TO MIM-7111KEXTTRAN.                              00013000
+000140     MOVE SPACES TO MIM-7111KINTTRAN.                             00014000
+000150     MOVE MIC-RPS-7111-PRI TO MIC-MST-REC-PRI.                    00015000
+000160     MOVE MI7111-RECORD TO MIMST-RECORD.                          00016000
+000170     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00017000
+000180     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00018000
+000190         GO TO LR7111-EXIT.                                       00019000
+000200     GO TO LR7111-RECCONT.                                        00020000
+000210 LR7111-RECREAD.                                                  00021000
+000220     PERFORM MIC-MST-GET-NEXT-REQUEST.                            00022000
+000230     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00023000
+000240         GO TO LR7111-EXIT.                                       00024000
+000250 LR7111-RECCONT.                                                  00025000
+000260     MOVE MIMST-RECORD TO MI7111-RECORD.                          00026000
+000270     IF MIM-7111KINST IS NOT EQUAL TO WS-RPMIM7111INST            00027000
+000280         GO TO LR7111-EXIT.                                       00028000
+000290     IF INDX-7111 IS GREATER THAN WS-RPMIM7111MAXSIZE             00029000
+000300         MOVE 'Y' TO WS-RPMIM7111ERROR                            00030000
+000310         GO TO LR7111-EXIT.                                       00031000
+000320     MOVE MIM-7111KTRANPROFILE                                    00032000
+000330         TO WS-7111-TRANPROFILE (INDX-7111).                      00033000
+000340     MOVE MIM-7111KTRANPLAN TO WS-7111-TRANPLAN (INDX-7111).      00034000
+000350     MOVE MIM-7111KEXTTRAN TO WS-7111-EXTTRAN (INDX-7111).        00035000
+000360     MOVE MIM-7111KINTTRAN TO WS-7111-INTTRAN (INDX-7111).        00036000
+000370     MOVE MIM-REC7111 TO WS-RPMIM7111 (INDX-7111).                00037000
+000380     SET INDX-7111 UP BY +1.                                      00038000
+000390     GO TO LR7111-RECREAD.                                        00039000
+000400 LR7111-EXIT.                                                     00040000
+000410      EXIT.                                                       00041000
+000420*----------------------------------------------------------------*00042000
+000430*     END OF RP TRANSACTION 7111 MICM RECORD LOAD                *00043000
+000440*----------------------------------------------------------------*00044000

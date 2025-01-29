@@ -1,0 +1,1 @@
+CREATE INDEX ExcelSheetErrors_projectLink_key_idx IF NOT EXISTS ON ExcelSheetErrors (projectLink, key) NOTUNIQUE_HASH_INDEX;

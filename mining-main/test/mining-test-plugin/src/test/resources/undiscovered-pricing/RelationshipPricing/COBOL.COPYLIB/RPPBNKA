@@ -1,0 +1,242 @@
+000010******************************************************************00001000
+000020* API CALL ROUTINES FOR RP BANK RECORD     -BNK-                  00002000
+000030******************************************************************00003000
+000040 RPS-BNK-GET-REQUEST SECTION.                                     00004000
+000050 RBNKGR-START.                                                    00005000
+000060     MOVE REQ-GET TO RPS-BNK-REQ-VERB.                            00006000
+000070     PERFORM RPS-BNK-APISERVER.                                   00007000
+000080 RBNKGR-EXIT.                                                     00008000
+000090     EXIT.                                                        00009000
+000100******************************************************************00010000
+000110 RPS-BNK-GET-LOCK-REQUEST SECTION.                                00011000
+000120 RBNKGLR-START.                                                   00012000
+000130     MOVE REQ-GET-LOCK TO RPS-BNK-REQ-VERB.                       00013000
+000140     PERFORM RPS-BNK-APISERVER.                                   00014000
+000150     IF WS-FUNCTION IS EQUAL TO SPACES                            00015000
+000160         MOVE RPBNK-RECORD TO RPS-BNK-BIMAGE                      00016000
+000170         MOVE RPS-BNK-APPENDDATA TO RPS-BNK-BAPPENDDATA.          00017000
+000180 RBNKGLR-EXIT.                                                    00018000
+000190     EXIT.                                                        00019000
+000200******************************************************************00020000
+000210 RPS-BNK-GET-GE-REQUEST SECTION.                                  00021000
+000220 RBNKGER-START.                                                   00022000
+000230     MOVE REQ-GET-GE TO RPS-BNK-REQ-VERB.                         00023000
+000240     PERFORM RPS-BNK-APISERVER.                                   00024000
+000250 RBNKGER-EXIT.                                                    00025000
+000260     EXIT.                                                        00026000
+000270******************************************************************00027000
+000280 RPS-BNK-GET-GE-LOCK-REQUEST SECTION.                             00028000
+000290 RBNKGELR-START.                                                  00029000
+000300     MOVE REQ-GET-GE-LOCK TO RPS-BNK-REQ-VERB.                    00030000
+000310     PERFORM RPS-BNK-APISERVER.                                   00031000
+000320     IF WS-FUNCTION IS EQUAL TO SPACES                            00032000
+000330         MOVE RPBNK-RECORD TO RPS-BNK-BIMAGE                      00033000
+000340         MOVE RPS-BNK-APPENDDATA TO RPS-BNK-AAPPENDDATA.          00034000
+000350 RBNKGELR-EXIT.                                                   00035000
+000360     EXIT.                                                        00036000
+000370******************************************************************00037000
+000380 RPS-BNK-GET-NEXT-REQUEST SECTION.                                00038000
+000390 RBNKGNR-START.                                                   00039000
+000400     MOVE REQ-GET-NEXT TO RPS-BNK-REQ-VERB.                       00040000
+000410     PERFORM RPS-BNK-APISERVER.                                   00041000
+000420 RBNKGNR-EXIT.                                                    00042000
+000430     EXIT.                                                        00043000
+000440******************************************************************00044000
+000450 RPS-BNK-GET-NEXT-LOCK-REQUEST SECTION.                           00045000
+000460 RBNKGNLR-START.                                                  00046000
+000470     MOVE REQ-GET-NEXT-LOCK TO RPS-BNK-REQ-VERB.                  00047000
+000480     PERFORM RPS-BNK-APISERVER.                                   00048000
+000490     IF WS-FUNCTION IS EQUAL TO SPACES                            00049000
+000500         MOVE RPBNK-RECORD TO RPS-BNK-BIMAGE                      00050000
+000510         MOVE RPS-BNK-APPENDDATA TO RPS-BNK-BAPPENDDATA.          00051000
+000520 RBNKGNLR-EXIT.                                                   00052000
+000530     EXIT.                                                        00053000
+000540******************************************************************00054000
+000550 RPS-BNK-LOCATE-REQUEST SECTION.                                  00055000
+000560 RBNKLR-START.                                                    00056000
+000570     MOVE REQ-LOCATE TO RPS-BNK-REQ-VERB.                         00057000
+000580     PERFORM RPS-BNK-APISERVER.                                   00058000
+000590 RBNKLR-EXIT.                                                     00059000
+000600     EXIT.                                                        00060000
+000610******************************************************************00061000
+000620 RPS-BNK-LOCATE-NEXT-REQUEST SECTION.                             00062000
+000630 RBNKLNR-START.                                                   00063000
+000640     MOVE REQ-LOCATE-NEXT TO RPS-BNK-REQ-VERB.                    00064000
+000650     PERFORM RPS-BNK-APISERVER.                                   00065000
+000660 RBNKLNR-EXIT.                                                    00066000
+000670     EXIT.                                                        00067000
+000680******************************************************************00068000
+000690 RPS-BNK-UNLOCK-REQUEST SECTION.                                  00069000
+000700 RBNKUR-START.                                                    00070000
+000710     MOVE REQ-UNLOCK TO RPS-BNK-REQ-VERB.                         00071000
+000720     PERFORM RPS-BNK-APISERVER.                                   00072000
+000730 RBNKUR-EXIT.                                                     00073000
+000740     EXIT.                                                        00074000
+000750******************************************************************00075000
+000760 RPS-BNK-PUT-REQUEST SECTION.                                     00076000
+000770 RBNKPR-START.                                                    00077000
+000780     MOVE WS-UPD-USER TO BPSB-USER.                               00078000
+000790     MOVE REQ-PUT TO RPS-BNK-REQ-VERB.                            00079000
+000800     PERFORM RPS-BNK-APISERVER.                                   00080000
+000810     IF WS-FUNCTION IS EQUAL TO SPACES                            00081000
+000820         AND RPS-BNK-LOG IS EQUAL TO 'Y'                          00082000
+000830         MOVE RPBNK-RECORD TO RPS-BNK-AIMAGE                      00083000
+000840         MOVE RPS-BNK-APPENDDATA TO RPS-BNK-AAPPENDDATA           00084000
+000850         PERFORM RPS-BNK-LOG-WRITE-KEY                            00085000
+000860         MOVE 'A' TO LOG-BAFUNCTION                               00086000
+000870         PERFORM RPS-BNK-LOG-WRITE.                               00087000
+000880 RBNKPR-EXIT.                                                     00088000
+000890     EXIT.                                                        00089000
+000900******************************************************************00090000
+000910 RPS-BNK-REPUT-REQUEST SECTION.                                   00091000
+000920 RBNKRR-START.                                                    00092000
+000930     MOVE WS-UPD-USER TO BPSB-USER.                               00093000
+000940     MOVE REQ-REPUT TO RPS-BNK-REQ-VERB.                          00094000
+000950     PERFORM RPS-BNK-APISERVER.                                   00095000
+000960     IF WS-FUNCTION IS EQUAL TO SPACES                            00096000
+000970         AND RPS-BNK-LOG IS EQUAL TO 'Y'                          00097000
+000980         MOVE RPBNK-RECORD TO RPS-BNK-AIMAGE                      00098000
+000990         MOVE RPS-BNK-APPENDDATA TO RPS-BNK-AAPPENDDATA           00099000
+001000         PERFORM RPS-BNK-LOG-WRITE-KEY                            00100000
+001010         MOVE 'M' TO LOG-BAFUNCTION                               00101000
+001020         PERFORM RPS-BNK-LOG-WRITE.                               00102000
+001030 RBNKRR-EXIT.                                                     00103000
+001040     EXIT.                                                        00104000
+001050******************************************************************00105000
+001060 RPS-BNK-DELETE-REQUEST SECTION.                                  00106000
+001070 RBNKDR-START.                                                    00107000
+001080     MOVE WS-UPD-USER TO BPSB-USER.                               00108000
+001090     MOVE REQ-DELETE TO RPS-BNK-REQ-VERB.                         00109000
+001100     PERFORM RPS-BNK-APISERVER.                                   00110000
+001110     IF WS-FUNCTION IS EQUAL TO SPACES                            00111000
+001120         AND RPS-BNK-LOG IS EQUAL TO 'Y'                          00112000
+001130         PERFORM RPS-BNK-LOG-WRITE-KEY                            00113000
+001140         MOVE 'D' TO LOG-BAFUNCTION                               00114000
+001150         PERFORM RPS-BNK-LOG-WRITE.                               00115000
+001160 RBNKDR-EXIT.                                                     00116000
+001170     EXIT.                                                        00117000
+001180******************************************************************00118000
+001190 RPS-BNK-OPEN-REQUEST SECTION.                                    00119000
+001200 RBNKOR-START.                                                    00120000
+001210     MOVE REQ-OPEN TO RPS-BNK-REQ-VERB.                           00121000
+001220     PERFORM RPS-BNK-APISERVER.                                   00122000
+001230 RBNKOR-EXIT.                                                     00123000
+001240     EXIT.                                                        00124000
+001250******************************************************************00125000
+001260 RPS-BNK-CLOSE-REQUEST SECTION.                                   00126000
+001270 RBNKCR-START.                                                    00127000
+001280     MOVE REQ-CLOSE TO RPS-BNK-REQ-VERB.                          00128000
+001290     PERFORM RPS-BNK-APISERVER.                                   00129000
+001300 RBNKCR-EXIT.                                                     00130000
+001310     EXIT.                                                        00131000
+001320******************************************************************00132000
+001330 RPS-BNK-GLOBAL-CLOSE-REQUEST SECTION.                            00133000
+001340 RBNKGCR-START.                                                   00134000
+001350     MOVE REQ-GLOBAL-CLOSE TO RPS-BNK-REQ-VERB.                   00135000
+001360     PERFORM RPS-BNK-APISERVER.                                   00136000
+001370 RBNKGCR-EXIT.                                                    00137000
+001380     EXIT.                                                        00138000
+001390******************************************************************00139000
+001400 RPS-BNK-GLOBAL-COMMIT-REQUEST SECTION.                           00140000
+001410 RBNKGCMR-START.                                                  00141000
+001420     MOVE REQ-GLOBAL-COMMIT TO RPS-BNK-REQ-VERB.                  00142000
+001430     PERFORM RPS-BNK-APISERVER.                                   00143000
+001440 RBNKGCMR-EXIT.                                                   00144000
+001450     EXIT.                                                        00145000
+001460******************************************************************00146000
+001470 RPS-BNK-GLOBAL-ABORT-REQUEST SECTION.                            00147000
+001480 RBNKGAR-START.                                                   00148000
+001490     MOVE REQ-GLOBAL-ABORT TO RPS-BNK-REQ-VERB.                   00149000
+001500     PERFORM RPS-BNK-APISERVER.                                   00150000
+001510 RBNKGAR-EXIT.                                                    00151000
+001520     EXIT.                                                        00152000
+001530******************************************************************00153000
+001540 RPS-BNK-APISERVER SECTION.                                       00154000
+001550 RPSBNKSRV-START.                                                 00155000
+001560     MOVE 'IPRP' TO SRB-APPL-ID.                                  00156000
+001570     MOVE SR-APIPROGLIT TO SRB-PROG-ID.                           00157000
+001580     MOVE RPS-RLSE-LIT TO SRB-RELEASE.                            00158000
+001590     MOVE SPACE TO WS-FUNCTION.                                   00159000
+001600     MOVE MIC-MST-APPL-ORG TO RPS-BNK-ORG-ID.                     00160000
+001610     CALL 'BISDBS' USING                                          00161000
+001620         BICRPSB                                                  00162000
+001630         BICRSRB                                                  00163000
+001640         RPS-BNK-RDBS                                             00164000
+001650         RPBNK-RECORD                                             00165000
+001660         RPS-BNK-PARM.                                            00166000
+001670     IF RPS-BNK-STAT IS EQUAL TO STAT-OK                          00167000
+001680         MOVE ' ' TO WS-FUNCTION                                  00168000
+001690         GO TO RPSBNKSRV-EXIT.                                    00169000
+001700     IF RPS-BNK-STAT IS EQUAL TO STAT-RES1                        00170000
+001710         MOVE 'C' TO WS-FUNCTION                                  00171000
+001720         GO TO RPSBNKSRV-EXIT.                                    00172000
+001730     IF RPS-BNK-STAT IS EQUAL TO STAT-RES2                        00173000
+001740         MOVE 'F' TO WS-FUNCTION                                  00174000
+001750         GO TO RPSBNKSRV-EXIT.                                    00175000
+001760     IF RPS-BNK-STAT IS EQUAL TO STAT-LOG1                        00176000
+001770         AND RPS-BNK-REQ-VERB IS EQUAL TO REQ-OPEN                00177000
+001780         MOVE SPACE TO WS-FUNCTION                                00178000
+001790         MOVE STAT-OK TO RPS-BNK-STAT                             00179000
+001800         GO TO RPSBNKSRV-EXIT.                                    00180000
+001810     IF RPS-BNK-STAT IS EQUAL TO STAT-END                         00181000
+001820         MOVE 'E' TO WS-FUNCTION                                  00182000
+001830         GO TO RPSBNKSRV-EXIT.                                    00183000
+001840     IF RPS-BNK-STAT IS EQUAL TO STAT-KEY                         00184000
+001850         AND RPS-BNK-REQ-VERB IS EQUAL TO REQ-PUT                 00185000
+001860         MOVE '=' TO WS-FUNCTION                                  00186000
+001870         GO TO RPSBNKSRV-EXIT.                                    00187000
+001880     IF RPS-BNK-STAT IS EQUAL TO STAT-KEY                         00188000
+001890         AND (RPS-BNK-REQ-VERB IS EQUAL TO REQ-GET-GE             00189000
+001900         OR RPS-BNK-REQ-VERB IS EQUAL TO REQ-GET-GE-LOCK)         00190000
+001910         MOVE 'E' TO WS-FUNCTION                                  00191000
+001920         GO TO RPSBNKSRV-EXIT.                                    00192000
+001930     IF RPS-BNK-STAT IS EQUAL TO STAT-KEY                         00193000
+001940         MOVE 'N' TO WS-FUNCTION                                  00194000
+001950         GO TO RPSBNKSRV-EXIT.                                    00195000
+001960     IF RPS-BNK-STAT IS EQUAL TO STAT-CONC                        00196000
+001970         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG1                    00197000
+001980         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG2                    00198000
+001990         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG3                    00199000
+002000         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG6                    00200000
+002010         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG7                    00201000
+002020         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG8                    00202000
+002030         OR RPS-BNK-STAT IS EQUAL TO STAT-LOG9                    00203000
+002040         MOVE 'O' TO WS-FUNCTION                                  00204000
+002050         GO TO RPSBNKSRV-EXIT.                                    00205000
+002060     MOVE 'X' TO WS-FUNCTION.                                     00206000
+002070 RPSBNKSRV-EXIT.                                                  00207000
+002080     EXIT.                                                        00208000
+002090******************************************************************00209000
+002100 RPS-BNK-LOG-WRITE-KEY SECTION.                                   00210000
+002110 RPSBNKLOGK-START.                                                00211000
+002120     MOVE RPBNK-UPD-DATE TO LOG-DATE.                             00212000
+002130     MOVE RPBNK-UPD-TIME TO LOG-TIME.                             00213000
+002140     MOVE MIC-MST-ORG TO LOG-ORG-ID-X.                            00214000
+002150     MOVE RPBNK-INST TO LOG-INST.                                 00215000
+002160     MOVE BPSB-USER TO LOG-USER.                                  00216000
+002170 RPSBNKLOGK-EXIT.                                                 00217000
+002180     EXIT.                                                        00218000
+002190******************************************************************00219000
+002200 RPS-BNK-LOG-WRITE SECTION.                                       00220000
+002210 RPSBNKLOG-START.                                                 00221000
+002220     MOVE ZEROS TO LOG-UNIQUE.                                    00222000
+002230     MOVE 'SAE0' TO LOG-REC-ID.                                   00223000
+002240     MOVE RPS-BNK-REC-PRI TO LOG-RECID-2-LOG.                     00224000
+002250     MOVE 'IPRP' TO LOG-APPL-ID.                                  00225000
+002260     MOVE REQ-PUT TO LOG-REQ-VERB.                                00226000
+002270     MOVE RPS-BNK-RECLGTH TO LOG-RECLGTH.                         00227000
+002280     ADD RPS-BNK-APPENDLGTH TO LOG-RECLGTH.                       00228000
+002290     CALL 'BISLOG' USING                                          00229000
+002300         BICRPSB                                                  00230000
+002310         BICRSRB                                                  00231000
+002320         BICRLOG                                                  00232000
+002330         RPS-BNK-BEFORE                                           00233000
+002340         RPS-BNK-AFTER.                                           00234000
+002350     IF LOG-STAT IS EQUAL TO STAT-OK                              00235000
+002360         MOVE ' ' TO WS-FUNCTION                                  00236000
+002370     ELSE                                                         00237000
+002380         MOVE 'L' TO WS-FUNCTION.                                 00238000
+002390     MOVE 'N' TO LOG-AUTO-OPEN.                                   00239000
+002400 RPSBNKLOG-EXIT.                                                  00240000
+002410     EXIT.                                                        00241000
+002420******************************************************************00242000

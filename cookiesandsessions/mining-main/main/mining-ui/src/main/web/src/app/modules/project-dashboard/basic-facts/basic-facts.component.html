@@ -1,0 +1,85 @@
+ <div nz-row class="basic-fact__row-spacing">
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="6" [nzXl]="4" [nzXXl]="4">
+      <nz-card  [nzHoverable]="hasMissingFiles" [routerLink]="hasMissingFiles ? routeModules : null" [queryParams]="hasMissingFiles ? { savedSearch: 'Missing Source Files' } : null" [ngClass]="hasMissingFiles ? 'warning-card-template__card' : 'basic-fact__card-height' " >
+        <nz-skeleton [nzLoading]="showSkeleton" [nzActive]="true" [nzTitle]="false"
+          [nzParagraph]="{rows: 2, width: skeletonWidth}">
+          <nz-statistic nzValue="{{sourceFileCount}}" [nzSuffix]="fileSuffix" [nzTitle]="sourceFileTitle">
+          </nz-statistic>
+        </nz-skeleton>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="6" [nzXl]="4" [nzXXl]="4">
+      <nz-card [nzHoverable]="hasError" [routerLink]="hasError ? routeModules : null" [queryParams]="hasError ? { savedSearch: 'Modules with Errors' } : null" [ngClass]="hasError ? 'error-card-template__card' : 'basic-fact__card-height' " >
+        <nz-skeleton [nzLoading]="showSkeleton" [nzActive]="true" [nzTitle]="false"
+          [nzParagraph]="{rows: 2, width: skeletonWidth}">
+          <nz-statistic nzValue="{{totalModule}}" [nzTitle]="statTitle" [nzSuffix]="moduleSuffix">
+          </nz-statistic>
+        </nz-skeleton>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="6" [nzXl]="5" [nzXXl]="5">
+      <nz-card class="basic-fact__card-height">
+        <nz-skeleton [nzLoading]="showSkeleton" [nzActive]="true" [nzTitle]="false"
+          [nzParagraph]="{rows: 2, width: skeletonWidth}">
+          <nz-statistic nzValue="{{lineOfCode}}" [nzTitle]="'projectDashboard.totalSourceLinesOfCodes' | translate ">
+          </nz-statistic>
+        </nz-skeleton>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="6" [nzXl]="7" [nzXXl]="7">
+      <nz-card class="basic-fact__card-height">
+        <nz-skeleton [nzLoading]="showSkeleton" [nzActive]="true" [nzTitle]="false"
+          [nzParagraph]="{rows: 2, width: skeletonWidth}">
+          <nz-statistic nzValue="{{technologyList}}" [nzTitle]="infoTopTech">
+          </nz-statistic>
+        </nz-skeleton>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24" [nzXl]="4" [nzXXl]="4">
+      <nz-card class="basic-fact__card-height">
+        <nz-skeleton [nzLoading]="showSkeleton" [nzActive]="true" [nzTitle]="false"
+          [nzParagraph]="{rows: 2, width: skeletonWidth}">
+          <nz-statistic nzValue="{{lastScanDate}}" [nzTitle]="infoLastScan">
+          </nz-statistic>
+        </nz-skeleton>
+      </nz-card>
+    </nz-col>
+    <ng-template #infoLoC>
+      {{'projectDashboard.totalSourceLinesOfCodes' | translate }}<i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+        class="basic-fact__icon-info"
+        nzTooltipTitle="{{'projectDashboard.loCTooltip' | translate }}"></i>
+    </ng-template>
+    <ng-template  #infoTopTech>
+      {{'projectDashboard.topTechnologies' | translate }}<i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+        class="basic-fact__icon-info"
+        nzTooltipTitle="{{'projectDashboard.topTechnologiesTooltip' | translate }}"></i>
+    </ng-template>
+    <ng-template #infoLastScan>
+      {{ 'lastScan.header' | translate }}<i nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+        class="basic-fact__icon-info"
+        nzTooltipTitle="{{ 'projectDashboard.lastScanDateTooltip' | translate }}"></i>
+    </ng-template>
+    <ng-template #sourceFileTitle>{{ 'projectDashboard.sourceFiles' | translate }}
+      <span *ngIf="hasMissingFiles" class="basic-fact__icon-info" nz-typography nzType="warning">
+        <span nz-icon nzType="warning" nzTheme="fill"></span>
+      </span>
+    </ng-template>
+    <ng-template #statTitle>{{ 'projectDashboard.modules' | translate }}
+      <span *ngIf="hasError" class="basic-fact__icon-info" nz-typography nzType="danger">
+        <i nz-icon nz-tooltip nzTooltipTitle="{{'projectDashboard.errorTooltip' | translate }}" nzType="close-circle" nzTheme="fill">
+        </i>
+      </span>
+    </ng-template>
+
+    <ng-template #fileSuffix>
+      <span *ngIf="hasMissingFiles" class="warning-card-template__text">
+         {{missingFileCount}} {{ 'missing' | translate }}
+      </span>
+    </ng-template>
+
+    <ng-template #moduleSuffix>
+      <span *ngIf="hasError" class="error-card-template__text">
+        {{errorCount}} {{ 'projectDashboard.withErrors' | translate }}
+      </span>
+    </ng-template>
+  </div>

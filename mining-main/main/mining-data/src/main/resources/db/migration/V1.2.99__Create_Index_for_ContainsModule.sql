@@ -1,0 +1,1 @@
+CREATE INDEX ContainsModule_in_idx IF NOT EXISTS ON ContainsModule (in) UNIQUE;

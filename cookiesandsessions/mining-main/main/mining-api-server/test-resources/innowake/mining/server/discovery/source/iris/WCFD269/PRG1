@@ -1,0 +1,36 @@
+main1: proc options(main);
+	dcl result character (20),
+	    sub1 entry, 
+	    func1 entry,
+	    sub2 entry,
+	    func2 entry;
+	    
+    put list ('Hello, world!');
+    
+    %include inc1;
+    %include inc2;
+    
+    call sub1 ('a', 'b');      /* external from PRG1 */
+    call sub2 ('a', 'b');      /* external from PRG2 */
+    result = func1 ('a', 'b'); /* external from PRG1 */
+    result = func2 ('a', 'b'); /* external from PRG2 */
+    call int1 ('a', 'b');      /* internal from PRG1 */
+
+	int1: proc (U,V);
+	    dcl (U,V) character (20);
+	    
+	    put list ('Hello, world!');
+	end int1;
+end main1;
+
+sub1: proc (U,V);
+    dcl (U,V) character (20);
+    
+    put list ('Hello, world!');
+end sub1;
+
+func1: proc (U,V) returns returns (character (20));
+    dcl (U,V) character (20);
+	
+	return 1;
+end func1;

@@ -1,0 +1,216 @@
+//RPAUTOED JOB
+//*    ********************************************************         00001000
+//*    * RPAUTOEN - RELATIONSHIP PRICING AUTOMATIC ENROLLMENT *         00002000
+//*    ********************************************************         00003000
+//JOBLIB   DD  DSN=BNKCA.RP50.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.BI15.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.DP86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.RF21.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.TI86.LOADLIB,DISP=SHR
+//         DD  DSN=BNKCA.MI51.LOADLIB,DISP=SHR
+//*** INSERT OTHER SUPPORTING LIBRARIES AS APPROPRIATE ***
+//         DD  DSN=CICSTS22.CICS.SDFHEXCI,DISP=SHR                      00005000
+//*                                                                     00006000
+//*    **********************************************************       00007000
+//*    * RPR090 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 1  *       00008000
+//*    **********************************************************       00009000
+//STEP005  EXEC PGM=IEFBR14,COND=(0,LT)                                 00010000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,                              00011000
+//             DISP=(MOD,DELETE,DELETE),                                00012000
+//             UNIT=SYSDA,                                              00013000
+//             SPACE=(TRK,(1,1),RLSE)                                   00014000
+//*                                                                     00015000
+//STEP010  EXEC PGM=RPR090,REGION=4096K,COND=(0,LT)                     00016000
+//SYSPRINT DD  SYSOUT=*                                                 00017000
+//SYSUDUMP DD  SYSOUT=*                                                 00018000
+//SYSOUT   DD  SYSOUT=*                                                 00019000
+//PRINTR   DD  SYSOUT=*                                                 00020000
+//PRFICH   DD  SYSOUT=*                                                 00021000
+//PRINTA   DD  SYSOUT=*                                                 00022000
+//PRINTB   DD  SYSOUT=*                                                 00023000
+//PRINTC   DD  SYSOUT=*                                                 00024000
+//PRINTD   DD  SYSOUT=*                                                 00025000
+//PRINTE   DD  SYSOUT=*                                                 00026000
+//PRINTF   DD  SYSOUT=*                                                 00027000
+//PRINTG   DD  SYSOUT=*                                                 00028000
+//PRINTH   DD  SYSOUT=*                                                 00029000
+//PRINTI   DD  SYSOUT=*                                                 00030000
+//PRINTJ   DD  SYSOUT=*                                                 00031000
+//PRNTR01  DD  SYSOUT=*                                                 00032000
+//PRNTRST  DD  SYSOUT=*                                                 00033000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,                              00034000
+//             DISP=(NEW,CATLG,DELETE),                                 00035000
+//             UNIT=SYSDA,                                              00036000
+//             DCB=(RECFM=FB,LRECL=0028,BLKSIZE=27972),                 00037000
+//             SPACE=(CYL,(10,5),RLSE)                                  00038000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00040000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR090),DISP=SHR              00041000
+//*                                                                     00042000
+/*                                                                      00043000
+//*                                                                     00044000
+//*    **********************************************************       00045000
+//*    * RPR092 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 2  *       00046000
+//*    **********************************************************       00047000
+//STEP015  EXEC PGM=IEFBR14,COND=(0,LT)                                 00048000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,                              00049000
+//             DISP=(MOD,DELETE,DELETE),                                00050000
+//             UNIT=SYSDA,                                              00051000
+//             SPACE=(TRK,(1,1),RLSE)                                   00052000
+//*                                                                     00053000
+//STEP020  EXEC PGM=RPR092,REGION=4096K,COND=(0,LT)                     00054000
+//SYSPRINT DD  SYSOUT=*                                                 00055000
+//SYSUDUMP DD  SYSOUT=*                                                 00056000
+//SYSOUT   DD  SYSOUT=*                                                 00057000
+//PRINTR   DD  SYSOUT=*                                                 00058000
+//PRFICH   DD  SYSOUT=*                                                 00059000
+//PRINTA   DD  SYSOUT=*                                                 00060000
+//PRINTB   DD  SYSOUT=*                                                 00061000
+//PRINTC   DD  SYSOUT=*                                                 00062000
+//PRINTD   DD  SYSOUT=*                                                 00063000
+//PRINTE   DD  SYSOUT=*                                                 00064000
+//PRINTF   DD  SYSOUT=*                                                 00065000
+//PRINTG   DD  SYSOUT=*                                                 00066000
+//PRINTH   DD  SYSOUT=*                                                 00067000
+//PRINTI   DD  SYSOUT=*                                                 00068000
+//PRINTJ   DD  SYSOUT=*                                                 00069000
+//PRNTR01  DD  SYSOUT=*                                                 00070000
+//PRNTRST  DD  SYSOUT=*                                                 00071000
+//RPAUT1   DD  DSN=BNKCA.IN0.RP50.R90AUT1,DISP=SHR                      00072000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,                              00073000
+//             DISP=(NEW,CATLG,DELETE),                                 00074000
+//             UNIT=SYSDA,                                              00075000
+//             DCB=(RECFM=FB,LRECL=0057,BLKSIZE=27987),                 00076000
+//             SPACE=(CYL,(10,5),RLSE)                                  00077000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00079000
+/*                                                                      00080000
+//*                                                                     00081000
+//*    **********************************************************       00082000
+//*    * RPR094 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 3  *       00083000
+//*    **********************************************************       00084000
+//STEP025  EXEC PGM=IEFBR14,COND=(0,LT)                                 00085000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,                              00086000
+//             DISP=(MOD,DELETE,DELETE),                                00087000
+//             UNIT=SYSDA,                                              00088000
+//             SPACE=(TRK,(1,1),RLSE)                                   00089000
+//*                                                                     00090000
+//STEP030  EXEC PGM=RPR094,REGION=4096K,COND=(0,LT)                     00091000
+//SYSPRINT DD  SYSOUT=*                                                 00092000
+//SYSUDUMP DD  SYSOUT=*                                                 00093000
+//SYSOUT   DD  SYSOUT=*                                                 00094000
+//PRINTR   DD  SYSOUT=*                                                 00095000
+//PRFICH   DD  SYSOUT=*                                                 00096000
+//PRINTA   DD  SYSOUT=*                                                 00097000
+//PRINTB   DD  SYSOUT=*                                                 00098000
+//PRINTC   DD  SYSOUT=*                                                 00099000
+//PRINTD   DD  SYSOUT=*                                                 00100000
+//PRINTE   DD  SYSOUT=*                                                 00101000
+//PRINTF   DD  SYSOUT=*                                                 00102000
+//PRINTG   DD  SYSOUT=*                                                 00103000
+//PRINTH   DD  SYSOUT=*                                                 00104000
+//PRINTI   DD  SYSOUT=*                                                 00105000
+//PRINTJ   DD  SYSOUT=*                                                 00106000
+//PRNTR01  DD  SYSOUT=*                                                 00107000
+//PRNTRST  DD  SYSOUT=*                                                 00108000
+//RPAUT2   DD  DSN=BNKCA.IN0.RP50.R92AUT2,DISP=SHR                      00109000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,                              00110000
+//             DISP=(NEW,CATLG,DELETE),                                 00111000
+//             UNIT=SYSDA,                                              00112000
+//             DCB=(RECFM=FB,LRECL=0062,BLKSIZE=27962),                 00113000
+//             SPACE=(CYL,(10,5),RLSE)                                  00114000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00116000
+/*                                                                      00117000
+//*                                                                     00118000
+//*    **********************************************************       00119000
+//*    * RPR096 - RELATIONSHIP PRICING AUTO ENROLLMENT BUILD 4  *       00120000
+//*    **********************************************************       00121000
+//STEP035  EXEC PGM=IEFBR14,COND=(0,LT)                                 00122000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,                              00123000
+//             DISP=(MOD,DELETE,DELETE),                                00124000
+//             UNIT=SYSDA,                                              00125000
+//             SPACE=(TRK,(1,1),RLSE)                                   00126000
+//*                                                                     00127000
+//STEP040  EXEC PGM=RPR096,REGION=4096K,COND=(0,LT)                     00128000
+//SYSPRINT DD  SYSOUT=*                                                 00129000
+//SYSUDUMP DD  SYSOUT=*                                                 00130000
+//SYSOUT   DD  SYSOUT=*                                                 00131000
+//PRINTR   DD  SYSOUT=*                                                 00132000
+//PRFICH   DD  SYSOUT=*                                                 00133000
+//PRINTA   DD  SYSOUT=*                                                 00134000
+//PRINTB   DD  SYSOUT=*                                                 00135000
+//PRINTC   DD  SYSOUT=*                                                 00136000
+//PRINTD   DD  SYSOUT=*                                                 00137000
+//PRINTE   DD  SYSOUT=*                                                 00138000
+//PRINTF   DD  SYSOUT=*                                                 00139000
+//PRINTG   DD  SYSOUT=*                                                 00140000
+//PRINTH   DD  SYSOUT=*                                                 00141000
+//PRINTI   DD  SYSOUT=*                                                 00142000
+//PRINTJ   DD  SYSOUT=*                                                 00143000
+//PRNTR01  DD  SYSOUT=*                                                 00144000
+//PRNTRST  DD  SYSOUT=*                                                 00145000
+//RPAUT3   DD  DSN=BNKCA.IN0.RP50.R94AUT3,DISP=SHR                      00146000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,                              00147000
+//             DISP=(NEW,CATLG,DELETE),                                 00148000
+//             UNIT=SYSDA,                                              00149000
+//             DCB=(RECFM=FB,LRECL=0375,BLKSIZE=27750),                 00150000
+//             SPACE=(CYL,(10,5),RLSE)                                  00151000
+//SORTWK01 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK02 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK03 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//SORTWK04 DD  UNIT=SYSDA,SPACE=(CYL,(50))
+//*                                                                     00153000
+/*                                                                      00154000
+//*                                                                     00155000
+//*    **********************************************************       00156000
+//*    * RPR100 - RELATIONSHIP PRICING AUTO ENROLLMENT          *       00157000
+//*    **********************************************************       00158000
+//STEP045  EXEC PGM=IEFBR14,COND=(0,LT)                                 00159000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(MOD,DELETE,DELETE),      00160000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00161000
+//RPEXCP   DD  DSN=BNKCA.IN0.RP50.RPEXCP,                               00162000
+//             DISP=(MOD,DELETE,DELETE),                                00163000
+//             UNIT=SYSDA,SPACE=(TRK,(1,1),RLSE)                        00164000
+//*                                                                     00165000
+//STEP050  EXEC PGM=RPR100,REGION=4096K,COND=(0,LT)                     00166000
+//SYSPRINT DD  SYSOUT=*                                                 00167000
+//SYSUDUMP DD  SYSOUT=*                                                 00168000
+//SYSOUT   DD  SYSOUT=*                                                 00169000
+//PRINTR   DD  SYSOUT=*                                                 00170000
+//PRFICH   DD  SYSOUT=*                                                 00171000
+//PRINTA   DD  SYSOUT=*                                                 00172000
+//PRINTB   DD  SYSOUT=*                                                 00173000
+//PRINTC   DD  SYSOUT=*                                                 00174000
+//PRINTD   DD  SYSOUT=*                                                 00175000
+//PRINTE   DD  SYSOUT=*                                                 00176000
+//PRINTF   DD  SYSOUT=*                                                 00177000
+//PRINTG   DD  SYSOUT=*                                                 00178000
+//PRINTH   DD  SYSOUT=*                                                 00179000
+//PRINTI   DD  SYSOUT=*                                                 00180000
+//PRINTJ   DD  SYSOUT=*                                                 00181000
+//PRNTR01  DD  SYSOUT=*                                                 00182000
+//PRNTRST  DD  SYSOUT=*                                                 00183000
+//RPAUT4   DD  DSN=BNKCA.IN0.RP50.R96AUT4,DISP=SHR                      00184000
+//RPEXCP   DD  DSN=BNKCA.IN0.RP50.RPEXCP,                               00185000
+//             DISP=(NEW,CATLG,DELETE),                                 00186000
+//             UNIT=SYSDA,                                              00187000
+//             DCB=(RECFM=FB,LRECL=0113,BLKSIZE=27911),                 00188000
+//             SPACE=(CYL,(10,5),RLSE)                                  00189000
+//PRINTK   DD  DSN=BNKCA.IN0.MI51.PRINTK,DISP=(NEW,CATLG,DELETE),       00190000
+//             UNIT=SYSDA,DCB=(RECFM=FB,LRECL=0133,BLKSIZE=11438),      00191000
+//             SPACE=(CYL,(1,1),RLSE)                                   00192000
+//*                                                                     00193000
+//RPCARD   DD  DSN=BNKCA.RP50.SAMPLE.DATA(RPR100),DISP=SHR              00194000
+//*                                                                     00195000
+//*                                                                     00196000
+//

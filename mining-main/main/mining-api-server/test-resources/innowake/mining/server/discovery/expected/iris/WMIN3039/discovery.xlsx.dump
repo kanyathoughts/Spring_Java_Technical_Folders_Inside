@@ -1,0 +1,39 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2478,"","DSFLVSA","src/pl1/WMIN3039/copies/DSFLVSA.pcpy","PL1","PL1_COPYBOOK","PHYSICAL",-1,0,2,0,3,0,0,-1,-1
+2480,2479,"main","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,15,0,-1,0,0,0,427
+2479,"","SQL","src/pl1/WMIN3039/programs/SQL.pl1m","PL1","PL1_MAINPROGRAM","PHYSICAL",5,0,29,0,41,0,3,-1,-1
+2481,2479,"sub1","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,7,0,-1,0,0,432,182
+2482,2479,"sub2","","PL1","PL1_SUBROUTINE","VIRTUAL",-1,0,7,0,-1,0,0,619,184
+2484,"","TABLEONE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2483,"","TABLETHREE","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2486,"","TABLETWO","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+2479,"SQL","SELECT",67,1,1,5,4.50,1.50,"SELECT firstnme INTO :FIRSTNME FROM tableOne WHERE empno = '000010'"
+2479,"SQL","SELECT",69,1,1,5,4.50,1.50,"SELECT firstnme INTO :FIRSTNME FROM tableThree WHERE empno = '000010'"
+2479,"SQL","SELECT",67,1,1,5,4.50,1.50,"SELECT firstnme INTO :FIRSTNME FROM tableTwo WHERE empno = '000010'"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2479,"SQL",2478,"DSFLVSA","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",152,25,-1,-1
+2479,"SQL",-1,"GETPRML","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",196,25,-1,-1
+2479,"SQL",0,"SQLCA","COBOL","COPYBOOK","Calls","","EARLY","{}",35,23,-1,-1
+2479,"SQL",0,"SQLDA","UNKNOWN","UTILITY","Calls","","EARLY","{}",60,23,-1,-1
+2479,"SQL",2484,"TABLEONE","SQL","SQL_TABLE","Accesses","","LATE","{}",274,110,-1,-1
+2479,"SQL",2483,"TABLETHREE","SQL","SQL_TABLE","Accesses","","LATE","{}",677,112,-1,-1
+2479,"SQL",2486,"TABLETWO","SQL","SQL_TABLE","Accesses","","LATE","{}",490,110,-1,-1
+2480,"main",2478,"DSFLVSA","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",152,25,-1,-1
+2480,"main",-1,"GETPRML","PL1","PL1_COPYBOOK","Includes","","EARLY","{}",196,25,-1,-1
+2480,"main",0,"SQLCA","COBOL","COPYBOOK","Calls","","EARLY","{}",35,23,-1,-1
+2480,"main",0,"SQLDA","UNKNOWN","UTILITY","Calls","","EARLY","{}",60,23,-1,-1
+2480,"main",2484,"TABLEONE","SQL","SQL_TABLE","Accesses","","LATE","{}",274,110,-1,-1
+2481,"sub1",2486,"TABLETWO","SQL","SQL_TABLE","Accesses","","LATE","{}",490,110,-1,-1
+2482,"sub2",2483,"TABLETHREE","SQL","SQL_TABLE","Accesses","","LATE","{}",677,112,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,13 @@
+-- SQL STATEMENT WITH
+WITH Sales_CTE (SalesPersonID, NumberOfOrders)
+AS
+(
+  SELECT SalesPersonID COUNT(OrderID)
+  FROM SalesOrderHeader
+  GROUP BY SalesPersonID
+)
+SELECT E.EmployeeID E.FirstName, E.LastName, S.NumberOfOrders
+FROM Employee AS E
+JOIN Sales_CTE AS S
+ON E.EmployeeID = S.SalesPersonID
+ORDER BY S.NumberOfOrders DESC;

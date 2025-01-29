@@ -1,0 +1,58 @@
+.control-flow-meta-data {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+    &__virtual-scroll-container {
+        max-height: 125px;
+        overflow-y: scroll;
+        margin-bottom: @job-monitor-margin;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+            background-color: @gray-4;
+          }
+      
+          &::-webkit-scrollbar-thumb {
+            background-color: @gray-6;
+          }
+      
+          &-down {
+            top: 0;
+            overflow: hidden;
+            transition: top 0.3s;
+          }
+      
+          &-up {
+            transition: top 0.3s;
+          }
+    }
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding-right: 0;
+    }
+    &__item-size {
+        font-size: @font-size-sm;
+    }
+
+    &__display {
+      display: none;
+    }
+
+    &__monaco-editor {
+      min-height: calc(100vh - 180px);
+      width: 100%;
+    }
+
+    &__background {
+      background-color: #dbf0fa;
+    }
+}
+
+/* stylelint-disable declaration-no-important */
+.cfg-side-panel {
+  width: 55% !important;
+}
+
+.cfg-shared-annotation-editor {
+  padding: @padding-md;
+}

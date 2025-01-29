@@ -1,0 +1,53 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=RELATIONSHIP MASTER                                     00002000
+000030*    PROD=RPS WU=MST0                                             00003000
+000040*    LDB=BKI136                                                   00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPMST-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSMST - RP RELATIONSHIP MASTER RECORD                -MST- *00010000
+000110******************************************************************00011000
+000120     03  RPMST-GRP-KEY.                                           00012000
+000130         05  RPMST-INST          PIC 9(04).                       00013000
+000140         05  RPMST-PRODCODE      PIC X(06).                       00014000
+000150         05  RPMST-ACCOUNT       PIC X(18).                       00015000
+000160         05  RPMST-MODEL         PIC X(10).                       00016000
+000170*----------------------------------------------------------------*00017000
+000180     03  RPMST-AUDIT-STAMP.                                       00018000
+000190         05  RPMST-UPD-DATE      PIC S9(09)      COMP-3.          00019000
+000200         05  RPMST-UPD-TIME      PIC S9(09)      COMP-3.          00020000
+000210         05  RPMST-UPD-USER      PIC X(08).                       00021000
+000220         05  RPMST-UPD-ORG       PIC X(06).                       00022000
+000230*----------------------------------------------------------------*00023000
+000240     03  RPMST-GRP-DATA.                                          00024000
+000250         05  RPMST-REL-STAT      PIC X(01).                       00025000
+000260         05  RPMST-QUAL-STAT     PIC X(01).                       00026000
+000270         05  RPMST-LMNTDT        PIC S9(09)      COMP-3.          00027000
+000280         05  RPMST-IQUALDT       PIC S9(09)      COMP-3.          00028000
+000290         05  RPMST-VQUALDT       PIC S9(09)      COMP-3.          00029000
+000300         05  RPMST-SCNXTDT       PIC S9(09)      COMP-3.          00030000
+000310         05  RPMST-DATE-OPENED   PIC S9(09)      COMP-3.          00031000
+000320         05  RPMST-EXPIRATION-DATE                                00032000
+000330                                 PIC S9(09)      COMP-3.          00033000
+000340         05  RPMST-SCTODAYFLAG   PIC X(01).                       00034000
+000350         05  RPMST-IDNUMBER      PIC X(18).                       00035000
+000360         05  RPMST-COMBBAL1      PIC S9(13)V99   COMP-3.          00036000
+000370         05  RPMST-COMBBAL2      PIC S9(13)V99   COMP-3.          00037000
+000380         05  RPMST-COMBBAL3      PIC S9(13)V99   COMP-3.          00038000
+000390         05  RPMST-COMBBAL4      PIC S9(13)V99   COMP-3.          00039000
+000400         05  RPMST-RSV-BAL2      PIC S9(13)V99   COMP-3.          00040000
+000410         05  RPMST-RSV-BAL3      PIC S9(13)V99   COMP-3.          00041000
+000420         05  RPMST-OUT-FLAG      PIC X(01).                       00042000
+000430         05  RPMST-VF-EXP-DATE   PIC S9(09)      COMP-3.          00043000
+000440         05  RPMST-EXTENSIONS    PIC S9(02).                      00044000
+000450         05  RPMST-RETENTION-DAYS                                 00045000
+000460                                 PIC S9(03)      COMP-3.          00046000
+000470         05  RPMST-VF-MSGNBR     PIC 9(04).                       00047000
+000480         05  RPMST-IQ-MSGNBR     PIC 9(04).                       00048000
+000490         05  RPMST-CUST-NO       PIC 9(13).                       00049000
+000500         05  RPMST-RESERVED      PIC X(46).                       00050000
+000510***************************************************************** 00051000
+000520*        END  RP RELATIONSHIP MASTER RECORD (MST)                 00052000
+000530***************************************************************** 00053000

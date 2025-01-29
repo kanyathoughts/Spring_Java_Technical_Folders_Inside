@@ -1,0 +1,46 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+2342,2334,"abc","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2340,2336,"abc","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2341,2333,"foo","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2335,2329,"foo","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2339,2331,"main","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2334,"","WMIN5076C_abc","src/c/WMIN5076C/WMIN5076C_abc.c","C","C_PROGRAM","PHYSICAL",1,0,6,0,7,0,0,-1,-1
+2336,"","WMIN5076C_abc","src/c/WMIN5076C/WMIN5076C_abc.h","C","C_HEADER","PHYSICAL",1,0,4,0,4,0,0,-1,-1
+2333,"","WMIN5076C_foo","src/c/WMIN5076C/WMIN5076C_foo.c","C","C_PROGRAM","PHYSICAL",1,0,6,0,7,0,0,-1,-1
+2329,"","WMIN5076C_foo","src/c/WMIN5076C/WMIN5076C_foo.h","C","C_HEADER","PHYSICAL",1,0,4,0,4,0,0,-1,-1
+2331,"","WMIN5076C_main","src/c/WMIN5076C/WMIN5076C_main.c","C","C_PROGRAM","PHYSICAL",1,0,10,0,10,0,0,-1,-1
+2330,"","WMIN5076C_xyz","src/c/WMIN5076C/WMIN5076C_xyz.c","C","C_PROGRAM","PHYSICAL",1,0,6,0,6,0,0,-1,-1
+2332,"","WMIN5076C_xyz","src/c/WMIN5076C/WMIN5076C_xyz.h","C","C_HEADER","PHYSICAL",1,0,4,0,4,0,0,-1,-1
+2337,2330,"xyz","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+2338,2332,"xyz","","C","C_FUNCTION","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+2334,"WMIN5076C_abc",2336,"WMIN5076C_abc","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2333,"WMIN5076C_foo",2329,"WMIN5076C_foo","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2336,"WMIN5076C_abc","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2334,"WMIN5076C_abc","C","C_PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2333,"WMIN5076C_foo","C","C_PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2329,"WMIN5076C_foo","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2330,"WMIN5076C_xyz","C","C_PROGRAM","Calls","","EARLY","{}",-1,-1,-1,-1
+2331,"WMIN5076C_main",2332,"WMIN5076C_xyz","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2330,"WMIN5076C_xyz",2332,"WMIN5076C_xyz","C","C_HEADER","Includes","","EARLY","{}",-1,-1,-1,-1
+2342,"abc",2340,"abc","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",50,134,-1,-1
+2341,"foo",2335,"foo","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",50,134,-1,-1
+2339,"main",2340,"abc","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2339,"main",2342,"abc","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2339,"main",2335,"foo","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2339,"main",2341,"foo","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2339,"main",2338,"xyz","C","C_FUNCTION","Calls","","LATE","{}",-1,-1,-1,-1
+2339,"main",2337,"xyz","C","C_FUNCTION","Calls","","EARLY","{}",-1,-1,-1,-1
+2337,"xyz",2338,"xyz","C","C_FUNCTION","Calls","","EARLY","{""TYPE_REFERENCE_TYPE"":""IMPLEMENT""}",50,134,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,162 @@
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = 111111,
+	 LOCATION = null,
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [Move],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = 11111111,
+	 LOCATION = null,
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [Move],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FILLER,
+	 LOCATION = ModuleLocation[offset=571,length=19],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FIRSTGROUP,
+	 LOCATION = ModuleLocation[offset=297,length=14],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FILLER, FOURBYTES, FOURBYTES2, FOURBYTES3, GROUP1, TESTCOMP, TESTGROUP, TESTNUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FOURBYTES,
+	 LOCATION = ModuleLocation[offset=325,length=22],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, GROUP1],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Initialize]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FOURBYTES2,
+	 LOCATION = ModuleLocation[offset=361,length=23],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, GROUP1],
+	 READACCESSES = [Display],
+	 WRITEACCESSES = [Move]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = FOURBYTES3,
+	 LOCATION = ModuleLocation[offset=398,length=23],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, GROUP1],
+	 READACCESSES = [Display],
+	 WRITEACCESSES = [Move]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = GROUP1,
+	 LOCATION = ModuleLocation[offset=275,length=10],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, FOURBYTES, FOURBYTES2, FOURBYTES3, TESTCOMP, TESTNUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = TESTCOMP,
+	 LOCATION = ModuleLocation[offset=531,length=26],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, GROUP1, TESTGROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Move]]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = TESTGROUP,
+	 LOCATION = ModuleLocation[offset=433,length=34],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, TESTCOMP, TESTNUM],
+	 READACCESSES = [],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = FIELD,
+	 NAME = TESTNUM,
+	 LOCATION = ModuleLocation[offset=481,length=36],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [FIRSTGROUP, GROUP1, TESTGROUP],
+	 READACCESSES = [],
+	 WRITEACCESSES = [Move]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Display,
+	 LOCATION = ModuleLocation[offset=769,length=18],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [FOURBYTES2],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Display,
+	 LOCATION = ModuleLocation[offset=836,length=18],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [FOURBYTES3],
+	 WRITEACCESSES = []]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Initialize,
+	 LOCATION = ModuleLocation[offset=629,length=36],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = [FOURBYTES]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=661,length=25],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = [FOURBYTES2]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=698,length=25],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [],
+	 WRITEACCESSES = [FOURBYTES3]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=735,length=22],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [111111],
+	 WRITEACCESSES = [TESTNUM]]
+
+DataFlowNode 
+ 	 [TYPE = STATEMENT,
+	 NAME = Move,
+	 LOCATION = ModuleLocation[offset=799,length=25],
+	 MODULEID = 2005,
+	 RELATEDFIELDS = [],
+	 READACCESSES = [11111111],
+	 WRITEACCESSES = [TESTCOMP]]
+

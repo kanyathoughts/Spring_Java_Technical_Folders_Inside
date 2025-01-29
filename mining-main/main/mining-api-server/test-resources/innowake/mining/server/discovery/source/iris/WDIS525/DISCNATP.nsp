@@ -1,0 +1,28 @@
+************************************************************************
+** Object	: DISCNATP
+** Function	: natural program calling subroutines
+**            - call internal subroutine
+**            - call external subroutine DISCNATS in module DISCNATS
+** 				(subr. name =  module name) 
+**            - call external subroutine EXTERNAL-SUBR in module DISCNATX
+**				(subr. name <> module name) 
+************************************************************************
+*
+* this subroutine is defined inside this program
+* discovery will find this one:
+PERFORM INTERNAL-SUBR
+*
+* this subroutine is defined externally as EXTERNSR in object DISCNATS 
+* discovery will find this one:
+PERFORM DISCNATS
+*
+* this subroutine is defined externally as EXTERN-SUBR in object DISCNATX 
+* discovery will not find this one because of different names:
+PERFORM EXTERNAL-SUBR
+*
+************************************************************************
+DEFINE SUBROUTINE INTERNAL-SUBR
+	PRINT 'this is subroutine INTERNAL-SUBR in program ' *PROGRAM
+END-SUBROUTINE 
+*
+END

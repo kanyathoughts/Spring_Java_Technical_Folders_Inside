@@ -1,0 +1,60 @@
+000010* REL=5.0                                                         00001000
+000020*    DESC=RELATIONSHIP                                            00002000
+000030*    PROD=RPS WU=REL0                                             00003000
+000040*    LDB=BKI136                                                   00004000
+000050*    RELATED=XXX,XXX                                              00005000
+000060*    RECOVERY=YES                                                 00006000
+000070*                                                                 00007000
+000080*01  RPREL-RECORD.                                                00008000
+000090*----------------------------------------------------------------*00009000
+000100*    RPSREL - RP RELATIONSHIP RECORD                       -REL- *00010000
+000110******************************************************************00011000
+000120     03  RPREL-GRP-KEY.                                           00012000
+000130         05  RPREL-ACCT1-GRP.                                     00013000
+000140             07  RPREL-INST      PIC 9(04).                       00014000
+000150             07  RPREL-PRODCODE  PIC X(06).                       00015000
+000160             07  RPREL-ACCOUNT   PIC X(18).                       00016000
+000170             07  RPREL-MODEL     PIC X(10).                       00017000
+000180         05  RPREL-ACCT2-GRP.                                     00018000
+000190             07  RPREL-INST2     PIC 9(04).                       00019000
+000200             07  RPREL-PRODCODE2 PIC X(06).                       00020000
+000210             07  RPREL-ACCOUNT2  PIC X(18).                       00021000
+000220*----------------------------------------------------------------*00022000
+000230     03  RPREL-AUDIT-STAMP.                                       00023000
+000240         05  RPREL-UPD-DATE      PIC S9(09)      COMP-3.          00024000
+000250         05  RPREL-UPD-TIME      PIC S9(09)      COMP-3.          00025000
+000260         05  RPREL-UPD-USER      PIC X(08).                       00026000
+000270         05  RPREL-UPD-ORG       PIC X(06).                       00027000
+000280*----------------------------------------------------------------*00028000
+000290     03  RPREL-GRP-DATA.                                          00029000
+000300         05  RPREL-ACCT-STATUS   PIC X(01).                       00030000
+000310         05  RPREL-BRANCH        PIC S9(05)      COMP-3.          00031000
+000320         05  RPREL-ACCT-TYPE     PIC S9(03)      COMP-3.          00032000
+000330         05  RPREL-SC-INC-OPTION PIC X(01).                       00033000
+000340         05  RPREL-RATE-INC-OPTION                                00034000
+000350                                 PIC X(01).                       00035000
+000360         05  RPREL-APPL          PIC 9(02).                       00036000
+000370         05  RPREL-ACCTBAL-1     PIC S9(13)V99   COMP-3.          00037000
+000380         05  RPREL-ACCTBAL-2     PIC S9(13)V99   COMP-3.          00038000
+000390         05  RPREL-PRIMEBAL      PIC S9(13)V99   COMP-3.          00039000
+000400         05  RPREL-ACCT-COMBBAL1 PIC S9(13)V99   COMP-3.          00040000
+000410         05  RPREL-ACCT-COMBBAL2 PIC S9(13)V99   COMP-3.          00041000
+000420         05  RPREL-ACCT-COMBBAL3 PIC S9(13)V99   COMP-3.          00042000
+000430         05  RPREL-ACCT-COMBBAL4 PIC S9(13)V99   COMP-3.          00043000
+000440         05  RPREL-CASH-RW-BAL   PIC S9(13)V99   COMP-3.          00044000
+000450         05  RPREL-ACCT-RATE-BAL PIC S9(13)V99   COMP-3.          00045000
+000460         05  RPREL-SC-BAL        PIC S9(13)V99   COMP-3.          00046000
+000470         05  RPREL-SECSVC-BAL    PIC S9(13)V99   COMP-3.          00047000
+000480         05  RPREL-DISCAMT-OVRD-FLAG                              00048000
+000490                                 PIC X(01).                       00049000
+000500         05  RPREL-DISCPCT-OVRD-FLAG                              00050000
+000510                                 PIC X(01).                       00051000
+000520         05  RPREL-RATEPCT-OVRD-FLAG                              00052000
+000530                                 PIC X(01).                       00053000
+000540         05  RPREL-DISCAMT-OVRD  PIC S9(09)V99   COMP-3.          00054000
+000550         05  RPREL-DISCPCT-OVRD  PIC SV9(05)     COMP-3.          00055000
+000560         05  RPREL-RATEPCT-OVRD  PIC SV9(05)     COMP-3.          00056000
+000570         05  RPREL-RESERVED      PIC X(43).                       00057000
+000580***************************************************************** 00058000
+000590*        END  RP RELATIONSHIP RECORD (REL)                        00059000
+000600***************************************************************** 00060000

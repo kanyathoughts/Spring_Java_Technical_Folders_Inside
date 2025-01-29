@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WMIN539FILE1.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+      * DELETE
+           DELETE FILE
+           END-DELETE.
+      
+           GOBACK.

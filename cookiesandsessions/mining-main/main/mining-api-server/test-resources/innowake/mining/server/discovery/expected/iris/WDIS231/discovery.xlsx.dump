@@ -1,0 +1,84 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+1039,"","WEO418I1","src/jcl/WDIS231/jobs/WEO418I1.job","JCL","JCL_JOB","PHYSICAL",3,40,9,1,11,3,0,-1,-1
+1037,"","WEO418I1","src/jcl/WDIS231/procs/WEO418I1.proc","JCL","JCL_PROC","PHYSICAL",0,0,26,0,27,1,0,-1,-1
+1040,1037,"WEO418I1.FBR14010.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,5,-1,-1,-1,0,0,-1,-1
+1042,1039,"WEO418I1.WEO418I1.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1043,1039,"WEO418I1.WEO418I2.EXEC","","JCL","JCL_EXEC","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1038,"","WEO418I2","src/jcl/WDIS231/procs/WEO418I2.proc","JCL","JCL_PROC","PHYSICAL",0,0,26,0,27,1,0,-1,-1
+1041,1038,"WEO418I2.FBR14010.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,5,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+1039,"WEO418I1","CONDITIONAL","IF RC LE 4"
+1037,"WEO418I1","EXEC","Properties: [PGM=IEFBR14], Data Definitions: [DD1{DSN=WE.ORSIS.&RGN..ACS,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD2{DSN=WE.ORSIS.&RGN..IN.ACS.TEMP,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD3{DSN=WE.ORSIS.&RGN..ACS.FTP00020.FTPDATA,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD4{DSN=WE.ORSIS.&RGN..ACS.U0X18060.GETCMD,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD5{DSN=WE.ORSIS.&RGN..ACS.U0X18060.DELCMD,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},SYSIN{DUMMY=null},SYSPRINT{SYSOUT=*}], Additional Properties: [Fully Qualified Step name=WEO418I1.FBR14010,Step name=FBR14010,Job name=WEO418I1]"
+1039,"WEO418I1","EXEC_PROC","Properties: [PROC=WEO418I1,RGN=&RGN,FTPPARM=B418FT1P], Data Definitions: [], Additional Properties: [Fully Qualified Step name=WEO418I1,Step name=WEO418I1,Job name=WEO418I1]"
+1039,"WEO418I1","EXEC_PROC","Properties: [PROC=WEO418I2,RGN=&RGN,FTPPARM=B418FT2P], Data Definitions: [], Additional Properties: [Fully Qualified Step name=WEO418I2,Step name=WEO418I2,Job name=WEO418I1]"
+1038,"WEO418I2","EXEC","Properties: [PGM=IEFBR14], Data Definitions: [DD1{DSN=WE.ORSIS.&RGN..ACS,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD2{DSN=WE.ORSIS.&RGN..IN.SUM.TEMP,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD3{DSN=WE.ORSIS.&RGN..ACS.SUM.FTP00020.FTPDATA,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD4{DSN=WE.ORSIS.&RGN..ACS.SUM.U0X18060.GETCMD,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},DD5{DSN=WE.ORSIS.&RGN..ACS.SUM.U0X18060.DELCMD,DISP=MOD,DELETE,DELETE,SPACE=TRK,0,STORCLAS=STANDARD},SYSIN{DUMMY=null},SYSPRINT{SYSOUT=*}], Additional Properties: [Fully Qualified Step name=WEO418I2.FBR14010,Step name=FBR14010,Job name=WEO418I1]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+1040,"WEO418I1.FBR14010.EXEC_PGM",0,"IEFBR14","UNKNOWN","UTILITY","Calls","[1042]","LATE","{}",-1,-1,-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM",0,"IEFBR14","UNKNOWN","UTILITY","Calls","[1043]","LATE","{}",-1,-1,-1,-1
+1042,"WEO418I1.WEO418I1.EXEC",1037,"WEO418I1","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+1037,"WEO418I1",1040,"WEO418I1.FBR14010.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1039,"WEO418I1",1042,"WEO418I1.WEO418I1.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+1039,"WEO418I1",1043,"WEO418I1.WEO418I2.EXEC","JCL","JCL_EXEC","Calls","","LATE","{}",-1,-1,-1,-1
+1043,"WEO418I1.WEO418I2.EXEC",1038,"WEO418I2","JCL","JCL_PROC","Calls","","LATE","{}",-1,-1,-1,-1
+1038,"WEO418I2",1041,"WEO418I2.FBR14010.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1039,"WEO418I1","WARNING","PARSE_ERROR","Variable value is just another reference to itself: RGN=&RGN",-1,-1
+1040,"WEO418I1.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I1.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS",-1,-1
+1040,"WEO418I1.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I1.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..IN.ACS.TEMP",-1,-1
+1040,"WEO418I1.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I1.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.FTP00020.FTPDATA",-1,-1
+1040,"WEO418I1.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I1.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.U0X18060.GETCMD",-1,-1
+1040,"WEO418I1.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I1.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.U0X18060.DELCMD",-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I2.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS",-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I2.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..IN.SUM.TEMP",-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I2.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.SUM.FTP00020.FTPDATA",-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I2.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.SUM.U0X18060.GETCMD",-1,-1
+1041,"WEO418I2.FBR14010.EXEC_PGM","ERROR","METRICS_CALCULATION_ERROR","WEO418I2.FBR14010 step has invalid resource file name, contains '&' in WE.ORSIS.&RGN..ACS.SUM.U0X18060.DELCMD",-1,-1
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

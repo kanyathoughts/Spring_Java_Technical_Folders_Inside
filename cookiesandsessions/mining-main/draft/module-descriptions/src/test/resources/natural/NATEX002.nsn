@@ -1,0 +1,57 @@
+* ******************************************************************** *
+*                                                                      *
+*     Art          : Request                                           *
+*     Bereich      : BV                                               *
+*     Bezeichnung  : D201-U-STAAT pflegen                              *
+*                                                                      *
+*     Modul        : RAL01AEN                                          *
+*     Type         : Subprogramm                                       *
+*                                                                      *
+*                                                                      *
+* ******************************************************************** *
+*                                                                      *
+*     Beschreibung : D201-U-STAAT                                      *
+*                                                                      *
+*     Primary-Key ist: D201-ST-SCHL (A3)                               *
+*                                                                      *
+* ******************************************************************** *
+*                                                                      *
+*    Änderungshistorie:                                                *
+*                                                                      *
+*  +------------+--------------+-------------------------------------+ *
+*  ! Datum      ! Autor        ! Grund                               ! *
+*  +------------+--------------+-------------------------------------+ *
+*  ! 26.11.2009 ! Witzgall     ! Erstellung                          ! *
+*  ! 19.04.2010 ! Birowski     ! Aufnahme Felder ST-STELLUNG-AUSLAND-! *
+*  !            !              ! PLZ und ST-ART-KENNZ aus alter LDA  ! *
+*  !            !              ! "STAAT--L"                          ! *
+*  +------------+--------------+-------------------------------------+ *
+*                                                                      *
+* ******************************************************************** *
+*
+*
+DEFINE DATA
+* ---------------------------------      Parameter
+PARAMETER USING SMSGS-2A              /* Message   PDA
+PARAMETER USING SFUNC-1A              /* Funktions PDA
+PARAMETER USING RAL01AEA              /* Business  PDA
+* ---------------------------------      Local
+LOCAL     USING SCONS-1L
+LOCAL     USING MAL01AEA
+* ---------------------------------
+*
+END-DEFINE
+*
+*
+* ******************************************************************* *
+* *                                                                 * *
+* *               H A U P T S T E U E R U N G                       * *
+* *                                                                 * *
+* ******************************************************************* *
+*
+INCLUDE SSTEU-1C   /* Copycode Programmbeginn
+*
+*
+INCLUDE SSTEU-2C   /* Copycode Programmende
+*
+END

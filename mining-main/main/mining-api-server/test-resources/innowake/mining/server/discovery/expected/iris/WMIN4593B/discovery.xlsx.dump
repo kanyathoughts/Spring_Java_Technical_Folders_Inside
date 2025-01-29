@@ -1,0 +1,28 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3839,"","CONFIGURED","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+3836,3835,"DEC-XXXX-PRIME-FPM","","COBOL","COBOL_COPYPROC","VIRTUAL",-1,0,-1,-1,-1,0,0,40,275
+3837,3834,"DEC-XXXX-PRIME-FPM","","COBOL","COBOL_COPYPROC","VIRTUAL",-1,0,-1,-1,-1,0,0,40,286
+3834,"","XXXXPROC","src/cobol/WMIN4593B/copy/copylibs/XXXXPROC.cpl","COBOL","COBOL_COPYLIB","PHYSICAL",0,0,9,3,13,0,0,-1,-1
+3835,"","XXXXPROC","src/cobol/WMIN4593B/copylibs/XXXXPROC.cpl","COBOL","COBOL_COPYLIB","PHYSICAL",0,0,9,3,14,0,0,-1,-1
+3838,"","XXXXSEI","src/cobol/WMIN4593B/programs/XXXXSEI.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,10,0,13,0,1,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3838,"XXXXSEI","INSERT",91,1,1,4,1.00,0.50,"INSERT
+INTO CONFIGURED
+(T227_INTAKE_ID,
+T227_FIPS_ST_CODE)
+VALUES (INTAKE-ID,
+FIPS-ST-CODE)"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3834,"XXXXPROC",3839,"CONFIGURED","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""STORE""]}",14,229,-1,-1
+3838,"XXXXSEI",3837,"DEC-XXXX-PRIME-FPM","COBOL","COBOL_COPYPROC","Includes","","EARLY","{}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

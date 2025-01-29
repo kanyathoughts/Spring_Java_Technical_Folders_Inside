@@ -1,0 +1,111 @@
+*          DATA SET ESPN01M    AT LEVEL 009 AS OF 07/25/07
+*          DATA SET ESPN01M    AT LEVEL 008 AS OF 08/25/82
+         TITLE 'MAIN OPTION MAPSET'
+         PRINT NOGEN
+         SPACE
+* NEW MAP SET
+ESPN01M  DFHMSD TYPE=MAP,                        some comment          *
+               MODE=INOUT,                                             *
+               LANG=COBOL,                                             *
+               BASE=MAPBASE,                                           *
+               DATA=FIELD,                                             *
+               TIOAPFX=YES
+         SPACE
+* NEW MAP DEFINITION
+ESPSM1   DFHMDI SIZE=(24,80),                                          *
+               LINE=1,                                                 *
+               COLUMN=1
+         SPACE
+ESPRG1   DFHMDF POS=(5,10),                                            *
+               ATTRB=(ASKIP,BRT),                                      *
+               LENGTH=18,                                              *
+               INITIAL='                  '
+         SPACE
+         DFHMDF POS=(5,30),                                            *
+               ATTRB=(ASKIP,BRT),                                      *
+               LENGTH=24,                                              *
+               INITIAL=' CUBS MAIN OPTION SCREEN'
+         SPACE
+         DFHMDF POS=(8,30),                                            *
+               ATTRB=ASKIP,                                            *
+               LENGTH=20,                                              *
+               INITIAL='ENTER YOUR PASSWORD:'
+         SPACE
+SM1NAME  DFHMDF POS=(8,51),                                            *
+               ATTRB=(UNPROT,DRK,IC),                                  *
+               LENGTH=4
+         SPACE
+         DFHMDF POS=(8,56),                                            *
+               ATTRB=ASKIP,                                            *
+               LENGTH=1
+         SPACE
+         DFHMDF POS=(9,38),                                            *
+               ATTRB=ASKIP,                                            *
+               LENGTH=12,                                              *
+               INITIAL='OPERATOR ID:'
+         SPACE
+SM1OPID  DFHMDF POS=(9,51),                                            *
+               ATTRB=(UNPROT,NUM,DRK),                                 *
+               LENGTH=8
+         SPACE
+         DFHMDF POS=(9,60),                                            *
+               ATTRB=ASKIP,                                            *
+               LENGTH=1
+         SPACE
+         DFHMDF POS=(10,31),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=19,                                              *
+               INITIAL='TRANSACTION OPTION:'
+         SPACE
+SM1TRID  DFHMDF POS=(10,51),                                           *
+               ATTRB=UNPROT,                                           *
+               LENGTH=2
+         SPACE
+         DFHMDF POS=(10,54),                                           *
+               ATTRB=PROT,                                             *
+               LENGTH=1
+         SPACE
+         DFHMDF POS=(12,22),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=43,                                              *
+               INITIAL='PRESS  PF1 FOR RETURN TO MAIN OPTION SCREEN'
+         SPACE
+         DFHMDF POS=(13,29),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=30,                                              *
+               INITIAL='PF2 FOR INQUIRY FORWARD PAGING'
+         SPACE
+         DFHMDF POS=(14,29),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=35,                                              *
+               INITIAL='PF3 FOR INQUIRY BACKWARD PAGING OR '
+         SPACE
+         DFHMDF POS=(15,33),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=31,                                              *
+               INITIAL='FOR DATA ENTRY TRANSACTION LIST'
+         SPACE
+         DFHMDF POS=(16,29),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=32,                                              *
+               INITIAL='PF4 FOR INQUIRY TRANSACTION LIST'
+         SPACE
+         DFHMDF POS=(17,29),                                           *
+               ATTRB=ASKIP,                                            *
+               LENGTH=17,                                              *
+               INITIAL='PF5 FOR SIGN OFF'
+         SPACE
+SM1ERR   DFHMDF POS=(24,1),                                            *
+               ATTRB=(ASKIP,BRT),                                      *
+               LENGTH=72
+         SPACE
+* NEW MAP DEFINITION
+ESPSM2   DFHMDI SIZE=(01,80),                                          *
+               LINE=24,                                                *
+               COLUMN=1
+SM2ERR   DFHMDF POS=(01,1),                                            *
+               ATTRB=(ASKIP,BRT),                                      *
+               LENGTH=72
+         SPACE
+         DFHMSD TYPE=FINAL
+         END

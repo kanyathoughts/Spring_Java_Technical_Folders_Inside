@@ -1,0 +1,102 @@
+LIST OFF
+FILE STAREG
+  INREC                 1  450  A                                         )
+  STAREG80              1   80  A                                         )
+  STAREG1               1    1  A
+  STAREG3               1    3  A
+  STAREGST             16    2  A
+
+FILE PRNTOUT1 PRINTER
+
+FILE EMAIL
+  EMAIL-REC             1   80  A                                         )
+
+HOLD-80         W   80  A
+
+ERROR-CNT       W    3 N 0
+O-EMAIL         W   80  A
+************************************************************************
+*****  PROCESSING  ACTIVITIES
+************************************************************************
+JOB INPUT STAREG START (EMAIL-OUT) FINISH (END-EMAIL)
+  IF STAREG3 = 'H47', 'T47', 'D47'
+      GOTO JOB
+  END-IF
+  IF STAREGST = '47'
+      HOLD-80 = STAREG80
+  ELSE
+      PERFORM ERROR-OUT
+      PRINT REPORT-1
+  END-IF
+  GOTO JOB
+
+ERROR-OUT. PROC
+   ERROR-CNT = ERROR-CNT + 1
+   EMAIL-REC = HOLD-80
+   PUT EMAIL
+   EMAIL-REC = STAREG80
+   PUT EMAIL
+   EMAIL-REC = '* * * * * * * * * * * * *'
+   PUT EMAIL
+END-PROC
+
+EMAIL-OUT. PROC
+   ERROR-CNT = 0
+   O-EMAIL = +
+    'THE FOLLOWING RECORDS WERE RECEIVED IN THE STATE REGISTRY   '
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   O-EMAIL = +
+    'FILE AND CONTAINED UN-PROCESSABLE DATA.  THE FIRST RECORD   '
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   O-EMAIL = +
+    'IS THE BASE RECORD AND THE SECOND IS THE ERROR RECORD.      '
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   O-EMAIL = +
+    '                                                            '
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   EMAIL-REC = '* * * * * * * * * * * * *'
+   PUT EMAIL
+END-PROC
+
+END-EMAIL. PROC
+   O-EMAIL = +
+    'THESE RECORDS DID NOT PROCESS INTO TCSES AND WILL NEED TO BE'
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   O-EMAIL = +
+    'CORRECTED AND RESENT.                                       '
+   EMAIL-REC = O-EMAIL
+   PUT EMAIL
+   EMAIL-REC = ' '
+   PUT EMAIL
+   EMAIL-REC = '                *** THANK YOU  ***'
+   PUT EMAIL
+   EMAIL-REC = ' '
+   PUT EMAIL
+   IF ERROR-CNT > 0
+       RETURN-CODE = 888
+   END-IF
+END-PROC
+
+************************************************************************
+*****  REPORT  PROCESSING
+**************************************************************
+REPORT REPORT-1 PRINTER PRNTOUT1 LINESIZE 90 SPACE 2 TITLESKIP 1
+   TITLE 1 'STATE REGISTARY INPUT ERRORS'
+   HEADING HOLD-80 '   RECORD WITH ERROR              '                 00841001
+   LINE  1 HOLD-80                                                      00841001
+   LINE  2 ' '                                                          00845001
+   LINE  3 STAREG80                                                     00845001
+   LINE  4 ' '                                                          00845001
+
+TERMINATION. PROC
+    DISPLAY ' '
+    DISPLAY '                      *****  END OF REPORT  *****'
+    DISPLAY ' '
+END-PROC
+
+

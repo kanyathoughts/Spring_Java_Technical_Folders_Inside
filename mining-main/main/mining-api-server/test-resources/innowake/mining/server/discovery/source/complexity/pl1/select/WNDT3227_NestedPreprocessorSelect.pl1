@@ -1,0 +1,14 @@
+ WNDT3227_NestedPreprocessorSelect: PROCEDURE OPTIONS(MAIN);
+  %DECLARE MONTH CHAR(3),
+      YEAR PIC'99',
+      NO_DAYS FIXED BINARY;
+  %SELECT(MONTH);
+   %WHEN ('FEB')
+      %SELECT (MOD(YEAR,4));
+            %WHEN (0) NO_DAYS = 29;
+            %OTHERWISE NO_DAYS = 28;
+      %END;
+   %WHEN ('APR','JUN','SEPT','NOV') NO_DAYS = 30; 
+   %OTHERWISE NO_DAYS = 31;
+  %END;
+ END WNDT3227_NestedPreprocessorSelect;

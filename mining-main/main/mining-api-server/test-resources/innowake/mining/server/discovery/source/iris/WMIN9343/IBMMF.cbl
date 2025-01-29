@@ -1,0 +1,54 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. IBMMF.
+       AUTHOR. DELOITTE.
+       INSTALLATION. DELOITTE.
+       DATE-WRITTEN. JULY 1989.
+           *COMMENTS BELOW
+           REPLACE COPY BOOK STATEMENT EXAMPLE
+                   CALL SUBROUTIN STATEMENT EXAMPLE
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       DATA DIVISION.
+           EJECT
+       WORKING-STORAGE SECTION.
+       01 WS-COMMAREA    PIC X(70).
+       01 WS-PROGRAM-ID.
+           05 WS-PROGRAM-ENV  PIC X(03) VALUE 'DLV'.
+           05 WS-PROD-TEST    PIC X(01) VALUE 'P'.
+           05 WS-PROD-SEC-LVL PIC X(03) VALUE '001'.
+              88 DEFAULT-QUAL VALUE '001'.
+              88 SET-PUT-FLAG VALUE 'PUT'.
+           05 FILLER          PIC X(01).
+       01 WS-PROGRAMA-ID.
+           05 WS-PROGRAM-ENV  PIC X(03) VALUE 'ADLV'.
+           05 WS-PROD-TEST    PIC X(01) VALUE 'P'.
+           05 WS-PROD-SEC-LVL PIC X(03) VALUE '001'.
+       01 WS-PROGRAMB-ID.
+           05 WS-PROGRAM-ENV  PIC X(03) VALUE 'BDLV'.
+           05 WS-PROD-TEST    PIC X(01) VALUE 'P'.
+           05 WS-PROD-SEC-LVL PIC X(03).
+              07 DEFAULT-QUAL PIC X(1) VALUE 'P'.
+              07 SET-PUT-FLAG PIC X(2) VALUE 'UT'.
+           05 FILLER          PIC X(01).
+       01 WS-PROGRAMC-ID.
+           05 WS-PROGRAM-ENV  PIC X(03) VALUE 'CDLV'.
+           05 WS-PROD-TEST    PIC X(01) VALUE 'P'.
+           05 WS-PROD-SEC-LVL PIC X(03).
+           07 DEFAULT-QUAL PIC X(1) VALUE 'P'.
+           07 SET-PUT-FLAG PIC X(2).
+             09 SET-FLAG PIC X(1) VALUE 'U'.
+             09 SET-FLAG1 PIC X(1) VALUE 'T'.
+           05 FILLER          PIC X(01).
+       01 WS-PROGRAMD-ID PIC X(08) VALUE 'DDLVPPUT'.
+       PROCEDURE DIVISION.
+
+            SET SET-PUT-FLAG TO TRUE
+            DISPLAY WS-PROGRAM-ID
+
+            CALL WS-PROGRAM-ID.
+            CALL WS-PROGRAMA-ID.
+            CALL WS-PROGRAMB-ID.
+            CALL WS-PROGRAMC-ID.
+            CALL WS-PROGRAMD-ID.
+           GOBACK.

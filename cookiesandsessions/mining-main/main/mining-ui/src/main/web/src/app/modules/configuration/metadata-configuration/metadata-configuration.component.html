@@ -1,0 +1,57 @@
+<nz-content class="mining__content-margin">
+  <nz-card [nzTitle]="titleTemplate">
+    <ng-template #titleTemplate>
+      <nz-row [nzGutter]="[16, 8]" nzAlign="middle">
+        <nz-col nzFlex="auto">
+          {{ 'metadataComponent.metadataExpImp' | translate }}
+        </nz-col>
+        <nz-col>
+          <nz-content nz-row nzJustify="end" class="metadata-configuration__import-export-container">
+            <nz-space nzDirection="horizontal">
+              <nz-button-group>
+                <button nz-button (click)="onExportMetadata('DEFAULT')">{{ 'metadataComponent.exportMetadata' | translate }}</button>
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
+                  <span nz-icon nzType="ellipsis"></span>
+                </button>
+              </nz-button-group>
+              <nz-dropdown-menu #menu1="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item> 
+                    <a (click)="onExportMetadata('compressed')">
+                      {{ 'metadataComponent.exportMetadataZipped' | translate }} </a>
+                    </li>
+                </ul>
+              </nz-dropdown-menu>
+              <i *nzSpaceItem></i>
+              <i *nzSpaceItem aria-hidden="true" nzType="question-circle" nz-icon nz-tooltip [nzTooltipTitle]="'metadataComponent.tooltip' | translate"
+              nzTheme="outline" class="question-circle-icon"></i>
+            </nz-space>
+          </nz-content>
+        </nz-col>
+      </nz-row>
+    </ng-template>
+    <span> {{ 'metadataComponent.description' | translate }} </span><br /><br />
+    <strong> {{ 'metadataComponent.annotation' | translate }} </strong><br />
+    <strong> {{ 'metadataComponent.dataDictionary' | translate }} </strong><br />
+    <strong> {{ 'metadataComponent.moduleDescription' | translate }} </strong><br />
+    <strong> {{ 'metadataComponent.taxonomies' | translate }} </strong><br />
+    <strong> {{ 'metadataComponent.functionalBlock' | translate }} </strong><br />
+    <strong> {{ 'metadataComponent.customProperties' | translate }} </strong><br /><br />
+    <span> {{ 'metadataComponent.reimportDescription' | translate }} </span>
+    <nz-divider></nz-divider>
+    <nz-row nzJustify="center">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-upload [nzFileList]="$any(inputFile)" nzType="drag" [nzBeforeUpload]="$any(beforeUpload)"
+            [nzMultiple]="false" [nzDisabled]="disableImportExport" [nzShowUploadList]="false"
+            [nzAccept]="'application/json,.zip'">
+            <p class="ant-upload-drag-icon">
+              <span nz-icon nzType="inbox"></span>
+            </p>
+            <p class="ant-upload-text"> {{ 'metadataComponent.dragDropText' | translate }} </p>
+          </nz-upload>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-row>
+  </nz-card>
+</nz-content>

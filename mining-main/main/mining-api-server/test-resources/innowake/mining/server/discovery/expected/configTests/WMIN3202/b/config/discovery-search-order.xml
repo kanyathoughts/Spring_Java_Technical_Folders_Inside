@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<search-orders>
+    <search-order>
+        <source pattern="src/java/WMIN3202/pro2/**/*"/> <!-- tests if only dependencies of pro2 are resolved -->
+        <target pattern="src/java/WMIN3202/pro3"/>
+        <target pattern="src/java/WMIN3202/pro1/**/*"/> <!-- trailing wildcards are removed during execution -->
+        <target pattern="src/java/WMIN3202/pro2/*/example/**/*"/> <!-- wildcards and the paths after are removed during execution -->
+    </search-order>
+    <search-order>
+        <source pattern="src/java"/> <!-- tests if no dependencies other than the above are resolved -->
+        <target pattern="src/java/WMIN3202/pro3"/>
+        <target pattern="src/java/WMIN3202/pro1/**/*"/> <!-- trailing wildcards are removed during execution -->
+        <target pattern="src/java/WMIN3202/pro2/*/example/**/*"/> <!-- wildcards and the paths after are removed during execution -->
+    </search-order>
+</search-orders>

@@ -1,0 +1,30 @@
+ WMIN3020_MiscIfDoWhile2: proc options(main);
+    DO WHILE( IZ > 0 );
+    IF IZ = 1 THEN;
+    ELSE
+        PUT LIST( SUBSTR(PTEXT->CHARS, 1, IZ-1) );
+        
+        PTEXT += IZ;
+        LTEXT -= IZ;
+        
+        SELECT( PTEXT->CH );
+           WHEN( 'I' )
+               DO;
+                 PUT EDIT( TRIM(P->I) )(A);
+                 P += VARGSIZE( P->I );
+               END;
+              
+           WHEN( 'D' )
+               DO;
+                 PUT EDIT( TRIM(P->D) )(A);
+                 P += VARGSIZE( P->D );
+               END;
+        END;
+      
+        PTEXT += 1;
+        LTEXT -= 1;
+                
+        IF LTEXT <= 0 THEN LEAVE;
+            IZ = INDEX( SUBSTR(PTEXT->CHARS, 1, LTEXT), '%' );
+    END;
+ end WMIN3020_MiscIfDoWhile2;

@@ -1,0 +1,26 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+3946,"","SQLALIASES","src/cobol/WMIN7426/programs/SQLALIASES.cbl","COBOL","COBOL_PROGRAM","PHYSICAL",1,0,19,0,22,0,1,-1,-1
+3947,"","T1","","SQL","SQL_TABLE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+3946,"SQLALIASES","SELECT",223,6,4,25,17.79,5.14,"DECLARE ASD CURSOR FOR WITH ALIASTABLE1 AS
+(SELECT A, B, C FROM T1),
+ALIASTABLE2 AS
+(SELECT A, B, C FROM T1),
+ALIASTABLE3 AS
+(SELECT A, B, C FROM T1
+LEFT OUTER JOIN ALIASTABLE2)
+SELECT A, B, C FROM ALIASTABLE1 ,
+ALIASTABLE3"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+3946,"SQLALIASES",3947,"T1","SQL","SQL_TABLE","Accesses","","LATE","{""DB_ACCESS_TYPE"":[""READ""]}",196,389,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

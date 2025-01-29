@@ -1,0 +1,186 @@
+<div id="contextualToolbar" #showgraphoption class="contextual-toolbar"
+    [ngClass]="{'contextual-toolbar--visible': showToolbar}" tabindex="0">
+    <ng-container *ngFor="let optionType of contextMenuOptionType" [ngSwitch]="optionType">
+        <ng-container *ngSwitchCase="ContextToolbarMenuType.DEFAULT">
+            <button id="show-incoming-edges" class="contextual-toolbar__menu-option"
+                data-container-id="show-incoming-edges-options" (click)="setDependenciesForToolbar($event)"
+                [disabled]="isOptionDisabled('incoming')"></button>
+            <label for="show-incoming-edges" class="contextual-toolbar__label"
+                [ngClass]="{'contextual-toolbar__label--disabled': isOptionDisabled('incoming')}" nz-tooltip
+                [nzTooltipTitle]="( ! isOptionDisabled('incoming') ? 'contextToolbar.incomingEdges' : 'contextToolbar.noIncoming') | translate"
+                nzTooltipPlacement="top">
+                <img src="assets/graph-context-menu/icon-incoming.svg" alt="incoming icon " />
+                <em nz-icon nzType="caret-right" [nzRotate]="45" nzTheme="outline"
+                    class="contextual-toolbar__caret-right-icon"></em>
+            </label>
+            <span class="contextual-toolbar__separator"></span>
+            <button #graph id="show-outgoing-edges" class="contextual-toolbar__menu-option"
+                data-container-id="show-outgoing-edges-options" (click)="setDependenciesForToolbar($event)"
+                [disabled]="isOptionDisabled('outgoing')"></button>
+            <label for="show-outgoing-edges" class="contextual-toolbar__label"
+                [ngClass]="{'contextual-toolbar__label--disabled': isOptionDisabled('outgoing')}" nz-tooltip
+                [nzTooltipTitle]="( ! isOptionDisabled('outgoing') ? 'contextToolbar.outgoingEdges' : 'contextToolbar.noOutgoing') | translate"
+                nzTooltipPlacement="top">
+                <img src="assets/graph-context-menu/icon-outgoing.svg" alt="outgoing icon" />
+                <em nz-icon nzType="caret-right" [nzRotate]="45" nzTheme="outline"
+                    class="contextual-toolbar__caret-right-icon"></em>
+            </label>
+            <em class="fa fa-american-sign-language-interpreting fa-5x" aria-hidden="true"> </em>
+            <span class="contextual-toolbar__separator"></span>
+
+            <button #graph id="hide-node" class="contextual-toolbar__menu-option" (click)="hideNode($event)"
+                [disabled]=" ! isNotRootNode()"></button>
+            <label for="hide-node" class="contextual-toolbar__label"
+                [ngClass]="{'contextual-toolbar__label--disabled': ! isNotRootNode()}" nz-tooltip
+                [nzTooltipTitle]="(isNotRootNode() ? 'contextToolbar.hideNode' : 'contextToolbar.rootNodeHideDisabled') | translate"
+                nzTooltipPlacement="top">
+                <img src="assets/graph-context-menu/icon-hide.svg" alt="hide icon " />
+            </label>
+            <span class="contextual-toolbar__separator"></span>
+
+            <ng-container *ngTemplateOutlet="openSidePanel"></ng-container>
+
+            <div #optionsContainer id="show-incoming-edges-options" class="contextual-toolbar__options-container"
+                [ngClass]="{'bottom': isPickerBottom}">
+                <ul class="contextual-toolbar__menu-options">
+                    <li class="contextual-toolbar__menu-options--menu-option" translate>contextToolbar.incoming</li>
+                    <ng-container *ngIf="selectedItem">
+                        <li class="contextual-toolbar__menu-options--menu-option"
+                            *ngFor="let edge of incomingEdges.get(selectedItem.tag.id) | keyvalue" [title]="edge.key">
+                            <input type="checkbox" [(ngModel)]="edge.value.checked" id="incoming-{{edge.key}}"
+                                (change)="toggleEdgeVisibility(edge.key, 'incoming')"
+                                class="contextual-toolbar__menu-options--checkbox"
+                                [indeterminate]="edge.value.indeterminate" />
+                            <label for="incoming-{{edge.key}}" class="contextual-toolbar__menu-options--label">
+                                {{edge.key + " ("+ edge.value.count +")" }}
+                            </label>
+                        </li>
+                    </ng-container>
+                </ul>
+            </div>
+            <div #optionsContainer id="show-outgoing-edges-options" class="contextual-toolbar__options-container"
+                [ngClass]="{'bottom': isPickerBottom}">
+                <ul class="contextual-toolbar__menu-options">
+                    <li class="contextual-toolbar__menu-options--menu-option" translate>contextToolbar.outgoing</li>
+                    <ng-container *ngIf="selectedItem">
+                        <li class="contextual-toolbar__menu-options--menu-option"
+                            *ngFor="let edge of outgoingEdges.get(selectedItem.tag.id) | keyvalue" [title]="edge.key">
+                            <input type="checkbox" [(ngModel)]="edge.value.checked" id="outgoing-{{edge.key}}"
+                                (change)="toggleEdgeVisibility(edge.key, 'outgoing')"
+                                [indeterminate]="edge.value.indeterminate" />
+                            <label for="outgoing-{{edge.key}}" class="contextual-toolbar__menu-options--label">
+                                {{edge.key + " ("+ edge.value.count +")" }}
+                            </label>
+                        </li>
+                    </ng-container>
+                </ul>
+            </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="ContextToolbarMenuType.REACHABILITY_NETWORK">
+            <ng-container *ngIf="selectedNodes.length <=1">
+                <button #graph id="view-details" class="contextual-toolbar__menu-option"
+                    (click)="getReachabilityDetails(false, 'view')"></button>
+                <label for="view-details" class="contextual-toolbar__label" nz-tooltip
+                    [nzTooltipTitle]="'contextToolbar.viewDetails' | translate">
+                    <i class="contextual-toolbar__svg-size" nz-icon nzType="profile" nzTheme="outline"></i>
+                </label>
+                <span class="contextual-toolbar__separator"></span>
+            </ng-container>
+            <ng-container *ngIf="selectedNodes.length >=2 && canEditRB">
+                <button #graph id="merge" class="contextual-toolbar__menu-option"
+                    (click)="mergeRB()"></button>
+                <label for="merge" class="contextual-toolbar__label" nz-tooltip
+                    [nzTooltipTitle]="'contextToolbar.merge' | translate">
+                    <i class="contextual-toolbar__svg-size" nz-icon nzType="group" nzTheme="outline"></i>
+                </label>
+                <span class="contextual-toolbar__separator"></span>
+            </ng-container>
+            <button #graph id="table-view" class="contextual-toolbar__menu-option"
+                (click)="getReachabilityDetails(selectedNodes.length <=1 ? false : true, 'table')"></button>
+            <label for="table-view" class="contextual-toolbar__label" nz-tooltip
+                [nzTooltipTitle]="'contextToolbar.tableView' | translate">
+                <i class="contextual-toolbar__svg-size" nz-icon nzType="table" nzTheme="outline"></i>
+            </label>
+            <ng-container *ngIf="selectedItem?.tag.info?.peerCount">
+                <span class="contextual-toolbar__separator"></span>
+                <ng-container *ngTemplateOutlet="functionalBlockCount; context: { $implicit: 'network'}"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="selectedNodes.length <=1">
+                <span class=" contextual-toolbar__separator"></span>
+                <button #graph id="graph-view" class="contextual-toolbar__menu-option" (click)="getReachabilityDetails(false, 'graph')"></button>
+                <label for="graph-view" class="contextual-toolbar__label" nz-tooltip
+                    [nzTooltipTitle]="'contextToolbar.graphView' | translate">
+                    <i class="contextual-toolbar__svg-size" nz-icon nzType="mining-icons:dependencies"
+                        nzTheme="outline"></i>
+                </label>
+            </ng-container>
+            <ng-container>
+                <span class="contextual-toolbar__separator"></span>
+                <button #graph id="recalculate" class="contextual-toolbar__menu-option"
+                    (click)="recalculateReachabilityAnalysis()"></button>
+                <label for="recalculate" class="contextual-toolbar__label" nz-tooltip
+                    [nzTooltipTitle]="'contextToolbar.recalculate' | translate">
+                    <i class="contextual-toolbar__svg-size" nz-icon nzType="retweet" nzTheme="outline"></i>
+                </label>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="ContextToolbarMenuType.FUNCTIONALANALYSIS">
+            <nz-dropdown-menu #dropdownMenu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item (click)="removeBranches(removeBranchType.REMOVE_BRANCH)">{{'contextToolbar.onlyThis' | translate}}</li>
+                    <li (click)="removeBranches(removeBranchType.REMOVE_ALL_BRANCHES)" nz-menu-item>{{'contextToolbar.allBranches' | translate}}</li>
+                </ul>
+            </nz-dropdown-menu>
+            <button nz-button nz-dropdown  nz-tooltip
+                    [nzTooltipTitle]="'contextToolbar.removeBranch' | translate" [nzDropdownMenu]="dropdownMenu">
+                <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
+            </button>
+        </ng-container>
+        <ng-container *ngSwitchCase="ContextToolbarMenuType.REACHABILITY_BLOCK">
+            <ng-container *ngIf="selectedItem?.tag.info?.peerCount">
+                <ng-container *ngTemplateOutlet="functionalBlockCount; context: { $implicit: 'block'}"></ng-container>
+                <span class="contextual-toolbar__separator"></span>
+            </ng-container>
+            <ng-container *ngTemplateOutlet="openSidePanel"></ng-container>
+        </ng-container>
+    </ng-container>
+    <ng-template #functionalBlockCount let-data>
+        <a #graph [routerLink]="['/project-' + projectId + '/functional-analysis']"
+            [queryParams]="{ filterApplied: stringifyData(data) }" target="_blank">
+            <label class="contextual-toolbar__label" nz-tooltip
+                nzTooltipTitle="{{'reachability.referencedBlockBadgeTooltip' | translate}}" nzTooltipPlacement="top">
+                <img class="contextual-toolbar__functional-analysis" src="assets/mining-icons/functional-analysis.svg"
+                    alt="{{'reachability.functionalCount' | translate}}" />
+            </label>
+        </a>
+    </ng-template>
+    <ng-template #openSidePanel>
+        <button #graph id="open-side-panel" class="contextual-toolbar__menu-option"
+                        (click)="toggleSidePanel()"></button>
+        <label for="open-side-panel" class="contextual-toolbar__label" nz-tooltip
+                     [nzTooltipTitle]="'contextToolbar.openSidePanelToolTip' | translate">
+            <i class="contextual-toolbar__svg-size" nz-icon nzType="profile" nzTheme="outline"></i>
+        </label>
+    </ng-template>
+</div>
+
+<ng-template #drawerTitleTemplate>
+  <strong>{{ selectedNode?.tag?.name }}
+    <nz-tag *ngIf="selectedNode?.tag?.info?.STATUS" nzColor="error">{{'reachability.inactive' | translate}}</nz-tag>
+    <nz-page-header-subtitle  *ngIf="blockState?.errorCount > 0 || blockState?.warningsCount > 0">{{'reachability.moduleswith' | translate}}</nz-page-header-subtitle>
+    <nz-tag *ngIf="blockState?.errorCount > 0" nzColor="error" class="block-card__title-pointer"
+      (click)="openModulesTable('errors')">{{'reachability.errors' | translate}}<nz-badge class="block-card__badge-margin"
+        [nzCount]="blockState?.errorCount" nzSize="small"></nz-badge></nz-tag>
+    <nz-tag *ngIf="blockState?.warningsCount > 0" nzColor="warning" class="block-card__title-pointer"
+      (click)="openModulesTable('warnings')">{{'reachability.warnings' | translate}} <nz-badge
+        class="block-card__badge-margin block-card__warning-badge" [nzCount]="blockState?.warningsCount" nzSize="small"></nz-badge></nz-tag>
+</strong>
+  <button *ngIf="selectedNode?.tag?.info?.STATUS" (click)="updateBlock('ACTIVE')" nz-tooltip
+    nzTooltipTitle="{{'reachability.activeButtonTooltip' | translate}}" nz-button>
+    <span nz-icon nzType="eye" nzTheme="outline"></span>{{'reachability.activateBlock' | translate}}
+  </button>
+  <button *ngIf="! selectedNode?.tag?.info?.STATUS" (click)="updateBlock('INACTIVE')" nz-tooltip
+    nzTooltipTitle="{{'reachability.inactiveButtonTooltip' | translate}}" nz-button>
+    <span nz-icon nzType="eye-invisible" nzTheme="outline"></span>{{'reachability.inactivateBlock' | translate}}
+  </button>
+</ng-template>

@@ -1,0 +1,26 @@
+#8 ProcedureDivision
+ #9 CobolMoveStmt, FROM={TestEntryPoint}, TO={#14}
+ #14 CobolDisplayStmt ' ----- A:', FROM={#9}, TO={#17}
+ #17 CobolPerformStmt LABEL3 THRU LABEL5 , FROM={#14}, TO={#32}
+  #18 CobolFieldReference
+  #19 CobolFieldReference
+ #20 CobolGoBackStmt, FROM={#44}, TO={TestReturnPoint}
+ #21 CobolLabelStmt LABEL1 
+  #22 CobolDisplayStmt ' ----- B:'
+ #25 CobolLabelStmt LABEL2 
+  #26 CobolDisplayStmt ' ----- C:'
+  #29 CobolDisplayStmt ' --- END --- '
+ #32 CobolLabelStmt LABEL3 , FROM={#17}, TO={#33}
+  #33 CobolDisplayStmt ' ----- D:', FROM={#32}, TO={#36}
+  #36 CobolPerformStmt LABEL4 THRU LABEL5 , FROM={#33}, TO={#39}
+   #37 CobolFieldReference
+   #38 CobolFieldReference
+ #39 CobolLabelStmt LABEL4 , FROM={#36, #44}, TO={#40}
+  #40 CobolDisplayStmt ' ----- E:', FROM={#39}, TO={#43}
+ #43 CobolLabelStmt LABEL5 , FROM={#40}, TO={#44}
+  #44 CobolDisplayStmt ' ----- F:', FROM={#43}, TO={#20, #39}
+ #47 CobolLabelStmt LABEL6 
+  #48 CobolDisplayStmt ' ----- G:'
+ #51 CobolLabelStmt LABEL7 
+  #52 CobolGoBackStmt
+  #53 CobolEndStmt

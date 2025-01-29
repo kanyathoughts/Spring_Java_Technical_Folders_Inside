@@ -1,0 +1,54 @@
+# Modules
+"Uid","Parent Uid","Name","Path","Language","Type","Representation","Complexity","Errors (Nodes)","Source Lines of Code","Comment Lines of Code","Physical Lines of Code","Statements (Nodes)","SQL Statements","Offset","Length"
+1256,"","MMRS00C.AWA.VSAM.PRINT","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1254,"","MMRS00C.AWA.VSAME","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1255,"","MMRS00C.AWA.VSAME.PATH","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1252,"","MMRS00C.AWA.VSAMK","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1253,"","MMRS00C.AWA.VSAMK.PATH","","RESOURCE","RESOURCE_FILE","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1251,"","MMRS711A","src/jcl/WCFD670/jobs/MMRS711A.job","JCL","JCL_JOB","PHYSICAL",1,0,78,19,98,6,0,-1,-1
+1248,1251,"MMRS711A.STEPDEF.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1250,1251,"MMRS711A.STEPDEL.0.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1249,1251,"MMRS711A.STEPDEL.1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1247,1251,"MMRS711A.STEPLST1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1246,1251,"MMRS711A.STEPPRT1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+1245,1251,"MMRS711A.STEPREP1.EXEC_PGM","","JCL","JCL_EXEC_PGM","VIRTUAL",-1,0,-1,-1,-1,0,0,-1,-1
+# Statements
+"Uid","Module Name","Statement","String"
+1251,"MMRS711A","EXEC","Properties: [PGM=IDCAMS], Data Definitions: [SYSPRINT{SYSOUT=*},MYVSAMK{DISP=MOD,DSN=MMRS00C.AWA.VSAMK},MYVSAMKP{DISP=MOD,DSN=MMRS00C.AWA.VSAMK.PATH},MYVSAME{DISP=MOD,DSN=MMRS00C.AWA.VSAME},MYVSAMEP{DISP=MOD,DSN=MMRS00C.AWA.VSAME.PATH},OUT{DISP=,CATLG,DSN=MMRS00C.AWA.VSAM.PRINT,SPACE=CYL,(1,5),DCB=RECFM=V,LRECL=84},SYSIN{*=  REPRO INFILE(MYVSAMK) OUTFILE(OUT)  REPRO INFILE(MYVSAMKP) OUTFILE(OUT)  REPRO INFILE(MYVSAME) OUTFILE(OUT)  REPRO INFILE(MYVSAMEP) OUTFILE(OUT)}], Additional Properties: [Fully Qualified Step name=STEPREP1,Step name=STEPREP1,Job name=MMRS711A]"
+1251,"MMRS711A","EXEC","Properties: [PGM=IDCAMS], Data Definitions: [SYSPRINT{SYSOUT=*},MYVSAMK{DISP=MOD,DSN=MMRS00C.AWA.VSAMK},MYVSAMKP{DISP=MOD,DSN=MMRS00C.AWA.VSAMK.PATH},MYVSAME{DISP=MOD,DSN=MMRS00C.AWA.VSAME},MYVSAMEP{DISP=MOD,DSN=MMRS00C.AWA.VSAME.PATH},SYSIN{*=  PRINT INFILE(MYVSAMK)  PRINT INFILE(MYVSAMKP)  PRINT INFILE(MYVSAME)  PRINT INFILE(MYVSAMEP)}], Additional Properties: [Fully Qualified Step name=STEPPRT1,Step name=STEPPRT1,Job name=MMRS711A]"
+1251,"MMRS711A","EXEC","Properties: [PGM=IDCAMS], Data Definitions: [SYSPRINT{SYSOUT=*},SYSIN{*=   DEL MMRS00C.AWA.VSAMK.AIX  ALTERNATEINDEX PURGE   DEL MMRS00C.AWA.VSAME.AIX  ALTERNATEINDEX PURGE}], Additional Properties: [Fully Qualified Step name=STEPDEL,Step name=STEPDEL,Job name=MMRS711A]"
+1251,"MMRS711A","EXEC","Properties: [PGM=IDCAMS], Data Definitions: [SYSPRINT{SYSOUT=*},SYSIN{*=   LISTCAT ENTRIES(MMRS00C.AWA.*) ALL}], Additional Properties: [Fully Qualified Step name=STEPLST1,Step name=STEPLST1,Job name=MMRS711A]"
+1251,"MMRS711A","EXEC","Properties: [PGM=IDCAMS], Data Definitions: [SYSPRINT{SYSOUT=*},SYSIN{*=  DEFINE ALTERNATEINDEX (                                   -               NAME(MMRS00C.AWA.VSAMK.AIX)                  -               RELATE(MMRS00C.AWA.VSAMK)                    -               KEYS(10 17)                                  -               CYL(1 1)                                     -               NONUNIQUEKEY                                 -               UPGRADE )                                    -         DATA (                                             -               NAME(MMRS00C.AWA.VSAMK.AIX-D) )              -         INDEX (                                            -               NAME(MMRS00C.AWA.VSAMK.AIX-I) )              -      CATALOG (CATALOG.USERAA)  BLDINDEX INDATASET(MMRS00C.AWA.VSAMK)                     -           OUTDATASET(MMRS00C.AWA.VSAMK.AIX)  DEFINE PATH (NAME(MMRS00C.AWA.VSAMK.PATH)                 -           PATHENTRY(MMRS00C.AWA.VSAMK.AIX) )  DEFINE ALTERNATEINDEX (                                   -               NAME(MMRS00C.AWA.VSAME.AIX)                  -               RELATE(MMRS00C.AWA.VSAME)                    -               KEYS(10 17)                                  -               CYL(1 1)                                     -               NONUNIQUEKEY                                 -               UPGRADE )                                    -         DATA (                                             -               NAME(MMRS00C.AWA.VSAME.AIX-D) )              -         INDEX (                                            -               NAME(MMRS00C.AWA.VSAME.AIX-I) )              -      CATALOG (CATALOG.USERAA)  BLDINDEX INDATASET(MMRS00C.AWA.VSAME)                     -           OUTDATASET(MMRS00C.AWA.VSAME.AIX)  DEFINE PATH (NAME(MMRS00C.AWA.VSAME.PATH)                 -           PATHENTRY(MMRS00C.AWA.VSAME.AIX) )}], Additional Properties: [Fully Qualified Step name=STEPDEF,Step name=STEPDEF,Job name=MMRS711A]"
+1251,"MMRS711A","EXEC","Properties: [PGM=IEFBR14], Data Definitions: [MYFXOUT{DISP=MOD,DELETE,SPACE=TRK,(1,5),DSN=MMRS00C.AWA.VSAM.PRINT}], Additional Properties: [Fully Qualified Step name=STEPDEL,Step name=STEPDEL,Job name=MMRS711A]"
+# SQL
+"Uid","Module Name","Statement","SQL Length","Tables","Distinct Tables","Custom Complexity","Halstead Complexity","Halstead Difficulty","String"
+# Dependencies
+"Uid","Module Name","Target Uid","Target Name","Target Language","Target Type","Relationship","Reached From Uids","Binding","Attributes","fromLocationOffset","fromLocationLength","toLocationOffset","toLocationLength"
+1248,"MMRS711A.STEPDEF.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":""0"",""OUTBOUND"":""0"",""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+1250,"MMRS711A.STEPDEL.0.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":""0"",""OUTBOUND"":""0"",""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+1247,"MMRS711A.STEPLST1.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":""0"",""OUTBOUND"":""0"",""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+1246,"MMRS711A.STEPPRT1.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":""0"",""OUTBOUND"":""0"",""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",0,"IDCAMS","UNKNOWN","UTILITY","Calls","","LATE","{""INBOUND"":""0"",""OUTBOUND"":""0"",""OUTBOUND_TARGETS"":[]}",-1,-1,-1,-1
+1249,"MMRS711A.STEPDEL.1.EXEC_PGM",0,"IEFBR14","UNKNOWN","UTILITY","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1248,"MMRS711A.STEPDEF.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1250,"MMRS711A.STEPDEL.0.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1249,"MMRS711A.STEPDEL.1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1247,"MMRS711A.STEPLST1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1246,"MMRS711A.STEPPRT1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1251,"MMRS711A",1245,"MMRS711A.STEPREP1.EXEC_PGM","JCL","JCL_EXEC_PGM","Calls","","LATE","{}",-1,-1,-1,-1
+1249,"MMRS711A.STEPDEL.1.EXEC_PGM",1256,"MMRS00C.AWA.VSAM.PRINT","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD,DELETE"",""SPACE"":""TRK,(1,5)"",""ID_NAME"":""MYFXOUT""}]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",1256,"MMRS00C.AWA.VSAM.PRINT","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE""],""PROPERTIES"":[{""DISP"":"",CATLG"",""SPACE"":""CYL,(1,5)"",""DCB"":""RECFM=V,LRECL=84"",""ID_NAME"":""OUT""}]}",-1,-1,-1,-1
+1246,"MMRS711A.STEPPRT1.EXEC_PGM",1254,"MMRS00C.AWA.VSAME","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAME""}]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",1254,"MMRS00C.AWA.VSAME","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAME""}]}",-1,-1,-1,-1
+1246,"MMRS711A.STEPPRT1.EXEC_PGM",1255,"MMRS00C.AWA.VSAME.PATH","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMEP""}]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",1255,"MMRS00C.AWA.VSAME.PATH","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMEP""}]}",-1,-1,-1,-1
+1246,"MMRS711A.STEPPRT1.EXEC_PGM",1252,"MMRS00C.AWA.VSAMK","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMK""}]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",1252,"MMRS00C.AWA.VSAMK","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMK""}]}",-1,-1,-1,-1
+1246,"MMRS711A.STEPPRT1.EXEC_PGM",1253,"MMRS00C.AWA.VSAMK.PATH","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMKP""}]}",-1,-1,-1,-1
+1245,"MMRS711A.STEPREP1.EXEC_PGM",1253,"MMRS00C.AWA.VSAMK.PATH","RESOURCE","RESOURCE_FILE","Accesses","","LATE","{""FILE_ACCESS_TYPE"":[""WRITE"",""READ""],""PROPERTIES"":[{""DISP"":""MOD"",""ID_NAME"":""MYVSAMKP""}]}",-1,-1,-1,-1
+# Errors
+"Uid","Module Name","Severity","Key","Cause","Offset","Length"
+# Undiscovered
+"Uid","Name","Path"
+# Dead Code
+"Uid","Module Name","DeadCode","Starting Line","Number of Lines"

@@ -1,0 +1,33 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7103                                             *
+*   Description  . . Rate Option                                       *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(20,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                      Rate Option - Help
+
+    Option that determines if the rate table is a tier table,
+    a split rate table, a term table or a term/balance table.
+    If this value is set to a '2' or '3', the Balance Option
+    and Balance Order will be ignored.  Valid values are:
+
+    1  Calculate a rate using the balance and rate table.
+       (Default)
+    2  Split Table. This split rate table is comprised of the
+       balance and rate table.
+    3  Calculate a rate using the Term and Rate table. The term
+       is validated based on a equal to or less than condition.
+    4  Calculate a rate using the Term, Balance and Rate
+       table. This table is defined on the MICM 7114 record.
+                                                                _
+    F12=Cancel                                            M03014S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

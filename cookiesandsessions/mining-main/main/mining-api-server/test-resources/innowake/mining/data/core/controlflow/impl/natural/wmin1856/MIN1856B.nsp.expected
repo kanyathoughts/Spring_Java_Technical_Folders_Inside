@@ -1,0 +1,16 @@
+ #2 DefineDataStmt
+ #12 FormatStmt
+ #15 MoveStmt, FROM={TestEntryPoint}, TO={#19}
+ #19 MoveStmt, FROM={#15}, TO={#23}
+ #23 IfStmt, Label: IF TRUE EQ TRUE AND FALSE EQ FALSE, FROM={#19}, TO={#32(TRUE), #77(FALSE)}
+   #32 IfStmt, Label: IF TRUE EQ TRUE AND FALSE EQ FALSE, FROM={#23(TRUE)}, TO={#41(TRUE), #59(FALSE)}
+     #41 WRITE NOTITLE '=' #VAR1 '=' #VAR2, FROM={#32(TRUE)}, TO={#54}
+     #54 WRITE NOTITLE 'IF IF', FROM={#41}, TO={#63}
+     #59 WRITE NOTITLE 'IF IF ELSE', FROM={#32(FALSE)}, TO={#63}
+   #63 WRITE NOTITLE '=' #VAR1 '=' #VAR2, FROM={#54, #59}, TO={#112}
+   #77 WRITE NOTITLE 'ELSE', FROM={#23(FALSE)}, TO={#81}
+   #81 IfStmt, Label: IF TRUE EQ TRUE AND FALSE EQ FALSE, FROM={#77}, TO={#108(FALSE), #90(TRUE)}
+     #90 WRITE NOTITLE '=' #VAR1 '=' #VAR2, FROM={#81(TRUE)}, TO={#103}
+     #103 WRITE NOTITLE 'ELSE IF', FROM={#90}, TO={#112}
+     #108 WRITE NOTITLE 'ELSE IF ELSE', FROM={#81(FALSE)}, TO={#112}
+ #112 EndStmt, FROM={#103, #108, #63}, TO={TestReturnPoint}

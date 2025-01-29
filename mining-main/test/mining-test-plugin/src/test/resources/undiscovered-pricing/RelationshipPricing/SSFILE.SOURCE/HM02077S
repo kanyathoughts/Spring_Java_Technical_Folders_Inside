@@ -1,0 +1,33 @@
+*----------------------------------------------------------------------*
+*   Record . . . . . M7102                                             *
+*   Description  . . User Routine                                      *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(20,67), ORIENT=(02,07)
+WINDOW BOX
+EASEL ON
+
+
+                       User Routine - Help
+
+    Indicates custom code is used for further editing of
+    account requirements using subroutine RPBUSER.  The
+    following application-specific information is contained
+    in a user control area:
+      - Status codes                 - Risk code
+      - Dormant and block flags      - Auto debit flag
+      - Delinquency days             - Rating code
+      - Delinquency (credit rating)
+
+    Valid entries are:
+
+      N  Do not access the user routine.
+      Y  Access the user routine.
+                                                                _
+    F12=Cancel                                            M02077S
+
+EASEL OFF
+LABEL=(LABEL,IMPORTANT)
+FIELD=PFKEY,    PIC='X(01)', ATTR=(DISPLAY,HIDDEN)
+LABEL=(LABEL,IMPORTANT)

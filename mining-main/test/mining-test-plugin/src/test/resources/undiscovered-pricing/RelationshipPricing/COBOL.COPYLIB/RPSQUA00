@@ -1,0 +1,88 @@
+000010*01  RPQUA00-MESSAGE.                                             00001000
+000020*----------------------------------------------------------------*00002000
+000030*    RPSQUA00 - RPS RELATIONSHIPS NEW REVIEW MESSAGE AREA        *00003000
+000040******************************************************************00004000
+000050     03  RPQUA00-DCHG.                                            00005000
+000060         05  RPQUA00-DCHG-GRP                    OCCURS 07 TIMES. 00006000
+000070             07 RPQUA00-DEL-DCHG PIC X(01).                       00007000
+000080     03  RPQUA00-DATA-GRP.                                        00008000
+000090         05  RPQUA00-RECORD                      OCCURS 08 TIMES. 00009000
+000100             07  RPQUA00-GRP-KEY.                                 00010000
+000110                 09  RPQUA00-INST                                 00011000
+000120                                 PIC 9(04).                       00012000
+000130                 09  RPQUA00-PRODCODE                             00013000
+000140                                 PIC X(06).                       00014000
+000150                 09  RPQUA00-ACCOUNT                              00015000
+000160                                 PIC X(18).                       00016000
+000170                 09  RPQUA00-MODEL                                00017000
+000180                                 PIC X(10).                       00018000
+000190             07  RPQUA00-AUDIT-STAMP.                             00019000
+000200                 09  RPQUA00-GRP-AUDT.                            00020000
+000210                     11  RPQUA00-UPD-DATE                         00021000
+000220                                 PIC S9(09)      COMP-3.          00022000
+000230                     11  RPQUA00-UPD-TIME                         00023000
+000240                                 PIC S9(09)      COMP-3.          00024000
+000250                     11  RPQUA00-UPD-USER                         00025000
+000260                                 PIC X(08).                       00026000
+000270                     11  RPQUA00-UPD-ORG                          00027000
+000280                                 PIC X(06).                       00028000
+000290                 09  RPQUA00-GRP-DATA.                            00029000
+000300                     11  RPQUA00-RCIF-KEY.                        00030000
+000310                         13  RPQUA00-RCIF-INST                    00031000
+000320                                 PIC 9(04).                       00032000
+000330                         13  RPQUA00-RCIF-TYPE                    00033000
+000340                                 PIC X(01).                       00034000
+000350                         13  RPQUA00-RCIF-CUST.                   00035000
+000360                             15  RPQUA00-ALPHA                    00036000
+000370                                 PIC X(14).                       00037000
+000380                             15  RPQUA00-ACCUM                    00038000
+000390                                 PIC 9(03).                       00039000
+000400                             15  RPQUA00-TIEBRKR                  00040000
+000410                                 PIC 9(04).                       00041000
+000420                     11  RPQUA00-CUST-NAME                        00042000
+000430                                 PIC X(40).                       00043000
+000440                     11  RPQUA00-DATE-OPENED                      00044000
+000450                                 PIC S9(09)      COMP-3.          00045000
+000460                     11  RPQUA00-IDNUMBER                         00046000
+000470                                 PIC X(18).                       00047000
+000480                     11  RPQUA00-BRANCH                           00048000
+000490                                 PIC S9(05)      COMP-3.          00049000
+000500                     11  RPQUA00-ACCT-TYPE                        00050000
+000510                                 PIC S9(03)      COMP-3.          00051000
+000520                     11  RPQUA00-ADDON-ACCTS                      00052000
+000530                                 PIC S9(03)      COMP-3.          00053000
+000540                     11  RPQUA00-CASH-RW-KEY.                     00054000
+000550                         13  RPQUA00-CRW-INST                     00055000
+000560                                 PIC 9(04).                       00056000
+000570                         13  RPQUA00-CRW-PRODCODE                 00057000
+000580                                 PIC X(06).                       00058000
+000590                         13  RPQUA00-CRW-ACCOUNT                  00059000
+000600                                 PIC X(18).                       00060000
+000610                     11  RPQUA00-ENROLLATTEMPTS                   00061000
+000620                                 PIC 9(02).                       00062000
+000630                     11  RPQUA00-RESERVED                         00063000
+000640                                 PIC X(44).                       00064000
+000650     03  RPQUA00-MISC-DATA.                                       00065000
+000660         05  RPQUA00-OCCUR       PIC 9(04)       COMP.            00066000
+000670         05  RPQUA00-SELECT-RTN  PIC X(01).                       00067000
+000680         05  RPQUA00-DEL-GRP.                                     00068000
+000690             07  RPQUA00-DEL     PIC X(01)       OCCURS 07 TIMES. 00069000
+000700         05  RPQUA00-KEY-RECORD.                                  00070000
+000710             07  RPQUA00-KEY-INST                                 00071000
+000720                                 PIC 9(04).                       00072000
+000730             07  RPQUA00-KEY-PRODCODE                             00073000
+000740                                 PIC X(06).                       00074000
+000750             07  RPQUA00-KEY-ACCOUNT                              00075000
+000760                                 PIC X(18).                       00076000
+000770             07  RPQUA00-KEY-MODEL                                00077000
+000780                                 PIC X(10).                       00078000
+000790         05  RPQUA00-KEY-IDNUMBER                                 00079000
+000800                                 PIC 9(18).                       00080000
+000810         05  RPQUA00-PAGING-CONTROLS.                             00081000
+000820             07  RPQUA00-SUB     PIC S9(04)      COMP-3.          00082000
+000830             07  RPQUA00-CURPAGE PIC S9(04)      COMP-3.          00083000
+000840             07  RPQUA00-PAGES-TO-READ                            00084000
+000850                                 PIC S9(04)      COMP-3.          00085000
+000860******************************************************************00086000
+000870*       END RPS QUALIFICATION RECORD MESSAGE AREA (00)           *00087000
+000880******************************************************************00088000

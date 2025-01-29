@@ -1,0 +1,65 @@
+<nz-page-header class="mining__content-page-header" [nzTitle]="'exportOptionsComponent.exportModuleHeader' | translate">
+</nz-page-header>
+<nz-content class="mining__card-grid-layout">
+  <nz-space nzDirection="vertical">
+    <nz-card *nzSpaceItem>
+        <div nz-row [nzGutter]="[32, 32]">
+            <ng-container *ngIf="exportExtDetails && exportExtDetails.length > 0">
+                <div *ngFor="let option of exportExtDetails" nz-col [nzXs]="24" [nzSm]="16" [nzMd]="12" [nzLg]="8" [nzXl]="6"
+                    [nzXXl]="6">
+                    <p nz-typography nz-row><strong translate>{{option.key ? option.key: 'codeViewer.other' | translate}}</strong>
+                    </p>
+                    <nz-space nzDirection="vertical" nzSize="small">
+                        <ng-container *ngFor="let data of option.value">
+                            <button *nzSpaceItem nz-button nzType="link" nzSize="small"
+                                (click)="option.key === 'GraphML' ? advancedGraphMLEport() : exportExtensions(data)">
+                                {{ data.label }}
+                            </button>
+                        </ng-container>
+                    </nz-space>
+                </div>
+            </ng-container>
+        </div>
+    </nz-card>
+    <div *nzSpaceItem nz-row [nzJustify]="'space-around'">
+        <div nz-col>
+            <img src="assets/file-transfer.svg" />
+        </div>
+    </div>
+  </nz-space>
+</nz-content>
+
+<ng-template #exportDrawerContent>
+  <form nz-form nzLayout="vertical" [formGroup]="exportForm" class="shared-annotation-editor">
+    <div class="shared-annotation-editor__scroll">
+      <custom-property-field *ngFor="let exportValue of parameterDescData" [form]="exportForm"
+        [customProperty]="exportValue" [optionList]="exportValue.optionList">
+      </custom-property-field>
+      <div *ngIf="uploadDescription.supported">
+        <nz-form-label nzRequired="{{uploadDescription.required}}" nzTooltipTitle="{{uploadDescription.description}}"
+          [nzTooltipIcon]="infoTooltipIcon" [nzSpan]="28" nzFor="'input'">{{ uploadDescription.name }}</nz-form-label>
+        <nz-form-control>
+          <nz-upload [nzBeforeUpload]="$any(beforeUpload)" [nzFileList]="fileList" nzAccept="{{uploadDescription.accept}}">
+            <button nz-button>
+              <span nz-icon nzType="upload"></span>
+              {{'taxonomyReportingComponent.selectFile' | translate}}
+            </button>
+          </nz-upload>
+        </nz-form-control>
+      </div>
+    </div>
+    <div nz-row [nzJustify]="'end'" class="shared-annotation-editor__button-bar">
+      <nz-divider></nz-divider>
+      <div nz-coll>
+        <nz-space>
+          <button *nzSpaceItem type="button" nz-button [disabled]="isExportSave || isExportCancel"
+            [nzLoading]="isExportCancel" class="cancel_editor" nzType="default" (click)="onCancel()">
+            {{ 'btnLabel.cancel' | translate}}</button>
+          <button *nzSpaceItem type="button" [disabled]="isExportCancel || (isFileUploading && ! canSubmitForm())"
+            [nzLoading]="isExportSave" nz-button nzType="primary" (click)="onSubmit()">
+            {{ 'navigation.export' | translate}}</button>
+        </nz-space>
+      </div>
+    </div>
+  </form>
+</ng-template>

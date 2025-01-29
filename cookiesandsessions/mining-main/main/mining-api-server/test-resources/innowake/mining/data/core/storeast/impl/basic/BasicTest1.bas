@@ -1,0 +1,18 @@
+ DECLARE BYTE FUNCTION FN_ERROR                       
+ DECLARE STRING FUNCTION FN_FORMAT_AMOUNT(LONG)         
+ DECLARE STRING FUNCTION XFN_FORMAT_AMOUNT(LONG)          
+ DECLARE LONG FUNCTION FNCHECK_GRPRMC 
+ %INCLUDE "INC:MBR_RMC_RULES_WKSP.REC"
+ DECLARE LONG FUNCTION &
+ LocalVarInit &
+ ,FileOpen &
+ ,FileClose &
+ 10	FUNCTION WORD	CLC30_Get_PCF_NEW				&
+	(	STRING		Conv_Type				&
+	,	STRING		PCF_Code				&
+	,	ICIDATE		Svc_Date				&
+	,	STRING		Plan					&
+	,	STRING		Provider_ID				&
+	,	WORD		Svc_Cd					&
+	,	STRING		Prv_Group				&
+	)

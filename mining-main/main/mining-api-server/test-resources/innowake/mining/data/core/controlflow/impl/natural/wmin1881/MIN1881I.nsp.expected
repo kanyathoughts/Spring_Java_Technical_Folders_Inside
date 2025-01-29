@@ -1,0 +1,12 @@
+ #2 DefineDataStmt
+ #15 IncludeStmt, FROM={TestEntryPoint}, TO={#16}
+ #16 DefineWorkFileStmt, FROM={#15}, TO={#18}
+ #18 SetControlStmt, FROM={#16}, TO={#20}
+ #20 UploadPcFileStmt, Label: UPLOAD PC FILE 1 #FILE-RECORD, FROM={#18, #25}, TO={#25(LOOP BODY), #33(LOOP END)}
+  #24 EveryRecord
+   #25 WRITE(1) NOTITLE NOHDR '=' #FILE-RECORD, FROM={#20(LOOP BODY)}, TO={#20}
+   #32 EndAllMarkStmt
+ #33 SortStmt, Label: SORT #FILE-RECORD-SORT USING #FILE-RECORD, FROM={#20(LOOP END), #38}, TO={#38(LOOP BODY), #45(LOOP END)}
+  #38 WRITE(1) NOTITLE NOHDR '=' #FILE-RECORD, FROM={#33(LOOP BODY)}, TO={#33}
+ #45 ClosePcFileStmt, FROM={#33(LOOP END)}, TO={#46}
+ #46 EndStmt, FROM={#45}, TO={TestReturnPoint}

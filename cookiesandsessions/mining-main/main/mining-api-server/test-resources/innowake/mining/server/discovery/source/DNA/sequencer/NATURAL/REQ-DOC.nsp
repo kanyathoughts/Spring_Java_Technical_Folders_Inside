@@ -1,0 +1,135 @@
+DEFINE DATA
+LOCAL
+1 #SOAPURL (A10)
+1 #USER (A10)
+1 #PASSWORD (A10)
+1 #SOAP-ACTION (A10)
+1 #NAME (A10)
+1 #VALUE (A10)
+1 #VALUEN (N8)
+1 #VALUEI (I4)
+1 #RECVHEADER (A)
+1 #RECVPAGE (A)
+1 #DATA (A)
+1 #DATAB (B1920)
+1 #RESP (I4)
+1 #ERRNO (I4)
+END-DEFINE
+
+REQUEST DOCUMENT FROM #SOAPURL WITH
+    USER #USER PASSWORD #PASSWORD
+    HEADER
+      NAME 'Host' VALUE 'example.com:8619'
+      NAME 'Request-Method' VALUE 'POST'
+      NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+      NAME 'SOAPAction'     VALUE 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+      NAME ' ' VALUE ' '
+    DATA ALL #DATA ENCODED CODEPAGE 'UTF-8'
+  RETURN HEADER ALL #RECVHEADER
+    PAGE #RECVPAGE
+RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL
+  WITH USER     #USER
+       PASSWORD #PASSWORD
+       HEADER
+    NAME 'Request-Method' VALUE 'POST'
+    NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+    NAME 'SOAPAction'     VALUE
+      'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+  DATA ALL #DATA
+  RETURN HEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #RECVPAGE
+  RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL
+  WITH USER     #USER
+       PASSWORD #PASSWORD
+       HEADER
+    NAME 'Request-Method' VALUE 'POST'
+    NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+    NAME 'SOAPAction'     VALUE
+      'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+  DATA ALL #DATA
+  RETURN HEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #DATAB
+  RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL
+  WITH USER     #USER
+       PASSWORD #PASSWORD
+       HEADER
+    NAME 'Request-Method' VALUE 'POST'
+    NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+    NAME 'SOAPAction'     VALUE
+      'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+  DATA ALL #DATA
+  RETURN HEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #RECVPAGE
+  RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL
+  WITH USER     #USER
+       PASSWORD #PASSWORD
+       HEADER
+    NAME 'Request-Method' VALUE 'POST'
+    NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+    NAME 'SOAPAction'     VALUE
+      'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+  DATA ALL #DATA
+  RETURN HEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #RECVPAGE
+  RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL
+  WITH USER     #USER
+       PASSWORD #PASSWORD
+       HEADER
+    NAME 'Request-Method' VALUE 'POST'
+    NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+    NAME 'SOAPAction'     VALUE
+      'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+  DATA ALL #DATA
+  RETURN HEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #RECVPAGE
+  RESPONSE #RESP
+*
+REQUEST DOCUMENT FROM #SOAPURL WITH
+    USER #USER PASSWORD #PASSWORD
+    HEADER
+      NAME 'Request-Method' VALUE 'POST'
+      NAME 'Content-Type'   VALUE 'text/xml; charset=utf-8'
+      NAME 'SOAPAction'     VALUE #SOAP-ACTION
+    DATA ALL #DATA ENCODED CODEPAGE 'UTF-8'
+  RETURN HEADER ALL #RECVHEADER
+    NAME ' ' VALUE #VALUE
+    PAGE #RECVPAGE ENCODED CODEPAGE 'UTF-8'
+    RESPONSE #RESP
+*
+REQUEST DOCUMENT
+          FROM 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+*         FROM 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+* FROM 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+   RETURN PAGE #RECVPAGE ENCODED CODEPAGE 'iso_8859-1:1987'
+*  RETURN PAGE #RECVPAGE ENCODED CODEPAGE 'IBM819'
+*  RETURN PAGE #RECVPAGE ENCODED CODEPAGE 'UTF-8'
+   RESPONSE #RESP
+   GIVING #ERRNO
+
+REQUEST  DOCUMENT
+          FROM 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+   RETURN PAGE #RECVPAGE ENCODED CODEPAGE 'iso-8859-1:1987'
+   RESPONSE #RESP
+   GIVING #GIV
+
+REQUEST  DOCUMENT
+          FROM 'http://Klammerteil/Server/WebServices/VertragsAnmeldungAblehnen'
+   RETURN PAGE #RECVPAGE ENCODED CODEPAGE 'iso-8859-1:1987'
+   RESPONSE #RESP
+   GIVING #ERRNO
+END

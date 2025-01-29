@@ -1,0 +1,74 @@
+*----------------------------------------------------------------------*
+*   Panel ID . . . . RPV140                                            *
+*   Description  . . Relationships Event Profile                       *
+*   Product  . . . . Relationship Pricing                              *
+*   Release  . . . . 5.0                                               *
+*----------------------------------------------------------------------*
+SIZE=(24,80), ORIENT=(01,01)
+EASEL ON
+ RPEVENT   ________                Event History               ____  __________
+                                                                      _____ _ _
+
+  Product Code . : ______  Account __________________  Event Date __________
+  Customer Name  : ________________________________________
+  Primary Key  . : ____  ______  __________________
+  Model  . . . . : __________  ____________________
+  ID Number  . . : __________________
+
+  Event  . . . . : ________________________________________
+  Process  . . . : _________________________
+  Message  . . . : ________________________________________
+
+  ___________________________________________________________________________
+  ________________ _  ________________ __________
+  ________________ _  ________________ ___________
+
+  ___________________________________________________________________________
+  ________________ _  ________________ __________  ________________ ______
+
+ ______________________________________________________________________________
+ Command====> _________________________________________________________________
+ ______________________________________________________________________________
+ ______________________________________________________________________________
+EASEL OFF
+FIELD=OPERID,   PIC='X(08)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001M
+LABEL=(LABEL,IMPORTANT)
+FIELD=INST,     PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HXXX002M
+FIELD=SYSDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HXXX003M
+FIELD=MORE,     PIC='X(05)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M, CASE=M
+FIELD=MINUS,    PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PLUS,     PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HXXX004M
+FIELD=PRODCD,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HSEC005S
+FIELD=ACCOUNT,  PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HSEC006S
+FIELD=EVTDATE,  PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HEVT005S
+FIELD=CUSTNA,   PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HXXX001S, CASE=M
+FIELD=INST1,    PIC='X(04)', ATTR=(DISPLAY,NORMAL), HELP=HREL009S
+FIELD=PRODCD1,  PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HREL010S
+FIELD=ACCOUNT1, PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HREL011S
+FIELD=MODEL1,   PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HREL007S
+FIELD=MODLTY,   PIC='X(20)', ATTR=(DISPLAY,NORMAL), HELP=HM01051S, CASE=M
+FIELD=IDNBR,    PIC='X(18)', ATTR=(DISPLAY,NORMAL), HELP=HMST024S
+FIELD=EVENT,    PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HEVT002S, CASE=M
+FIELD=MODULE,   PIC='X(25)', ATTR=(DISPLAY,NORMAL), HELP=HEVT004S, CASE=M
+FIELD=MESSDES,  PIC='X(40)', ATTR=(DISPLAY,NORMAL), HELP=HEVT003S, CASE=M
+FIELD=RATELIT,  PIC='X(75)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=RATEL01,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=RATCHGI,  PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HREL024S
+FIELD=RATEL02,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=RATPCT,   PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HREL039S
+FIELD=RATEL03,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=RATOPT,   PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HM03014S
+FIELD=RATEL04,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=RATTYP,   PIC='X(11)', ATTR=(DISPLAY,NORMAL), HELP=HM02132S
+FIELD=SCHGLIT,  PIC='X(75)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=SCHGL01,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=SVCCHGI,  PIC='X(01)', ATTR=(DISPLAY,NORMAL), HELP=HREL023S
+FIELD=SCHGL02,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=SVCAMT,   PIC='X(10)', ATTR=(DISPLAY,NORMAL), HELP=HREl037S
+FIELD=SCHGL03,  PIC='X(16)', ATTR=(DISPLAY,NORMAL), HELP=HEVT006S, CASE=M
+FIELD=SVCPCT,   PIC='X(06)', ATTR=(DISPLAY,NORMAL), HELP=HREL038S
+END
+FIELD=MSGLINE,  PIC='X(78)', ATTR=(DISPLAY,IMPORTANT), HELP=HXXX023M, CASE=M
+FIELD=COMMAND,  PIC='X(65)', ATTR=(INPUT,OPTIONAL)
+FIELD=PFLINE1,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M
+FIELD=PFLINE2,  PIC='X(78)', ATTR=(DISPLAY,NORMAL), CASE=M

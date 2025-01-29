@@ -1,0 +1,509 @@
+//**********************************************************************
+//*                                                                    *
+//*  PROCNAME   :  IBA600P                                             *
+//*  SYSTEM     :  ADHOC REPORTING                                     *
+//*  DEPARTMENT :  GES                                                 *
+//*  DESCRIPTION:  EXTRACT CURRENT MLII PH'S, PF'S, PB'S, LH'S,        *
+//*                FC'S AND PL'S                                       *
+//*  RERUN      :  FROM THE START                                      *
+//*                                                                    *
+//**********************************************************************
+//IBA600P PROC HOLD=S,
+//             MGTCL=PRODDFLT,
+//*
+//*-----PRODUCTION LIBRARY VERSIONS
+//*
+//        LOADB='MERP.ALL',
+//        CNTLB='MERP.ALL',
+//*
+//*-----DATASET QUALIFIERS
+//*
+//        PRTEDMA='PRTEDMA',
+//        PRTEDMI='PRTEDMI',
+//        PRTEIBA='PRTEIBA',
+//        APPLID='IBA',
+//*
+//*-----PROGRAMS AND PARMS
+//*
+//        PROG05='IBA600A',
+//        PROG10='IBA600M',
+//        PROG15='DMN600A',
+//        PROG30='DMN600B',
+//        PARM15='DMA',
+//        MFSET='1',
+//*
+//**********************************************************************
+//******** POSSIBLE VALUES FOR MFSET, APPLID AND PRTEIBA ***************
+//***      -------------------------------------
+//***         MFSET       APPLID      PRTEIBA
+//***         -----       ------      -------
+//***           1          IBA        PRTEIBA
+//***           2          IBB        PRTEIBB
+//***           3          IBC        PRTEIBC
+//***           4          IBD        PRTEIBD
+//***           5          IBE        PRTEIBE
+//***           6          IBF        PRTEIBF
+//***           7          IBG        PRTEIBG
+//***           8          IBH        PRTEIBH
+//***
+//**********************************************************************
+//*-----GDG NUMBERS AND CYCLES
+//*
+//*       GENM00='(-0)',
+//        GENP01='(+1)',
+//        OCYCLE=DXYYDDD1
+//*
+//*-----DATASET UNITS
+//*
+//*
+//**********************************************************************
+//*                                                                    *
+//*  STEPNAME   :  STEP05R                                             *
+//*                                                                    *
+//*  DESCRIPTION:  EXTRACT CURRENT MLII PH'S, PF'S, PB'S, LH'S,        *
+//*                FC'S AND PL'S                                       *
+//*  RESTART    :  AT STEP05R                                          *
+//*                                                                    *
+//**********************************************************************
+//STEP05R  EXEC PGM=&PROG05,PARM=&MFSET,
+//         REGION=512M
+//*
+//STEPLIB  DD DISP=SHR,DSN=SYSE.TE.&LOADB..LOADB
+//         DD DISP=SHR,DSN=SYSE.TE.MERP.ALL.LOADB
+//*
+//SYSUDUMP DD  SYSOUT=&HOLD
+//SYSABOUT DD  SYSOUT=&HOLD
+//SYSDBOUT DD  SYSOUT=&HOLD
+//DISPLAY  DD  SYSOUT=&HOLD
+//SYSOUT   DD  SYSOUT=&HOLD
+//IAMINFO  DD  SYSOUT=*
+//*
+//IB600A01 DD  DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.PART.PARTMSTR
+//*
+//IB600A02  DD DISP=SHR,
+//         AMP=('BUFNI=4','BUFND=10'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.PLAN.PLANMSTR
+//*
+//IB600A03  DD DISP=SHR,
+//         AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.FUND.FUNDMSTR
+//*
+//IB600A04 DD  DISP=SHR,
+//         DSN=SYSE.TE.&CNTLB..CNTLB(&APPLID.600I1)
+//*
+//IB600A05 DD  DISP=SHR,
+//         AMP=('BUFNI=20','BUFND=50'),
+//         DSN=PRTEIBA.VSAM.IBA600P.CMPYTABL
+//*
+//*PRCETBL  DD  SUBSYS=(BLSR,'DDNAME=BLSR3','MSG=I','RMODE31=ALL',
+//*         'DEFERW=YES')
+//*
+//VAHST    DD  DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.AHST.AHSTMSTR
+//*
+//VAHST1   DD  DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.SHST.AHSTSTAT
+//*
+//VAHST2   DD  DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.SHS2.AHSTSTA2
+//*
+//BLSR3    DD  DISP=SHR,
+//         AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMI..VSAM.DPRSPRCE.PRCEMSTR
+//*
+//BBOXTBL  DD DISP=SHR,
+//            DSN=&PRTEDMI..VSAM.DPRSBBOX.BBOXMSTR
+//*
+//BBOXCTL  DD DISP=SHR,
+//            DSN=SYSE.TE.&CNTLB..CNTLB(DMI101IX)
+//*
+//***=========> ACCT-TABLE
+//IB600B01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=1400,BLKSIZE=0),
+//         SPACE=(TRK,(23000,3500),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACCTFILE&GENP01
+//*
+//***=========> DTE EXTRACT FILE 
+//IB600B02 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=500,BLKSIZE=0),
+//         SPACE=(TRK,(23000,3500),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.DTEEXTRT&GENP01
+//*
+//***=========> ACCT SOURCE FUND
+//IB600C01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=430,BLKSIZE=0),
+//         SPACE=(TRK,(23000,3500),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACTSRFND&GENP01
+//*
+//***=========> ACCT-FUND-TABLE
+//IB600N01 DD  DISP=(NEW,CATLG,DELETE),
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=190,BLKSIZE=0),
+//         SPACE=(TRK,(8000,800),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACCTFUND&GENP01
+//*
+//***=========> ACCT-BALANCE-TABLE
+//IB600D01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=1000,BLKSIZE=0),
+//         SPACE=(TRK,(23000,3000),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACTBALFL&GENP01
+//*
+//***=========> ACCT-LOAN-TABLE
+//IB600E01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=400,BLKSIZE=0),
+//         SPACE=(TRK,(700,1000),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACTLOANF&GENP01
+//*
+//***=========> ACCT-SOURCE-TABLE
+//IB600F01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=250,BLKSIZE=0),
+//         SPACE=(TRK,(25000,3000),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACTSRCEF&GENP01
+//*
+//***=========> ACCT-PYRL-TABLE
+//IB600G01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=150,BLKSIZE=0),
+//         SPACE=(TRK,(3350,500),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.ACTPAYRL&GENP01
+//*
+//***=========> PLAN-TOTAL-TABLE
+//IB600H01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=600,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.PLANTOTL&GENP01
+//*
+//***=========> PLAN-TABLE
+//IB600H02 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=200,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.PLANTABL&GENP01
+//*
+//***=========> PLAN-SRCE-TABLE
+//IB600I01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=150,BLKSIZE=0),
+//         SPACE=(TRK,(30,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.PLANSRCE&GENP01
+//*
+//***=========> SRCE-TABLE
+//IB600I02 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=50,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.SOURCETB&GENP01
+//*
+//***=========> PLAN-FUND-TABLE
+//IB600J01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=500,BLKSIZE=0),
+//         SPACE=(TRK,(500,500),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.PLANFUND&GENP01
+//*
+//***=========> FUND-TABLE
+//IB600J02 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=50,BLKSIZE=0),
+//         SPACE=(TRK,(60,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.FUNDTABL&GENP01
+//*
+//***=========> CMPY-TABLE
+//IB600K01 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=50,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.CMPYTABL&GENP01
+//*
+//***=========> REGION-TABLE
+//IB600K02 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=50,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.REGNTABL&GENP01
+//*
+//***=========> HIST EXTR TEMP TABLE
+//IB600TMP DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,
+//         DCB=(RECFM=FB,LRECL=150,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..TEMP.&APPLID.600P0.HISTTEMP.&OCYCLE
+//*
+//***=========> HISTORY EXTRACT FILE FOR PLAN 700957 ONLY
+//IB600A06 DD  DISP=(NEW,CATLG,DELETE),
+//         MGMTCLAS=&MGTCL,
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(SYSL.MODEL,RECFM=FB,LRECL=150,BLKSIZE=0),
+//         SPACE=(TRK,(10,100),RLSE),
+//         DSN=&PRTEIBA..DNLD.&APPLID.600P0.HISTEXTR&GENP01
+//*
+//EXTRMSTR DD DUMMY
+//*
+//PART01   DD DUMMY
+//*
+//*********************************************************************
+//* STEP10  - CREATES FILE TO PROVIDE DISTINCT                        *
+//*  PLAN-NO, DIVISION-CD, PAYROLL-CD                                 *
+//* RECOVERY: CAN RESTART FROM THIS STEP                              *
+//*********************************************************************
+//STEP10R  EXEC PGM=&PROG10,REGION=512M,
+//         PARM='&APPLID'
+//*
+//STEPLIB  DD DISP=SHR,DSN=SYSE.TE.&LOADB..LOADB
+//         DD DISP=SHR,DSN=SYSP.CORPCAL.LOADB
+//*
+//VPLAN DD DISP=SHR,
+//         AMP=('BUFNI=4','BUFND=20'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.PLAN.PLANMSTR
+//*
+//VAHST    DD DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.AHST.AHSTMSTR
+//VAHST1   DD DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.SHST.AHSTSTAT
+//VAHST2   DD DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.SHS2.AHSTSTA2
+//*
+//VPART DD DISP=SHR,
+//*        AMP=('BUFNI=20','BUFND=50'),
+//         DSN=&PRTEDMA..VSAM.DPR&MFSET.PART.PARTMSTR
+//*
+//EXTRFLE  DD DISP=(NEW,CATLG,DELETE),
+//         UNIT=SYSDA,                                                  CHANGED
+//         DCB=(LRECL=40,RECFM=FB,BLKSIZE=0),
+//         SPACE=(TRK,(900,350),RLSE),
+//         LABEL=RETPD=09,
+//         DSN=&PRTEIBA..OTHR.&APPLID.600P0.EXTRFILE.&OCYCLE
+//DATECARD DD DDNAME=DATECARD
+//SYSTSPRT DD SYSOUT=&HOLD
+//SYSPRINT DD SYSOUT=&HOLD
+//DISPLAY  DD SYSOUT=&HOLD
+//SYSUDUMP DD SYSOUT=&HOLD
+//SYSABOUT DD SYSOUT=&HOLD
+//SYSSNAP  DD SYSOUT=&HOLD
+//SNAPDUMP DD SYSOUT=&HOLD
+//SYSOUT   DD SYSOUT=&HOLD
+//IAMINFO  DD SYSOUT=*
+//*
+//*********************************************************************
+//*  STEPNAME   :  STEP15R                                            *
+//*  PROGRAM    :  DMN600A                                            *
+//*  DESCRIPTION:  WRITE EXTRACT FOR CHRYSLER                         *
+//*  RECOVERY   :  STEP IS NOT RESTARTABLE                            *
+//*
+//*********************************************************************
+//STEP15R  EXEC  PGM=&PROG15,PARM=&PARM15,REGION=251M //*
+//STEPLIB  DD DISP=SHR,DSN=SYSE.TE.&LOADB..LOADB
+//*
+//DISPLAY  DD SYSOUT=&HOLD
+//SYSOUT   DD SYSOUT=&HOLD
+//SYSOUX   DD SYSOUT=&HOLD
+//SYSDBOUT DD SYSOUT=&HOLD
+//SYSUDUMP DD SYSOUT=&HOLD
+//*
+//MCCAMIS  DD DUMMY
+//*
+//XREFILE  DD DISP=SHR,
+//            DSN=SYSE.TE.&CNTLB..CNTLB(IBE600I2)
+//*
+//PARTFILE  DD DISP=SHR,DSN=&PRTEDMA..VSAM.DPR&MFSET.PART.PARTMSTR
+//*
+//VPART    DD DUMMY
+//*
+//VAHST    DD DUMMY
+//*
+//VAHST1   DD DUMMY
+//*
+//VAHST2   DD DUMMY
+//*
+//BBOXTBL  DD DISP=SHR,DSN=PRTEDMI.VSAM.DPRSBBOX.BBOXMSTR
+//*
+//PRCETBL  DD DISP=SHR,DSN=PRTEDMI.VSAM.DPRSPRCE.PRCEMSTR
+//*
+//VDMNXREF DD DISP=SHR,DSN=PVSMSB01.MLII401K.DMNSRCAC.XREFFILE
+//*
+//PART01   DD DISP=(NEW,CATLG,DELETE),
+//            UNIT=SYSDA,                                               CHANGED
+//            DCB=(LRECL=300,BLKSIZE=0,RECFM=FB),
+//            SPACE=(23400,(60,15),RLSE),
+//            LABEL=RETPD=09,
+//            DSN=&PRTEIBA..OTHR.&APPLID.600P0.MCCAMISH.&OCYCLE
+//*
+//**********************************************************************
+//*  STEPNAME   :  STEP20R                                             *
+//*  PROGRAM    :  SORT                                                *
+//*  DESCRIPTION:  REMOVE THE HEADER AND TRAILER                       *
+//**********************************************************************
+//*
+//STEP20R EXEC PGM=SORT,REGION=4096K
+//*
+//SORTIN   DD DUMMY,
+//            DCB=(LRECL=300,BLKSIZE=0,RECFM=FB)
+//SORTOUT  DD DISP=(NEW,CATLG,DELETE),
+//            UNIT=SYSDA,                                               CHANGED
+//            DCB=(LRECL=300,BLKSIZE=0,RECFM=FB),
+//            SPACE=(23400,(60,15),RLSE),
+//            LABEL=RETPD=09,
+//            DSN=&PRTEIBA..SORT.&APPLID.600P0.ESE22401.&OCYCLE
+//*
+//SYSIN    DD   DISP=SHR,
+//            DSN=SYSE.TE.&CNTLB..CNTLB(IBE600I3)
+//*
+//SYSOUT   DD SYSOUT=&HOLD
+//SYSPRINT DD SYSOUT=&HOLD
+//*
+//**********************************************************************
+//*  STEPNAME   :  STEP25R                                             *
+//*  PROGRAM    :  SORT                                                *
+//*  DESCRIPTION:  MERGE THE FILES                                     *
+//**********************************************************************
+//*
+//STEP25R EXEC PGM=SORT,REGION=4096K
+//*
+//SORTIN   DD DISP=SHR,
+//            DSN=&PRTEIBA..SORT.&APPLID.600P0.ESE22401.&OCYCLE
+//         DD DISP=SHR,
+//            DSN=&PRTEIBA..OTHR.&APPLID.600P0.MCCAMISH.&OCYCLE
+//SORTOUT  DD DISP=(NEW,CATLG,DELETE),
+//            UNIT=SYSDA,                                               CHANGED
+//            DCB=(LRECL=300,BLKSIZE=0,RECFM=FB),
+//            SPACE=(23400,(60,15),RLSE),
+//            LABEL=RETPD=09,
+//            DSN=&PRTEIBA..SORT.&APPLID.600P0.EXTRACT1.&OCYCLE
+//*
+//SYSIN    DD   DISP=SHR,
+//            DSN=SYSE.TE.&CNTLB..CNTLB(IBE600I4)
+//*
+//SYSOUT   DD SYSOUT=&HOLD
+//SYSPRINT DD SYSOUT=&HOLD
+//*
+//**********************************************************************
+//*  STEPNAME   :  STEP30R                                             *
+//*  PROGRAM    :  DMN600B                                             *
+//*  DESCRIPTION:  ADD UACR HDR/TRL                                    *
+//*  RESTART    :  STEP IS RESTARTABLE                                 *
+//**********************************************************************
+//STEP30R EXEC PGM=&PROG30,REGION=550K
+//*
+//STEPLIB  DD DISP=SHR,DSN=SYSE.TE.&LOADB..LOADB
+//*
+//SYSOUT   DD  SYSOUT=&HOLD
+//SYSUDUMP DD  SYSOUT=&HOLD
+//SYSPRINT DD  SYSOUT=&HOLD
+//*
+//INPUT1   DD  DISP=SHR,
+//             DSN=&PRTEIBA..SORT.&APPLID.600P0.EXTRACT1.&OCYCLE
+//*
+//OUTPUT1  DD  DISP=(NEW,CATLG,DELETE),
+//             UNIT=SYSDA,                                              CHANGED
+//             DCB=(SYSL.MODEL,LRECL=300,BLKSIZE=0,RECFM=FB),
+//             SPACE=(23400,(60,15),RLSE),
+//*            LABEL=RETPD=09,
+//             DSN=&PRTEIBA..TROT.&APPLID.600P0.ESE22401&GENP01
+//*
+//*-------------------------------------------------------------------*
+//*->>>>>>>>>>>>>>>>>>>>>>>  END OF PROC  <<<<<<<<<<<<<<<<<<<<<<<<<<<-*
+//*-------------------------------------------------------------------*
+//*-CHANGELOG:                                                       -*
+//*  09/09/03  STEVE DONIGIAN  SIU  212-647-2505                     -*
+//*            REGION SIZE INCREASED FOR STEP10R TO CORRECT U0423    -*
+//*            ABEND.                                                -*
+//*-------------------------------------------------------------------*
+//*  01/22/02  B. LUTZ INCREASED SIZE OF SRCEF AND ACTBALFL FILES     _*
+//*  12/30/98  S. DONIGIAN DSS  - 212-647-2505                        _*
+//*            SPACE PARAMETERS HAVE BEEN MODIFIED FOR SELECTED FILES -*
+//*            TO CORRECT JCLERROR.                                   -*
+//*                                                                   -*
+//*  03/98     CHANGED LRECL OF REGNTAB FROM 20 TO 50 FOR REGION NAME -*
+//*  AMM                                                              -*
+//*                                                                   -*
+//*  09/99     CHANGED LRECL OF PLAN-TABLE FROM 100 TO 200 AND        -*
+//*            LOAN-TABLE FROM 250 TO 300                             -*
+//*                                                                   -*
+//*  09/99     ADDED UDF-TABLE IN FULL-LOAD AND DELTA FILES.          -*
+//****************************                                        -*
+//*  06/01     MODIFIED THE RECORD LENGTHS OF                         -*
+//*            IB600B01 - ACCT-TABLE             400 TO 550           -*
+//*            IB600C01 - ACCT-SOURCE-FUND-TABLE 400 TO 430           -*
+//*            IB600D01 - ACCT-BALANCE-TABLE     400 TO 450           -*
+//*            IB600E01 - ACCT-LOAN-TABLE        300 TO 350           -*
+//*            IB650B02 - DELTA ACCT-TABLE             400 TO 550     -*
+//*            IB650C02 - DELTA-ACCT-SOURCE-FUND-TABLE 400 TO 430     -*
+//*            IB650D02 - DELTA-ACCT-BALANCE-TABLE     400 TO 450     -*
+//*            IB650E02 - DELTA-ACCT-LOAN-TABLE        300 TO 350     -*
+//*          TO MEET THE REQUIREMENTS OF E-REPORTING WEBSITE DATABASE -*
+//****************************                                        -*
+//*  09/10/01 - YELENA BYKOVA                                         -*
+//*             ADDED STEP10 TO CREATE FILE THAT HAS ALL VARIATIONS   -*
+//*             OF PLAN NUMBERS, DIVISION CODES, PAYROLL CODES.       -*
+//*--------------------------------------------------------------------*
+//*  07/26/02 - SBPRADD DOUG PRADAT                                   -*
+//*             ADDED EXTRMSTR AND PART01 DUMMY FOR CHRYSLER EXTRACT  -*
+//*             BECAUSE ONLY USED IN 'E' DUMMY HERE AND OVERRIDE      -*
+//*             IN JCL IBE600P                                        -*
+//*--------------------------------------------------------------------*
+//*  08/02/02 - CHANGED SECOND NODE OF DATA SET NAMES FOR FOLLOWING   -*
+//*  M. KRAUS   FROM OTHR TO DNLD:                                    -*
+//*             ACCTFILE                                              -*
+//*             ACTSRFND                                              -*
+//*             ACTBALFL                                              -*
+//*             ACTLOANF                                              -*
+//*             ACTSRCEF                                              -*
+//*             ACTPAYRL                                              -*
+//*             UDFTABLE                                              -*
+//*--------------------------------------------------------------------*
+//*  03/10/03 - ADDED THE BBOX FILES IN THE PROC AND ALSO CHANGED THE -*
+//*  N. GEHLOT  SPACE PARAMETER FROM BLOCK TO TRACKS FOR OUTOUT FILES.-*
+//*--------------------------------------------------------------------*
+//*  05/10/03 - EXPANDED THE ACCTFILE FROM 550 BYTES TO 850 BYTES TO  -*
+//*  N. GEHLOT  ADD ADVICE AND GUIDANCE FLDS AND AHBTEMAIL ADDR FIELDS *
+//*--------------------------------------------------------------------*
+//*  01/22/04 - TWO DATASETS ARE REMOVED FOR THE DECOMMISSIONING      -*
+//*  SBASHOK    DD IB600C01 & IB600L01.                               -*
+//*--------------------------------------------------------------------*
+//*--------------------------------------------------------------------*
+//*  10/13/06 - ADDED STEP15R,STEP20R,STEP15R AND STEP20R TO EXTRACT  -*
+//*  SBMISHR    THE RECORDS FOR NON QUALIFIED PLANS AND TO MERGE      -*
+//*             IT WITH QUALIFIED PLANS                               -*
+//*--------------------------------------------------------------------*
+//*  04/2015  - ADDED DD IB600A06 FOR HISTORY EXTRACT                 -*
+//*  M.HOSZKO - EXPAND LRECL FOR ACCTFILE TO 1400 FROM 1100           -*
+//*             EXPAND LRECL FOR PLANTOTL TO 600  FROM 450            -*
+//*             EXPAND LRECL FOR PLANFUND TO 500  FROM 200            -*
+//*--------------------------------------------------------------------*
+//*  08/2015  - ADDED DD IB600B02 FOR DTE EXTRACT FILE                -*
+//*  M.HOSZKO - INITIAL LRECL IS 500 BYTES FOR DTEEXTRT               -*
+//*--------------------------------------------------------------------*
+//*  11/2016  - EXPAND FILE FROM 750 BYTES TO 1000                    -*
+//*  DEMARTINIS                                                       -*
+//*--------------------------------------------------------------------*

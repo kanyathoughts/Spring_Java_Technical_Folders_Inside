@@ -1,0 +1,5029 @@
+Form CEPL502AA
+   /* Start.Documentation
+
+   SYSTEM:   CEP (Claims/Encounter Processing)
+   PROGRAM:  CEPL502AA
+   TITLE:    Authorization Maintenance Main form
+   ALIAS:    CEPL502AA
+   DATE:     January 1991
+
+   MOD:    07-02-2008	    JSZ	    OBSOLETE
+	    Software has been obsolete for years.
+
+   MOD:	    05-JUL-1995
+	    Expanded notes array from 25 to 250 for MDM.
+	    MOD #6
+
+   MOD:     09-DEC-1992        HNPROJ/007850  MOD# 5 THY
+	    Modified to check for new parameter passed, calling program
+	    indicator (M or A) and if it is "A" (called by adjudication 
+	    program, check if the auth type code is allowed to be processed
+	    by examiner by calling new module, CEPF520AA. If not allowed,
+	    do not allow updating and adding of records.
+
+   MOD:     26-MAY-1992        ISR# 005138  MOD# 4  GLW
+	    Modified to default Auth Type to "M" on new Auth creation.
+
+   MOD #3:  April 3, 1992
+	    Modified for HMO defaulting of CEP_AUTHORIZATION_MASTER file.
+
+   MOD #2:  August 24, 1991 - Implementation
+	    July 9, 1991 - Modification
+	    o	Modify the ENRF038AA_REC internal record layout to fit
+		with the new MBRELIG record layout by positioning the
+		Pmg and Group variables and added three new filler
+		variables.
+
+   MOD #1:  February 5, 1991
+ 	    This screen was modified to invoke the authorization search
+	    function (CEPS512AA_Auth_Selection) when the user enters the
+	    FIND key at the Authorization ID field.
+
+   OVERVIEW:
+
+      Processes the Authorizations "Main" data entry screen.  In
+      Update mode either stores or updates records, Inquiry mode
+      displays records.   It is processed by CEPS502AA.COB.
+**/
+
+    Form Data 
+	GROUP RMC_TABLE
+	    Occurs 20
+	    Code Character(1)
+	END GROUP
+	JPI_User_ID	Character (32)
+	Indemn_RMC_Tbl_Loaded LONGWORD INTEGER
+	Indemn_RMC_Count LONGWORD INTEGER
+	GRPNO Character(8)
+	RMC_T_NAME Character(15)
+	SYSTEM_CODE Character(1)
+	PROT_SW CHARACTER (3)
+	PROT_SW_2 CHARACTER (3)
+	PROT_SW_3 CHARACTER (3)
+	PROT_SW_4 CHARACTER (3)
+	T_ROW	WORD INTEGER
+	T_COL	WORD INTEGER
+        HEADER_1 Character(30)
+        HEADER_2 Character(30)
+        PAR_HEADER_1 Character(31)
+        PAR_HEADER_2 Character(31)
+        SCREEN_MODE Character(8)
+        /* Program Control Variables */
+        PROG_MODE Character(1)
+        SYS_MODE Character(1)
+        UPD_MODE Character(1)
+
+        RETURN_COND Character(3)
+        RETURN_COMMAND Character(7)
+        PROCESS_COND Character(3)
+        DX_MIN_LENGTH Word Integer
+        CHGS_MADE Unsigned Longword
+        FIRST_TIME_THRU Unsigned Longword
+        DIFF_MBR_FLAG Unsigned Longword
+        /* Authorization Master  */
+        /*    Forms data         */
+        PAR_0 Word Integer VALUE 0
+        PAR_1 Word Integer VALUE 1
+        PAR_9 Word Integer VALUE 9
+        HDR_1 Word Integer VALUE 80
+        HDR_2 Word Integer VALUE 0
+	ICIDATE_FROM LONGWORD INTEGER
+	ICIDATE_THRU LONGWORD INTEGER
+	TEMP_INJ_DATE CHARACTER(8)
+        AUTH_INJ_VMSDATE DATE
+        AUTH_BEN_ADM Character(9)
+        AUTH_NOTE1 Character(64)
+        AUTH_NOTE2 CHARACTER(64)
+        AUTH_NOTE3 CHARACTER(64)
+        AUTH_ID Character(7)
+        AUTH_ITEM Word Integer
+        AUTH_REC_TYPE Character(1)
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        AUTH_TYPE Character(1)
+        AUTH_STATUS_CODE Character(1)
+        AUTH_STATUS_EFF_DATE Longword Integer
+        AUTH_STATUS_EFF_TIME Longword Integer
+        AUTH_PMG_ID Character(4)
+        AUTH_SERV_PROV_NAME Character(44)
+        AUTH_WKCOMP Character(1)
+	AUTH_INJ_DATE LONGWORD INTEGER
+        AUTH_COB Character(1)
+        AUTH_MEDICARE Character(1)
+        AUTH_SEVERITY_CODE Character(1)
+        AUTH_PRI_DIAG Character(5)
+        AUTH_DIS_REASON_CODE Character(1)
+        AUTH_ADM_TYPE_CODE Character(1)
+        AUTH_EST_ADM_DATE Longword Integer
+        AUTH_EST_ADM_TIME Longword Integer
+        AUTH_EST_DIS_DATE Longword Integer
+        AUTH_EST_DIS_TIME Longword Integer
+        AUTH_INPATIENT Character(1)
+        AUTH_OUT_EMER Character(1)
+        AUTH_OUT_SURG Character(1)
+        AUTH_PATH_PROF Character(1)
+        AUTH_RAD_PROF Character(1)
+        AUTH_AMBULANCE Character(1)
+        AUTH_HOME_HEALTH Character(1)
+        AUTH_HOSPICE Character(1)
+        AUTH_OTHER Character(1)
+        AUTH_CREATION_ICIDATE Longword Integer
+        AUTH_CREATION_ICITIME Longword Integer
+        AUTH_CREATION_USERNAME Character(3)
+        FILLER_39 Character(39)
+	AUTH_EXT_TRACK_NO Character(15)
+        AUTH_FILLER_4 Character(4)
+        AUTH_LAST_UPD_ICIDATE Longword Integer
+        AUTH_LAST_UPD_ICITIME Longword Integer
+        AUTH_LAST_UPD_USERNAME Character(3)
+        AUTH_FILLER_1 Character(1)
+        /*	Copy "ENRF011AA_REC" From Dictionary     Try this for some real fun!
+	End Copy                                                         */
+        AUTH_TYPE_DESC Character(36)
+        /* Auth master Screen    */
+        AUTH_MBR_TYPE_DESC Character(3)
+        /* Display fields        */
+        AUTH_MBR_NAME Character(31)
+        AUTH_MBR_DOB_CCYY CHARACTER(4) 
+        AUTH_MBR_DOB_MMDD CHARACTER(4) 
+	WORK_MBR_FLAGS Longword Integer
+        WORK_STATUS_CODE Character(1)
+        WORK_STATUS_EFF_DATE Longword Integer
+        WORK_STATUS_EFF_TIME Longword Integer
+        WORK_PMG_ID Character(4)
+        WORK_SERV_PROV_NAME Character(44)
+        WORK_WKCOMP Character(1)
+	WORK_INJ_DATE LONGWORD INTEGER
+        WORK_COB Character(1)
+        WORK_MEDICARE Character(1)
+        WORK_SEVERITY_CODE Character(1)
+        WORK_PRI_DIAG Character(5)
+        WORK_DIS_REASON_CODE Character(1)
+        WORK_ADM_TYPE_CODE Character(1)
+        WORK_EST_ADM_DATE Longword Integer
+        WORK_EST_ADM_TIME Longword Integer
+        WORK_EST_DIS_DATE Longword Integer
+        WORK_EST_DIS_TIME Longword Integer
+        WORK_INPATIENT Character(1)
+        WORK_OUT_EMER Character(1)
+        WORK_OUT_SURG Character(1)
+        WORK_PATH_PROF Character(1)
+        WORK_RAD_PROF Character(1)
+        WORK_AMBULANCE Character(1)
+        WORK_HOME_HEALTH Character(1)
+        WORK_HOSPICE Character(1)
+        WORK_OTHER Character(1)
+        WORK_CREATION_ICIDATE Longword Integer
+        WORK_CREATION_ICITIME Longword Integer
+        WORK_CREATION_USERNAME Character(3)
+	WORK_EXT_TRACK_NO Character(15)
+        WORK_LAST_UPD_ICIDATE Longword Integer
+        WORK_LAST_UPD_ICITIME Longword Integer
+        WORK_LAST_UPD_USERNAME Character(3)
+       /* WORK_NOTE1 Character(64)
+        WORK_NOTE2 CHARACTER(64)
+        WORK_NOTE3 CHARACTER(64)  */
+	AUTH_MBR_FLAGS Longword Integer
+        AUTH_PMG_NAME Character(33)
+        AUTH_PMG_NAME2 Character(27)
+        AUTH_PRI_DIAG_DESC Character(45)
+        AUTH_CREATION_VMSDATE Date
+        AUTH_LAST_UPD_VMSDATE Date
+        AUTH_SEVERITY_CODE_DESC Character(15)
+        AUTH_DIS_REASON_DESC Character(20)
+        AUTH_ADM_TYPE_DESC Character(24)
+        AUTH_STATUS_DESC Character(20)
+        AUTH_STATUS_EFF_VMSDATE Date
+        AUTH_INJ_OUTDATE INTEGER(8) VALUE 0
+        AUTH_EST_ADM_VMSDATE Date
+        AUTH_EST_DIS_VMSDATE Date
+        CURR_VMSDATE Date Current
+        TODAY_VMSDATE Date
+        /* Table fields and other  */
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_DIR Character(1)
+        TABLE_CODE Character(6)
+        TABLE_CODE_OUT Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+        VALID_OPTION Unsigned Longword
+        TRUE Longword Integer
+            Value -1
+        FALSE Longword Integer
+            Value 0
+        RET_VALUE Unsigned Longword
+        RET_VALUE_SAVE Unsigned Longword
+        SESSION Character(16) Builtin
+        MSG_ID Longword Integer
+        MESSAGE_LINE Character(80)
+        GEN_INVSSN Longword Integer
+        GEN_INVPROV Longword Integer
+        GEN_INVBA Longword Integer
+        GEN_INVUBA Longword Integer
+        GEN_INVUW Longword Integer
+        ENR_INVMBRBA Longword Integer
+        SCR_COLS Word Integer
+            Value 80
+        /*  misc. definitions      */
+        ABORT_FLD Character(5)
+        /* Confirm, Enter & Abort  */
+        CONFIRM_FLD Character(1)
+        /* panel fields            */
+        CONFIRM_FLAG Word Integer
+        CONFIRM_PROMPT_FLD Character(58)
+        OPTION_FLD Character(1)
+        OPTION_DESC Character(20)
+        OPTION_TERSE Character(20)
+        OPTION_TABLE Character(12)
+        OPTION_DIRECTION Character(1)
+        ENTER_FLD Character(2)
+        ENTER_RESPONSE Character(6)
+        /* Misc. Variables    */
+        DUP_MSG_LIT1 Character(34)
+            Value "Possible Duplicate Authorization  "
+        DUP_AUTH_ID Character(7)
+        DUP_MSG_LIT2 Character(16)
+            Value " Continue? [Y]: "
+        DUP_FLD Character(1)
+	RTN_SSN Character(9)
+	RTN_MBR_TYPE Character(1)
+        TODAY_ICIDATE Longword Integer
+        TODAY_ICITIME Longword Integer
+        ICIDATE1 Longword Integer
+        ICITIME1 Longword Integer
+        ICIDATE2 Longword Integer
+        ICITIME2 Longword Integer
+
+	LINK_ID CHARACTER(4)
+	LINK_NAME CHARACTER(33)
+	LINK_NAME2 CHARACTER(33)
+	NOTE_CAPTION Character(10)
+	UP_SYMBOL   CHARACTER(1)
+	DOWN_SYMBOL   CHARACTER(1)
+        HEADER_NODE_ID Character(3)
+        HEADER_ENV_ID Character(3)
+        TODAY Date Current
+        NONE Word Integer
+            Value 0
+        ONE Word Integer
+            Value 1
+        MINUS_ONE Word Integer
+            Value -1
+        SAVE_PTR Word Integer
+            Value 0
+        LONG_TEMP Longword Integer
+        AUTH_FILLER Character(176)
+        AUTH_ID_SAVE Character(7)
+        DIAG_CODE Character(5)
+        DIAG_DESC Character(80)
+        HDR_CNT Longword Integer
+        EMP_GROUP Character(8)
+        /* EMP_SUB_GROUP Character(2) */
+        FAM_TAB_DIR Character(1)
+        COVERAGE_TYPE Character(1)
+        OFFSET_MODE Character(1)
+        OFFSET_VALUE Word Integer
+        OED_ICIDATE Longword Integer
+        FILLER_17 Character(17)
+        FILLER_23 Character(23)
+        SIX_BYTES Character(6)
+        BEN_TYPE Character(1)
+        REDISP_FLAG Character(1)
+        SELECT_FLAG Character(1)
+        SAVE_SSN Character(9) 
+        PROV_ID Character(9)
+        PROV_SUFF Character(3)
+        FILLER_173 Character(173)
+        PARENTREQUESTID Character(24) Builtin
+        Group ENR_TAB 
+            Occurs 21
+            ENR_MBR_CODE Character(3)
+            ENR_MBR_DOB_CCYY Character(4)
+            ENR_MBR_DOB_MMDD Character(4)
+            ENR_FILLER_8 Character(8)
+            ENR_SSN Character(9)
+            ENR_MBR_TYPE Character(1)
+            ENR_GEN_NAME_REC Character(28)
+            ENR_FILLER_9 Character(9)
+            ENR_MBR_FLAGS LONGWORD INTEGER
+            ENR_FILLER_99 Character(99)
+        End Group
+        PAT_PTR Word Integer
+        Copy
+            "INT_RECORDS.HN_Namedef" from Dictionary
+        End Copy
+	NOTE_PTR    Word Integer
+        Group NOTE_TABLE
+/* Begin MOD #6
+            Occurs 25	*/
+            Occurs 250
+/* End MOD #6		*/
+	    NOTELINE Character(64)
+	    AUTHITEM Word Integer
+        End Group
+	NEXT_ITEM Word Integer
+	MAXLIN	Word Integer
+	NOLIN	Word Integer
+	DISPFL	Word Integer
+	ROWNO	Word Integer
+	COLNO	Word Integer
+	DSPLIN	Word Integer
+	INITFL	Word Integer
+	CURLIN	Word Integer
+	START	Word Integer
+	CHGS	Word Integer
+    End Data
+
+    Form Data 
+        ENR_BOTMDATA Longword Integer
+        ENR_TOPDATA Longword Integer
+        ENR_MBRSRCHERR Longword Integer
+        ENR_NOTFILE Longword Integer
+        ENR_INVIDTY Longword Integer
+        ENR_INVMBRTYP Longword Integer
+        ENR_ELGERR Longword Integer
+        ENR_PCPNOTFOU Longword Integer
+        ENR_ELGNOTFOU Longword Integer
+        NET_NOPRVSEL Longword Integer
+        NET_INVSUFF Longword Integer
+        GEN_INVFLDNUM Longword Integer
+        GEN_ENTYORN Longword Integer
+        GEN_CHGNOTALL Longword Integer
+        GEN_INVOPT Longword Integer
+        CEP_MANSCRDSP Longword Integer
+        CEP_INVAUTHID Longword Integer
+        CEP_AUTNOTFOU Longword Integer
+        CEP_INVAUTTYP Longword Integer
+        CEP_SRVSTDREQ Longword Integer
+        CEP_SRVSTDINV Longword Integer
+        CEP_SRVEDTINV Longword Integer
+        CEP_SRVDTRINV Longword Integer
+        CEP_SRVEDTREQ Longword Integer
+        CEP_INVADMTYP Longword Integer
+        CEP_INVSTACDE Longword Integer
+        CEP_STADTEREQ Longword Integer
+        CEP_EXPDTEREQ Longword Integer
+        CEP_EXPDTEINV Longword Integer
+        CEP_INVDIACDE Longword Integer
+        CEP_PRIDIAREQ Longword Integer
+        CEP_DUPDIACDE Longword Integer
+        CEP_INVDISCDE Longword Integer
+        CEP_INVSEVCDE Longword Integer
+    End Data
+
+    Form Record CEP_502_MSG_IDS
+        ENR_BOTMDATA Longword Integer
+        ENR_TOPDATA Longword Integer
+        ENR_MBRSRCHERR Longword Integer
+        ENR_NOTFILE Longword Integer
+        ENR_INVIDTY Longword Integer
+        ENR_INVMBRTYP Longword Integer
+        ENR_ELGERR Longword Integer
+        ENR_PCPNOTFOU Longword Integer
+        ENR_ELGNOTFOU Longword Integer
+        NET_NOPRVSEL Longword Integer
+        NET_INVSUFF Longword Integer
+        GEN_INVFLDNUM Longword Integer
+        GEN_ENTYORN Longword Integer
+        GEN_CHGNOTALL Longword Integer
+        GEN_INVOPT Longword Integer
+        CEP_MANSCRDSP Longword Integer
+        CEP_INVAUTHID Longword Integer
+        CEP_AUTNOTFOU Longword Integer
+        CEP_INVAUTTYP Longword Integer
+        CEP_SRVSTDREQ Longword Integer
+        CEP_SRVSTDINV Longword Integer
+        CEP_SRVEDTINV Longword Integer
+        CEP_SRVDTRINV Longword Integer
+        CEP_SRVEDTREQ Longword Integer
+        CEP_INVADMTYP Longword Integer
+        CEP_INVSTACDE Longword Integer
+        CEP_STADTEREQ Longword Integer
+        CEP_EXPDTEREQ Longword Integer
+        CEP_EXPDTEINV Longword Integer
+        CEP_INVDIACDE Longword Integer
+        CEP_PRIDIAREQ Longword Integer
+        CEP_DUPDIACDE Longword Integer
+        CEP_INVDISCDE Longword Integer
+        CEP_INVSEVCDE Longword Integer
+    End Record
+
+    Form Record WORK_MAIN
+        AUTH_ID Character(7)
+        AUTH_ITEM Word Integer
+        AUTH_REC_TYPE Character(1)
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        AUTH_TYPE Character(1)
+        WORK_STATUS_CODE Character(1)
+        WORK_STATUS_EFF_DATE Longword Integer
+        WORK_STATUS_EFF_TIME Longword Integer
+        WORK_PMG_ID Character(4)
+        WORK_SERV_PROV_NAME Character(44)
+        WORK_WKCOMP Character(1)
+	WORK_INJ_DATE LONGWORD INTEGER
+        WORK_COB Character(1)
+        WORK_MEDICARE Character(1)
+        WORK_SEVERITY_CODE Character(1)
+        WORK_PRI_DIAG Character(5)
+        WORK_DIS_REASON_CODE Character(1)
+        WORK_ADM_TYPE_CODE Character(1)
+        WORK_EST_ADM_DATE Longword Integer
+        WORK_EST_ADM_TIME Longword Integer
+        WORK_EST_DIS_DATE Longword Integer
+        WORK_EST_DIS_TIME Longword Integer
+        WORK_INPATIENT Character(1)
+        WORK_OUT_EMER Character(1)
+        WORK_OUT_SURG Character(1)
+        WORK_PATH_PROF Character(1)
+        WORK_RAD_PROF Character(1)
+        WORK_AMBULANCE Character(1)
+        WORK_HOME_HEALTH Character(1)
+        WORK_HOSPICE Character(1)
+        WORK_OTHER Character(1)
+        WORK_CREATION_ICIDATE Longword Integer
+        WORK_CREATION_ICITIME Longword Integer
+        WORK_CREATION_USERNAME Character(3)
+	WORK_EXT_TRACK_NO Character(15)
+        AUTH_FILLER_4 Character(4)
+        WORK_LAST_UPD_ICIDATE Longword Integer
+        WORK_LAST_UPD_ICITIME Longword Integer
+        WORK_LAST_UPD_USERNAME Character(3)
+        AUTH_FILLER_1 Character(1)
+    End Record
+
+/*    Form Record WORK_NOTE
+        WORK_NOTE1 Character(64)
+        WORK_NOTE2 CHARACTER(64)
+        WORK_NOTE3 CHARACTER(64)
+    End Record                     */
+
+    Form Record AUTMAIN_REC
+        AUTH_ID Character(7)
+        AUTH_ITEM Word Integer
+        AUTH_REC_TYPE Character(1)
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        AUTH_TYPE Character(1)
+        AUTH_STATUS_CODE Character(1)
+        AUTH_STATUS_EFF_DATE Longword Integer
+        AUTH_STATUS_EFF_TIME Longword Integer
+        AUTH_PMG_ID Character(4)
+        AUTH_SERV_PROV_NAME Character(44)
+        AUTH_WKCOMP Character(1)
+	AUTH_INJ_DATE LONGWORD INTEGER
+        AUTH_COB Character(1)
+        AUTH_MEDICARE Character(1)
+        AUTH_SEVERITY_CODE Character(1)
+        AUTH_PRI_DIAG Character(5)
+        AUTH_DIS_REASON_CODE Character(1)
+        AUTH_ADM_TYPE_CODE Character(1)
+        AUTH_EST_ADM_DATE Longword Integer
+        AUTH_EST_ADM_TIME Longword Integer
+        AUTH_EST_DIS_DATE Longword Integer
+        AUTH_EST_DIS_TIME Longword Integer
+        AUTH_INPATIENT Character(1)
+        AUTH_OUT_EMER Character(1)
+        AUTH_OUT_SURG Character(1)
+        AUTH_PATH_PROF Character(1)
+        AUTH_RAD_PROF Character(1)
+        AUTH_AMBULANCE Character(1)
+        AUTH_HOME_HEALTH Character(1)
+        AUTH_HOSPICE Character(1)
+        AUTH_OTHER Character(1)
+        AUTH_CREATION_ICIDATE Longword Integer
+        AUTH_CREATION_ICITIME Longword Integer
+        AUTH_CREATION_USERNAME Character(3)
+	AUTH_EXT_TRACK_NO Character(15)
+        AUTH_FILLER_4 Character(4)
+        AUTH_LAST_UPD_ICIDATE Longword Integer
+        AUTH_LAST_UPD_ICITIME Longword Integer
+        AUTH_LAST_UPD_USERNAME Character(3)
+        AUTH_FILLER_1 Character(1)
+    End Record
+
+    Form Record MESSAGE_IDS
+        GEN_INVSSN Longword Integer
+        GEN_INVPROV Longword Integer
+        GEN_INVBA Longword Integer
+        GEN_INVUBA Longword Integer
+        GEN_INVUW Longword Integer
+        ENR_INVMBRBA Longword Integer
+    End Record
+
+    Form Record MESSAGE_REC
+        MESSAGE_LINE Character(80)
+    End Record
+
+    Form Record GENF113AA_REC
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_CODE Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+    End Record
+
+    Form Record GENF114AA_REC
+        TABLE_TYPE Character(1)
+        TABLE_ID Character(12)
+        TABLE_CODE Character(6)
+        TABLE_DIR Character(1)
+        TABLE_CODE_OUT Character(6)
+        TABLE_TERSE Character(50)
+        TABLE_DESC Character(50)
+    End Record
+
+    Form Record ICLOCK_ARG
+        AUTH_ID Character(7)
+        MESSAGE_LINE Character(80)
+    End Record
+
+    Form Record POSSIBLE_DUP
+        DUP_AUTH_ID Character(7)
+        AUTH_FILLER Character(176)
+    End Record
+
+    Form Record ENRF011AA_REC
+        Group ENR_TAB
+            Occurs 21
+            ENR_MBR_CODE Character(3)
+            ENR_MBR_DOB_CCYY Character(4)
+            ENR_MBR_DOB_MMDD Character(4)
+            ENR_FILLER_8 Character(8)
+            ENR_SSN Character(9)
+            ENR_MBR_TYPE Character(1)
+            ENR_GEN_NAME_REC Character(28)
+            ENR_FILLER_9 Character(9)
+            ENR_MBR_FLAGS LONGWORD INTEGER
+            ENR_FILLER_99 Character(99)
+        End Group
+        PAT_PTR Word Integer
+    End Record
+
+/*  Form Record CEPS590_REC
+	Group RMC_TABLE
+	    Occurs 20
+	    CODE Character(1)
+        End Group
+	INDEMN_RMC_COUNT LONGWORD INTEGER
+	INDEMN_RMC_TBL_LOADED LONGWORD INTEGER
+	SYSTEM_CODE Character(1)
+	GRPNO Character(8)
+	RMC_T_NAME Character(15)
+    End Record				*/
+
+
+    Form Record ENRF032AA_REC
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        EMP_GROUP Character(8)
+        /* EMP_SUB_GROUP Character(2) */
+        COVERAGE_TYPE Character(1)
+        ICIDATE1 Longword Integer
+        PROV_ID Character(9)
+        PROV_SUFF Character(3)
+        ICIDATE2 Longword Integer
+    End Record
+
+    Form Record ENRF036AA_REC
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        EMP_GROUP Character(8)
+        /* EMP_SUB_GROUP Character(2) */
+        ICIDATE1 Longword Integer
+        COVERAGE_TYPE Character(1)
+        AUTH_BEN_ADM Character(9)
+    End Record
+
+    Form Record HEADER_REC
+        HEADER_NODE_ID Character(3)
+        HEADER_ENV_ID Character(3)
+    End Record
+
+    Form Record LINK_REC
+	LINK_ID CHARACTER(4)
+	LINK_NAME CHARACTER(33)
+	LINK_NAME2 CHARACTER(33)
+    End Record
+
+    Form Record GEN_NAME_REC
+        Copy
+            "INT_RECORDS.HN_Namedef" from Dictionary
+        End Copy
+    End Record
+
+    Form Record GENF126AA_REC
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        AUTH_MBR_NAME Character(31)
+        AUTH_MBR_DOB_MMDD Character(4)
+        AUTH_MBR_DOB_CCYY Character(4)
+	AUTH_MBR_FLAGS Longword Integer
+    End Record
+
+    Form Record GENF126AA_WORK_REC
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        FILLER_39 Character(39)
+	WORK_MBR_FLAGS Longword Integer
+    End Record
+
+    Form Record PROC_STAMP
+        TODAY_ICIDATE Longword Integer
+        TODAY_ICITIME Longword Integer
+        AUTH_LAST_UPD_USERNAME Character(3)
+    End Record
+
+    Form Record RET_PROC_COND
+        RETURN_COND Character(3)
+        PROCESS_COND Character(3)
+        DX_MIN_LENGTH Word Integer
+    End Record
+
+    Form Record ENRF038AA_REC
+        AUTH_SSN Character(9)
+        AUTH_MBR_TYPE Character(1)
+        BEN_TYPE Character(1)
+        REDISP_FLAG Character(1)
+        ICIDATE1 Longword Integer
+        ICIDATE2 Longword Integer
+	/* MOD #2 BEGIN */
+        /* FILLER_19 Character(19) */
+	FILLER_16 Character(16)
+        EMP_GROUP Character(8)
+	FILLER_4 Character(4)
+        AUTH_PMG_ID Character(4)
+	FILLER_26 Character(26)
+        /* EMP_SUB_GROUP Character(2) */
+        /* FILLER_17 Character(17) */
+	/* MOD #2 END */
+        SELECT_FLAG Character(1)
+    End Record
+
+    Form Record CEPF502AB_REC
+        Group NOTE_TABLE
+/* Begin MOD #6
+            Occurs 25	*/
+            Occurs 250
+/* End MOD #6		*/
+	    NOTELINE Character(64)
+	    AUTHITEM Word Integer
+        End Group
+	NEXT_ITEM Word Integer
+	MAXLIN	Word Integer
+	NOLIN	Word Integer
+	DISPFL	Word Integer
+	ROWNO	Word Integer
+	COLNO	Word Integer
+	DSPLIN	Word Integer
+	INITFL	Word Integer
+	CURLIN	Word Integer
+	START	Word Integer
+	CHGS	Word Integer
+    End Record
+
+    Record List RET_CODE_REC_LIST
+        AUTMAIN_REC
+	CEPF502AB_REC
+        RET_PROC_COND
+    End List
+
+    Record List MESSAGE_REC_LIST
+        MESSAGE_IDS
+        CEP_502_MSG_IDS
+    End List
+
+
+    Layout VT_LAYOUT
+        Device
+            Terminal
+                Type %VT100
+        End Device
+        Size 24 Lines by 80 Columns
+
+        /* Define wanted function keys */
+        /* Define some useful general  */
+        /* purpose internal responses  */
+        /* Reset an Authmast Record    */
+        /*  and asssociated screen     */
+        /*  display/edit fields        */
+        Viewport HEADER_VIEWPORT
+            Lines 1 Through 1
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport MAIN_VP
+            Lines 2 Through 22
+            Columns 1 Through 80
+        End Viewport
+
+        Viewport PROMPT_VIEWPORT
+            Lines 23 Through 24
+            Columns 1 Through 80
+        End Viewport
+
+        Function ENTER_KEY
+            Is %CARRIAGE_RETURN
+               %KP_ENTER
+        End Function
+
+        Function BACK_FLD
+            Is %F12
+               %CONTROL_H
+        End Function
+
+        Function PF1_QUIT
+            Is %PF1
+        End Function
+
+        Function PF2_QUIT
+            Is %PF2
+        End Function
+
+        Function PF3_KEY
+            Is %PF3
+        End Function
+
+        Function PF4_QUIT
+            Is %PF4
+        End Function
+
+        Function INSERT_KEY
+            Is %INSERT_HERE
+        End Function
+
+        Function REMOVE_KEY
+            Is %REMOVE
+        End Function
+
+        Function DO_KEY
+            Is %DO
+        End Function
+
+        Function SELECT_KEY
+            Is %SELECT
+        End Function
+
+        Function FIND_KEY
+            Is %FIND
+        End Function
+
+        Function NEXT_PAGE
+            Is %NEXT_SCREEN
+        End Function
+
+        Function PREV_PAGE
+            Is %PREV_SCREEN
+        End Function
+
+        Function UP_ITEM
+            Is %UP
+        End Function
+
+        Function DOWN_ITEM
+            Is %DOWN
+        End Function
+
+        Function LEFT_ITEM
+            Is %LEFT
+        End Function
+
+        Function RIGHT_ITEM
+            Is %RIGHT
+        End Function
+
+        Internal Response MOVE_WORK_TO_REC
+	    Let AUTH_STATUS_CODE = WORK_STATUS_CODE 
+	    Let AUTH_STATUS_EFF_DATE = WORK_STATUS_EFF_DATE 
+	    Let AUTH_STATUS_EFF_TIME = WORK_STATUS_EFF_TIME 
+	    Let AUTH_PMG_ID = WORK_PMG_ID 
+	    Let AUTH_SERV_PROV_NAME = WORK_SERV_PROV_NAME 
+	    Let AUTH_WKCOMP = WORK_WKCOMP 
+	    Let AUTH_INJ_DATE = WORK_INJ_DATE 
+	    Let AUTH_COB = WORK_COB 
+	    Let AUTH_MEDICARE = WORK_MEDICARE 
+	    Let AUTH_SEVERITY_CODE = WORK_SEVERITY_CODE 
+	    Let AUTH_PRI_DIAG = WORK_PRI_DIAG 
+	    Let AUTH_DIS_REASON_CODE = WORK_DIS_REASON_CODE 
+	    Let AUTH_ADM_TYPE_CODE = WORK_ADM_TYPE_CODE 
+	    Let AUTH_EST_ADM_DATE = WORK_EST_ADM_DATE 
+	    Let AUTH_EST_ADM_TIME = WORK_EST_ADM_TIME 
+	    Let AUTH_EST_DIS_DATE = WORK_EST_DIS_DATE 
+	    Let AUTH_EST_DIS_TIME = WORK_EST_DIS_TIME 
+	    Let AUTH_INPATIENT = WORK_INPATIENT 
+	    Let AUTH_OUT_EMER = WORK_OUT_EMER 
+	    Let AUTH_OUT_SURG = WORK_OUT_SURG 
+	    Let AUTH_PATH_PROF = WORK_PATH_PROF 
+	    Let AUTH_RAD_PROF = WORK_RAD_PROF 
+	    Let AUTH_AMBULANCE = WORK_AMBULANCE 
+	    Let AUTH_HOME_HEALTH = WORK_HOME_HEALTH 
+	    Let AUTH_HOSPICE = WORK_HOSPICE 
+	    Let AUTH_OTHER = WORK_OTHER 
+	    Let AUTH_CREATION_ICIDATE = WORK_CREATION_ICIDATE 
+	    Let AUTH_CREATION_ICITIME = WORK_CREATION_ICITIME 
+	    Let AUTH_CREATION_USERNAME = WORK_CREATION_USERNAME 
+	    Let AUTH_EXT_TRACK_NO = WORK_EXT_TRACK_NO
+	    Let AUTH_LAST_UPD_ICIDATE = WORK_LAST_UPD_ICIDATE 
+	    Let AUTH_LAST_UPD_ICITIME = WORK_LAST_UPD_ICITIME 
+	    Let AUTH_LAST_UPD_USERNAME = WORK_LAST_UPD_USERNAME 
+	/*    Let AUTH_NOTE1 = WORK_NOTE1 
+	    Let AUTH_NOTE2 = WORK_NOTE2 
+	    Let AUTH_NOTE3 = WORK_NOTE3    */
+        End Response
+
+        Internal Response CHECK_AUTMAIN_FUNCTION_KEYS
+	    If RET_VALUE = 2  /* Back Space */ Then
+                If (UPD_MODE = "A") Then
+                    Position Immediate To Previous Item
+                Else
+                    Include INVALID_FUNCTION
+                End If
+	    Else
+		If RET_VALUE = 9  /* Left Arrow */  Then
+		    If (UPD_MODE = "A") Then
+			Position To Previous Item
+		    Else
+			Include INVALID_FUNCTION
+		    End If
+		Else
+		    If RET_VALUE = 10  /* Right Arrow */  Then
+			If (UPD_MODE = "A") Then
+			    Position To Next Item
+			Else
+			    Include INVALID_FUNCTION
+			End If
+		    Else
+			If RET_VALUE = 3  /* PF1 */  Then
+			    Let RETURN_COND = "PF1"
+			    Include ABORT_REQUEST
+			Else
+			    If RET_VALUE = 4  /* PF2 */  Then
+				Let RETURN_COND = "PF2"
+				Include ABORT_REQUEST
+			    Else
+				If RET_VALUE = 6  /* PF4 */  Then
+				    Let RETURN_COND = "PF4"
+				    Include ABORT_REQUEST
+				Else
+				    Include INVALID_FUNCTION
+				End If
+			    End If
+			End If
+		    End If
+		End If
+	    End If
+        End Response
+
+        Internal Response INVALID_FUNCTION
+            Message
+                "Invalid Function"
+            Invalid
+        End Response
+
+        Internal Response TABLE_INIT
+            Let TABLE_DIR = "N"
+            Let TABLE_CODE = ""
+            Call "GENF114AA_DISPLAY_TABLE" Using
+                    By Reference GENF114AA_REC
+        End Response
+
+        Internal Response SCROLL_TABLE
+            Let TABLE_CODE = TABLE_CODE_OUT
+            Call "GENF114AA_DISPLAY_TABLE" Using
+                    By Reference GENF114AA_REC
+        End Response
+
+        Internal Response VALIDATE_TABLE
+            Call "GENF113AA_VALIDATE_TABLE_CODE" Using
+                    By Reference GENF113AA_REC
+                    Giving VALID_OPTION
+        End Response
+
+        Internal Response SHOW_MESSAGE
+            Call "GENF032AA_DISPLAY_MESSAGE" Using
+                    By Descriptor SESSION
+                    By Descriptor "MESSAGE_REC"
+                    By Value MSG_ID
+                    By Reference SCR_COLS
+                    Giving RET_VALUE
+        End Response
+
+        Internal Response INIT_HDR
+            Call "HN_FRM_HDR_INFO" Using
+                    By Reference HEADER_NODE_ID
+                    By Reference HEADER_ENV_ID
+            Call "ICTRNLNM_XLATE_01" Using
+                    By Descriptor "ICSCR_HDR1"
+                    By Descriptor PAR_HEADER_1
+		    Giving RET_VALUE
+	    	IF PAR_HEADER_1 = "" THEN
+		   LET PAR_HEADER_1 = " Claims Administration System "
+		END IF
+		LET HEADER_1 = PAR_HEADER_1
+			
+            Call "ICTRNLNM_XLATE_01" Using
+                    By Descriptor "ICSCR_HDR2"
+                    By Descriptor PAR_HEADER_2
+		    Giving RET_VALUE
+		LET HEADER_2 = PAR_HEADER_2
+	
+        End Response
+
+        Internal Response INIT_NOTE_TABLE
+	    Let NEXT_ITEM   = 2
+/* Begin MOD #6
+	    Let MAXLIN	    = 24    */
+	    Let MAXLIN	    = 249
+/* End MOD #6			    */
+	    Let NOLIN	    = -1
+	    Let DISPFL	    = 1
+	    Let ROWNO	    = 20
+	    Let COLNO	    = 12
+	    Let DSPLIN	    = 3
+	    Let	INITFL	    = 0
+	    Let CURLIN	    = -1
+	    Let START	    = 0
+	    Let CHGS	    = 0
+
+/* Begin MOD #6 - Expand array size to 250, so initialize 250 elements	    */
+	    Let NOTE_TABLE(1).NOTELINE = " "
+	    Let NOTE_TABLE(2).NOTELINE = " "
+	    Let NOTE_TABLE(3).NOTELINE = " "
+	    Let NOTE_TABLE(4).NOTELINE = " "
+	    Let NOTE_TABLE(5).NOTELINE = " "
+	    Let NOTE_TABLE(6).NOTELINE = " "
+	    Let NOTE_TABLE(7).NOTELINE = " "
+	    Let NOTE_TABLE(8).NOTELINE = " "
+	    Let NOTE_TABLE(9).NOTELINE = " "
+	    Let NOTE_TABLE(10).NOTELINE = " "
+	    Let NOTE_TABLE(11).NOTELINE = " "
+	    Let NOTE_TABLE(12).NOTELINE = " "
+	    Let NOTE_TABLE(13).NOTELINE = " "
+	    Let NOTE_TABLE(14).NOTELINE = " "
+	    Let NOTE_TABLE(15).NOTELINE = " "
+	    Let NOTE_TABLE(16).NOTELINE = " "
+	    Let NOTE_TABLE(17).NOTELINE = " "
+	    Let NOTE_TABLE(18).NOTELINE = " "
+	    Let NOTE_TABLE(19).NOTELINE = " "
+	    Let NOTE_TABLE(20).NOTELINE = " "
+	    Let NOTE_TABLE(21).NOTELINE = " "
+	    Let NOTE_TABLE(22).NOTELINE = " "
+	    Let NOTE_TABLE(23).NOTELINE = " "
+	    Let NOTE_TABLE(24).NOTELINE = " "
+	    Let NOTE_TABLE(25).NOTELINE = " "
+	    Let NOTE_TABLE(26).NOTELINE = " "
+	    Let NOTE_TABLE(27).NOTELINE = " "
+	    Let NOTE_TABLE(28).NOTELINE = " "
+	    Let NOTE_TABLE(29).NOTELINE = " "
+	    Let NOTE_TABLE(30).NOTELINE = " "
+	    Let NOTE_TABLE(31).NOTELINE = " "
+	    Let NOTE_TABLE(32).NOTELINE = " "
+	    Let NOTE_TABLE(33).NOTELINE = " "
+	    Let NOTE_TABLE(34).NOTELINE = " "
+	    Let NOTE_TABLE(35).NOTELINE = " "
+	    Let NOTE_TABLE(36).NOTELINE = " "
+	    Let NOTE_TABLE(37).NOTELINE = " "
+	    Let NOTE_TABLE(38).NOTELINE = " "
+	    Let NOTE_TABLE(39).NOTELINE = " "
+	    Let NOTE_TABLE(40).NOTELINE = " "
+	    Let NOTE_TABLE(41).NOTELINE = " "
+	    Let NOTE_TABLE(42).NOTELINE = " "
+	    Let NOTE_TABLE(43).NOTELINE = " "
+	    Let NOTE_TABLE(44).NOTELINE = " "
+	    Let NOTE_TABLE(45).NOTELINE = " "
+	    Let NOTE_TABLE(46).NOTELINE = " "
+	    Let NOTE_TABLE(47).NOTELINE = " "
+	    Let NOTE_TABLE(48).NOTELINE = " "
+	    Let NOTE_TABLE(49).NOTELINE = " "
+	    Let NOTE_TABLE(50).NOTELINE = " "
+	    Let NOTE_TABLE(51).NOTELINE = " "
+	    Let NOTE_TABLE(52).NOTELINE = " "
+	    Let NOTE_TABLE(53).NOTELINE = " "
+	    Let NOTE_TABLE(54).NOTELINE = " "
+	    Let NOTE_TABLE(55).NOTELINE = " "
+	    Let NOTE_TABLE(56).NOTELINE = " "
+	    Let NOTE_TABLE(57).NOTELINE = " "
+	    Let NOTE_TABLE(58).NOTELINE = " "
+	    Let NOTE_TABLE(59).NOTELINE = " "
+	    Let NOTE_TABLE(60).NOTELINE = " "
+	    Let NOTE_TABLE(61).NOTELINE = " "
+	    Let NOTE_TABLE(62).NOTELINE = " "
+	    Let NOTE_TABLE(63).NOTELINE = " "
+	    Let NOTE_TABLE(64).NOTELINE = " "
+	    Let NOTE_TABLE(65).NOTELINE = " "
+	    Let NOTE_TABLE(66).NOTELINE = " "
+	    Let NOTE_TABLE(67).NOTELINE = " "
+	    Let NOTE_TABLE(68).NOTELINE = " "
+	    Let NOTE_TABLE(69).NOTELINE = " "
+	    Let NOTE_TABLE(70).NOTELINE = " "
+	    Let NOTE_TABLE(71).NOTELINE = " "
+	    Let NOTE_TABLE(72).NOTELINE = " "
+	    Let NOTE_TABLE(73).NOTELINE = " "
+	    Let NOTE_TABLE(74).NOTELINE = " "
+	    Let NOTE_TABLE(75).NOTELINE = " "
+	    Let NOTE_TABLE(76).NOTELINE = " "
+	    Let NOTE_TABLE(77).NOTELINE = " "
+	    Let NOTE_TABLE(78).NOTELINE = " "
+	    Let NOTE_TABLE(79).NOTELINE = " "
+	    Let NOTE_TABLE(80).NOTELINE = " "
+	    Let NOTE_TABLE(81).NOTELINE = " "
+	    Let NOTE_TABLE(82).NOTELINE = " "
+	    Let NOTE_TABLE(83).NOTELINE = " "
+	    Let NOTE_TABLE(84).NOTELINE = " "
+	    Let NOTE_TABLE(85).NOTELINE = " "
+	    Let NOTE_TABLE(86).NOTELINE = " "
+	    Let NOTE_TABLE(87).NOTELINE = " "
+	    Let NOTE_TABLE(88).NOTELINE = " "
+	    Let NOTE_TABLE(89).NOTELINE = " "
+	    Let NOTE_TABLE(90).NOTELINE = " "
+	    Let NOTE_TABLE(91).NOTELINE = " "
+	    Let NOTE_TABLE(92).NOTELINE = " "
+	    Let NOTE_TABLE(93).NOTELINE = " "
+	    Let NOTE_TABLE(94).NOTELINE = " "
+	    Let NOTE_TABLE(95).NOTELINE = " "
+	    Let NOTE_TABLE(96).NOTELINE = " "
+	    Let NOTE_TABLE(97).NOTELINE = " "
+	    Let NOTE_TABLE(98).NOTELINE = " "
+	    Let NOTE_TABLE(99).NOTELINE = " "
+	    Let NOTE_TABLE(100).NOTELINE = " "
+	    Let NOTE_TABLE(101).NOTELINE = " "
+	    Let NOTE_TABLE(102).NOTELINE = " "
+	    Let NOTE_TABLE(103).NOTELINE = " "
+	    Let NOTE_TABLE(104).NOTELINE = " "
+	    Let NOTE_TABLE(105).NOTELINE = " "
+	    Let NOTE_TABLE(106).NOTELINE = " "
+	    Let NOTE_TABLE(107).NOTELINE = " "
+	    Let NOTE_TABLE(108).NOTELINE = " "
+	    Let NOTE_TABLE(109).NOTELINE = " "
+	    Let NOTE_TABLE(110).NOTELINE = " "
+	    Let NOTE_TABLE(111).NOTELINE = " "
+	    Let NOTE_TABLE(112).NOTELINE = " "
+	    Let NOTE_TABLE(113).NOTELINE = " "
+	    Let NOTE_TABLE(114).NOTELINE = " "
+	    Let NOTE_TABLE(115).NOTELINE = " "
+	    Let NOTE_TABLE(116).NOTELINE = " "
+	    Let NOTE_TABLE(117).NOTELINE = " "
+	    Let NOTE_TABLE(118).NOTELINE = " "
+	    Let NOTE_TABLE(119).NOTELINE = " "
+	    Let NOTE_TABLE(120).NOTELINE = " "
+	    Let NOTE_TABLE(121).NOTELINE = " "
+	    Let NOTE_TABLE(122).NOTELINE = " "
+	    Let NOTE_TABLE(123).NOTELINE = " "
+	    Let NOTE_TABLE(124).NOTELINE = " "
+	    Let NOTE_TABLE(125).NOTELINE = " "
+	    Let NOTE_TABLE(126).NOTELINE = " "
+	    Let NOTE_TABLE(127).NOTELINE = " "
+	    Let NOTE_TABLE(128).NOTELINE = " "
+	    Let NOTE_TABLE(129).NOTELINE = " "
+	    Let NOTE_TABLE(130).NOTELINE = " "
+	    Let NOTE_TABLE(131).NOTELINE = " "
+	    Let NOTE_TABLE(132).NOTELINE = " "
+	    Let NOTE_TABLE(133).NOTELINE = " "
+	    Let NOTE_TABLE(134).NOTELINE = " "
+	    Let NOTE_TABLE(135).NOTELINE = " "
+	    Let NOTE_TABLE(136).NOTELINE = " "
+	    Let NOTE_TABLE(137).NOTELINE = " "
+	    Let NOTE_TABLE(138).NOTELINE = " "
+	    Let NOTE_TABLE(139).NOTELINE = " "
+	    Let NOTE_TABLE(140).NOTELINE = " "
+	    Let NOTE_TABLE(141).NOTELINE = " "
+	    Let NOTE_TABLE(142).NOTELINE = " "
+	    Let NOTE_TABLE(143).NOTELINE = " "
+	    Let NOTE_TABLE(144).NOTELINE = " "
+	    Let NOTE_TABLE(145).NOTELINE = " "
+	    Let NOTE_TABLE(146).NOTELINE = " "
+	    Let NOTE_TABLE(147).NOTELINE = " "
+	    Let NOTE_TABLE(148).NOTELINE = " "
+	    Let NOTE_TABLE(149).NOTELINE = " "
+	    Let NOTE_TABLE(150).NOTELINE = " "
+	    Let NOTE_TABLE(151).NOTELINE = " "
+	    Let NOTE_TABLE(152).NOTELINE = " "
+	    Let NOTE_TABLE(153).NOTELINE = " "
+	    Let NOTE_TABLE(154).NOTELINE = " "
+	    Let NOTE_TABLE(155).NOTELINE = " "
+	    Let NOTE_TABLE(156).NOTELINE = " "
+	    Let NOTE_TABLE(157).NOTELINE = " "
+	    Let NOTE_TABLE(158).NOTELINE = " "
+	    Let NOTE_TABLE(159).NOTELINE = " "
+	    Let NOTE_TABLE(160).NOTELINE = " "
+	    Let NOTE_TABLE(161).NOTELINE = " "
+	    Let NOTE_TABLE(162).NOTELINE = " "
+	    Let NOTE_TABLE(163).NOTELINE = " "
+	    Let NOTE_TABLE(164).NOTELINE = " "
+	    Let NOTE_TABLE(165).NOTELINE = " "
+	    Let NOTE_TABLE(166).NOTELINE = " "
+	    Let NOTE_TABLE(167).NOTELINE = " "
+	    Let NOTE_TABLE(168).NOTELINE = " "
+	    Let NOTE_TABLE(169).NOTELINE = " "
+	    Let NOTE_TABLE(170).NOTELINE = " "
+	    Let NOTE_TABLE(171).NOTELINE = " "
+	    Let NOTE_TABLE(172).NOTELINE = " "
+	    Let NOTE_TABLE(173).NOTELINE = " "
+	    Let NOTE_TABLE(174).NOTELINE = " "
+	    Let NOTE_TABLE(175).NOTELINE = " "
+	    Let NOTE_TABLE(176).NOTELINE = " "
+	    Let NOTE_TABLE(177).NOTELINE = " "
+	    Let NOTE_TABLE(178).NOTELINE = " "
+	    Let NOTE_TABLE(179).NOTELINE = " "
+	    Let NOTE_TABLE(180).NOTELINE = " "
+	    Let NOTE_TABLE(181).NOTELINE = " "
+	    Let NOTE_TABLE(182).NOTELINE = " "
+	    Let NOTE_TABLE(183).NOTELINE = " "
+	    Let NOTE_TABLE(184).NOTELINE = " "
+	    Let NOTE_TABLE(185).NOTELINE = " "
+	    Let NOTE_TABLE(186).NOTELINE = " "
+	    Let NOTE_TABLE(187).NOTELINE = " "
+	    Let NOTE_TABLE(188).NOTELINE = " "
+	    Let NOTE_TABLE(199).NOTELINE = " "
+	    Let NOTE_TABLE(200).NOTELINE = " "
+	    Let NOTE_TABLE(201).NOTELINE = " "
+	    Let NOTE_TABLE(202).NOTELINE = " "
+	    Let NOTE_TABLE(203).NOTELINE = " "
+	    Let NOTE_TABLE(204).NOTELINE = " "
+	    Let NOTE_TABLE(205).NOTELINE = " "
+	    Let NOTE_TABLE(206).NOTELINE = " "
+	    Let NOTE_TABLE(207).NOTELINE = " "
+	    Let NOTE_TABLE(208).NOTELINE = " "
+	    Let NOTE_TABLE(209).NOTELINE = " "
+	    Let NOTE_TABLE(210).NOTELINE = " "
+	    Let NOTE_TABLE(211).NOTELINE = " "
+	    Let NOTE_TABLE(212).NOTELINE = " "
+	    Let NOTE_TABLE(213).NOTELINE = " "
+	    Let NOTE_TABLE(214).NOTELINE = " "
+	    Let NOTE_TABLE(215).NOTELINE = " "
+	    Let NOTE_TABLE(216).NOTELINE = " "
+	    Let NOTE_TABLE(217).NOTELINE = " "
+	    Let NOTE_TABLE(218).NOTELINE = " "
+	    Let NOTE_TABLE(219).NOTELINE = " "
+	    Let NOTE_TABLE(220).NOTELINE = " "
+	    Let NOTE_TABLE(221).NOTELINE = " "
+	    Let NOTE_TABLE(222).NOTELINE = " "
+	    Let NOTE_TABLE(223).NOTELINE = " "
+	    Let NOTE_TABLE(224).NOTELINE = " "
+	    Let NOTE_TABLE(225).NOTELINE = " "
+	    Let NOTE_TABLE(226).NOTELINE = " "
+	    Let NOTE_TABLE(227).NOTELINE = " "
+	    Let NOTE_TABLE(228).NOTELINE = " "
+	    Let NOTE_TABLE(229).NOTELINE = " "
+	    Let NOTE_TABLE(230).NOTELINE = " "
+	    Let NOTE_TABLE(231).NOTELINE = " "
+	    Let NOTE_TABLE(232).NOTELINE = " "
+	    Let NOTE_TABLE(233).NOTELINE = " "
+	    Let NOTE_TABLE(234).NOTELINE = " "
+	    Let NOTE_TABLE(235).NOTELINE = " "
+	    Let NOTE_TABLE(236).NOTELINE = " "
+	    Let NOTE_TABLE(237).NOTELINE = " "
+	    Let NOTE_TABLE(238).NOTELINE = " "
+	    Let NOTE_TABLE(239).NOTELINE = " "
+	    Let NOTE_TABLE(240).NOTELINE = " "
+	    Let NOTE_TABLE(241).NOTELINE = " "
+	    Let NOTE_TABLE(242).NOTELINE = " "
+	    Let NOTE_TABLE(243).NOTELINE = " "
+	    Let NOTE_TABLE(244).NOTELINE = " "
+	    Let NOTE_TABLE(245).NOTELINE = " "
+	    Let NOTE_TABLE(246).NOTELINE = " "
+	    Let NOTE_TABLE(247).NOTELINE = " "
+	    Let NOTE_TABLE(248).NOTELINE = " "
+	    Let NOTE_TABLE(249).NOTELINE = " "
+	    Let NOTE_TABLE(250).NOTELINE = " "
+
+	    Let NOTE_TABLE(1).AUTHITEM = 0
+	    Let NOTE_TABLE(2).AUTHITEM = 0
+	    Let NOTE_TABLE(3).AUTHITEM = 0
+	    Let NOTE_TABLE(4).AUTHITEM = 0
+	    Let NOTE_TABLE(5).AUTHITEM = 0
+	    Let NOTE_TABLE(6).AUTHITEM = 0
+	    Let NOTE_TABLE(7).AUTHITEM = 0
+	    Let NOTE_TABLE(8).AUTHITEM = 0
+	    Let NOTE_TABLE(9).AUTHITEM = 0
+	    Let NOTE_TABLE(10).AUTHITEM = 0
+	    Let NOTE_TABLE(11).AUTHITEM = 0
+	    Let NOTE_TABLE(12).AUTHITEM = 0
+	    Let NOTE_TABLE(13).AUTHITEM = 0
+	    Let NOTE_TABLE(14).AUTHITEM = 0
+	    Let NOTE_TABLE(15).AUTHITEM = 0
+	    Let NOTE_TABLE(16).AUTHITEM = 0
+	    Let NOTE_TABLE(17).AUTHITEM = 0
+	    Let NOTE_TABLE(18).AUTHITEM = 0
+	    Let NOTE_TABLE(19).AUTHITEM = 0
+	    Let NOTE_TABLE(20).AUTHITEM = 0
+	    Let NOTE_TABLE(21).AUTHITEM = 0
+	    Let NOTE_TABLE(22).AUTHITEM = 0
+	    Let NOTE_TABLE(23).AUTHITEM = 0
+	    Let NOTE_TABLE(24).AUTHITEM = 0
+	    Let NOTE_TABLE(25).AUTHITEM = 0
+	    Let NOTE_TABLE(26).AUTHITEM = 0
+	    Let NOTE_TABLE(27).AUTHITEM = 0
+	    Let NOTE_TABLE(28).AUTHITEM = 0
+	    Let NOTE_TABLE(29).AUTHITEM = 0
+	    Let NOTE_TABLE(30).AUTHITEM = 0
+	    Let NOTE_TABLE(31).AUTHITEM = 0
+	    Let NOTE_TABLE(32).AUTHITEM = 0
+	    Let NOTE_TABLE(33).AUTHITEM = 0
+	    Let NOTE_TABLE(34).AUTHITEM = 0
+	    Let NOTE_TABLE(35).AUTHITEM = 0
+	    Let NOTE_TABLE(36).AUTHITEM = 0
+	    Let NOTE_TABLE(37).AUTHITEM = 0
+	    Let NOTE_TABLE(38).AUTHITEM = 0
+	    Let NOTE_TABLE(39).AUTHITEM = 0
+	    Let NOTE_TABLE(40).AUTHITEM = 0
+	    Let NOTE_TABLE(41).AUTHITEM = 0
+	    Let NOTE_TABLE(42).AUTHITEM = 0
+	    Let NOTE_TABLE(43).AUTHITEM = 0
+	    Let NOTE_TABLE(44).AUTHITEM = 0
+	    Let NOTE_TABLE(45).AUTHITEM = 0
+	    Let NOTE_TABLE(46).AUTHITEM = 0
+	    Let NOTE_TABLE(47).AUTHITEM = 0
+	    Let NOTE_TABLE(48).AUTHITEM = 0
+	    Let NOTE_TABLE(49).AUTHITEM = 0
+	    Let NOTE_TABLE(50).AUTHITEM = 0
+	    Let NOTE_TABLE(51).AUTHITEM = 0
+	    Let NOTE_TABLE(52).AUTHITEM = 0
+	    Let NOTE_TABLE(53).AUTHITEM = 0
+	    Let NOTE_TABLE(54).AUTHITEM = 0
+	    Let NOTE_TABLE(55).AUTHITEM = 0
+	    Let NOTE_TABLE(56).AUTHITEM = 0
+	    Let NOTE_TABLE(57).AUTHITEM = 0
+	    Let NOTE_TABLE(58).AUTHITEM = 0
+	    Let NOTE_TABLE(59).AUTHITEM = 0
+	    Let NOTE_TABLE(60).AUTHITEM = 0
+	    Let NOTE_TABLE(61).AUTHITEM = 0
+	    Let NOTE_TABLE(62).AUTHITEM = 0
+	    Let NOTE_TABLE(63).AUTHITEM = 0
+	    Let NOTE_TABLE(64).AUTHITEM = 0
+	    Let NOTE_TABLE(65).AUTHITEM = 0
+	    Let NOTE_TABLE(66).AUTHITEM = 0
+	    Let NOTE_TABLE(67).AUTHITEM = 0
+	    Let NOTE_TABLE(68).AUTHITEM = 0
+	    Let NOTE_TABLE(69).AUTHITEM = 0
+	    Let NOTE_TABLE(70).AUTHITEM = 0
+	    Let NOTE_TABLE(71).AUTHITEM = 0
+	    Let NOTE_TABLE(72).AUTHITEM = 0
+	    Let NOTE_TABLE(73).AUTHITEM = 0
+	    Let NOTE_TABLE(74).AUTHITEM = 0
+	    Let NOTE_TABLE(75).AUTHITEM = 0
+	    Let NOTE_TABLE(76).AUTHITEM = 0
+	    Let NOTE_TABLE(77).AUTHITEM = 0
+	    Let NOTE_TABLE(78).AUTHITEM = 0
+	    Let NOTE_TABLE(79).AUTHITEM = 0
+	    Let NOTE_TABLE(80).AUTHITEM = 0
+	    Let NOTE_TABLE(81).AUTHITEM = 0
+	    Let NOTE_TABLE(82).AUTHITEM = 0
+	    Let NOTE_TABLE(83).AUTHITEM = 0
+	    Let NOTE_TABLE(84).AUTHITEM = 0
+	    Let NOTE_TABLE(85).AUTHITEM = 0
+	    Let NOTE_TABLE(86).AUTHITEM = 0
+	    Let NOTE_TABLE(87).AUTHITEM = 0
+	    Let NOTE_TABLE(88).AUTHITEM = 0
+	    Let NOTE_TABLE(89).AUTHITEM = 0
+	    Let NOTE_TABLE(90).AUTHITEM = 0
+	    Let NOTE_TABLE(91).AUTHITEM = 0
+	    Let NOTE_TABLE(92).AUTHITEM = 0
+	    Let NOTE_TABLE(93).AUTHITEM = 0
+	    Let NOTE_TABLE(94).AUTHITEM = 0
+	    Let NOTE_TABLE(95).AUTHITEM = 0
+	    Let NOTE_TABLE(96).AUTHITEM = 0
+	    Let NOTE_TABLE(97).AUTHITEM = 0
+	    Let NOTE_TABLE(98).AUTHITEM = 0
+	    Let NOTE_TABLE(99).AUTHITEM = 0
+	    Let NOTE_TABLE(100).AUTHITEM = 0
+	    Let NOTE_TABLE(101).AUTHITEM = 0
+	    Let NOTE_TABLE(102).AUTHITEM = 0
+	    Let NOTE_TABLE(103).AUTHITEM = 0
+	    Let NOTE_TABLE(104).AUTHITEM = 0
+	    Let NOTE_TABLE(105).AUTHITEM = 0
+	    Let NOTE_TABLE(106).AUTHITEM = 0
+	    Let NOTE_TABLE(107).AUTHITEM = 0
+	    Let NOTE_TABLE(108).AUTHITEM = 0
+	    Let NOTE_TABLE(109).AUTHITEM = 0
+	    Let NOTE_TABLE(110).AUTHITEM = 0
+	    Let NOTE_TABLE(111).AUTHITEM = 0
+	    Let NOTE_TABLE(112).AUTHITEM = 0
+	    Let NOTE_TABLE(113).AUTHITEM = 0
+	    Let NOTE_TABLE(114).AUTHITEM = 0
+	    Let NOTE_TABLE(115).AUTHITEM = 0
+	    Let NOTE_TABLE(116).AUTHITEM = 0
+	    Let NOTE_TABLE(117).AUTHITEM = 0
+	    Let NOTE_TABLE(118).AUTHITEM = 0
+	    Let NOTE_TABLE(119).AUTHITEM = 0
+	    Let NOTE_TABLE(120).AUTHITEM = 0
+	    Let NOTE_TABLE(121).AUTHITEM = 0
+	    Let NOTE_TABLE(122).AUTHITEM = 0
+	    Let NOTE_TABLE(123).AUTHITEM = 0
+	    Let NOTE_TABLE(124).AUTHITEM = 0
+	    Let NOTE_TABLE(125).AUTHITEM = 0
+	    Let NOTE_TABLE(126).AUTHITEM = 0
+	    Let NOTE_TABLE(127).AUTHITEM = 0
+	    Let NOTE_TABLE(128).AUTHITEM = 0
+	    Let NOTE_TABLE(129).AUTHITEM = 0
+	    Let NOTE_TABLE(130).AUTHITEM = 0
+	    Let NOTE_TABLE(131).AUTHITEM = 0
+	    Let NOTE_TABLE(132).AUTHITEM = 0
+	    Let NOTE_TABLE(133).AUTHITEM = 0
+	    Let NOTE_TABLE(134).AUTHITEM = 0
+	    Let NOTE_TABLE(135).AUTHITEM = 0
+	    Let NOTE_TABLE(136).AUTHITEM = 0
+	    Let NOTE_TABLE(137).AUTHITEM = 0
+	    Let NOTE_TABLE(138).AUTHITEM = 0
+	    Let NOTE_TABLE(139).AUTHITEM = 0
+	    Let NOTE_TABLE(140).AUTHITEM = 0
+	    Let NOTE_TABLE(141).AUTHITEM = 0
+	    Let NOTE_TABLE(142).AUTHITEM = 0
+	    Let NOTE_TABLE(143).AUTHITEM = 0
+	    Let NOTE_TABLE(144).AUTHITEM = 0
+	    Let NOTE_TABLE(145).AUTHITEM = 0
+	    Let NOTE_TABLE(146).AUTHITEM = 0
+	    Let NOTE_TABLE(147).AUTHITEM = 0
+	    Let NOTE_TABLE(148).AUTHITEM = 0
+	    Let NOTE_TABLE(149).AUTHITEM = 0
+	    Let NOTE_TABLE(150).AUTHITEM = 0
+	    Let NOTE_TABLE(151).AUTHITEM = 0
+	    Let NOTE_TABLE(152).AUTHITEM = 0
+	    Let NOTE_TABLE(153).AUTHITEM = 0
+	    Let NOTE_TABLE(154).AUTHITEM = 0
+	    Let NOTE_TABLE(155).AUTHITEM = 0
+	    Let NOTE_TABLE(156).AUTHITEM = 0
+	    Let NOTE_TABLE(157).AUTHITEM = 0
+	    Let NOTE_TABLE(158).AUTHITEM = 0
+	    Let NOTE_TABLE(159).AUTHITEM = 0
+	    Let NOTE_TABLE(160).AUTHITEM = 0
+	    Let NOTE_TABLE(161).AUTHITEM = 0
+	    Let NOTE_TABLE(162).AUTHITEM = 0
+	    Let NOTE_TABLE(163).AUTHITEM = 0
+	    Let NOTE_TABLE(164).AUTHITEM = 0
+	    Let NOTE_TABLE(165).AUTHITEM = 0
+	    Let NOTE_TABLE(166).AUTHITEM = 0
+	    Let NOTE_TABLE(167).AUTHITEM = 0
+	    Let NOTE_TABLE(168).AUTHITEM = 0
+	    Let NOTE_TABLE(169).AUTHITEM = 0
+	    Let NOTE_TABLE(170).AUTHITEM = 0
+	    Let NOTE_TABLE(171).AUTHITEM = 0
+	    Let NOTE_TABLE(172).AUTHITEM = 0
+	    Let NOTE_TABLE(173).AUTHITEM = 0
+	    Let NOTE_TABLE(174).AUTHITEM = 0
+	    Let NOTE_TABLE(175).AUTHITEM = 0
+	    Let NOTE_TABLE(176).AUTHITEM = 0
+	    Let NOTE_TABLE(177).AUTHITEM = 0
+	    Let NOTE_TABLE(178).AUTHITEM = 0
+	    Let NOTE_TABLE(179).AUTHITEM = 0
+	    Let NOTE_TABLE(180).AUTHITEM = 0
+	    Let NOTE_TABLE(181).AUTHITEM = 0
+	    Let NOTE_TABLE(182).AUTHITEM = 0
+	    Let NOTE_TABLE(183).AUTHITEM = 0
+	    Let NOTE_TABLE(184).AUTHITEM = 0
+	    Let NOTE_TABLE(185).AUTHITEM = 0
+	    Let NOTE_TABLE(186).AUTHITEM = 0
+	    Let NOTE_TABLE(187).AUTHITEM = 0
+	    Let NOTE_TABLE(188).AUTHITEM = 0
+	    Let NOTE_TABLE(199).AUTHITEM = 0
+	    Let NOTE_TABLE(200).AUTHITEM = 0
+	    Let NOTE_TABLE(201).AUTHITEM = 0
+	    Let NOTE_TABLE(202).AUTHITEM = 0
+	    Let NOTE_TABLE(203).AUTHITEM = 0
+	    Let NOTE_TABLE(204).AUTHITEM = 0
+	    Let NOTE_TABLE(205).AUTHITEM = 0
+	    Let NOTE_TABLE(206).AUTHITEM = 0
+	    Let NOTE_TABLE(207).AUTHITEM = 0
+	    Let NOTE_TABLE(208).AUTHITEM = 0
+	    Let NOTE_TABLE(209).AUTHITEM = 0
+	    Let NOTE_TABLE(210).AUTHITEM = 0
+	    Let NOTE_TABLE(211).AUTHITEM = 0
+	    Let NOTE_TABLE(212).AUTHITEM = 0
+	    Let NOTE_TABLE(213).AUTHITEM = 0
+	    Let NOTE_TABLE(214).AUTHITEM = 0
+	    Let NOTE_TABLE(215).AUTHITEM = 0
+	    Let NOTE_TABLE(216).AUTHITEM = 0
+	    Let NOTE_TABLE(217).AUTHITEM = 0
+	    Let NOTE_TABLE(218).AUTHITEM = 0
+	    Let NOTE_TABLE(219).AUTHITEM = 0
+	    Let NOTE_TABLE(220).AUTHITEM = 0
+	    Let NOTE_TABLE(221).AUTHITEM = 0
+	    Let NOTE_TABLE(222).AUTHITEM = 0
+	    Let NOTE_TABLE(223).AUTHITEM = 0
+	    Let NOTE_TABLE(224).AUTHITEM = 0
+	    Let NOTE_TABLE(225).AUTHITEM = 0
+	    Let NOTE_TABLE(226).AUTHITEM = 0
+	    Let NOTE_TABLE(227).AUTHITEM = 0
+	    Let NOTE_TABLE(228).AUTHITEM = 0
+	    Let NOTE_TABLE(229).AUTHITEM = 0
+	    Let NOTE_TABLE(230).AUTHITEM = 0
+	    Let NOTE_TABLE(231).AUTHITEM = 0
+	    Let NOTE_TABLE(232).AUTHITEM = 0
+	    Let NOTE_TABLE(233).AUTHITEM = 0
+	    Let NOTE_TABLE(234).AUTHITEM = 0
+	    Let NOTE_TABLE(235).AUTHITEM = 0
+	    Let NOTE_TABLE(236).AUTHITEM = 0
+	    Let NOTE_TABLE(237).AUTHITEM = 0
+	    Let NOTE_TABLE(238).AUTHITEM = 0
+	    Let NOTE_TABLE(239).AUTHITEM = 0
+	    Let NOTE_TABLE(240).AUTHITEM = 0
+	    Let NOTE_TABLE(241).AUTHITEM = 0
+	    Let NOTE_TABLE(242).AUTHITEM = 0
+	    Let NOTE_TABLE(243).AUTHITEM = 0
+	    Let NOTE_TABLE(244).AUTHITEM = 0
+	    Let NOTE_TABLE(245).AUTHITEM = 0
+	    Let NOTE_TABLE(246).AUTHITEM = 0
+	    Let NOTE_TABLE(247).AUTHITEM = 0
+	    Let NOTE_TABLE(248).AUTHITEM = 0
+	    Let NOTE_TABLE(249).AUTHITEM = 0
+	    Let NOTE_TABLE(250).AUTHITEM = 0
+/* End MOD #6								    */
+        End Response
+
+        Internal Response INIT_AUTHMAST
+            Reset
+		UP_SYMBOL
+		DOWN_SYMBOL
+                AUTH_ID
+                AUTH_SSN
+                AUTH_TYPE
+                AUTH_TYPE_DESC
+                AUTH_MBR_TYPE
+                AUTH_MBR_TYPE_DESC
+                AUTH_MBR_NAME
+                AUTH_MBR_DOB_CCYY
+                AUTH_MBR_DOB_MMDD
+                AUTH_PMG_ID
+                AUTH_SERV_PROV_NAME
+                AUTH_PMG_NAME
+                AUTH_PMG_NAME2
+                AUTH_INJ_OUTDATE
+                AUTH_PRI_DIAG
+                AUTH_PRI_DIAG_DESC
+                AUTH_EST_ADM_VMSDATE
+                AUTH_EST_DIS_VMSDATE
+                AUTH_SEVERITY_CODE
+                AUTH_SEVERITY_CODE_DESC
+                AUTH_DIS_REASON_CODE
+                AUTH_DIS_REASON_DESC
+                AUTH_ADM_TYPE_CODE
+                AUTH_ADM_TYPE_DESC
+                AUTH_STATUS_CODE
+                AUTH_STATUS_DESC
+                AUTH_STATUS_EFF_VMSDATE
+                AUTH_STATUS_EFF_DATE
+                AUTH_EST_ADM_DATE
+                AUTH_EST_DIS_DATE
+                TEMP_INJ_DATE
+                AUTH_INJ_VMSDATE
+                AUTH_INJ_DATE
+		AUTH_WKCOMP
+		AUTH_COB
+		AUTH_MEDICARE
+		AUTH_INPATIENT
+		AUTH_OUT_EMER 
+		AUTH_OUT_SURG 
+        	AUTH_PATH_PROF
+        	AUTH_RAD_PROF 
+        	AUTH_AMBULANCE 
+        	AUTH_HOME_HEALTH 
+        	AUTH_HOSPICE 
+        	AUTH_OTHER 
+		AUTH_EXT_TRACK_NO
+		AUTH_CREATION_USERNAME
+		AUTH_CREATION_VMSDATE
+		AUTH_LAST_UPD_USERNAME
+		AUTH_LAST_UPD_VMSDATE
+		AUTH_NOTE1
+		AUTH_NOTE2
+		AUTH_NOTE3
+		ENTER_FLD
+		OPTION_FLD
+		OPTION_DESC
+		CONFIRM_FLD
+	    Include INIT_NOTE_TABLE
+        End Response
+
+        Internal Response CONFIRM_UPDATES
+            /* See if user wants to save data */
+            If ((PROCESS_COND <> "   ") OR ((PROCESS_COND = "   ") AND 
+                (UPD_MODE = "M") AND (CHGS_MADE = 1))) Then
+                Deactivate
+                    Panel ENTER_PANEL
+                    Panel ABORT_PANEL
+                    Panel AUTMAIN_PANEL
+                Let CONFIRM_PROMPT_FLD = "                                    "-
+                    "      Confirm Y/N : "
+                Activate
+                    Panel CONFIRM_PANEL
+                Position Immediate To Field CONFIRM_FLD On CONFIRM_PANEL
+            Else
+                Let PROCESS_COND = "PRC"
+                Let RETURN_COND = "   "
+                If (UPD_MODE = "A") Then
+                    Let RETURN_COND = "ADD"
+                    Deactivate
+                    	Panel ENTER_PANEL
+                    	Panel ABORT_PANEL
+                    	Panel AUTMAIN_PANEL
+                    Let CONFIRM_PROMPT_FLD = "                                    "-
+                    	"      Confirm Y/N : "
+                    Activate
+                    	Panel CONFIRM_PANEL
+                    Position Immediate To Field CONFIRM_FLD On CONFIRM_PANEL
+                Else
+                    If (UPD_MODE = "M") Then
+                        If (CHGS_MADE = 1) Then
+                            Let RETURN_COND = "UPD"
+                	    Deactivate
+                    		Panel ENTER_PANEL
+                    		Panel ABORT_PANEL
+                    		Panel AUTMAIN_PANEL
+                  	    Let CONFIRM_PROMPT_FLD = "                                    "-
+                    		"      Confirm Y/N : "
+                	    Activate
+                    		Panel CONFIRM_PANEL
+                	    Position Immediate To Field CONFIRM_FLD On CONFIRM_PANEL
+                        Else
+                            Let RETURN_COND = "MOD"
+			    LET RETURN_COND = "PF4"
+			    INCLUDE ABORT_REQUEST
+                        End If
+                    Else
+                        Let RETURN_COND = "   "
+                	Remove All  
+                	Return Immediate   
+                    End If
+                End If
+            End If
+        End Response
+
+        Internal Response ENTER_PROMPT
+            Deactivate
+                Field OPTION_FLD on ENTER_PANEL
+            Activate
+                Field ENTER_FLD on ENTER_PANEL
+            Position Immediate To Field ENTER_FLD On ENTER_PANEL
+        End Response
+
+        Internal Response OPTION_PROMPT
+            /* Put user on OPTION:      */
+            Deactivate
+                Field ENTER_FLD on ENTER_PANEL
+            Activate
+                Field OPTION_FLD on ENTER_PANEL
+            Position Immediate To Field OPTION_FLD On ENTER_PANEL
+        End Response
+
+        Internal Response CONFIRM_ABORT
+            /* Show Abort Panel */
+            Display
+                ABORT_PANEL
+            Activate
+                Panel ABORT_PANEL
+            Position Immediate To Field ABORT_FLD On ABORT_PANEL
+        End Response
+
+        Internal Response ABORT_REQUEST
+            /* Handle PF1, PF2 & PF4 keys  */
+            If ((CHGS_MADE = 1) AND (PROG_MODE = "U")) Then
+                Include CONFIRM_ABORT
+            Else
+                If ((RETURN_COND = "PF1") OR (RETURN_COND = "PF2")) Then
+                    Let PROCESS_COND = "   "
+                    Remove All
+                    Return Immediate
+                End If
+                If (RETURN_COND = "PF4") Then
+                    Let PROCESS_COND = "   "
+                    Deactivate
+                        All
+                    Include INIT_AUTHMAST
+                    Deactivate
+                        Panel ABORT_PANEL
+                    Display
+                        AUTMAIN_PANEL
+                        ENTER_PANEL
+                    Activate
+                        Panel AUTMAIN_PANEL
+                        Panel ENTER_PANEL
+                    Position Immediate To Field AUTH_ID On AUTMAIN_PANEL
+                End If
+            End If
+        End Response
+
+        Internal Response CHECK_FOR_DUP
+            /* Check auth-master for */
+            Reset
+                /* a possible duplicate  */
+                DUP_AUTH_ID
+                AUTH_FILLER
+            Let DUP_AUTH_ID = AUTH_ID 
+            Call "CEPF504AA_AUTH_DUPS" Using
+                    By Reference AUTMAIN_REC
+                    By Reference POSSIBLE_DUP
+                    Giving RET_VALUE
+            If (RET_VALUE <> FALSE) Then
+                Activate
+                    Panel DUP_PANEL
+                Display
+                    DUP_PANEL
+                Position Immediate To Field DUP_FLD On DUP_PANEL
+            End If
+        End Response
+
+        Internal Response GET_DIAG
+            /* Call standard function */
+            If (DIAG_CODE <> "     ") Then
+                /* to get diagnosis desc. */
+                /*		If (DX_MIN_LENGTH = 2) Then
+		    Let DIAG_DESC = "length is 2"
+		Else If (DX_MIN_LENGTH = 3) Then
+			Let DIAG_DESC = "length is 3" 
+		     Else
+			Let DIAG_DESC = "length is ?"
+		     End If
+		End If	*/
+
+		Let DIAG_DESC = "NEW-CODE"
+		If PROG_MODE = "I" Then
+		    If AUTH_CREATION_VMSDATE < "1991 07 01" Then
+			Let DIAG_DESC = "OLD-CODE"
+		    End IF
+		End If
+                Let ICIDATE1 = AUTH_EST_ADM_DATE
+                Let ICIDATE2 = AUTH_EST_DIS_DATE
+                Call "CEPF062AA_GET_DIAG" Using
+                        By Descriptor DIAG_CODE
+                        By Descriptor AUTH_MBR_TYPE
+                        By Reference NONE
+                        By Descriptor ""
+                        By Descriptor ICIDATE1
+                        By Descriptor ICIDATE2
+                        By Descriptor DIAG_DESC
+                        By Reference DX_MIN_LENGTH
+                        Giving RET_VALUE
+                If (RET_VALUE = FALSE) Then
+                    Let DIAG_DESC = "** Invalid Code"
+                End If
+            Else
+                Reset
+                    DIAG_DESC
+            End If
+        End Response
+
+        Internal Response SET_NOTE_FIELDS
+	    Let NOTE_PTR = START
+            Call "GENS110AA_Calc_Word" Using 
+		By Reference NOTE_PTR 
+		By Reference ONE
+	    Let AUTH_NOTE1 = NOTE_TABLE(NOTE_PTR).NOTELINE
+            Call "GENS110AA_Calc_Word" Using 
+		By Reference NOTE_PTR 
+		By Reference ONE
+	    Let AUTH_NOTE2 = NOTE_TABLE(NOTE_PTR).NOTELINE
+            Call "GENS110AA_Calc_Word" Using 
+		By Reference NOTE_PTR 
+		By Reference ONE
+	    Let AUTH_NOTE3 = NOTE_TABLE(NOTE_PTR).NOTELINE
+	    If NOLIN > -1 Then
+		If START > 0 Then
+		    Let UP_SYMBOL = "^"
+		End If
+		Let NOTE_PTR = START
+		Call "GENS110AA_Calc_Word" Using 
+		    By Reference NOTE_PTR 
+		    By Reference ONE
+		Call "GENS110AA_Calc_Word" Using 
+		    By Reference NOTE_PTR 
+		    By Reference ONE
+		If NOLIN > NOTE_PTR Then
+		    Let DOWN_SYMBOL = "v"
+		End If
+	    End If
+	    Let NOTE_CAPTION = "13. Notes:"
+        End Response
+
+        Internal Response RESET_NOTE_FIELDS
+	    Let AUTH_NOTE1 = "~"
+	    Let AUTH_NOTE2 = "~"
+	    Let AUTH_NOTE3 = "~"
+	    Include SET_NOTE_FIELDS
+        End Response
+
+        Internal Response PROCESS_NOTE_FIELDS
+	    Remove PROMPT_VIEWPORT
+	    Display NOTE_HEADER_PANEL
+	    Let NOTE_CAPTION = " "
+	    Reset UP_SYMBOL DOWN_SYMBOL
+	    Message " "
+	    If (NOLIN > -1) and (CURLIN = -1) Then
+		Let CURLIN = 0
+	    End If
+	    Call "CEPF502AB_Get_Auth_Notes"
+		Using By Reference CEPF502AB_REC
+	    Let NOTE_CAPTION = "13. Notes:"
+	    If (CHGS <> 0) AND 	(PROG_MODE = "U") Then 
+	    	LET CHGS_MADE = 1
+	    End IF
+	    Include RESET_NOTE_FIELDS
+	    Display ENTER_PANEL
+        End Response
+
+        Internal Response DISPLAY_AUTH
+            Let TABLE_ID = "AUTH_TYPE"
+            Let TABLE_TYPE = "P"
+            Let TABLE_CODE = AUTH_TYPE
+            Include VALIDATE_TABLE
+            Let AUTH_TYPE_DESC = TABLE_DESC
+            Call "ENRF037AA_CVT_MBR_CODE" Using
+                    By Descriptor AUTH_MBR_TYPE
+                    By Descriptor AUTH_MBR_TYPE_DESC
+                    By Descriptor "1"
+                    Giving RET_VALUE
+            If (RET_VALUE = FALSE) Then
+                Let AUTH_MBR_TYPE_DESC = "***"
+            End If
+            Call "GENF126AA_Get_Mbr_Name" Using
+                    By Reference GENF126AA_REC
+                    Giving RET_VALUE
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_EST_ADM_DATE
+                    By Reference AUTH_EST_ADM_VMSDATE
+                    Giving RET_VALUE
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_EST_DIS_DATE
+                    By Reference AUTH_EST_DIS_VMSDATE
+                    Giving RET_VALUE
+
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_INJ_DATE
+                    By Reference AUTH_INJ_VMSDATE
+                    Giving RET_VALUE
+            Call "ICIS036AA_ICIDATE_TO_MMDDCCYY" Using
+                    By Reference  AUTH_INJ_DATE
+                    By Descriptor TEMP_INJ_DATE
+                    Giving RET_VALUE
+	    LET AUTH_INJ_OUTDATE = TEMP_INJ_DATE
+
+            Let TABLE_ID = "ADMIT_TYPE"
+            Let TABLE_TYPE = "U"
+            Let TABLE_CODE = AUTH_ADM_TYPE_CODE
+            Include VALIDATE_TABLE
+            Let AUTH_ADM_TYPE_DESC = TABLE_DESC
+
+            Let LINK_ID = AUTH_PMG_ID
+            Call "NETF001AA_GET_MASTER" Using
+                    By Reference LINK_REC
+                    Giving RET_VALUE
+            If (RET_VALUE = FALSE) Then
+                Let AUTH_PMG_NAME = "** Invalid Pmg"
+                Let AUTH_PMG_NAME2 = ""
+            Else
+                Let AUTH_PMG_NAME = LINK_NAME
+                Let AUTH_PMG_NAME2 = LINK_NAME2
+            End If
+
+            Let TABLE_ID = "AUTH_STATUS"
+            Let TABLE_TYPE = "P"
+            Let TABLE_CODE = AUTH_STATUS_CODE
+            Include VALIDATE_TABLE
+            Let AUTH_STATUS_DESC = TABLE_DESC
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_STATUS_EFF_DATE
+                    By Reference AUTH_STATUS_EFF_VMSDATE
+                    Giving RET_VALUE
+            Let TABLE_ID = "AUTH_DISCH"
+            Let TABLE_TYPE = "U"
+            Let TABLE_CODE = AUTH_DIS_REASON_CODE
+            Include VALIDATE_TABLE
+            Let AUTH_DIS_REASON_DESC = TABLE_DESC
+            Let TABLE_ID = "AUTH_SEVERTY"
+            Let TABLE_TYPE = "U"
+            Let TABLE_CODE = AUTH_SEVERITY_CODE
+            Include VALIDATE_TABLE
+            Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_LAST_UPD_ICIDATE
+                    By Reference AUTH_LAST_UPD_VMSDATE
+                    Giving RET_VALUE
+            Call "GENF122AA_CVT_ICI_VMS" Using
+                    By Reference AUTH_CREATION_ICIDATE
+                    By Reference AUTH_CREATION_VMSDATE
+                    Giving RET_VALUE
+            Let DIAG_CODE = AUTH_PRI_DIAG
+            Include GET_DIAG
+            Let AUTH_PRI_DIAG_DESC = DIAG_DESC
+	    Include SET_NOTE_FIELDS
+        End Response
+
+        Internal Response SCROLL_FAM_TAB
+            If (FAM_TAB_DIR = "P") Then
+                If (PAT_PTR > 1) Then
+                    Call "GENS110AA_Calc_Word" Using
+                            By Reference PAT_PTR
+                            By Reference MINUS_ONE
+                Else
+                    Let MSG_ID = ENR_TOPDATA
+                    Include SHOW_MESSAGE
+                End If
+            Else
+                Let SAVE_PTR = PAT_PTR
+                If (PAT_PTR < 21) Then
+                Call "GENS110AA_Calc_Word" Using
+                        By Reference PAT_PTR
+                        By Reference ONE
+                Else
+                    Let MSG_ID = ENR_BOTMDATA
+                    Include SHOW_MESSAGE
+                End If
+                If (ENR_TAB(PAT_PTR).ENR_MBR_CODE = "   ") Then
+                    Let PAT_PTR = SAVE_PTR
+                    Let MSG_ID = ENR_BOTMDATA
+                    Include SHOW_MESSAGE
+                End If
+            End If
+            Let AUTH_MBR_TYPE = ENR_TAB(PAT_PTR).ENR_MBR_TYPE
+            Let AUTH_MBR_TYPE_DESC = ENR_TAB(PAT_PTR).ENR_MBR_CODE
+            Call "GENF116AA_FMT_NAME" Using
+                    By Reference ENR_TAB(PAT_PTR).ENR_GEN_NAME_REC
+                    By Reference AUTH_MBR_NAME
+                    Giving RET_VALUE
+            Let AUTH_MBR_DOB_MMDD = ENR_TAB(PAT_PTR).ENR_MBR_DOB_MMDD
+            Let AUTH_MBR_DOB_CCYY = ENR_TAB(PAT_PTR).ENR_MBR_DOB_CCYY
+        End Response
+
+        Internal Response PROCESS_ENTER_FLD
+            Deactivate
+                Panel AUTMAIN_PANEL
+            If (PROG_MODE = "I") and (ENTER_FLD <> "13")Then
+                Let ENTER_FLD = ""
+            End If
+            If ((ENTER_FLD = "1") OR (ENTER_FLD = "01") OR (ENTER_FLD = " 1")) 
+                Then
+	        Deactivate Panel ENTER_PANEL
+                Activate
+                    Field AUTH_TYPE on AUTMAIN_PANEL
+                    Field ENTER_FLD on ENTER_PANEL
+                Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                Position Immediate To Field AUTH_TYPE On AUTMAIN_PANEL
+            Else
+            If ((ENTER_FLD = "2") OR (ENTER_FLD = "02") OR (ENTER_FLD = " 2")) 
+                Then
+	        Deactivate Panel ENTER_PANEL
+                Activate
+                    Field AUTH_SSN on AUTMAIN_PANEL
+                    Field AUTH_MBR_TYPE_DESC on AUTMAIN_PANEL
+                    Field AUTH_MBR_NAME on AUTMAIN_PANEL
+                    Field AUTH_MBR_DOB_MMDD on AUTMAIN_PANEL
+                    Field AUTH_MBR_DOB_CCYY on AUTMAIN_PANEL
+                    Field AUTH_EST_ADM_VMSDATE on AUTMAIN_PANEL
+                    Field AUTH_EST_DIS_VMSDATE on AUTMAIN_PANEL
+                    Field AUTH_ADM_TYPE_CODE on AUTMAIN_PANEL
+                    Field AUTH_ADM_TYPE_DESC on AUTMAIN_PANEL
+                    Field AUTH_PMG_ID on AUTMAIN_PANEL
+                    Field AUTH_PMG_NAME on AUTMAIN_PANEL
+                    Field AUTH_PMG_NAME2 on AUTMAIN_PANEL
+                    Field ENTER_FLD on ENTER_PANEL
+                Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                Position Immediate To Field AUTH_SSN On AUTMAIN_PANEL
+            Else
+                If ((ENTER_FLD = "3") OR (ENTER_FLD = "03") OR (ENTER_FLD = " "-
+                    "3")) Then
+		    Deactivate Panel ENTER_PANEL
+                    Activate
+                        Field AUTH_EST_ADM_VMSDATE on AUTMAIN_PANEL
+                        Field AUTH_EST_DIS_VMSDATE on AUTMAIN_PANEL
+                        Field AUTH_ADM_TYPE_CODE on AUTMAIN_PANEL
+                        Field AUTH_ADM_TYPE_DESC on AUTMAIN_PANEL
+                        Field AUTH_PMG_ID on AUTMAIN_PANEL
+                        Field AUTH_PMG_NAME on AUTMAIN_PANEL
+                        Field AUTH_PMG_NAME2 on AUTMAIN_PANEL
+                        Field ENTER_FLD on ENTER_PANEL
+                    Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                    Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                    Position Immediate To Field AUTH_EST_ADM_VMSDATE On 
+                        AUTMAIN_PANEL
+                Else
+                    If ((ENTER_FLD = "4") OR (ENTER_FLD = "04") OR (ENTER_FLD = 
+                        " 4")) Then
+		        Deactivate Panel ENTER_PANEL
+                        Activate
+                            Field AUTH_PMG_ID on AUTMAIN_PANEL
+                            Field AUTH_PMG_NAME on AUTMAIN_PANEL
+                            Field AUTH_PMG_NAME2 on AUTMAIN_PANEL
+                            Field ENTER_FLD on ENTER_PANEL
+                        Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                        Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                        Position Immediate To Field AUTH_PMG_ID On 
+                            AUTMAIN_PANEL
+                    Else
+                        If ((ENTER_FLD = "5") OR (ENTER_FLD = "05") OR 
+                            (ENTER_FLD = " 5")) Then
+			    Deactivate Panel ENTER_PANEL
+                            Activate
+                                Field AUTH_SERV_PROV_NAME on AUTMAIN_PANEL
+                                Field ENTER_FLD on ENTER_PANEL
+                            Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                            Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                            Position Immediate To Field AUTH_SERV_PROV_NAME On 
+                                AUTMAIN_PANEL
+                        Else
+                            If ((ENTER_FLD = "7") OR (ENTER_FLD = "07") OR 
+                                (ENTER_FLD = " 7")) Then
+			      IF AUTH_STATUS_CODE <> "A" THEN
+			        Deactivate Panel ENTER_PANEL
+                                Activate
+                                    Field AUTH_STATUS_CODE on AUTMAIN_PANEL
+                                    Field AUTH_STATUS_DESC on AUTMAIN_PANEL
+                                    Field AUTH_STATUS_EFF_VMSDATE on 
+                                        AUTMAIN_PANEL
+                                    Field ENTER_FLD on ENTER_PANEL
+                                Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                                Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                                Position Immediate To Field AUTH_STATUS_CODE On 
+                                    AUTMAIN_PANEL
+			      ELSE
+				MESSAGE 
+				"'Applied' Status Code is not allowed to Change"
+				RESET ENTER_FLD
+				Invalid
+			      END IF
+                            Else
+                                If ((ENTER_FLD = "8") OR (ENTER_FLD = "08") OR 
+                                    (ENTER_FLD = " 8")) Then
+				    Deactivate Panel ENTER_PANEL
+                                    Activate
+                                        Field AUTH_INPATIENT on AUTMAIN_PANEL
+                                        Field AUTH_OUT_EMER on AUTMAIN_PANEL
+                                        Field AUTH_OUT_SURG on AUTMAIN_PANEL
+                                        Field AUTH_PATH_PROF on AUTMAIN_PANEL
+                                        Field AUTH_RAD_PROF on AUTMAIN_PANEL
+                                        Field AUTH_AMBULANCE on AUTMAIN_PANEL
+                                        Field AUTH_HOME_HEALTH on AUTMAIN_PANEL
+                                        Field AUTH_HOSPICE on AUTMAIN_PANEL
+                                        Field AUTH_OTHER on AUTMAIN_PANEL
+                                        Field ENTER_FLD on ENTER_PANEL
+                                    Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+                                    Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+                                    Position Immediate To Field 
+                                        AUTH_INPATIENT On AUTMAIN_PANEL
+                                Else
+                                    If ((ENTER_FLD = "9") OR (ENTER_FLD = "09") 
+                                        OR (ENTER_FLD = " 9")) Then
+				        Deactivate Panel ENTER_PANEL
+                                        Activate
+                                            Field AUTH_PRI_DIAG on AUTMAIN_PANEL
+                                            Field AUTH_PRI_DIAG_DESC on 
+                                                AUTMAIN_PANEL
+                                            Field ENTER_FLD on ENTER_PANEL
+                                        Let AUTH_LAST_UPD_VMSDATE = 
+                                            TODAY_VMSDATE
+                                        Let AUTH_LAST_UPD_ICIDATE = 
+                                            TODAY_ICIDATE
+                                        Position Immediate To Field 
+                                            AUTH_PRI_DIAG On AUTMAIN_PANEL
+                                    Else
+                                        If ENTER_FLD = "10" Then
+					    Deactivate Panel ENTER_PANEL
+                                            Activate
+                                                Field AUTH_DIS_REASON_CODE on 
+                                                    AUTMAIN_PANEL
+                                                Field AUTH_DIS_REASON_DESC on 
+                                                    AUTMAIN_PANEL
+                                                Field ENTER_FLD on ENTER_PANEL
+                                            Let AUTH_LAST_UPD_VMSDATE = 
+                                                TODAY_VMSDATE
+                                            Let AUTH_LAST_UPD_ICIDATE = 
+                                                TODAY_ICIDATE
+                                            Position Immediate To Field 
+                                                AUTH_DIS_REASON_CODE On 
+                                                AUTMAIN_PANEL
+                                        Else
+                                            If (ENTER_FLD = "11") Then
+						Deactivate Panel ENTER_PANEL
+                                                Activate
+                                                    Field AUTH_WKCOMP on 
+                                                        AUTMAIN_PANEL
+                                                    Field AUTH_INJ_OUTDATE on 
+                                                        AUTMAIN_PANEL
+                                                    Field AUTH_COB 
+                                                        on AUTMAIN_PANEL
+                                                    Field AUTH_MEDICARE
+                                                        on AUTMAIN_PANEL
+                                                    Field ENTER_FLD on 
+                                                        ENTER_PANEL
+                                                Let AUTH_LAST_UPD_VMSDATE = 
+                                                    TODAY_VMSDATE
+                                                Let AUTH_LAST_UPD_ICIDATE = 
+                                                    TODAY_ICIDATE
+                                                Position Immediate To Field 
+                                                    AUTH_WKCOMP On 
+                                                    AUTMAIN_PANEL
+                                            Else
+                                                If (ENTER_FLD = "12") Then
+						    Deactivate Panel ENTER_PANEL
+                                                    Activate
+                                                        Field 
+                                                            AUTH_SEVERITY_CODE 
+                                                            on AUTMAIN_PANEL
+                                                        Field 
+                                                            AUTH_SEVERITY_CODE_DESC 
+                                                            on AUTMAIN_PANEL
+                                                    Field ENTER_FLD on 
+                                                        ENTER_PANEL
+                                                    Let AUTH_LAST_UPD_VMSDATE = 
+                                                        TODAY_VMSDATE
+                                                    Let AUTH_LAST_UPD_ICIDATE = 
+                                                        TODAY_ICIDATE
+                                                    Position Immediate To Field 
+                                                        AUTH_SEVERITY_CODE On 
+                                                        AUTMAIN_PANEL
+                                                Else
+                                                If (ENTER_FLD = "13") Then
+						    Deactivate Panel ENTER_PANEL
+						    IF PROG_MODE = "U" Then
+							Let DISPFL = 0
+						    Else
+							Let DISPFL = -3
+						    End If
+						    Include PROCESS_NOTE_FIELDS
+                                                    Activate
+							Field ENTER_FLD on 
+                                                        ENTER_PANEL
+                                                Else
+						  If ((ENTER_FLD = "6") OR 
+						      (ENTER_FLD = "06") OR 
+						      (ENTER_FLD = " 6")) Then
+						    Deactivate Panel ENTER_PANEL
+						    Activate
+						    Field AUTH_EXT_TRACK_NO 
+							on AUTMAIN_PANEL
+						    Field ENTER_FLD 
+							on ENTER_PANEL
+						    Let AUTH_LAST_UPD_VMSDATE =
+							 TODAY_VMSDATE
+						    Let AUTH_LAST_UPD_ICIDATE =
+							 TODAY_ICIDATE
+						    Position Immediate To Field
+							 AUTH_EXT_TRACK_NO
+							  On AUTMAIN_PANEL
+						  Else
+                                                    If (ENTER_FLD = " ") Then
+                                                        Message
+                                                            " "
+                                                    Else
+                                                        Let MSG_ID = 
+                                                            GEN_INVFLDNUM
+                                                        Include SHOW_MESSAGE
+                                                        Invalid
+                                                    End If
+                                                  End If
+                                                End If
+                                                End If
+                                            End If
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+            End If
+        End Response
+
+        Internal Response SHOW_CODES
+            /* For Debugging  */
+            Message
+                "PROCESS: "
+                PROCESS_COND
+                " RETURN: "
+                RETURN_COND
+        End Response
+
+        Send Response MESSAGE_REC
+            Message
+                MESSAGE_LINE
+        End Response
+
+        Transceive Response RET_CODE_REC_LIST RET_CODE_REC_LIST
+            Display
+                HEADER_PANEL
+                AUTMAIN_PANEL
+                ENTER_PANEL
+            Activate
+                Panel AUTMAIN_PANEL
+                Panel ENTER_PANEL
+	    Let NOTE_CAPTION = "13. Notes:"
+            Let CHGS_MADE = 0
+            If (PROCESS_COND <> "MAN") Then
+                /* This logic should execute */
+                /* only when returning from  */
+                /* procedure screen          */
+                Include INIT_HDR
+                Include INIT_AUTHMAST
+                Let CHGS_MADE = 0
+                Call "GENS029AA_Get_Stamp" Using
+                        By Reference PROC_STAMP
+		LET AUTH_CREATION_USERNAME = AUTH_LAST_UPD_USERNAME
+                Call "GENF122AA_CVT_ICI_VMS" Using
+                        By Reference TODAY_ICIDATE
+                        By Reference TODAY_VMSDATE
+                        Giving RET_VALUE
+                Position To Field AUTH_ID On AUTMAIN_PANEL
+            Else
+                If (RETURN_COND = "PF4") Then
+                    Let PROCESS_COND = "   "
+                    Let RETURN_COND = "   "
+                    Include INIT_AUTHMAST
+                    Reset
+                        OPTION_FLD
+                        OPTION_DESC
+                    Let CHGS_MADE = 0
+                Else
+                    Include DISPLAY_AUTH
+                    If (PROG_MODE = "U") Then
+                        Let UPD_MODE = "M"
+                        Let CHGS_MADE = 1
+                    Else
+                        Let CHGS_MADE = 0
+                    End If
+                End If
+                Position Immediate To Field AUTH_ID On AUTMAIN_PANEL
+            End If
+	CALL "CEP_GET_USER_MENU" Using By Descriptor JPI_User_ID
+        End Response
+
+        Control Text Response "UPD"
+            Let PROG_MODE = "U"
+            Let SCREEN_MODE = "UPDATE"
+        End Response
+
+        Control Text Response "INQ"
+            Let PROG_MODE = "I"
+            Let UPD_MODE = " "
+            Let SCREEN_MODE = "INQUIRY"
+            Let CHGS_MADE = 0
+        End Response
+
+        Control Text Response "MNU"
+            Let SYS_MODE = "M"
+        End Response
+
+        Control Text Response "ADJ"
+            Let SYS_MODE = "A"
+        End Response
+
+        Control Text Response "HMO"
+            Let SYS_MODE = "H"
+        End Response
+
+    /* MOD #3 Changed not to enter under POS/IND environ
+        Control Text Response "POS"
+            Let SYS_MODE = "P"
+        End Response
+
+        Control Text Response "IND"
+            Let SYS_MODE = "I"
+        End Response
+    */
+        Function Response PF1_QUIT
+            Let RETURN_COND = "PF1"
+            Include ABORT_REQUEST
+        End Response
+
+        Function Response PF2_QUIT
+            Let RETURN_COND = "PF2"
+            Include ABORT_REQUEST
+        End Response
+
+        Function Response PF4_QUIT
+            Let RETURN_COND = "PF4"
+            Include ABORT_REQUEST
+        End Response
+
+        Function Response PREV_PAGE
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response NEXT_PAGE
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response SELECT_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+        Function Response DO_KEY
+            Include INVALID_FUNCTION
+        End Response
+
+
+        Panel HEADER_PANEL
+            Viewport HEADER_VIEWPORT
+            /* header line */
+            Field HEADER_NODE_ID
+                Line 1
+                Column 2
+            End Field
+
+            Literal Text
+                Line 1
+                Column 5
+                Value "::"
+            End Literal
+
+            Field HEADER_ENV_ID
+                Line 1
+                Column 7
+            End Field
+
+            Field HEADER_1
+                Line 1
+                Column 26
+            End Field
+
+            Field TODAY
+                Line 1
+                Column 69
+            End Field
+
+        End Panel
+
+
+        Panel NOTE_HEADER_PANEL
+            Viewport PROMPT_VIEWPORT
+            Literal Text
+                Line 1
+                Column 1
+                Value "For Note Fields:"
+		Display Underlined Bold
+            End Literal
+        End Panel
+
+
+        Panel ABORT_PANEL
+            Viewport PROMPT_VIEWPORT
+            /* Confirm abort request */
+            Literal Text
+                Line 1
+                Column 30
+                Value "Enter RETURN to continue, 'ABORT' to abort"
+            End Literal
+
+            Field ABORT_FLD
+                Line 1
+                Column 74
+                Entry Response
+                    Reset
+                        ABORT_FLD
+                End Response
+
+                Function Response PF1_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF2_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF4_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response BACK_FLD
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response LEFT_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response RIGHT_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response UP_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response DOWN_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response FIND_KEY
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response ENTER_KEY
+                    If (ABORT_FLD = "ABORT") Then
+                        If ((RETURN_COND = "PF1") OR (RETURN_COND = "PF2")) Then
+                            Let PROCESS_COND = "   "
+                            Remove 
+                                HEADER_VIEWPORT
+                                MAIN_VP
+                                PROMPT_VIEWPORT
+                            Return Immediate
+                        End If
+                        If (RETURN_COND = "PF4") Then
+                            Deactivate
+                                All
+                            Let RETURN_COND = "   "
+                            Let PROCESS_COND = "   "
+                            Include INIT_AUTHMAST
+                            Display
+                                AUTMAIN_PANEL
+                                ENTER_PANEL
+                            Activate
+                                Panel AUTMAIN_PANEL
+                                Panel ENTER_PANEL
+                            Position Immediate To Field AUTH_ID On AUTMAIN_PANEL
+                        End If
+                    End If
+                    If (ABORT_FLD <> "     ") Then
+                        Reset
+                            ABORT_FLD
+                        Position Immediate To Field ABORT_FLD On ABORT_PANEL
+                    Else
+                        Deactivate
+                            Panel ABORT_PANEL
+                        Display
+                            ENTER_PANEL
+                        Position Immediate To Previous Item
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+        End Panel
+
+
+        Panel CONFIRM_PANEL
+            Viewport PROMPT_VIEWPORT
+            Remove
+            Field CONFIRM_PROMPT_FLD
+                Line 1
+                Column 19
+                Protected
+            End Field
+
+            Field CONFIRM_FLD
+                Line 1
+                Column 77
+                Entry Response
+                    If ((PROCESS_COND = "   ") AND (UPD_MODE = "A")) Then
+                        Include CONFIRM_UPDATES
+                    End If
+                    Reset
+                        CONFIRM_FLD
+                End Response
+
+                Function Response BACK_FLD
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF1_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF2_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF4_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response ENTER_KEY
+                    If ((CONFIRM_FLD <> "Y") AND (CONFIRM_FLD <> "N")) Then
+                        Let MSG_ID = GEN_ENTYORN
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+                    If (CONFIRM_FLD = "Y") Then
+                	Call "GENS029AA_GET_STAMP" Using 
+			   By Reference PROC_STAMP
+                        If ((UPD_MODE = "A") OR ((PROCESS_COND <> "   ") AND 
+                            (UPD_MODE = "M"))) Then
+			   If PROCESS_COND = "PRC" AND RETURN_COND = "ADD" THEN
+			      REMOVE ALL
+                              Return Immediate
+			   Else
+                              Let RETURN_COND  = "UDF"
+                              Let PROCESS_COND = ""
+                           End If
+                        Else
+                           Let RETURN_COND  = "UPD"
+                           Let PROCESS_COND = "NOW"
+                        End If
+                        Return Immediate
+                    Else
+                        Deactivate
+                            Panel CONFIRM_PANEL
+                        Activate
+                            Panel ENTER_PANEL
+                        Position Immediate To Field ENTER_FLD On ENTER_PANEL
+                    End If
+                End Response
+
+                Input Required
+                Uppercase
+            End Field
+
+        End Panel
+
+
+        Panel ENTER_PANEL
+            Viewport PROMPT_VIEWPORT
+            /* Option & Enter prompts */
+            Literal Text
+                Line 1
+                Column 2
+                Value "Option:"
+            End Literal
+
+            Literal Text
+                Line 1
+                Column 64
+                Value "ENTER FIELD:"
+            End Literal
+
+            Field ENTER_FLD
+                Line 1
+                Column 77
+                Entry Response
+                    Deactivate
+                        Panel AUTMAIN_PANEL
+                    Display
+                        ENTER_PANEL
+                    Let ENTER_FLD = ""
+                    Message
+                        " "
+                    Let FIRST_TIME_THRU = 0
+                End Response
+
+                Function Response BACK_FLD
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF1_QUIT
+                    Let RETURN_COND = "PF1"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF2_QUIT
+                    Let RETURN_COND = "PF2"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF4_QUIT
+                    Let RETURN_COND = "PF4"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF3_KEY
+                    Let ENTER_RESPONSE = "PF3"
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response LEFT_ITEM
+                    Include OPTION_PROMPT
+                End Response
+
+                Function Response ENTER_KEY
+                    If (PROG_MODE = "U") Then
+                        If (ENTER_FLD <> "") Then
+                            Include PROCESS_ENTER_FLD
+                        Else
+			    Deactivate Panel ENTER_PANEL
+                            If (PROCESS_COND = "   ") Then
+                                Include CONFIRM_UPDATES
+                            Else
+                Let CONFIRM_PROMPT_FLD = "                                    "-
+                    "      Confirm Y/N : "
+                                Display
+                                    CONFIRM_PANEL
+                                Activate
+                                    Panel CONFIRM_PANEL
+                                Position Immediate To Field CONFIRM_FLD On 
+                                    CONFIRM_PANEL
+                            End If
+                        End If
+                    Else
+                        If ((ENTER_FLD = "") OR (ENTER_FLD = " ")) Then
+                    	    Let RETURN_COND = "PF4"
+                    	    Include ABORT_REQUEST
+
+/*                            Let PROCESS_COND = "PRC"
+                            Let RETURN_COND = "   "
+                            Remove All
+                            Return Immediate   */
+                        Else
+			    If ENTER_FLD = "13" Then
+				Include PROCESS_ENTER_FLD
+			    Else
+				Let MSG_ID = GEN_CHGNOTALL
+				Include SHOW_MESSAGE
+			    End If
+                        End If
+                    End If
+                End Response
+
+            End Field
+
+            Field OPTION_FLD
+                Line 1
+                Column 10
+                Entry Response
+                    Let TABLE_TYPE = "P"
+                    Let TABLE_ID = "AUTH_MAINT"
+		    Let TABLE_DIR = ""
+		    Let TABLE_CODE = "P"
+		    Call "GENF114AA_DISPLAY_TABLE" Using
+			    By Reference GENF114AA_REC
+                    /* Include TABLE_INIT  */
+                    Let OPTION_FLD = TABLE_CODE_OUT
+                    Let OPTION_DESC = TABLE_DESC
+                End Response
+
+                Function Response BACK_FLD
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF1_QUIT
+                    Let RETURN_COND = "PF1"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF2_QUIT
+                    Let RETURN_COND = "PF2"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF4_QUIT
+                    Let RETURN_COND = "PF4"
+                    Include ABORT_REQUEST
+                End Response
+
+                Function Response PF3_KEY
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response ENTER_KEY
+                    Let TABLE_CODE = OPTION_FLD
+                    Include VALIDATE_TABLE
+                    If (VALID_OPTION = 0) Then
+                        Let MSG_ID = GEN_INVOPT
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let OPTION_DESC = TABLE_DESC
+                    End If
+                    If (OPTION_FLD = "M") Then
+                        Let MSG_ID = CEP_MANSCRDSP
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        If (OPTION_FLD = "P") Then
+			    Deactivate
+				Field OPTION_FLD on ENTER_PANEL
+                            Let PROCESS_COND = "PRC"
+		    	    IF UPD_MODE = "A" THEN
+			       LET RETURN_COND = "AAD"
+			    ELSE
+			       LET RETURN_COND = " "
+		    	    END IF
+			    RESET OPTION_FLD OPTION_DESC ENTER_FLD
+                            Remove All
+                            Return Immediate
+			ELSE
+                            Let MSG_ID = GEN_INVOPT
+                            Include SHOW_MESSAGE
+                            Invalid
+                        End If
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let OPTION_FLD = TABLE_CODE_OUT
+                    Let OPTION_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let OPTION_FLD = TABLE_CODE_OUT
+                    Let OPTION_DESC = TABLE_DESC
+                End Response
+
+                Function Response RIGHT_ITEM
+                    Include ENTER_PROMPT
+                End Response
+
+                Uppercase
+            End Field
+
+            Field OPTION_DESC
+                Line 1
+                Column 12
+                Protected
+            End Field
+
+        End Panel
+
+
+        Panel DUP_PANEL
+            Viewport PROMPT_VIEWPORT
+            Remove
+            /* Possible dup auth found... continue or cancel? */
+            Field DUP_MSG_LIT1
+                Line 1
+                Column 19
+                Protected
+            End Field
+
+            Field DUP_AUTH_ID
+                Line 1
+                Column 53
+                Protected
+            End Field
+
+            Field DUP_MSG_LIT2
+                Line 1
+                Column 61
+                Protected
+            End Field
+
+            Field DUP_FLD
+                Line 1
+                Column 77
+                Entry Response
+                    Let DUP_FLD = "Y"
+                End Response
+
+                Function Response BACK_FLD
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF1_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF2_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response PF4_QUIT
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response ENTER_KEY
+                    If ((DUP_FLD <> "Y") AND (DUP_FLD <> "N")) Then
+                        Let MSG_ID = GEN_ENTYORN
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+                    If (DUP_FLD = "N") Then
+                        Let RETURN_COND = "PF4"
+                        Let CHGS_MADE = 0
+                        Include ABORT_REQUEST
+                    Else
+                        Deactivate
+                            Panel DUP_PANEL
+                        Position Immediate To Next Item
+                    End If
+                End Response
+
+                Input Required
+                Uppercase
+            End Field
+
+        End Panel
+
+
+        Panel AUTMAIN_PANEL
+            Viewport MAIN_VP
+            /* Authorization maintenance update/inquiry panel */
+            Function Response BACK_FLD
+                If (UPD_MODE = "A") Then
+                    Position Immediate To Previous Item
+                Else
+                    Include INVALID_FUNCTION
+                End If
+            End Response
+
+            Function Response LEFT_ITEM
+                If (UPD_MODE = "A") Then
+                    Position To Previous Item
+                Else
+                    Include INVALID_FUNCTION
+                End If
+            End Response
+
+            Function Response RIGHT_ITEM
+                If (UPD_MODE = "A") Then
+                    Position To Next Item
+                Else
+                    Include INVALID_FUNCTION
+                End If
+            End Response
+
+            Function Response PF1_QUIT
+                Let RETURN_COND = "PF1"
+                Include ABORT_REQUEST
+            End Response
+
+            Function Response PF2_QUIT
+                Let RETURN_COND = "PF2"
+                Include ABORT_REQUEST
+            End Response
+
+            Function Response PF4_QUIT
+                Let RETURN_COND = "PF4"
+                Include ABORT_REQUEST
+            End Response
+
+            Literal Text
+                Line 2
+                Column 1
+                Value "                           A U T H O R I Z A T I O N"
+            End Literal
+
+            Literal Text
+                Line 4
+                Column 1
+                Value "Authorization ID:"
+            End Literal
+
+            Literal Text
+                Line 4
+                Column 30
+                Value "   1. Type: "
+            End Literal
+
+            Literal Text
+                Line 5
+                Column 1
+                Value " 2. SSN:             Mbr:"
+            End Literal
+
+            Literal Text
+                Line 5
+                Column 63
+                Value "Birth:"
+            End Literal
+
+            Literal Text
+                Line 6
+                Column 1
+                Value " 3. Est Service Dates - Start/Admission:              "-
+                    "End/Discharge:"
+            End Literal
+
+            Literal Text
+                Line 7
+                Column 1
+                Value "    Admission Type:"
+            End Literal
+
+            Literal Text
+                Line 8
+                Column 1
+                Value " 4. PMG/PCP:"
+            End Literal
+
+            Literal Text
+                Line 9
+                Column 1
+                Value " 5. Prov Of Service:"
+            End Literal
+
+            Literal Text
+                Line 10
+                Column 1
+                Value " 6. External Track#:"
+            End Literal
+
+            Literal Text
+                Line 11
+                Column 1
+                Value " 7. Status:"
+            End Literal
+
+            Literal Text
+                Line 12
+                Column 1
+                Value " 8. Treatment:: Inpatient:"
+            End Literal
+
+            Literal Text
+                Line 12
+                Column 32
+                Value "Out/Emer:"
+            End Literal
+
+            Literal Text
+                Line 12
+                Column 47
+                Value "Out/Surg:"
+            End Literal
+
+            Literal Text
+                Line 12
+                Column 64
+                Value "Path/Prof:"
+            End Literal
+
+            Literal Text
+                Line 13
+                Column 17
+                Value "Rad/Prof:"
+            End Literal
+
+            Literal Text
+                Line 13
+                Column 32
+                Value "Ambulance:"
+            End Literal
+
+            Literal Text
+                Line 13
+                Column 47
+                Value "Home Health:"
+            End Literal
+
+            Literal Text
+                Line 13
+                Column 64
+                Value "Hospice:"
+            End Literal
+
+            Literal Text
+                Line 14
+                Column 17
+                Value "Other:"
+            End Literal
+
+            Literal Text
+                Line 15
+                Column 1
+                Value " 9. Diagnosis -"
+            End Literal
+
+            Literal Text
+                Line 16
+                Column 1
+                Value "10. Discharge Reason:"
+            End Literal
+
+            Literal Text
+                Line 17
+                Column 1
+                Value "11. WkComp: "
+            End Literal
+
+            Literal Text
+                Line 17
+                Column 16
+                Value "Injury-Date: "
+            End Literal
+
+            Literal Text
+                Line 17
+                Column 41
+                Value "COB: "
+            End Literal
+
+            Literal Text
+                Line 17
+                Column 49
+                Value "Medicare: "
+            End Literal
+
+            Literal Text
+                Line 18
+                Column 1
+                Value "12. Severity:"
+            End Literal
+
+            Literal Text
+                Line 18
+                Column 36
+                Value "Orig:                   Last:"
+            End Literal
+
+            Literal Text
+                Line 19
+                Column 1
+                Value "13. Notes:"
+            End Literal
+
+            Field SCREEN_MODE
+                Line 1
+                Column 2
+                Display
+                    Bold
+                Protected
+            End Field
+
+            Field HEADER_2
+                Line 1
+                Column 26
+            End Field
+
+            Field AUTH_ID
+                Line 4
+                Column 19
+                Entry Response
+                   /* Message
+                        " "  */
+                    Let CHGS_MADE = 0
+                    If ((PROCESS_COND = "MAN") AND (RETURN_COND = "   ")) Then
+                        If (PROG_MODE = "U") Then
+                            Let UPD_MODE = "M"
+                            Let CHGS_MADE = 1
+                        End If
+                        Include ENTER_PROMPT
+                    Else
+                        If (RETURN_COND = "PF4") Then
+                            Let RETURN_COND = "   "
+                            Include INIT_AUTHMAST
+                        End If
+                    End If
+                End Response
+
+                Function Response PF4_QUIT
+                    Let RETURN_COND = "PF4"
+                    Let PROCESS_COND = "EXT"
+                    Remove All
+                    Return Immediate
+                End Response
+
+                Function Response FIND_KEY
+                    Call "ICHDR" Using
+                            By Descriptor "----"
+			    BY Reference HDR_1
+			    BY Reference HDR_2
+
+		    RESET RTN_SSN
+                    Call "CEPS512AA_AUTH_SELECTION" Using
+                            By Descriptor RTN_SSN
+                            By Descriptor RTN_MBR_TYPE
+                            By Descriptor AUTH_ID
+                            By Descriptor HDR_CNT
+                    Refresh All
+
+                End Response
+
+                Validation Response
+                    If ((PROG_MODE = "U") AND (AUTH_ID <> "       ")) Then
+                        Call "CEPF511AA_LOCK_AUTH" Using
+                                By Reference ICLOCK_ARG
+                                Giving RET_VALUE
+		    Else
+			Let RET_VALUE = 1
+		    End If
+                    If (RET_VALUE = FALSE) Then
+			Message " "
+			SIGNAL %BELL Message Message_Line
+                        INVALID
+		    Else
+			IF  AUTH_ID = "9999997" OR
+			    AUTH_ID = "9999998" OR AUTH_ID = "9999999" THEN
+			    LET MSG_ID = CEP_AUTNOTFOU
+			    INCLUDE SHOW_MESSAGE
+			    INVALID
+			ELSE
+			    If (AUTH_ID <> " ") Then
+			        Call "CEPF501AA_VALID_AUTH" Using
+                                    By Reference WORK_MAIN
+                                   /* By Reference WORK_NOTE */
+                                    By Reference CEPF502AB_REC
+                                    Giving RET_VALUE
+			    End If
+			    If (RET_VALUE = FALSE) OR (AUTH_ID = " ") Then
+				If (PROG_MODE = "U") Then
+				  If AUTH_ID = " " Then
+				    Let UPD_MODE = "A"
+				    Let AUTH_ID_SAVE = AUTH_ID
+				    Include INIT_AUTHMAST
+				    Let FIRST_TIME_THRU = 1
+				    Let AUTH_ID = AUTH_ID_SAVE
+				    Call "GENS029AA_GET_STAMP" Using
+					By Reference PROC_STAMP
+				    Let AUTH_CREATION_ICIDATE = TODAY_ICIDATE
+				    Let AUTH_CREATION_ICITIME = TODAY_ICITIME
+				    Let AUTH_CREATION_VMSDATE = TODAY_VMSDATE
+				    Let AUTH_CREATION_USERNAME
+					= AUTH_LAST_UPD_USERNAME
+				    Let AUTH_LAST_UPD_ICIDATE = TODAY_ICIDATE
+				    Let AUTH_LAST_UPD_ICITIME = TODAY_ICITIME
+				    Let AUTH_LAST_UPD_VMSDATE = TODAY_VMSDATE
+				  Else
+				    Let MSG_ID = CEP_AUTNOTFOU
+				    Include SHOW_MESSAGE
+				    Invalid
+				  End If
+				Else
+				    Let MSG_ID = CEP_AUTNOTFOU
+				    Include SHOW_MESSAGE
+				    Invalid
+				End If
+			    Else
+				Call "GENF126AA_Get_Mbr_Name" Using
+				    By Reference GENF126AA_WORK_REC
+				    Giving RET_VALUE
+				Call "CHECK_ACCESS_LEVEL1" Using
+				    By Reference  WORK_MBR_FLAGS
+                                    Giving RET_VALUE
+				If RET_VALUE = FALSE Then
+				    Include INIT_AUTHMAST
+				    SIGNAL %BELL 
+				    MESSAGE "Restricted Access - No Authorization"
+				    Invalid
+				Else
+				    Include MOVE_WORK_TO_REC
+				    Include DISPLAY_AUTH
+
+				    If (PROG_MODE = "U") Then
+					If SYS_MODE = "A" Then
+					  Call "CEPF520AA_Check_Auth_Type"
+					  Using By Descriptor AUTH_TYPE
+					  Giving RET_VALUE
+					  If RET_VALUE = FALSE Then
+					    SIGNAL %BELL MESSAGE
+					    "Update not allowed for this Authorization! - " AUTH_ID
+					    Let Auth_ID = "       "
+					    Invalid
+					  Else
+					    Deactivate Panel AUTMAIN_PANEL
+					    Let UPD_MODE = "M"
+					    Include ENTER_PROMPT
+					  End If
+					Else
+					  Deactivate Panel AUTMAIN_PANEL
+					  Let UPD_MODE = "M"
+					  Include ENTER_PROMPT
+					End If
+				    Else
+					Deactivate Panel AUTMAIN_PANEL
+					Include ENTER_PROMPT
+				    End If
+
+				End If
+			    End If
+			End If
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_TYPE
+                Line 4
+                Column 42
+                Entry Response
+                    Message
+                        " "
+                    Let TABLE_ID = "AUTH_TYPE"
+                    Let TABLE_TYPE = "P"
+                    If (AUTH_TYPE = " ") Then
+                        Include TABLE_INIT
+			/* MOD #4 BEGIN Default new Auths to Type "M" */
+			Let TABLE_CODE_OUT = "M"
+			Let TABLE_DESC = "Medical Management"
+			/* END MOD #4 */
+                        Let AUTH_TYPE = TABLE_CODE_OUT
+                        Let AUTH_TYPE_DESC = TABLE_DESC
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_TYPE = "P"
+                    Let TABLE_ID = "AUTH_TYPE"
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let AUTH_TYPE = TABLE_CODE_OUT
+                    Let AUTH_TYPE_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_TYPE = "P"
+                    Let TABLE_ID = "AUTH_TYPE"
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let AUTH_TYPE = TABLE_CODE_OUT
+                    Let AUTH_TYPE_DESC = TABLE_DESC
+                End Response
+
+                Validation Response
+                    Let TABLE_TYPE = "P"
+                    Let TABLE_ID = "AUTH_TYPE"
+                    Let TABLE_CODE = AUTH_TYPE
+                    Activate
+                        Field AUTH_TYPE_DESC on AUTMAIN_PANEL
+                    Include VALIDATE_TABLE
+                    Let AUTH_TYPE_DESC = TABLE_DESC
+                    If (VALID_OPTION = FALSE) Then
+                        Let MSG_ID = CEP_INVAUTTYP
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+			If (SYS_MODE = "A") AND (PROG_MODE = "U") Then
+			    Call "CEPF520AA_Check_Auth_Type"
+			    Using By Descriptor AUTH_TYPE
+			    Giving RET_VALUE
+			    If RET_VALUE = FALSE Then
+				SIGNAL %BELL MESSAGE
+				"Update not allowed with this Authorization Type!"
+				Invalid
+			    Else
+				Let CHGS_MADE = 1
+			    End If
+			Else
+			    Let CHGS_MADE = 1
+			End If
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_TYPE_DESC
+                Line 4
+                Column 44
+                Concealed
+                    When (AUTH_TYPE_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_SSN
+                Line 5
+                Column 10
+                Entry Response
+		    Reset SAVE_SSN
+                    If ((UPD_MODE = "A") AND (AUTH_SSN = "000000000")) Then
+                        Reset
+                            EMP_GROUP
+                            /* EMP_SUB_GROUP */
+                            AUTH_SSN
+                            AUTH_MBR_TYPE
+                            AUTH_MBR_TYPE_DESC
+                        Message
+                            " "
+                    End If
+                End Response
+
+                Function Response LEFT_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Function Response BACK_FLD
+    		    POSITION TO PREVIOUS ITEM
+                End Response
+
+                Function Response FIND_KEY
+		    Message ""
+                    Reset
+                        EMP_GROUP
+                        /* EMP_SUB_GROUP */
+                        AUTH_SSN
+                        AUTH_MBR_TYPE_DESC
+                        AUTH_MBR_NAME
+                        AUTH_MBR_DOB_MMDD
+                        AUTH_MBR_DOB_CCYY
+		        PAR_1 
+			PAR_9
+
+/*                    Call "ICHDR" Using
+                            By Descriptor "CAPS"
+			    BY Reference HDR_1
+			    BY Reference HDR_2   */
+		    Message  "x"
+		    Message  " "
+                    Call "TAC18_NEW" Using
+                            By Descriptor AUTH_SSN
+                            By Descriptor EMP_GROUP
+                            By Reference PAR_1
+                            By Reference PAR_9
+                            By Reference PAR_0
+                            By Reference PAR_0
+                            By Reference PAR_0
+                            By Reference PAR_0
+                    Refresh All
+                End Response
+
+                Validation Response
+                    If (PROG_MODE = "U") Then
+                        Let CHGS_MADE = 1
+                    Else
+                        Let CHGS_MADE = 0
+                    End If
+                    If (AUTH_SSN = "") OR (AUTH_SSN = "000000000") Then
+                        Let MSG_ID = GEN_INVSSN
+                        Include SHOW_MESSAGE
+                        Invalid
+		    Else
+                        If (SAVE_SSN <> AUTH_SSN) Then  
+                            Reset ENR_TAB PAT_PTR
+                            Let DIFF_MBR_FLAG = 1
+                            Let ENR_TAB(1).ENR_SSN = AUTH_SSN
+                            Call "ENRF011AA_GET_FAMILY" Using
+                                By Reference ENRF011AA_REC
+                                Giving RET_VALUE
+                            If (RET_VALUE = FALSE) Then
+                                Let MSG_ID = ENR_NOTFILE
+                                Call "GENF032AA_DISPLAY_MESSAGE" Using
+                                    By Descriptor SESSION
+                                    By Descriptor "MESSAGE_REC"
+                                    By Value MSG_ID
+                                    By Reference SCR_COLS
+                                    By Descriptor AUTH_SSN
+                                    Giving RET_VALUE
+                                Invalid
+			    Else
+				Call "CHECK_ACCESS_LEVEL1" Using
+				    By Reference  ENR_TAB(1).ENR_MBR_FLAGS
+                                    Giving RET_VALUE
+				If RET_VALUE = FALSE Then
+				    SIGNAL %BELL 
+				    MESSAGE "Restricted Access - No Authorization"
+				    Invalid
+				Else
+				    Let SAVE_SSN = AUTH_SSN
+				    Include CHECK_FOR_DUP
+				End If
+			    End If
+                        End If    
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Output Picture XXX'-'XX'-'XXXX   
+		Uppercase
+            End Field
+
+            Field AUTH_MBR_TYPE_DESC
+                Line 5
+                Column 27
+                Entry Response
+                    Message
+                        " "
+                    If (DIFF_MBR_FLAG = 1) Then
+                        Let DIFF_MBR_FLAG = 0
+                        Let AUTH_MBR_TYPE = ENR_TAB(1).ENR_MBR_TYPE
+                        Let AUTH_MBR_TYPE_DESC = ENR_TAB(1).ENR_MBR_CODE
+                        Call "GENF116AA_FMT_NAME" Using
+                                By Reference ENR_TAB(1).ENR_GEN_NAME_REC
+                                By Reference AUTH_MBR_NAME
+                                Giving RET_VALUE
+                        Let AUTH_MBR_DOB_MMDD = ENR_TAB(1).ENR_MBR_DOB_MMDD
+                        Let AUTH_MBR_DOB_CCYY = ENR_TAB(1).ENR_MBR_DOB_CCYY
+                        Let PAT_PTR = 1
+
+			IF UPD_MODE = "A" THEN
+			   Call "CEPS502AA_SET_MBR_FLAGS" Using
+				By Reference  ENR_TAB(1).ENR_MBR_FLAGS
+				By Descriptor AUTH_WKCOMP
+                        	By Descriptor AUTH_COB
+                        	By Descriptor AUTH_MEDICARE
+                        End If
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Let FAM_TAB_DIR = "P"
+                    Include SCROLL_FAM_TAB
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let FAM_TAB_DIR = "N"
+                    Include SCROLL_FAM_TAB
+                End Response
+
+                Validation Response
+                    Message
+                        " "
+                    Let CHGS_MADE = 1
+                    Call "ENRF037AA_CVT_MBR_CODE" Using
+                            By Descriptor AUTH_MBR_TYPE
+                            By Descriptor AUTH_MBR_TYPE_DESC
+                            By Descriptor "2"
+                            Giving RET_VALUE
+                    If (RET_VALUE = FALSE) Then
+                        Let MSG_ID = ENR_INVIDTY
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let PAT_PTR = 1
+                        Call "ENRF043AA_GET_FAM_MBR" Using
+                                By Reference AUTH_MBR_TYPE
+                                By Reference ENRF011AA_REC
+                                Giving RET_VALUE
+                        If (RET_VALUE = FALSE) Then
+                            Let MSG_ID = ENR_INVMBRTYP
+                            Include SHOW_MESSAGE
+                            Invalid
+                        Else
+                            Call "GENF116AA_FMT_NAME" Using
+                                    By Reference 
+                                        ENR_TAB(PAT_PTR).ENR_GEN_NAME_REC
+                                    By Reference AUTH_MBR_NAME
+                                    Giving RET_VALUE
+			    Let AUTH_MBR_DOB_MMDD = ENR_TAB(PAT_PTR).ENR_MBR_DOB_MMDD
+			    Let AUTH_MBR_DOB_CCYY = ENR_TAB(PAT_PTR).ENR_MBR_DOB_CCYY
+			    Include CHECK_FOR_DUP
+                        End If
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_MBR_NAME
+                Line 5
+                Column 31
+                Concealed
+                    When (AUTH_MBR_NAME = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_MBR_DOB_MMDD
+                Line 5
+                Column 70
+                Concealed
+                    When (AUTH_MBR_DOB_MMDD = " ")
+                Display
+                    Reverse
+                Protected
+                Output Picture XX'-'XX
+            End Field
+
+            Field AUTH_MBR_DOB_CCYY
+                Line 5
+                Column 75
+                Concealed
+                    When (AUTH_MBR_DOB_CCYY = " ")
+                Display
+                    Reverse
+                Protected
+                Output Picture '-'XXXX
+            End Field
+
+            Field AUTH_EST_ADM_VMSDATE
+                Line 6
+                Column 42
+                Entry Response
+                    If (AUTH_EST_ADM_VMSDATE = "1858 11 17") Then
+                        Let AUTH_EST_ADM_DATE = TODAY_ICIDATE
+                        Let AUTH_EST_ADM_VMSDATE = TODAY_VMSDATE
+                    End If
+		    Let T_ROW = 7
+		    Let T_COL = 42
+		    CALL  "GET_VMSDATE" USING
+			BY REFERENCE T_ROW
+			BY REFERENCE T_COL
+			BY REFERENCE AUTH_EST_ADM_VMSDATE
+			BY REFERENCE AUTH_EST_ADM_VMSDATE
+			Giving RET_VALUE
+		    LET PROT_SW = "ON"
+                End Response
+
+                Exit Response
+                  Message  ""
+		  Let PROT_SW = "OFF"
+		  If ( RET_VALUE <> 0 )   Then
+		      Include CHECK_AUTMAIN_FUNCTION_KEYS
+		  Else
+                    If (AUTH_EST_ADM_VMSDATE = "1858 11 17") Then
+                        Let MSG_ID = CEP_SRVSTDREQ
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+		      IF (AUTH_WKCOMP = "Y" AND 
+			AUTH_EST_ADM_VMSDATE < AUTH_INJ_VMSDATE) Then
+			MESSAGE "Est Admission date must be >= Injury date"
+                        Invalid
+		      ELSE
+                        Let CHGS_MADE = 1
+                        Call "GENF123AA_CVT_VMS_ICI" Using
+                                By Reference AUTH_EST_ADM_VMSDATE
+                                By Reference AUTH_EST_ADM_DATE
+                                By Reference AUTH_EST_ADM_TIME
+                                Giving RET_VALUE
+                        If (RET_VALUE = FALSE) Then
+                            Let MSG_ID = CEP_SRVSTDINV
+                            Include SHOW_MESSAGE
+                            Invalid
+                        Else
+                            Include CHECK_FOR_DUP
+			    /* If UPD_MODE = "A" Then
+				CALL "CEPF502AC_Check_Claims" Using
+				    By Descriptor AUTH_SSN
+				    By Descriptor AUTH_MBR_TYPE
+				    By Descriptor AUTH_MBR_TYPE_DESC
+				    By Reference  AUTH_EST_ADM_DATE
+				    Giving RET_VALUE
+				If RET_VALUE <> FALSE Then
+				    REFRESH ALL
+				End If
+			    End If                     */
+                        End If
+                      End If
+                    End If
+		  End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Concealed
+                    When (AUTH_EST_ADM_VMSDATE = "1858 11 17")
+                Display
+                    Reverse
+		PROTECTED WHEN (PROT_SW = "ON")
+                Input Picture For Date NN-DD-YYYY
+                Range
+                    "1980 01 01" Through "2050 12 31"
+                        Message
+                            "Service start date is invalid"
+            End Field
+
+            Field AUTH_EST_DIS_VMSDATE
+                Line 6
+                Column 70
+                Entry Response
+                    If (AUTH_EST_DIS_VMSDATE = "1858 11 17") Then
+                        Let AUTH_EST_DIS_DATE = AUTH_EST_ADM_DATE
+                        Let AUTH_EST_DIS_VMSDATE = AUTH_EST_ADM_VMSDATE
+                    End If
+		    Let T_ROW = 7
+		    Let T_COL = 70
+		    CALL  "GET_VMSDATE" USING
+			BY REFERENCE T_ROW
+			BY REFERENCE T_COL
+			BY REFERENCE AUTH_EST_DIS_VMSDATE
+			BY REFERENCE AUTH_EST_DIS_VMSDATE
+			Giving RET_VALUE
+		    LET PROT_SW_2 = "ON"
+                End Response
+
+                Exit Response
+		  Message " "
+		  Let PROT_SW_2 = "OFF"
+
+		  If ( RET_VALUE = 9 )    Then /* Left Arrow */ 
+			Activate Field AUTH_EST_ADM_VMSDATE ON AUTMAIN_PANEL
+			Position Immediate To Field AUTH_EST_ADM_VMSDATE 
+			    ON AUTMAIN_PANEL
+		  Else
+		    If ( RET_VALUE = 2 )   /* Back Space */ Then
+			Activate Field AUTH_EST_ADM_VMSDATE ON AUTMAIN_PANEL
+			Position Immediate To Field AUTH_EST_ADM_VMSDATE 
+			    ON AUTMAIN_PANEL
+		    Else
+		      If ( RET_VALUE <> 0 ) Then
+		        Include CHECK_AUTMAIN_FUNCTION_KEYS
+		      Else
+			Let CHGS_MADE = 1
+			If (AUTH_EST_DIS_VMSDATE < AUTH_EST_ADM_VMSDATE) Then
+			    Let MSG_ID = CEP_SRVDTRINV
+			    Include SHOW_MESSAGE
+			    Invalid
+			Else
+			    If (AUTH_EST_DIS_VMSDATE = "1858 11 17") Then
+				Let MSG_ID = CEP_SRVEDTREQ
+				Include SHOW_MESSAGE
+				Invalid
+			    Else
+				Call "GENF123AA_CVT_VMS_ICI" Using
+                            	By Reference AUTH_EST_DIS_VMSDATE
+                            	By Reference AUTH_EST_DIS_DATE
+                            	By Reference AUTH_EST_DIS_TIME
+                            	Giving RET_VALUE
+
+				Let COVERAGE_TYPE = "M"
+				If (AUTH_TYPE = "E") Then
+				    Let COVERAGE_TYPE = "D"
+				End If
+				Let EMP_GROUP = " "
+				/* Let EMP_SUB_GROUP = " " */
+				Let BEN_TYPE = "M"
+				Let ICIDATE1 = AUTH_EST_ADM_DATE
+				Let ICIDATE2 = AUTH_EST_DIS_DATE
+				Reset
+				    REDISP_FLAG
+				    SELECT_FLAG
+				Call "ENRF038AA_GET_ELIG_REC" Using
+                                    By Reference ENRF038AA_REC
+                                    Giving RET_VALUE
+				If (RET_VALUE = 0) Then
+				    Let MSG_ID = ENR_ELGERR
+				    Include SHOW_MESSAGE
+				    Invalid
+				Else
+				    If (REDISP_FLAG = "Y") Then
+					Refresh All
+				    End If
+				    If (SELECT_FLAG = "Y") Then
+					Let LINK_ID = AUTH_PMG_ID 
+					Call "NETF001AA_GET_MASTER" Using
+                                         By Reference LINK_REC
+                                         Giving RET_VALUE
+					If (RET_VALUE = FALSE) Then
+					    Let AUTH_PMG_NAME = "** Invalid PMG"
+					    Let AUTH_PMG_NAME2 = ""
+					Else
+					    Let AUTH_PMG_NAME = LINK_NAME
+					    Let AUTH_PMG_NAME2 = LINK_NAME2
+					End If
+					Let GRPNO = EMP_GROUP
+					Let SYSTEM_CODE = SYS_MODE
+    /* MOD #3 Make changes below
+					IF SYS_MODE = "H" Then
+					    Let RMC_T_NAME = "HMO_RMC"
+					Else
+					    If SYS_MODE = "I" Then
+						Let RMC_T_NAME = "INDEMN_RMC"
+					    Else
+						Let RMC_T_NAME = "POS_RMC"
+					    End If
+					End If
+					Call "CEPS590AA_VALIDATE_SYSTEM" Using
+					By Reference CEPS590_REC
+					Giving RET_VALUE
+					IF (RET_VALUE = FALSE) Then
+					    SIGNAL %BELL MESSAGE 
+					    "Processing Authorization on "-
+					    "Incorrect System"			
+					    LET RETURN_COND = "PF4"
+					    INCLUDE ABORT_REQUEST
+					End if
+       MOD #3 End of area to make changes				*/
+
+				    Else
+					Let MSG_ID = ENR_ELGNOTFOU
+					Include SHOW_MESSAGE
+				    End If
+				End If
+			    End If
+			End If
+
+			Call "GENF123AA_CVT_VMS_ICI" Using
+                            By Reference AUTH_EST_DIS_VMSDATE
+                            By Reference AUTH_EST_DIS_DATE
+                            By Reference AUTH_EST_DIS_TIME
+                            Giving RET_VALUE
+		    End If
+		  End If
+		End If
+                End Response   
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Concealed
+                    When (AUTH_EST_DIS_VMSDATE = "1858 11 17")
+                Display
+                    Reverse
+		PROTECTED WHEN (PROT_SW_2 = "ON")
+                Input Picture For Date NN-DD-YYYY
+                Range
+                    "1980 01 01" Through "2050 12 31"
+                        Message
+                            "Service end date is invalid"
+            End Field
+
+            Field AUTH_ADM_TYPE_CODE
+                Line 7
+                Column 21
+                Entry Response
+                    Let TABLE_ID = "ADMIT_TYPE"
+                    Let TABLE_TYPE = "U"
+                    If (AUTH_ADM_TYPE_CODE = " ") Then
+			Let TABLE_DIR = "N"
+			Let TABLE_CODE = "E"
+			Call "GENF114AA_DISPLAY_TABLE" Using
+			    By Reference GENF114AA_REC
+                        /* Include TABLE_INIT */
+                        Let AUTH_ADM_TYPE_CODE = TABLE_CODE_OUT
+                        Let AUTH_ADM_TYPE_DESC = TABLE_DESC
+                    End If
+                End Response
+
+                Exit Response
+		    Message
+                        " "
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_ID = "ADMIT_TYPE"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let AUTH_ADM_TYPE_CODE = TABLE_CODE_OUT
+                    Let AUTH_ADM_TYPE_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_ID = "ADMIT_TYPE"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let AUTH_ADM_TYPE_CODE = TABLE_CODE_OUT
+                    Let AUTH_ADM_TYPE_DESC = TABLE_DESC
+                End Response
+
+                Function Response BACK_FLD
+                    Position To Previous Item
+                End Response
+
+                Validation Response
+                    Let TABLE_ID = "ADMIT_TYPE"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_CODE = AUTH_ADM_TYPE_CODE
+                    Include VALIDATE_TABLE
+                    Let AUTH_ADM_TYPE_DESC = TABLE_DESC
+                    If (VALID_OPTION = FALSE) Then
+                        Let MSG_ID = CEP_INVADMTYP
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let CHGS_MADE = 1
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_ADM_TYPE_DESC
+                Line 7
+                Column 23
+                Concealed
+                    When (AUTH_ADM_TYPE_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_PMG_ID
+                Line 8
+                Column 14
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response FIND_KEY
+		    If JPI_User_ID <> "IMMVS" Then
+			Call "ICHDR" Using
+                            By Descriptor "----"
+			    BY Reference HDR_1
+			    BY Reference HDR_2
+		    
+			Call "PRV_PRV_ORX_02" Using
+                            By REFERENCE "Y"
+                            By REFERENCE RETURN_COMMAND
+			    BY REFERENCE PARENTREQUESTID
+			Refresh All
+		    End If
+                End Response
+
+                Validation Response
+                    If (AUTH_PMG_ID = " ") Then
+			Let AUTH_PMG_NAME = "** Invalid Pmg"
+                	Let AUTH_PMG_NAME2 = ""
+                        Let MSG_ID = GEN_INVPROV
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let CHGS_MADE = 1
+                        Let LINK_ID = AUTH_PMG_ID
+                        Call "NETF001AA_GET_MASTER" Using
+                                By Reference LINK_REC
+                                Giving RET_VALUE
+                        If (RET_VALUE = FALSE) Then
+			    Let AUTH_PMG_NAME = "** Invalid Pmg"
+                	    Let AUTH_PMG_NAME2 = ""
+                            Let MSG_ID = GEN_INVPROV
+                            Include SHOW_MESSAGE
+                            Invalid
+			Else
+                	    Let AUTH_PMG_NAME = LINK_NAME
+                	    Let AUTH_PMG_NAME2 = LINK_NAME2
+                        End If
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_PMG_NAME
+                Line 8
+                Column 19
+                Concealed
+                    When (AUTH_PMG_NAME = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_PMG_NAME2
+                Line 8
+                Column 53
+                Concealed
+                    When (AUTH_PMG_NAME2 = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_SERV_PROV_NAME
+                Line 9
+                Column 22
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Validation Response
+                        Let CHGS_MADE = 1
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_EXT_TRACK_NO
+                Line 10
+                Column 22
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Validation Response
+                        Let CHGS_MADE = 1
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+		    Uppercase
+            End Field
+
+            Field AUTH_STATUS_CODE
+                Line 11
+                Column 13
+                Entry Response
+                    Message
+                        " "
+                    Let TABLE_ID = "AUTH_STATUS"
+                    Let TABLE_TYPE = "P"
+                    If (AUTH_STATUS_CODE = " ") Then
+                        Let AUTH_STATUS_CODE = "O"
+                        Let TABLE_CODE = "O"
+                        Include VALIDATE_TABLE
+                        If (VALID_OPTION <> FALSE) Then
+                            Let SIX_BYTES = TABLE_TERSE
+                            If (SIX_BYTES = "NONE  ") Then
+                                Let AUTH_STATUS_DESC = TABLE_DESC
+                            Else
+                                Call "CEPF512AA_SCROLL_STATUS" Using
+                                        By Reference "N"
+                                        By Reference TABLE_CODE
+                                        By Reference TABLE_DESC
+                                        Giving RET_VALUE
+                                If (RET_VALUE = FALSE) Then
+                                    Let AUTH_STATUS_CODE = " "
+                                    Let AUTH_STATUS_DESC = "** Invalid Code"
+                                    Invalid
+                                Else
+                                    Let AUTH_STATUS_CODE = TABLE_CODE
+                                    Let AUTH_STATUS_DESC = TABLE_DESC
+                                End If
+                            End If
+                        Else
+                            Let AUTH_STATUS_CODE = " "
+                            Let AUTH_STATUS_DESC = "** Invalid Code"
+                            Invalid
+                        End If
+                    Else
+                        Let TABLE_CODE = AUTH_STATUS_CODE
+                        Include VALIDATE_TABLE
+                        If (VALID_OPTION = FALSE) Then
+                            Let AUTH_STATUS_CODE = " "
+                            Let AUTH_STATUS_DESC = "** Invalid code"
+                        End If
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Call "CEPF512AA_SCROLL_STATUS" Using
+                            By Reference "P"
+                            By Reference TABLE_CODE
+                            By Reference TABLE_DESC
+                            Giving RET_VALUE
+                    If (RET_VALUE = FALSE) Then
+                        Let AUTH_STATUS_CODE = " "
+                        Let AUTH_STATUS_DESC = "** Invalid code"
+                        Invalid
+                    Else
+                        Let AUTH_STATUS_CODE = TABLE_CODE
+                        Let AUTH_STATUS_DESC = TABLE_DESC
+                    End If
+                End Response
+
+                Function Response DOWN_ITEM
+                    Call "CEPF512AA_SCROLL_STATUS" Using
+                            By Reference "N"
+                            By Reference TABLE_CODE
+                            By Reference TABLE_DESC
+                            Giving RET_VALUE
+                    If (RET_VALUE = FALSE) Then
+                        Let AUTH_STATUS_CODE = " "
+                        Let AUTH_STATUS_DESC = "** Invalid code"
+                        Invalid
+                    Else
+                        Let AUTH_STATUS_CODE = TABLE_CODE
+                        Let AUTH_STATUS_DESC = TABLE_DESC
+                    End If
+                End Response
+
+                Validation Response
+		    Message " "
+                    Let TABLE_ID = "AUTH_STATUS"
+                    Let TABLE_TYPE = "P"
+                    Let TABLE_CODE = AUTH_STATUS_CODE
+                    Include VALIDATE_TABLE
+                    Let SIX_BYTES = TABLE_TERSE
+                    If (SIX_BYTES = "NONE  ") Then
+                        Let AUTH_STATUS_DESC = TABLE_DESC
+                    Else
+                        Let VALID_OPTION = FALSE
+                    End If
+                    If (VALID_OPTION = FALSE) Then
+                        Let AUTH_STATUS_DESC = "** Invalid Code"
+                        Let MSG_ID = CEP_INVSTACDE
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let CHGS_MADE = 1
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_STATUS_DESC
+                Line 11
+                Column 15
+                Concealed
+                    When (AUTH_STATUS_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_STATUS_EFF_VMSDATE
+                Line 11
+                Column 36
+                Entry Response
+                    If (AUTH_STATUS_EFF_VMSDATE = "1858 11 17") Then
+                        Let AUTH_STATUS_EFF_DATE = TODAY_ICIDATE
+                        Let AUTH_STATUS_EFF_VMSDATE = TODAY_VMSDATE
+                    End If
+		    Let T_ROW = 12
+		    Let T_COL = 36
+		    CALL  "GET_VMSDATE" USING
+			BY REFERENCE T_ROW
+			BY REFERENCE T_COL
+			BY REFERENCE AUTH_STATUS_EFF_VMSDATE
+			BY REFERENCE AUTH_STATUS_EFF_VMSDATE
+			Giving RET_VALUE
+		    LET PROT_SW_3 = "ON"
+                End Response
+
+                Exit Response
+		  Message " "
+		  Let PROT_SW_3 = "OFF"
+
+		  If ( RET_VALUE = 2 )    Then /* Back Space */ 
+		      Position To Previous Item
+		  Else
+		      If ( RET_VALUE <> 0 ) Then
+		        Include CHECK_AUTMAIN_FUNCTION_KEYS
+		      Else
+			If (AUTH_STATUS_EFF_VMSDATE = "1858 11 17") Then
+			    Let MSG_ID = CEP_STADTEREQ
+			    Include SHOW_MESSAGE
+			    Invalid
+			Else
+			    Let CHGS_MADE = 1
+			    Call "GENF123AA_CVT_VMS_ICI" Using
+				By Reference AUTH_STATUS_EFF_VMSDATE
+				By Reference AUTH_STATUS_EFF_DATE
+				By Reference AUTH_STATUS_EFF_TIME
+				Giving RET_VALUE
+			End If
+		      End IF
+		  End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Concealed
+                    When (AUTH_STATUS_EFF_VMSDATE = "1858 11 17")
+                Display
+                    Reverse
+		PROTECTED WHEN (PROT_SW_3 = "ON")
+                Input Picture For Date NN-DD-YYYY
+                Range
+                    "1980 01 01" Through "2050 12 31"
+                        Message
+                            "Status effective date is invalid"
+            End Field
+
+            Field AUTH_INPATIENT
+                Line 12
+                Column 28
+                Entry Response
+		    IF AUTH_INPATIENT = "" THEN
+		    	LET AUTH_INPATIENT   = "N"
+		    	LET AUTH_OUT_EMER    = "N"
+		    	LET AUTH_OUT_SURG    = "N"
+		    	LET AUTH_PATH_PROF   = "N"
+		    	LET AUTH_RAD_PROF    = "N"
+		    	LET AUTH_AMBULANCE   = "N"
+		    	LET AUTH_HOME_HEALTH = "N"
+		    	LET AUTH_HOSPICE     = "N"
+		    	LET AUTH_OTHER       = "N"
+		    END IF
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    MESSAGE " "
+		    IF AUTH_INPATIENT <> "Y" AND AUTH_INPATIENT <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_OUT_EMER
+                Line 12
+                Column 43
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_OUT_EMER <> "Y" AND AUTH_OUT_EMER <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_OUT_SURG
+                Line 12
+                Column 60
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_OUT_SURG <> "Y" AND AUTH_OUT_SURG <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_PATH_PROF
+                Line 12
+                Column 75
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_PATH_PROF <> "Y" AND AUTH_PATH_PROF <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_RAD_PROF
+                Line 13
+                Column 28
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_RAD_PROF <> "Y" AND AUTH_RAD_PROF <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_AMBULANCE
+                Line 13
+                Column 43
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_AMBULANCE <> "Y" AND AUTH_AMBULANCE <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_HOME_HEALTH
+                Line 13
+                Column 60
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_HOME_HEALTH <> "Y" AND AUTH_HOME_HEALTH <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_HOSPICE
+                Line 13
+                Column 75
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_HOSPICE <> "Y" AND AUTH_HOSPICE <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_OTHER
+                Line 14
+                Column 28
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+    		FUNCTION RESPONSE RIGHT_ITEM
+		    IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER    = "N" AND
+		       AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF   = "N" AND
+		       AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE   = "N" AND
+		       AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE     = "N" AND
+		       AUTH_OTHER       = "N" THEN
+		       MESSAGE "At least one Treatment should be selected"
+                       Position Immediate To CURRENT ITEM
+		    ELSE
+    		       IF UPD_MODE = "A" THEN
+    		     	  ACTIVATE FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		    	  POSITION TO FIELD AUTH_PRI_DIAG ON AUTMAIN_PANEL
+    		       ELSE
+    		     	  ACTIVATE FIELD ENTER_FLD ON ENTER_PANEL
+    		    	  POSITION TO FIELD ENTER_FLD ON ENTER_PANEL
+    		       END IF
+    		    END IF
+    		END RESPONSE
+
+		VALIDATION RESPONSE 
+		    IF AUTH_OTHER <> "Y" AND AUTH_OTHER <> "N" THEN
+			MESSAGE "Please Enter 'Y' or 'N'"
+			INVALID
+		    ELSE
+		       IF AUTH_INPATIENT   = "N" AND AUTH_OUT_EMER  = "N" AND
+		          AUTH_OUT_SURG    = "N" AND AUTH_PATH_PROF = "N" AND
+		          AUTH_RAD_PROF    = "N" AND AUTH_AMBULANCE = "N" AND
+		          AUTH_HOME_HEALTH = "N" AND AUTH_HOSPICE   = "N" AND
+		          AUTH_OTHER       = "N" THEN
+			  MESSAGE "At least one Treatment should be selected"
+                          Position Immediate To CURRENT ITEM
+		       ELSE
+			  LET CHGS_MADE = 1
+		       END IF
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_PRI_DIAG
+                Line 15
+                Column 19
+                Entry Response
+                    If (AUTH_PRI_DIAG = " ") Then
+                        Reset
+                            AUTH_PRI_DIAG_DESC
+                    End If
+                End Response
+
+                Validation Response
+                    If (AUTH_PRI_DIAG <> " ") Then
+                        Let CHGS_MADE = 1
+                        Let DIAG_CODE = AUTH_PRI_DIAG
+                        Include GET_DIAG
+                        Let AUTH_PRI_DIAG_DESC = DIAG_DESC
+                        Let AUTH_PRI_DIAG = DIAG_CODE
+                        If (RET_VALUE = FALSE) Then
+                            Let MSG_ID = CEP_INVDIACDE
+                            Include SHOW_MESSAGE
+                            Invalid
+			ELSE
+                    	    If (FIRST_TIME_THRU = 1) Then
+                        	Position Immediate To Field AUTH_WKCOMP On 
+                            		AUTMAIN_PANEL
+                    	    End If
+                        End If
+                    Else
+                        Let MSG_ID = CEP_PRIDIAREQ
+                        Include SHOW_MESSAGE
+                        Invalid
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_PRI_DIAG_DESC
+                Line 15
+                Column 25
+                Concealed
+                    When (AUTH_PRI_DIAG_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_DIS_REASON_CODE
+                Line 16
+                Column 23
+                Entry Response
+                    Message
+                        " "
+                    Include TABLE_INIT
+
+/*                    Let TABLE_ID = "AUTH_DISCH"
+                    Let TABLE_TYPE = "U"
+                    If (AUTH_DIS_REASON_CODE = " ") Then
+                        Include TABLE_INIT
+                        Let AUTH_DIS_REASON_CODE = TABLE_CODE_OUT
+                        Let AUTH_DIS_REASON_DESC = TABLE_DESC
+                    Else
+                        Let TABLE_CODE = AUTH_DIS_REASON_CODE
+                        Include VALIDATE_TABLE
+                        If (VALID_OPTION = FALSE) Then
+                            Let AUTH_DIS_REASON_CODE = " "
+                            Let AUTH_DIS_REASON_DESC = "** Invalid code"
+                        Else
+                            Let AUTH_DIS_REASON_DESC = TABLE_DESC
+                        End If
+                    End If    */
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_ID = "AUTH_DISCH"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let AUTH_DIS_REASON_CODE = TABLE_CODE_OUT
+                    Let AUTH_DIS_REASON_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_ID = "AUTH_DISCH"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let AUTH_DIS_REASON_CODE = TABLE_CODE_OUT
+                    Let AUTH_DIS_REASON_DESC = TABLE_DESC
+                End Response
+
+                Validation Response
+                    IF AUTH_DIS_REASON_CODE = "" THEN
+                    	LET AUTH_DIS_REASON_DESC = ""
+                        Let CHGS_MADE = 1
+		    ELSE
+                        Let TABLE_ID = "AUTH_DISCH"
+                    	Let TABLE_TYPE = "U"
+                    	Let TABLE_CODE = AUTH_DIS_REASON_CODE
+                    	Include VALIDATE_TABLE
+                    	Let AUTH_DIS_REASON_DESC = TABLE_DESC
+                    	If (VALID_OPTION = FALSE) Then
+                           Let MSG_ID = CEP_INVDISCDE
+                           Include SHOW_MESSAGE
+                           Invalid
+                    	Else
+                           Let CHGS_MADE = 1
+                    	End If
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_DIS_REASON_DESC
+                Line 16
+                Column 25
+                Concealed
+                    When (AUTH_DIS_REASON_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_WKCOMP
+                Line 17
+                Column 13
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    If (FIRST_TIME_THRU = 1) Then
+                        Position Immediate To Field AUTH_PRI_DIAG On 
+				AUTMAIN_PANEL
+                    End If
+                End Response
+
+                Validation Response
+		    Message " "
+                    If (AUTH_WKCOMP <> "Y" AND AUTH_WKCOMP <> "N") Then
+			MESSAGE "Workmans Comp must equal 'Y' or 'N'"
+			INVALID
+		    ELSE
+                        Let CHGS_MADE = 1
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_INJ_OUTDATE
+                Line 17
+                Column 29
+
+                Entry Response
+		    Call "GENS112AA" Using
+			By Descriptor AUTH_INJ_OUTDATE
+			By Reference ICIDATE_FROM
+			By Reference ICIDATE_THRU
+                    	By Reference AUTH_INJ_DATE
+                    	Giving RET_VALUE
+		    If RET_VALUE = FALSE Then
+			Let AUTH_INJ_DATE = 0
+		    End If
+		    Call "GENF122AA_CVT_ICI_VMS" Using
+			By Reference AUTH_INJ_DATE
+			By Reference AUTH_INJ_VMSDATE
+			Giving RET_VALUE
+		    Let T_ROW = 18
+		    Let T_COL = 29
+		    CALL  "GET_VMSDATE" USING
+			BY REFERENCE T_ROW
+			BY REFERENCE T_COL
+			BY REFERENCE AUTH_INJ_VMSDATE
+			BY REFERENCE AUTH_INJ_VMSDATE
+			Giving RET_VALUE_SAVE
+		    Call "GENF123AA_CVT_VMS_ICI" Using
+                        By Reference AUTH_INJ_VMSDATE
+                        By Reference AUTH_INJ_DATE
+                        Giving RET_VALUE
+		    If AUTH_INJ_VMSDATE = "1858 11 17 "  Then
+			Let AUTH_INJ_DATE = 0
+		    End If
+		    Call "ICIS036AA_ICIDATE_TO_MMDDCCYY" Using
+			By Reference  AUTH_INJ_DATE
+			By Descriptor TEMP_INJ_DATE
+			Giving RET_VALUE
+		    LET AUTH_INJ_OUTDATE = TEMP_INJ_DATE
+
+		    LET PROT_SW_4 = "ON"
+		    Let RET_VALUE = RET_VALUE_SAVE
+                End Response
+
+/*                Exit Response
+                    Call "GENF123AA_CVT_VMS_ICI" Using
+                            By Reference AUTH_INJ_VMSDATE
+                            By Reference AUTH_INJ_DATE
+                            Giving RET_VALUE
+                End Response   */
+
+                Exit Response
+		    Message " "
+		    Let PROT_SW_4 = "OFF"
+
+		    If RET_VALUE = 2   /* Back Space */ Then
+			Position Immediate To Previous Item
+		    Else
+		      If ( RET_VALUE <> 0 ) Then
+		        Include CHECK_AUTMAIN_FUNCTION_KEYS
+		      Else
+			If (AUTH_WKCOMP = "Y") THEN
+			    IF (AUTH_INJ_OUTDATE = 0) Then
+				MESSAGE "Injury date is required"
+				Invalid
+			    Else
+				Call "GENS112AA" Using
+				    By Descriptor AUTH_INJ_OUTDATE
+				    By Reference ICIDATE_FROM
+				    By Reference ICIDATE_THRU
+				    By Reference AUTH_INJ_DATE
+				    Giving RET_VALUE
+				IF RET_VALUE = FALSE THEN
+				    MESSAGE "Injury date is invalid"
+				    Invalid
+				ELSE
+				    Call "GENF122AA_CVT_ICI_VMS" Using
+					By Reference AUTH_INJ_DATE
+					By Reference AUTH_INJ_VMSDATE
+					Giving RET_VALUE
+				    IF (AUTH_INJ_VMSDATE > AUTH_EST_ADM_VMSDATE) Then
+					MESSAGE 
+					    "Injury date must be less than or equal to Est Admission date"
+					Invalid
+				    ELSE
+					Let CHGS_MADE = 1
+				    End If
+				End If
+			    End If
+			ELSE
+			    Call "GENS112AA" Using
+                    		By Descriptor AUTH_INJ_OUTDATE
+				By Reference ICIDATE_FROM
+				By Reference ICIDATE_THRU
+                    		By Reference AUTH_INJ_DATE
+                    		Giving RET_VALUE
+			    IF RET_VALUE = FALSE THEN
+				MESSAGE "Injury date is invalid"
+				Invalid
+			    ELSE
+				    Call "GENF122AA_CVT_ICI_VMS" Using
+					By Reference AUTH_INJ_DATE
+					By Reference AUTH_INJ_VMSDATE
+					Giving RET_VALUE
+				    IF (AUTH_INJ_VMSDATE > AUTH_EST_ADM_VMSDATE) Then
+					MESSAGE 
+					    "Injury date must be less than or equal to Est Admission date"
+					Invalid
+				    ELSE
+					Let CHGS_MADE = 1
+				    End If
+			    End If
+			End If
+		    End If
+		  End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+		PROTECTED WHEN ( PROT_SW_4 = "ON" )
+                Output Picture 99'-'99'-'9999
+            End Field
+
+            Field AUTH_COB
+                Line 17
+                Column 46
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+		VALIDATION RESPONSE 
+		    IF (AUTH_COB <> "Y" AND AUTH_COB <> "N") THEN
+			MESSAGE "COB flag must equal 'Y' or 'N'"
+			INVALID
+                    Else
+		        IF (AUTH_COB = "Y") Then
+                    	    Call "CLC05_DISPLAY_COB_NEW" Using
+                            	By Descriptor ""
+                            	By Descriptor AUTH_SSN
+                            	By Descriptor "M"
+                            	By Reference AUTH_MBR_TYPE
+			    REFRESH ALL
+                        End If
+                        Let CHGS_MADE = 1
+                    End If
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_MEDICARE
+                Line 17
+                Column 59
+                Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position Immediate To Previous Item
+                End Response
+
+		VALIDATION RESPONSE 
+		    IF AUTH_MEDICARE <> "Y" AND AUTH_MEDICARE <> "N" THEN
+			MESSAGE "Medicare must equal 'Y' or 'N'"
+			INVALID
+		    ELSE
+			LET CHGS_MADE = 1
+		    END IF
+		END RESPONSE
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_SEVERITY_CODE
+                Line 18
+                Column 15
+                Entry Response
+                    Message
+                        " "
+                    Let TABLE_ID = "AUTH_SEVERTY"
+                    Let TABLE_TYPE = "U"
+                    If (AUTH_SEVERITY_CODE = " ") Then
+            	    	Let TABLE_DIR = "N"
+            	    	Let TABLE_CODE = "L"
+            	    	Call "GENF114AA_DISPLAY_TABLE" Using
+                    		By Reference GENF114AA_REC
+                        Let AUTH_SEVERITY_CODE = TABLE_CODE_OUT
+                        Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+                    Else
+                        Let TABLE_CODE = AUTH_SEVERITY_CODE
+                        Include VALIDATE_TABLE
+                        If (VALID_OPTION = FALSE) Then
+                            Let AUTH_SEVERITY_CODE = " "
+                            Let AUTH_SEVERITY_CODE_DESC = "** Invalid code"
+                        Else
+                            Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+                        End If
+                    End If
+                End Response
+
+                Function Response UP_ITEM
+                    Let TABLE_ID = "AUTH_SEVERTY"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "P"
+                    Include SCROLL_TABLE
+                    Let AUTH_SEVERITY_CODE = TABLE_CODE_OUT
+                    Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+                End Response
+
+                Function Response DOWN_ITEM
+                    Let TABLE_ID = "AUTH_SEVERTY"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_DIR = "N"
+                    Include SCROLL_TABLE
+                    Let AUTH_SEVERITY_CODE = TABLE_CODE_OUT
+                    Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+                End Response
+
+                Function Response RIGHT_ITEM
+                    Include INVALID_FUNCTION
+                End Response
+
+                Validation Response
+                    Let TABLE_ID = "AUTH_SEVERTY"
+                    Let TABLE_TYPE = "U"
+                    Let TABLE_CODE = AUTH_SEVERITY_CODE
+                    Include VALIDATE_TABLE
+                    Let AUTH_SEVERITY_CODE_DESC = TABLE_DESC
+                    If (VALID_OPTION = FALSE) Then
+                        Let MSG_ID = CEP_INVSEVCDE
+                        Include SHOW_MESSAGE
+                        Invalid
+                    Else
+                        Let CHGS_MADE = 1
+			If (PROG_MODE = "U") AND (UPD_MODE = "A") Then
+			    Let DISPFL = 0
+			    Let CHGS = 32767
+			    Include PROCESS_NOTE_FIELDS
+			End IF
+                    End If
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse
+                Display
+                    Reverse
+                Uppercase
+            End Field
+
+            Field AUTH_SEVERITY_CODE_DESC
+                Line 18
+                Column 17
+                Concealed
+                    When (AUTH_SEVERITY_CODE_DESC = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_LAST_UPD_USERNAME
+                Line 18
+                Column 66
+                Concealed
+                    When (AUTH_LAST_UPD_USERNAME = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_LAST_UPD_VMSDATE
+                Line 18
+                Column 70
+                Concealed
+                    When (AUTH_LAST_UPD_VMSDATE = "1858 11 17 ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_CREATION_USERNAME
+                Line 18
+                Column 42
+                Concealed
+                    When (AUTH_CREATION_USERNAME = " ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_CREATION_VMSDATE
+                Line 18
+                Column 46
+                Concealed
+                    When (AUTH_CREATION_VMSDATE = "1858 11 17 ")
+                Display
+                    Reverse
+                Protected
+            End Field
+
+            Field AUTH_NOTE1
+                Line 19
+                Column 12
+                Concealed
+                    When (AUTH_NOTE1 = "~")
+               /* Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position To Previous Item
+                End Response
+
+		FUNCTION RESPONSE NEXT ITEM
+		    Let CHGS_MADE = 1
+                    Position Immediate To Field AUTH_NOTE2 On 
+			AUTMAIN_PANEL
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse        */
+                Display
+                    Reverse
+		Protected
+            End Field
+
+            Field AUTH_NOTE2
+                Line 20
+                Column 12
+                Concealed
+                    When (AUTH_NOTE2 = "~")
+               /* Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position To Previous Item
+                End Response
+
+		VALIDATION RESPONSE 
+		    Let CHGS_MADE = 1
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse            */
+                Display
+                    Reverse
+		Protected
+            End Field
+
+            Field AUTH_NOTE3
+                Line 21
+                Column 12
+                Concealed
+                    When (AUTH_NOTE3 = "~")
+               /* Entry Response
+                    Message
+                        " "
+                End Response
+
+                Function Response BACK_FLD
+                    Position To Previous Item
+                End Response
+
+		VALIDATION RESPONSE 
+		    Let CHGS_MADE = 1
+                End Response
+
+                Active Highlight
+                    Bold
+                    Reverse            */
+                Display
+                    Reverse
+		Protected
+            End Field
+
+	    Field NOTE_CAPTION
+		Line 19
+		Column 1
+		Protected
+            End Field
+
+	    Field UP_SYMBOL
+		Line 19
+		Column 11
+		Display BOLD BLINKING
+		Protected
+            End Field
+
+	    Field DOWN_SYMBOL
+		Line 21
+		Column 11
+		Display BOLD BLINKING
+		Protected
+            End Field
+
+        End Panel
+
+    End Layout
+End Form

@@ -1,0 +1,5 @@
+ #2 DefineDataStmt
+ #8 IncludeStmt, FROM={TestEntryPoint}, TO={#9}
+ #9 IfStmt, Label: IF #value, FROM={#8}, TO={#13(TRUE), #15(FALSE)}
+   #13 IncludeStmt, FROM={#9(TRUE)}, TO={#15}
+ #15 EndStmt, FROM={#13, #9(FALSE)}, TO={TestReturnPoint}

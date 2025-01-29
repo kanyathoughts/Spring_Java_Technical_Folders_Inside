@@ -1,0 +1,75 @@
+<nz-page-header class="mining__content-page-header" [nzTitle]="title">
+  <nz-page-header-subtitle *ngIf="showTaxonomyFilter">
+    <app-taxonomy-filter></app-taxonomy-filter>
+  </nz-page-header-subtitle>
+</nz-page-header>
+<nz-content class="mining__card-grid-layout">
+  <div nz-row [nzGutter]="[16, 16]" *appLoader="loadState">
+    <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="12" [nzXl]="8" [nzXXl]="8"
+      *ngFor="let metric of metricCardList; index as i">
+      <app-metrics-card 
+        [pageTitle]="title"
+        [title]="metric.title"
+        [description]="metric.description"
+        [descriptionPosition]="metric.descriptionPosition"
+        [kpiList]="metric.kpiList"
+        [chartType]="metric.chartType"
+        [chartConfig]="metric.chartConfig"
+        [showEclipseHint]="metric.showEclipseHint"
+        [chartFilterData]="metric.chartFilterData"
+        (openTableForFilter)="openChartDetailsTable($event,i)">
+      </app-metrics-card>
+    </div>
+  </div>
+</nz-content>
+
+<nz-drawer
+  [nzClosable]="true"
+  [nzVisible]="showChartDetails"
+  nzPlacement="right"
+  [nzTitle]="chartDetailTitleTemplate"
+  (nzOnClose)="closeChartDetails()"
+  nzWidth="100%">
+  <ng-container *nzDrawerContent>
+    <nz-space nzSize="middle" nzDirection="vertical" *ngIf="showChartDetails">
+      <!-- filters -->
+      <nz-row nzJustify="space-between">
+        <nz-col>
+          <ng-container *ngIf="(filterData.filters | keyvalue)?.length">
+            <nz-space nzSize="small" nzDirection="horizontal">
+              <span *nzSpaceItem nz-typography><strong>{{'filter' | translate}}:</strong></span>
+              <ng-container *ngFor="let filter of filterData.filters | keyvalue: filterSort last as isLast">
+                <span *nzSpaceItem class="ant-helper-secondary-text">{{filter.key | translate}}:</span>
+                <span *nzSpaceItem>{{filter.value}}</span>
+                <ng-container *ngIf="! isLast">
+                  <nz-divider *nzSpaceItem nzType="vertical"></nz-divider>
+                </ng-container>
+              </ng-container>
+            </nz-space>
+          </ng-container>
+        </nz-col>
+        <nz-col *ngIf="selectedCard.chartFilterData.showExportButton">
+            <button nz-button nzType="link" (click)="exportMetricsDetails()">
+              {{'miningTable.exportCSV' | translate}}</button>
+        </nz-col>
+      </nz-row>
+
+      <!-- Details Table -->
+      <mn-table *nzSpaceItem
+        [config]="chartTableConfig"
+        [value]="chartDataValue"
+        [totalRecords]="totalRecords"
+        [pageIndex]="pageIndex"
+        (queryParamChanged)="onQueryParamChange($event)"
+        (optionSelected)="navigateToDetails($event)"
+        [loading]="chartTableConfig.loading">
+      </mn-table>
+    </nz-space>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #chartDetailTitleTemplate>
+  <nz-page-header class="ant-helper__no-padding" nzBackIcon (nzBack)="closeChartDetails()">
+    <nz-page-header-title>{{ title + ': ' + selectedCard?.title }}</nz-page-header-title>
+  </nz-page-header>
+</ng-template>

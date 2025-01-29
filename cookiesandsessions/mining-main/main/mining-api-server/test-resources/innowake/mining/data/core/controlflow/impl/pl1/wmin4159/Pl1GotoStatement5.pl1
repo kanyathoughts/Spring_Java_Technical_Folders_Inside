@@ -1,0 +1,11 @@
+ SAMPLE1: PROC OPTIONS(MAIN);
+    DECLARE RESULT BIT(1) INIT(1B);
+    GOTO LABEL2;
+    PUT SKIP LIST('POST LABEL2');
+    LABEL2: X = Sprod(A,B,C); 
+    PUT SKIP LIST('POST ASSIGNING STATEMENT');
+    Sprod: procedure (U,V,W)
+     returns (float(21));
+     dcl (U,V,W) float(53);
+    end Sprod;
+ OUT : END SAMPLE1;

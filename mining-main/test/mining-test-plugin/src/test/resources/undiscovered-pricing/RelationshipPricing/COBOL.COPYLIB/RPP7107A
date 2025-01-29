@@ -1,0 +1,78 @@
+000010******************************************************************00001000
+000020* RPP7107A  7107 - RP BRANCH VALIDATION (ONLINE)                 *00002000
+000030******************************************************************00003000
+000040*   WS-RPMIM7107ERROR                                            *00004000
+000050*      ' ' SUCCESSFUL                                            *00005000
+000060*      '1' BRANCH/REGION CODE IS SPACES                          *00006000
+000070*      '2' BRANCH/REGION (MICM 7107) RECORD NOT FOUND            *00007000
+000080*      '3' BRANCH INFORMATION (MICM 2001) RECORD NOT FOUND       *00008000
+000090*      '4' BRANCH/REGION FIELD NOT VALID FOR MODEL               *00009000
+000100******************************************************************00010000
+000110*VALIDATE-BRANCH SECTION.                                         00011000
+000120 VB-START.                                                        00012000
+000130     MOVE SPACES TO WS-RPMIM7107ERROR.                            00013000
+000140     IF MIM-7102BRCHREGIONCD IS EQUAL TO SPACES                   00014000
+000150         MOVE '1' TO WS-RPMIM7107ERROR                            00015000
+000160         GO TO VB-EXIT.                                           00016000
+000170     MOVE SPACES TO MI7107-RECORD.                                00017000
+000180     MOVE WS-RPMIM7107INST TO MIM-7107KINST.                      00018000
+000190     MOVE +7107 TO MIM-7107KREC.                                  00019000
+000200     MOVE MIM-7102BRCHREGIONCD TO MIM-7107KRPREC.                 00020000
+000210     MOVE MIC-RPS-7107-PRI TO MIC-MST-REC-PRI.                    00021000
+000220     MOVE MI7107-RECORD TO MIMST-RECORD.                          00022000
+000230     PERFORM MIC-MST-GET-REQUEST.                                 00023000
+000240     MOVE MIMST-RECORD TO MI7107-RECORD.                          00024000
+000250     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00025000
+000260         MOVE '2' TO WS-RPMIM7107ERROR                            00026000
+000270         GO TO VB-EXIT.                                           00027000
+000280 VB-CONTINUE.                                                     00028000
+000290     MOVE +1 TO WS-RPMIM7107SUB.                                  00029000
+000300     IF MIM-7107TABLETYPE IS EQUAL TO 'B'                         00030000
+000310         GO TO VB-INCLUDE-EXCLUDE-OPTION.                         00031000
+000320     MOVE WS-RPMIM7107BRCHREGION TO WS-RPMIM2001BRANCH.           00032000
+000330 VB-READ-2001.                                                    00033000
+000340     MOVE SPACES TO MI2001-RECORD.                                00034000
+000350     MOVE WS-RPMIM7107INST2 TO MIM-2001KINST.                     00035000
+000360     MOVE +2001 TO MIM-2001KREC.                                  00036000
+000370     MOVE WS-RPMIM2001BRANCH TO MIM-2001KBRANCH.                  00037000
+000380     MOVE MIC-MST-2001-PRI TO MIC-MST-REC-PRI.                    00038000
+000390     MOVE MI2001-RECORD TO MIMST-RECORD.                          00039000
+000400     PERFORM MIC-MST-GET-REQUEST.                                 00040000
+000410     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00041000
+000420         MOVE '3' TO WS-RPMIM7107ERROR                            00042000
+000430         GO TO VB-EXIT.                                           00043000
+000440     MOVE MIMST-RECORD TO MI2001-RECORD.                          00044000
+000450     MOVE MIM-2001RPREG TO WS-RPMIM7107BRCHREGION.                00045000
+000460 VB-INCLUDE-EXCLUDE-OPTION.                                       00046000
+000470     IF MIM-7107OPT IS EQUAL TO 'I'                               00047000
+000480         GO TO VB-BRCHREGI.                                       00048000
+000490 VB-BRCHREGE.                                                     00049000
+000500     IF WS-RPMIM7107BRCHREGION IS EQUAL TO ZEROS                  00050000
+000510         GO TO VB-EXIT.                                           00051000
+000520     IF MIM-7107BRCHREGION (WS-RPMIM7107SUB) IS EQUAL TO ZEROS    00052000
+000530         GO TO VB-EXIT.                                           00053000
+000540     IF MIM-7107BRCHREGION (WS-RPMIM7107SUB)                      00054000
+000550         IS EQUAL TO WS-RPMIM7107BRCHREGION                       00055000
+000560         MOVE '4' TO WS-RPMIM7107ERROR                            00056000
+000570         GO TO VB-EXIT.                                           00057000
+000580     ADD +1 TO WS-RPMIM7107SUB.                                   00058000
+000590     IF WS-RPMIM7107SUB IS GREATER THAN 50                        00059000
+000600         GO TO VB-EXIT.                                           00060000
+000610     GO TO VB-BRCHREGE.                                           00061000
+000620 VB-BRCHREGI.                                                     00062000
+000630     IF WS-RPMIM7107BRCHREGION IS EQUAL TO ZEROS                  00063000
+000640         MOVE '4' TO WS-RPMIM7107ERROR                            00064000
+000650         GO TO VB-EXIT.                                           00065000
+000660     IF MIM-7107BRCHREGION (WS-RPMIM7107SUB) IS EQUAL TO ZEROS    00066000
+000670         MOVE '4' TO WS-RPMIM7107ERROR                            00067000
+000680         GO TO VB-EXIT.                                           00068000
+000690     IF MIM-7107BRCHREGION (WS-RPMIM7107SUB)                      00069000
+000700         IS EQUAL TO WS-RPMIM7107BRCHREGION                       00070000
+000710         GO TO VB-EXIT.                                           00071000
+000720     ADD +1 TO WS-RPMIM7107SUB.                                   00072000
+000730     IF WS-RPMIM7107SUB IS GREATER THAN 50                        00073000
+000740         MOVE '4' TO WS-RPMIM7107ERROR                            00074000
+000750         GO TO VB-EXIT.                                           00075000
+000760     GO TO VB-BRCHREGI.                                           00076000
+000770 VB-EXIT.                                                         00077000
+000780     EXIT.                                                        00078000

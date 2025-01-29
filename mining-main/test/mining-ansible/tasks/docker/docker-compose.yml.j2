@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  orientdb:
+    build: {{orient_dir}}
+    image: mining/orientdb:{{ansible_user}}
+    ports:
+      - "{{orient_binary_host_port}}:2424"
+      - "{{orient_http_host_port}}:2480"
+      - "{{orient_hazelcast_host_port}}:2434"
+    networks:
+           mining-net:
+  api-server:
+    build: {{api_server_dir}}
+    depends_on:
+      - orientdb
+    image: mining/api-server:{{ansible_user}}
+    ports:
+      - "{{api_server_host_port}}:8080"
+      - "{{api_server_hazelcast_host_port}}:5710"
+    networks:
+           mining-net:
+# the network name is automatically prepended with the username
+networks:
+  mining-net:

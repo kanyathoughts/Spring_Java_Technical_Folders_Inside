@@ -1,0 +1,1 @@
+       01  MY-PROGRAM-NAME PIC X(10) VALUE 'FOO'.

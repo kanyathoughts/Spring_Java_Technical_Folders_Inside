@@ -1,0 +1,793 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPD201.                                  00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040*----------------------------------------------------------------*00004000
+000050*                                                                *00005000
+000060*    RPD201 - RELATIONSHIP PRICING ACCOUNT INFORMATION UPDATE    *00006000
+000070*                                                                *00007000
+000080******************************************************************00008000
+000090 ENVIRONMENT DIVISION.                                            00009000
+000100 CONFIGURATION SECTION.                                           00010000
+000110 SPECIAL-NAMES.                                                   00011000
+000120     C01 IS C-01, C02 IS C-02, C03 IS C-03.                       00012000
+000130 INPUT-OUTPUT SECTION.                                            00013000
+000140 FILE-CONTROL.                                                    00014000
+000000 COPY RPSORTS.                                                    00015000
+000000 COPY RPACTWS.                                                    00016000
+000000 COPY RPACTES.                                                    00017000
+000000 COPY MIOPRCS       REPLACING                                     00018000
+000190                                 MI-OPRCFIL BY MI-APIBFIL         00019000
+000200                DA-3380-S-MIOPRC BY DA-3390-S-MIAPIB.             00020000
+000210 DATA DIVISION.                                                   00021000
+000220 FILE SECTION.                                                    00022000
+000000 COPY RPSRTXXX      REPLACING                                     00023000
+000240                                 ==:SORTFILE:== BY RP-SORTFIL     00024000
+P0168                                  ==:SZ:== BY 0448                 00025000
+000260                                 ==:SORTREC:== BY RP-SORTREC.     00026000
+000270 01  RP-SORTREC.                                                  00027000
+000280     03  RPACTWS-GRP-KEY.                                         00028000
+000290         05  RPACTWS-ACCT1-GRP.                                   00029000
+000300             07  RPACTWS-INST    PIC 9(04).                       00030000
+000310             07  RPACTWS-PRODCODE                                 00031000
+000320                                 PIC X(06).                       00032000
+000330             07  RPACTWS-ACCOUNT PIC X(18).                       00033000
+000340         05  RPACTWS-ACCT2-GRP.                                   00034000
+000350             07  RPACTWS-INST2   PIC 9(04).                       00035000
+000360             07  RPACTWS-PRODCODE2                                00036000
+000370                                 PIC X(06).                       00037000
+000380             07  RPACTWS-ACCOUNT2                                 00038000
+000390                                 PIC X(18).                       00039000
+000400             07  RPACTWS-MODEL2  PIC X(10).                       00040000
+000410     03  RPACTWS-GRP-DATA.                                        00041000
+000420         05  RPACTWS-SC-INC-OPTION                                00042000
+000430                                 PIC X(01).                       00043000
+000440         05  RPACTWS-SC-INC-QUAL PIC X(01).                       00044000
+000450         05  RPACTWS-SC-MODEL    PIC X(10).                       00045000
+000460         05  RPACTWS-DISCOUNT-AMOUNT                              00046000
+000470                                 PIC S9(09)V99   COMP-3.          00047000
+000480         05  RPACTWS-DISCOUNT-PERCENT                             00048000
+000490                                 PIC SV9(05).                     00049000
+000500         05  RPACTWS-RATE-INC-OPTION                              00050000
+000510                                 PIC X(01).                       00051000
+000520         05  RPACTWS-RATE-INC-QUAL                                00052000
+000530                                 PIC X(01).                       00053000
+000540         05  RPACTWS-RATE-MODEL  PIC X(10).                       00054000
+000550         05  RPACTWS-RATE-TYPE   PIC X(01).                       00055000
+000560         05  RPACTWS-RATE-OPTION PIC X(01).                       00056000
+000570         05  RPACTWS-RATE-PERCENT                                 00057000
+000580                                 PIC SV9(09).                     00058000
+000590         05  RPACTWS-PROCOPT     PIC X(01).                       00059000
+000600         05  RPACTWS-SPLIT-RATE-TABLE.                            00060000
+000610             07  RPACTWS-RATEAMT-1                                00061000
+000620                                 PIC S9(09)      COMP-3.          00062000
+000630             07  RPACTWS-RATEPCT-1                                00063000
+000640                                 PIC SV9(09)     COMP-3.          00064000
+000650             07  RPACTWS-RATEAMT-2                                00065000
+000660                                 PIC S9(09)      COMP-3.          00066000
+000670             07  RPACTWS-RATEPCT-2                                00067000
+000680                                 PIC SV9(09)     COMP-3.          00068000
+000690             07  RPACTWS-RATEAMT-3                                00069000
+000700                                 PIC S9(09)      COMP-3.          00070000
+000710             07  RPACTWS-RATEPCT-3                                00071000
+000720                                 PIC SV9(09)     COMP-3.          00072000
+000730             07  RPACTWS-RATEAMT-4                                00073000
+000740                                 PIC S9(09)      COMP-3.          00074000
+000750             07  RPACTWS-RATEPCT-4                                00075000
+000760                                 PIC SV9(09)     COMP-3.          00076000
+000770             07  RPACTWS-RATEAMT-5                                00077000
+000780                                 PIC S9(09)      COMP-3.          00078000
+000790             07  RPACTWS-RATEPCT-5                                00079000
+000800                                 PIC SV9(09)     COMP-3.          00080000
+000810             07  RPACTWS-RATEAMT-6                                00081000
+000820                                 PIC S9(09)      COMP-3.          00082000
+000830             07  RPACTWS-RATEPCT-6                                00083000
+000840                                 PIC SV9(09)     COMP-3.          00084000
+000850             07  RPACTWS-RATEAMT-7                                00085000
+000860                                 PIC S9(09)      COMP-3.          00086000
+000870             07  RPACTWS-RATEPCT-7                                00087000
+000880                                 PIC SV9(09)     COMP-3.          00088000
+000890             07  RPACTWS-RATEAMT-8                                00089000
+000900                                 PIC S9(09)      COMP-3.          00090000
+000910             07  RPACTWS-RATEPCT-8                                00091000
+000920                                 PIC SV9(09)     COMP-3.          00092000
+000930             07  RPACTWS-RATEAMT-9                                00093000
+000940                                 PIC S9(09)      COMP-3.          00094000
+000950             07  RPACTWS-RATEPCT-9                                00095000
+000960                                 PIC SV9(09)     COMP-3.          00096000
+000970             07  RPACTWS-RATEAMT-10                               00097000
+000980                                 PIC S9(09)      COMP-3.          00098000
+000990             07  RPACTWS-RATEPCT-10                               00099000
+001000                                 PIC SV9(09)     COMP-3.          00100000
+001010             07  RPACTWS-RATEAMT-11                               00101000
+001020                                 PIC S9(09)      COMP-3.          00102000
+001030             07  RPACTWS-RATEPCT-11                               00103000
+001040                                 PIC SV9(09)     COMP-3.          00104000
+001050             07  RPACTWS-RATEAMT-12                               00105000
+001060                                 PIC S9(09)      COMP-3.          00106000
+001070             07  RPACTWS-RATEPCT-12                               00107000
+001080                                 PIC SV9(09)     COMP-3.          00108000
+001090             07  RPACTWS-RATEAMT-13                               00109000
+001100                                 PIC S9(09)      COMP-3.          00110000
+001110             07  RPACTWS-RATEPCT-13                               00111000
+001120                                 PIC SV9(09)     COMP-3.          00112000
+001130             07  RPACTWS-RATEAMT-14                               00113000
+001140                                 PIC S9(09)      COMP-3.          00114000
+001150             07  RPACTWS-RATEPCT-14                               00115000
+001160                                 PIC SV9(09)     COMP-3.          00116000
+001170             07  RPACTWS-RATEAMT-15                               00117000
+001180                                 PIC S9(09)      COMP-3.          00118000
+001190             07  RPACTWS-RATEPCT-15                               00119000
+001200                                 PIC SV9(09)     COMP-3.          00120000
+001210         05  RPACTWS-SPLIT-RATE-TABLEX                            00121000
+001220                         REDEFINES RPACTWS-SPLIT-RATE-TABLE       00122000
+001230                                                 OCCURS 15.       00123000
+001240             07  RPACTWS-RATEAMT PIC S9(09)      COMP-3.          00124000
+001250             07  RPACTWS-RATEPCT PIC SV9(09)     COMP-3.          00125000
+001260         05  RPACTWS-APPL        PIC 9(02).                       00126000
+001270         05  RPACTWS-SECSVCS-INC-OPTION                           00127000
+001280                                 PIC X(01).                       00128000
+001290         05  RPACTWS-SECONDARY-SERVICES.                          00129000
+001300             07  RPACTWS-SECSERV1                                 00130000
+001310                                 PIC X(06).                       00131000
+001320             07  RPACTWS-SECSERV2                                 00132000
+001330                                 PIC X(06).                       00133000
+001340             07  RPACTWS-SECSERV3                                 00134000
+001350                                 PIC X(06).                       00135000
+001360             07  RPACTWS-SECSERV4                                 00136000
+001370                                 PIC X(06).                       00137000
+001380             07  RPACTWS-SECSERV5                                 00138000
+001390                                 PIC X(06).                       00139000
+001400             07  RPACTWS-SECSERV6                                 00140000
+001410                                 PIC X(06).                       00141000
+001420             07  RPACTWS-SECSERV7                                 00142000
+001430                                 PIC X(06).                       00143000
+001440             07  RPACTWS-SECSERV8                                 00144000
+001450                                 PIC X(06).                       00145000
+001460             07  RPACTWS-SECSERV9                                 00146000
+001470                                 PIC X(06).                       00147000
+001480             07  RPACTWS-SECSERV10                                00148000
+001490                                 PIC X(06).                       00149000
+001500             07  RPACTWS-SECSERV11                                00150000
+001510                                 PIC X(06).                       00151000
+001520             07  RPACTWS-SECSERV12                                00152000
+001530                                 PIC X(06).                       00153000
+001540             07  RPACTWS-SECSERV13                                00154000
+001550                                 PIC X(06).                       00155000
+001560             07  RPACTWS-SECSERV14                                00156000
+001570                                 PIC X(06).                       00157000
+001580             07  RPACTWS-SECSERV15                                00158000
+001590                                 PIC X(06).                       00159000
+001600             07  RPACTWS-SECSERV16                                00160000
+001610                                 PIC X(06).                       00161000
+001620             07  RPACTWS-SECSERV17                                00162000
+001630                                 PIC X(06).                       00163000
+001640             07  RPACTWS-SECSERV18                                00164000
+001650                                 PIC X(06).                       00165000
+001660             07  RPACTWS-SECSERV19                                00166000
+001670                                 PIC X(06).                       00167000
+001680             07  RPACTWS-SECSERV20                                00168000
+001690                                 PIC X(06).                       00169000
+001700         05  RPACTWS-SECONDARY-SERVICES-X                         00170000
+001710                         REDEFINES RPACTWS-SECONDARY-SERVICES.    00171000
+001720             07  RPACTWS-SECSERV PIC X(06)       OCCURS 20.       00172000
+001730         05  RPACTWS-RSV-AMT      PIC S9(13)V99   COMP-3.         00173000
+001740         05  RPACTWS-MISC-OPTION1                                 00174000
+001750                                 PIC X(01).                       00175000
+001760         05  RPACTWS-MISC-OPTION2                                 00176000
+001770                                 PIC X(01).                       00177000
+001780         05  RPACTWS-MISC-OPTION3                                 00178000
+001790                                 PIC X(01).                       00179000
+P0168          05  RPACTWS-RSV-FLAG    PIC X(01).                       00179100
+P0168          05  RPACTWS-RSV-FLAG1   PIC X(01).                       00179200
+P0168          05  RPACTWS-RSV-FLAG2   PIC X(01).                       00179300
+P0168          05  RPACTWS-RSV-FLAG3   PIC X(01).                       00179400
+P0168          05  RPACTWS-RECALC-RATE PIC X(01).                       00179500
+P0168          05  RPACTWS-RATE-BALCD  PIC 9(02).                       00179600
+P0168          05  RPACTWS-RATE-BALORDER                                00179700
+P0168                                  PIC X(02).                       00179800
+001800     03  RPACTWS-MISC-DATA.                                       00180000
+001810         05  RPACTWS-ACCT-TYPE   PIC 9(03)        COMP-3.         00181000
+001820         05  RPACTWS-COMBBAL1    PIC S9(13)V99    COMP-3.         00182000
+001830         05  RPACTWS-COMBBAL2    PIC S9(13)V99    COMP-3.         00183000
+001840         05  RPACTWS-COMBBAL3    PIC S9(13)V99    COMP-3.         00184000
+001850         05  RPACTWS-COMBBAL4    PIC S9(13)V99    COMP-3.         00185000
+001860         05  RPACTWS-SECSVC-BAL  PIC S9(13)V99    COMP-3.         00186000
+000000 COPY RPACTWF.                                                    00187000
+001880 01  RP-ACTWREC.                                                  00188000
+000000 COPY RPSACTW.                                                    00189000
+000000 COPY RPACTEF.                                                    00190000
+001910 01  RPACTE-RECORD.                                               00191000
+001920     03  RPACTE-GRP-KEY.                                          00192000
+001930         05  RPACTE-ACCT1-GRP.                                    00193000
+001940             07  RPACTE-INST     PIC 9(04).                       00194000
+001950             07  RPACTE-PRODCODE PIC X(06).                       00195000
+001960             07  RPACTE-ACCOUNT  PIC X(18).                       00196000
+001970         05  RPACTE-ACCT2-GRP.                                    00197000
+001980             07  RPACTE-INST2    PIC 9(04).                       00198000
+001990             07  RPACTE-PRODCODE2                                 00199000
+002000                                 PIC X(06).                       00200000
+002010             07  RPACTE-ACCOUNT2 PIC X(18).                       00201000
+002020             07  RPACTE-MODEL2   PIC X(10).                       00202000
+002030     03  RPACTE-GRP-DATA.                                         00203000
+002040         05  RPACTE-SC-INC-OPTION                                 00204000
+002050                                 PIC X(01).                       00205000
+002060         05  RPACTE-RATE-INC-OPTION                               00206000
+002070                                 PIC X(01).                       00207000
+002080         05  RPACTE-APPL         PIC 9(02).                       00208000
+002090         05  FILLER              PIC X(10).                       00209000
+000000 COPY MIOPRCF       REPLACING                                     00210000
+002110                                 MI-OPRCFIL BY MI-APIBFIL         00211000
+002120                                 MIOPRC-RECORD BY MIAPIB-RECORD.  00212000
+002130 01  MIAPIB-RECORD.                                               00213000
+002140     03  MIAPIB-ORGX             PIC X(06).                       00214000
+002150     03  MIAPIB-REC-CODE         PIC X(03).                       00215000
+002160     03  MIAPIB-BIN-ID           PIC S9(04)      COMP-4.          00216000
+002170     03  MIAPIB-PHY-KEY-LEN      PIC S9(04)      COMP-4.          00217000
+002180     03  MIAPIB-PHY-REC-LEN      PIC S9(04)      COMP-4.          00218000
+002190     03  MIAPIB-REC-AREA.                                         00219000
+002200         05  MIAPIB-REC-AREA-R   PIC X(01)       OCCURS 1 TO 2000 00220000
+002210                         DEPENDING ON MIAPIB-PHY-REC-LEN.         00221000
+002220 WORKING-STORAGE SECTION.                                         00222000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00223000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00223001
+002240 01  RPS-RLSELIT.                                                 00224000
+000000 COPY RPWRLSE.                                                    00225000
+002260 01  MIC-RLSELIT.                                                 00226000
+000000 COPY MIWRLSE.                                                    00227000
+002280 01  RPWPRI-AREAS.                                                00228000
+000000 COPY RPWPRI.                                                     00229000
+002300 01  MIWPRI-AREAS.                                                00230000
+000000 COPY MIWPRI.                                                     00231000
+002320 01  SRW105-AREAS.                                                00232000
+000000 COPY SRW105.                                                     00233000
+002340*01  BICPBPRM.                                                    00234000
+000000 COPY BICPBPRM.                                                   00235000
+002360*01  BICRSRB.                                                     00236000
+000000 COPY BICRSRB.                                                    00237000
+002380*01  BICRPSB.                                                     00238000
+000000 COPY BICRPSB.                                                    00239000
+002400*01  BICRVERB.                                                    00240000
+000000 COPY BICRVERB.                                                   00241000
+002420*01  BICRSTAT.                                                    00242000
+000000 COPY BICRSTAT.                                                   00243000
+002440*01  BICRDBS.                                                     00244000
+000000 COPY BICRDBS.                                                    00245000
+002460 01  RPBNK-RECORD.                                                00246000
+000000 COPY RPSBNK.                                                     00247000
+002480 01  RPACT-RECORD.                                                00248000
+000000 COPY RPSACT.                                                     00249000
+002500 01  RPRPTS-RECORD.                                               00250000
+000000 COPY RPSRPTS.                                                    00251000
+002520 01  RPBNKA-AREA.                                                 00252000
+000000 COPY RPWBNKA.                                                    00253000
+002540 01  RPACTA-AREA.                                                 00254000
+000000 COPY RPWACTA.                                                    00255000
+002560 01  RPRPTSA-AREA.                                                00256000
+000000 COPY RPWRPTS.                                                    00257000
+002580 01  RPW015-AREA.                                                 00258000
+000000 COPY RPW015.                                                     00259000
+002600 01  FILLER                      PIC X(08)       VALUE '*MISMST*'.00260000
+002610 01  MIMST-RECORD.                                                00261000
+000000 COPY MISMST.                                                     00262000
+002630 01  FILLER                      PIC X(08)       VALUE '*MI0307*'.00263000
+002640 01  MI0307-RECORD.                                               00264000
+000000 COPY MIS0307A.                                                   00265000
+002660 01  FILLER                      PIC X(08)       VALUE '*MI2023*'.00266000
+002670 01  MI2023-RECORD.                                               00267000
+000000 COPY MIS2023A.                                                   00268000
+002690 01  FILLER                      PIC X(08)       VALUE '*MI7100*'.00269000
+002700 01  MI7100-RECORD.                                               00270000
+000000 COPY MIS7100.                                                    00271000
+002720 01  FILLER                      PIC X(08)       VALUE '*MI7102*'.00272000
+002730 01  MI7102-RECORD.                                               00273000
+000000 COPY MIS7102.                                                    00274000
+002750 01  MIWMSTA-AREAS.                                               00275000
+000000 COPY MIWMSTA.                                                    00276000
+002770 01  WS-RPMIM2023AREAS.                                           00277000
+000000 COPY RPW2023.                                                    00278000
+002790 01  WS-RPMIM7102AREAS.                                           00279000
+000000 COPY RPW7102.                                                    00280000
+002810***************************************************************** 00281000
+002820 01  SRW000-AREAS.                                                00282000
+000000 COPY SRW000.                                                     00283000
+002840 01  SRW015-AREAS.                                                00284000
+000000 COPY SRW015.                                                     00285000
+002860 01  SRW025-AREAS.                                                00286000
+000000 COPY SRW025.                                                     00287000
+002880 01  WS-ABEND.                                                    00288000
+000000 COPY SRW028.                                                     00289000
+002900 01  SRW033-AREAS.                                                00290000
+000000 COPY SRW033.                                                     00291000
+002920 01  SRW044-AREAS.                                                00292000
+000000 COPY SRW044.                                                     00293000
+002940 01  SRW060-AREAS.                                                00294000
+000000 COPY SRW060.                                                     00295000
+002960 01  WS-STORAGE.                                                  00296000
+002970     03  FILLER                  PIC X(18)       VALUE            00297000
+002980         '*** WS-STORAGE ***'.                                    00298000
+002990     03  WS-FUNCTION             PIC X(01)       VALUE SPACES.    00299000
+003000     03  WS-CYEAR-FIRST          PIC X(08).                       00300000
+003010     03  FILLER          REDEFINES WS-CYEAR-FIRST.                00301000
+003020         05  WS-CYYYY            PIC 9(04).                       00302000
+003030         05  WS-CMM              PIC 9(02).                       00303000
+003040         05  WS-CDD              PIC 9(02).                       00304000
+003050     03  WS-CURDATE              PIC 9(08)       VALUE ZERO.      00305000
+003060     03  FILLER          REDEFINES WS-CURDATE.                    00306000
+003070         05  WS-CURMM            PIC 9(02).                       00307000
+003080         05  WS-CURDD            PIC 9(02).                       00308000
+003090         05  WS-CURYYYY          PIC 9(04).                       00309000
+003100     03  WS-LINES                PIC S9(03)      COMP-3           00310000
+003110                                                 VALUE +0.        00311000
+003120     03  WS-PRINT-SW             PIC X(01)       VALUE 'P'.       00312000
+003130     03  WS-FIRST-SW             PIC X(01)       VALUE 'Y'.       00313000
+003140     03  WS-ACT-SW               PIC X(01)       VALUE 'N'.       00314000
+003150     03  WS-DUPLICATE-SW         PIC X(01)       VALUE 'N'.       00315000
+003160     03  WS-WORK-APPL            PIC 9(02)       VALUE ZEROS.     00316000
+003170     03  WS-NUMOFACTREC          PIC S9(05)      COMP-3           00317000
+003180                                                 VALUE ZEROS.     00318000
+003190     03  WS-NUMOFDUPREC          PIC S9(05)      COMP-3           00319000
+003200                                                 VALUE ZEROS.     00320000
+003210     03  WS-COBOLDATE.                                            00321000
+003220         05  WS-COBOLYY          PIC X(02).                       00322000
+003230         05  WS-COBOLMM          PIC X(02).                       00323000
+003240         05  WS-COBOLDD          PIC X(02).                       00324000
+003250     03  WS-CURDTYYYYMMDD        PIC 9(08)       VALUE ZEROS.     00325000
+003260     03  FILLER          REDEFINES WS-CURDTYYYYMMDD.              00326000
+003270         05  WS-CURDTYYYY        PIC 9(04).                       00327000
+003280         05  WS-CURDTMMDD        PIC 9(04).                       00328000
+003290         05  FILLER      REDEFINES WS-CURDTMMDD.                  00329000
+003300             07  WS-CURDTMM      PIC 9(02).                       00330000
+003310             07  WS-CURDTDD      PIC 9(02).                       00331000
+003320     03  WS-DATEDDMMYYYY         PIC 9(08)       VALUE ZEROS.     00332000
+003330     03  FILLER          REDEFINES WS-DATEDDMMYYYY.               00333000
+003340         05  WS-DATEMM           PIC 9(02).                       00334000
+003350         05  WS-DATEDD           PIC 9(02).                       00335000
+003360         05  WS-DATEYYYY         PIC 9(04).                       00336000
+003370     03  WS-SUB1                 PIC S9(04)      COMP             00337000
+003380                                                 VALUE +0.        00338000
+003390     03  WS-SUB2                 PIC S9(04)      COMP             00339000
+003400                                                 VALUE +0.        00340000
+003410     03  WS-SUB3                 PIC S9(04)      COMP             00341000
+003420                                                 VALUE +0.        00342000
+003430     03  WS-SUBACT               PIC S9(04)      COMP             00343000
+003440                                                 VALUE +0.        00344000
+003450     03  WS-ALLSW                PIC X(01)       VALUE SPACES.    00345000
+003460     03  WS-INST-SW              PIC X(01)       VALUE SPACES.    00346000
+003470     03  WS-DEFAULT-SWITCH       PIC X(01)       VALUE SPACES.    00347000
+003480     03  WS-DEFAULT-REC          PIC X(80)       VALUE SPACES.    00348000
+003490     03  WS-SAVE-CDTBLE.                                          00349000
+003500         05  WS-SAVE-CDREC       PIC X(80)       OCCURS           00350000
+003510                                                 9999 TIMES.      00351000
+003520     03  WS-RRPTCTL.                                              00352000
+003530         05  FILLER              PIC X(04).                       00353000
+003540         05  WS-RRPTPFC          PIC X(01)       VALUE SPACES.    00354000
+003550******************************************************************00355000
+003560 PROCEDURE DIVISION.                                              00356000
+003570******************************************************************00357000
+003580 INITIALIZATION SECTION.                                          00358000
+003590 IN-START.                                                        00359000
+003600     MOVE 'N' TO RPS-ACT-LOG.                                     00360000
+003610     PERFORM GET-FILE-ORGANIZATION.                               00361000
+003620     MOVE 'RPD201' TO SR-APIPROGLIT.                              00362000
+003630     MOVE 'RPD201' TO WS-ABPROGID.                                00363000
+003640     OPEN INPUT RP-ACTWFIL.                                       00364000
+003650     OPEN OUTPUT RP-ACTEFIL.                                      00365000
+003660     OPEN OUTPUT MI-APIBFIL.                                      00366000
+003670     ACCEPT WS-COBOLDATE FROM DATE.                               00367000
+003680     MOVE WS-COBOLMM TO SR-C6MON.                                 00368000
+003690     MOVE WS-COBOLDD TO SR-C6DAY.                                 00369000
+003700     MOVE WS-COBOLYY TO SR-C6YR.                                  00370000
+003710     PERFORM CONVERT-6-TO-8.                                      00371000
+003720 IN-EXIT.                                                         00372000
+003730     EXIT.                                                        00373000
+003740******************************************************************00374000
+003750 OPEN-API-FILES SECTION.                                          00375000
+003760 OAF-START.                                                       00376000
+003770     MOVE 'O R' TO SR-APIFUNC.                                    00377000
+003780     PERFORM CALL-RPS-BNK.                                        00378000
+003790     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00379000
+003800         GO TO AR-0001.                                           00380000
+003810 OAF-EXIT.                                                        00381000
+003820     EXIT.                                                        00382000
+003830******************************************************************00383000
+003840 SORT-ROUTINE SECTION.                                            00384000
+003850 SR-START.                                                        00385000
+003860     MOVE 200704 TO SORT-CORE-SIZE.                               00386000
+003870     SORT RP-SORTFIL                                              00387000
+003880         ASCENDING KEY                                            00388000
+003890         RPACTWS-GRP-KEY                                          00389000
+003900         INPUT PROCEDURE IS MAIN-LOGIC                            00390000
+003910         OUTPUT PROCEDURE PROCESS-SORTED-ACCOUNT-FILE.            00391000
+003920     IF SORT-RETURN IS NOT EQUAL TO ZERO                          00392000
+003930         GO TO AR-0002.                                           00393000
+003940     CLOSE RP-ACTWFIL.                                            00394000
+003950     CLOSE RP-ACTEFIL.                                            00395000
+003960     CLOSE MI-APIBFIL.                                            00396000
+003970     MOVE 'GC ' TO SR-APIFUNC.                                    00397000
+003980     PERFORM CALL-RPS-BNK.                                        00398000
+003990     STOP RUN.                                                    00399000
+004000 SR-EXIT.                                                         00400000
+004010     EXIT.                                                        00401000
+004020******************************************************************00402000
+004030 MAIN-LOGIC SECTION.                                              00403000
+004040 ML-READ-NEXT.                                                    00404000
+004050     READ RP-ACTWFIL                                              00405000
+004060         AT END                                                   00406000
+004070         GO TO ML-EXIT.                                           00407000
+004080     MOVE RP-ACTWREC TO RP-SORTREC.                               00408000
+004090     RELEASE RP-SORTREC.                                          00409000
+004100     GO TO ML-READ-NEXT.                                          00410000
+004110 ML-EXIT.                                                         00411000
+004120     EXIT.                                                        00412000
+004130******************************************************************00413000
+004140 PROCESS-SORTED-ACCOUNT-FILE SECTION.                             00414000
+004150 PSAF-START.                                                      00415000
+004160     MOVE ZEROS TO RPBNK-GRP-KEY.                                 00416000
+004170     MOVE ZEROS TO RPACT-GRP-KEY.                                 00417000
+004180 PSAF-READ-NEXT.                                                  00418000
+004190     RETURN RP-SORTFIL                                            00419000
+004200         AT END                                                   00420000
+004210         GO TO PSAF-END.                                          00421000
+004220     IF RPACTWS-INST IS NOT EQUAL TO RPBNK-INST                   00422000
+004230         AND RPBNK-INST IS NOT EQUAL TO ZEROS                     00423000
+004240         PERFORM PROCESS-ACT-RECORD.                              00424000
+004250     IF RPACTWS-INST IS NOT EQUAL TO RPBNK-INST                   00425000
+004260         PERFORM CHANGE-BANK.                                     00426000
+004270     IF WS-FIRST-SW IS EQUAL TO 'Y'                               00427000
+004280         MOVE 'N' TO WS-FIRST-SW                                  00428000
+004290         GO TO PSAF-PROCESS1.                                     00429000
+004300 PSAF-PROCESS.                                                    00430000
+004310     IF RPACTWS-ACCT1-GRP IS NOT EQUAL TO RPACT-GRP-KEY           00431000
+004320         PERFORM PROCESS-ACT-RECORD.                              00432000
+004330     IF WS-ACT-SW IS EQUAL TO 'Y'                                 00433000
+004340         GO TO PSAF-CHECK-INCENTIVES.                             00434000
+004350 PSAF-PROCESS1.                                                   00435000
+004360     MOVE 'Y' TO WS-ACT-SW.                                       00436000
+004370     INITIALIZE RPACT-RECORD.                                     00437000
+P0168      MOVE 'N' TO RPACT-RECALC-RATE.                               00437500
+004380     MOVE RPACTWS-ACCT1-GRP TO RPACT-GRP-KEY.                     00438000
+004390     MOVE SR-CYEAR-FIRST TO RPACT-UPD-DATE.                       00439000
+004400     MOVE 'RPD201' TO RPACT-UPD-USER.                             00440000
+004410     MOVE MIC-MST-APPL-ORG TO RPACT-UPD-ORG.                      00441000
+004420     MOVE RPACTWS-GRP-DATA TO RPACT-GRP-DATA.                     00442000
+004430     IF RPACTWS-SECSVCS-INC-OPTION IS EQUAL TO 'Y'                00443000
+004440         PERFORM PROCESS-SECONDARY-SERVICES.                      00444000
+004450     GO TO PSAF-READ-NEXT.                                        00445000
+004460 PSAF-CHECK-INCENTIVES.                                           00446000
+004470     IF RPACTWS-SECSVCS-INC-OPTION IS EQUAL TO 'Y'                00447000
+004480         MOVE 'Y' TO RPACT-SECSVCS-INC-OPTION                     00448000
+004490         PERFORM PROCESS-SECONDARY-SERVICES.                      00449000
+004500     MOVE 'N' TO WS-DUPLICATE-SW.                                 00450000
+004510     IF RPACTWS-SC-INC-OPTION IS EQUAL TO 'Y'                     00451000
+004520         AND RPACT-SC-INC-OPTION IS EQUAL TO 'Y'                  00452000
+004530         MOVE '*' TO RPACTWS-SC-INC-OPTION                        00453000
+004540         MOVE 'Y' TO WS-DUPLICATE-SW.                             00454000
+004550     IF RPACTWS-RATE-INC-OPTION IS EQUAL TO 'Y'                   00455000
+004560         AND RPACT-RATE-INC-OPTION IS EQUAL TO 'Y'                00456000
+004570         MOVE '*' TO RPACTWS-RATE-INC-OPTION                      00457000
+004580         MOVE 'Y' TO WS-DUPLICATE-SW.                             00458000
+004590     IF MIM-7100DUPINCOPT IS NOT EQUAL TO 'Y'                     00459000
+004600         GO TO PSAF-NO-DUPLICATE-INCENTIVES.                      00460000
+004610     IF MIM-7100DUPINCRULE IS NOT EQUAL TO 'A'                    00461000
+004620         GO TO PSAF-DUPINCRULE-B.                                 00462000
+004630 PSAF-DUPINCRULE-A.                                               00463000
+004640     IF RPACT-SC-INC-QUAL IS EQUAL TO 'N'                         00464000
+004650         AND RPACTWS-SC-INC-QUAL IS EQUAL TO 'Y'                  00465000
+004660         MOVE 'Y' TO RPACT-SC-INC-OPTION                          00466000
+004670         MOVE 'Y' TO RPACT-SC-INC-QUAL                            00467000
+004680         MOVE RPACTWS-SC-MODEL TO RPACT-SC-MODEL                  00468000
+004690         MOVE RPACTWS-DISCOUNT-AMOUNT TO RPACT-DISCOUNT-AMOUNT    00469000
+004700         MOVE RPACTWS-DISCOUNT-PERCENT TO RPACT-DISCOUNT-PERCENT. 00470000
+004710     GO TO PSAF-CHECK-RATE-INCENTIVE.                             00471000
+004720 PSAF-DUPINCRULE-B.                                               00472000
+004730     IF RPACTWS-SC-INC-QUAL IS EQUAL TO 'N'                       00473000
+004740         GO TO PSAF-CHECK-RATE-INCENTIVE.                         00474000
+004750     MOVE 'Y' TO RPACT-SC-INC-OPTION.                             00475000
+004760     MOVE 'Y' TO RPACT-SC-INC-QUAL.                               00476000
+004770     MOVE RPACTWS-SC-MODEL TO RPACT-SC-MODEL.                     00477000
+004780     IF RPACTWS-DISCOUNT-AMOUNT                                   00478000
+004790         IS GREATER THAN RPACT-DISCOUNT-AMOUNT                    00479000
+004800         MOVE RPACTWS-DISCOUNT-AMOUNT TO RPACT-DISCOUNT-AMOUNT.   00480000
+004810     IF RPACTWS-DISCOUNT-PERCENT                                  00481000
+004820         IS GREATER THAN RPACT-DISCOUNT-PERCENT                   00482000
+004830         MOVE RPACTWS-DISCOUNT-PERCENT TO RPACT-DISCOUNT-PERCENT. 00483000
+004840     GO TO PSAF-CHECK-RATE-INCENTIVE.                             00484000
+004850 PSAF-NO-DUPLICATE-INCENTIVES.                                    00485000
+004860     IF WS-DUPLICATE-SW IS EQUAL TO 'Y'                           00486000
+P0032          GO TO PSAF-CHECK-RATE-INCENTIVE.                         00487000
+004880     IF RPACTWS-SC-INC-OPTION IS EQUAL TO 'Y'                     00488000
+004890         MOVE 'Y' TO RPACT-SC-INC-OPTION                          00489000
+004900         MOVE RPACTWS-SC-INC-QUAL TO RPACT-SC-INC-QUAL            00490000
+004910         MOVE RPACTWS-SC-MODEL TO RPACT-SC-MODEL                  00491000
+004920         MOVE RPACTWS-DISCOUNT-AMOUNT TO RPACT-DISCOUNT-AMOUNT    00492000
+004930         MOVE RPACTWS-DISCOUNT-PERCENT TO RPACT-DISCOUNT-PERCENT. 00493000
+004940 PSAF-CHECK-RATE-INCENTIVE.                                       00494000
+004950     IF RPACTWS-RATE-INC-OPTION IS EQUAL TO 'Y'                   00495000
+004960         MOVE 'Y' TO RPACT-RATE-INC-OPTION                        00496000
+004970         MOVE RPACTWS-RATE-INC-QUAL TO RPACT-RATE-INC-QUAL        00497000
+P0032          MOVE RPACTWS-RATE-MODEL TO RPACT-RATE-MODEL              00498000
+P0032          MOVE RPACTWS-RATE-TYPE TO RPACT-RATE-TYPE                00498190
+P0032          MOVE RPACTWS-RATE-OPTION TO RPACT-RATE-OPTION            00498380
+004990         MOVE RPACTWS-RATE-PERCENT TO RPACT-RATE-PERCENT          00499000
+P0168          MOVE RPACTWS-PROCOPT TO RPACT-PROCOPT                    00500000
+P0168          MOVE RPACTWS-RECALC-RATE TO RPACT-RECALC-RATE            00500190
+P0168          MOVE RPACTWS-RATE-BALCD TO RPACT-RATE-BALCD              00500380
+P0168          MOVE RPACTWS-RATE-BALORDER TO RPACT-RATE-BALORDER.       00500570
+005010 PSAF-CHECK-INCENTIVES-CONT.                                      00501000
+005020     ADD RPACTWS-RSV-AMT TO RPACT-RSV-AMT.                        00502000
+005030     IF RPACT-MISC-OPTION1 IS EQUAL TO SPACE                      00503000
+005040         MOVE RPACTWS-MISC-OPTION1 TO RPACT-MISC-OPTION1.         00504000
+005050     IF RPACT-MISC-OPTION2 IS EQUAL TO SPACE                      00505000
+005060         MOVE RPACTWS-MISC-OPTION2 TO RPACT-MISC-OPTION2.         00506000
+005070     IF RPACT-MISC-OPTION3 IS EQUAL TO SPACE                      00507000
+005080         MOVE RPACTWS-MISC-OPTION3 TO RPACT-MISC-OPTION3.         00508000
+005090     IF WS-DUPLICATE-SW IS EQUAL TO 'Y'                           00509000
+005100         GO TO PSAF-DUPLICATE-INCENTIVE.                          00510000
+005110     GO TO PSAF-READ-NEXT.                                        00511000
+005120 PSAF-DUPLICATE-INCENTIVE.                                        00512000
+005130     ADD +1 TO WS-NUMOFDUPREC.                                    00513000
+005140     MOVE SPACES TO RPACTE-RECORD.                                00514000
+005150     MOVE RPACTWS-ACCT1-GRP TO RPACTE-ACCT1-GRP.                  00515000
+005160     MOVE RPACTWS-ACCT2-GRP TO RPACTE-ACCT2-GRP.                  00516000
+005170     MOVE RPACTWS-SC-INC-OPTION TO RPACTE-SC-INC-OPTION.          00517000
+005180     MOVE RPACTWS-RATE-INC-OPTION TO RPACTE-RATE-INC-OPTION.      00518000
+005190     MOVE RPACTWS-MODEL2 TO RPACTE-MODEL2.                        00519000
+005200     MOVE RPACTWS-APPL TO RPACTE-APPL.                            00520000
+005210     WRITE RPACTE-RECORD                                          00521000
+005220         INVALID KEY                                              00522000
+005230         GO TO AR-0003.                                           00523000
+005240     GO TO PSAF-READ-NEXT.                                        00524000
+005250 PSAF-END.                                                        00525000
+005260     IF WS-ACT-SW IS EQUAL TO 'Y'                                 00526000
+005270         PERFORM PROCESS-ACT-RECORD.                              00527000
+005280     IF WS-NUMOFACTREC IS NOT GREATER THAN ZEROS                  00528000
+005290         DISPLAY '** RPD201 - ACCOUNT INFORMATION UPDATE **'      00529000
+005300         DISPLAY '**    NO RPACTW RECORDS PROCESSED      **'.     00530000
+005310 PSAF-EXIT.                                                       00531000
+005320     EXIT.                                                        00532000
+005330******************************************************************00533000
+005340 PROCESS-SECONDARY-SERVICES SECTION.                              00534000
+005350 PSS-START.                                                       00535000
+005360     MOVE 'Y' TO RPACT-SECSVCS-INC-OPTION.                        00536000
+005370     IF RPACT-SECSERV1 IS NOT EQUAL TO SPACES                     00537000
+005380         AND RPACT-SECSERV2 IS NOT EQUAL TO SPACES                00538000
+005390         AND RPACT-SECSERV3 IS NOT EQUAL TO SPACES                00539000
+005400         AND RPACT-SECSERV4 IS NOT EQUAL TO SPACES                00540000
+005410         AND RPACT-SECSERV5 IS NOT EQUAL TO SPACES                00541000
+005420         AND RPACT-SECSERV6 IS NOT EQUAL TO SPACES                00542000
+005430         AND RPACT-SECSERV7 IS NOT EQUAL TO SPACES                00543000
+005440         AND RPACT-SECSERV8 IS NOT EQUAL TO SPACES                00544000
+005450         AND RPACT-SECSERV9 IS NOT EQUAL TO SPACES                00545000
+005460         AND RPACT-SECSERV10 IS NOT EQUAL TO SPACES               00546000
+005470         AND RPACT-SECSERV11 IS NOT EQUAL TO SPACES               00547000
+005480         AND RPACT-SECSERV12 IS NOT EQUAL TO SPACES               00548000
+005490         AND RPACT-SECSERV13 IS NOT EQUAL TO SPACES               00549000
+005500         AND RPACT-SECSERV14 IS NOT EQUAL TO SPACES               00550000
+005510         AND RPACT-SECSERV15 IS NOT EQUAL TO SPACES               00551000
+005520         AND RPACT-SECSERV16 IS NOT EQUAL TO SPACES               00552000
+005530         AND RPACT-SECSERV17 IS NOT EQUAL TO SPACES               00553000
+005540         AND RPACT-SECSERV18 IS NOT EQUAL TO SPACES               00554000
+005550         AND RPACT-SECSERV19 IS NOT EQUAL TO SPACES               00555000
+005560         AND RPACT-SECSERV20 IS NOT EQUAL TO SPACES               00556000
+005570         GO TO PSS-EXIT.                                          00557000
+005580     MOVE ZEROS TO WS-SUB3.                                       00558000
+005590     MOVE ZEROS TO WS-SUBACT.                                     00559000
+005600 PSS-ACTWS-LOOP.                                                  00560000
+005610     ADD +1 TO WS-SUB3.                                           00561000
+005620     IF WS-SUB3 IS GREATER THAN +20                               00562000
+005630         GO TO PSS-EXIT.                                          00563000
+005640     IF RPACTWS-SECSERV (WS-SUB3) IS EQUAL TO SPACES              00564000
+005650         GO TO PSS-EXIT.                                          00565000
+005660 PSS-ACT-LOOP.                                                    00566000
+005670     ADD +1 TO WS-SUBACT.                                         00567000
+005680     IF WS-SUBACT IS GREATER THAN +20                             00568000
+005690         GO TO PSS-EXIT.                                          00569000
+005700     IF RPACT-SECSERV (WS-SUBACT) IS EQUAL TO SPACE               00570000
+005710         MOVE RPACTWS-SECSERV (WS-SUB3)                           00571000
+005720             TO RPACT-SECSERV (WS-SUBACT)                         00572000
+005730         MOVE ZEROS TO WS-SUBACT                                  00573000
+005740         GO TO PSS-ACTWS-LOOP.                                    00574000
+005750     IF RPACTWS-SECSERV (WS-SUB3) IS EQUAL TO                     00575000
+005760         RPACT-SECSERV (WS-SUBACT)                                00576000
+005770         MOVE ZEROS TO WS-SUBACT                                  00577000
+005780         GO TO PSS-ACTWS-LOOP.                                    00578000
+005790     GO TO PSS-ACT-LOOP.                                          00579000
+005800 PSS-EXIT.                                                        00580000
+005810     EXIT.                                                        00581000
+005820******************************************************************00582000
+005830 PROCESS-ACT-RECORD SECTION.                                      00583000
+005840 PAR-START.                                                       00584000
+005850     MOVE 'N' TO WS-ACT-SW.                                       00585000
+005860     MOVE SPACES TO RPRPTS-RECORD.                                00586000
+005870     MOVE 52 TO RPRPTS-RPTNBR.                                    00587000
+005880     MOVE 0 TO RPRPTS-SRTNUMBER                                   00588000
+005890               RPRPTS-BRANCH                                      00589000
+005900               RPRPTS-TYPE                                        00590000
+005910               RPRPTS-MODEL.                                      00591000
+005920     MOVE RPACT-INST TO RPRPTS-INST.                              00592000
+005930     MOVE RPACT-PRODCODE TO RPRPTS-PRODCODE.                      00593000
+005940     MOVE RPACT-ACCOUNT TO RPRPTS-ACCOUNT.                        00594000
+005950     MOVE WS-RRPTCTL TO RPRPTS-RPTCTL.                            00595000
+005960     MOVE RPACT-SC-INC-OPTION TO RPRPTS-052SCOPTION.              00596000
+005970     MOVE RPACT-SC-INC-QUAL TO RPRPTS-052SCQUAL.                  00597000
+005980     MOVE RPACT-SC-MODEL TO RPRPTS-052SCMODEL.                    00598000
+005990     MOVE RPACT-DISCOUNT-AMOUNT TO RPRPTS-052SCAMT.               00599000
+006000     MOVE RPACT-DISCOUNT-PERCENT TO RPRPTS-052SCPCT.              00600000
+006010     MOVE RPACT-RATE-INC-OPTION TO RPRPTS-052RTOPTION.            00601000
+006020     MOVE RPACT-RATE-INC-QUAL TO RPRPTS-052RTQUAL.                00602000
+006030     MOVE RPACT-RATE-MODEL TO RPRPTS-052RATEMODEL.                00603000
+006040     MOVE RPACT-RATE-PERCENT TO RPRPTS-052RTPCT.                  00604000
+006050     MOVE RPACT-PROCOPT TO RPRPTS-052RTPROCOPT.                   00605000
+006060     MOVE RPACT-RATE-OPTION TO RPRPTS-052RATEOPTION.              00606000
+006070     MOVE RPACT-RATE-TYPE TO RPRPTS-052RATETYPE.                  00607000
+006080     MOVE WS-NUMOFDUPREC TO RPRPTS-052NUMOFDUPREC.                00608000
+006090     MOVE ZEROS TO WS-NUMOFDUPREC.                                00609000
+006100     MOVE SPACES TO RPRPTS-052SPLITRATETABLE.                     00610000
+006110     IF RPACT-RATE-OPTION IS EQUAL TO '2'                         00611000
+006120         MOVE RPACT-SPLIT-RATE-TABLE                              00612000
+006130             TO RPRPTS-052SPLITRATETABLE.                         00613000
+006140     IF WS-RRPTPFC IS EQUAL TO '0'                                00614000
+006150         GO TO PAR-UTIL.                                          00615000
+006160 PAR-WRITE.                                                       00616000
+006170     MOVE 'ASE' TO WS-RRPTS.                                      00617000
+006180     PERFORM CALL-RPRPTS.                                         00618000
+006190     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00619000
+006200         GO TO AR-0004.                                           00620000
+006210 PAR-UTIL.                                                        00621000
+006220     PERFORM WRITE-UTIL.                                          00622000
+006230 PAR-EXIT.                                                        00623000
+006240     EXIT.                                                        00624000
+006250******************************************************************00625000
+006260 WRITE-UTIL SECTION.                                              00626000
+006270 WU-START.                                                        00627000
+006280     ADD +1 TO WS-NUMOFACTREC.                                    00628000
+006290     MOVE MIC-MST-APPL-ORG TO MIAPIB-ORGX.                        00629000
+006300     MOVE RPS-ACT-REC-PRI TO MIAPIB-REC-CODE.                     00630000
+006310     MOVE ZEROS TO MIAPIB-BIN-ID.                                 00631000
+006320     MOVE LENGTH OF RPACT-GRP-KEY TO MIAPIB-PHY-KEY-LEN.          00632000
+006330     MOVE LENGTH OF RPACT-RECORD TO MIAPIB-PHY-REC-LEN.           00633000
+006340     MOVE RPACT-RECORD                                            00634000
+006350         TO MIAPIB-REC-AREA (1:LENGTH OF RPACT-RECORD).           00635000
+006360     WRITE MIAPIB-RECORD                                          00636000
+006370         INVALID KEY                                              00637000
+006380         GO TO AR-0005.                                           00638000
+006390 WU-EXIT.                                                         00639000
+006400     EXIT.                                                        00640000
+006410******************************************************************00641000
+006420 CHANGE-BANK SECTION.                                             00642000
+006430 CB-START.                                                        00643000
+006440     MOVE 'R  ' TO SR-APIFUNC.                                    00644000
+006450     MOVE RPACTWS-INST TO RPBNK-INST.                             00645000
+006460     PERFORM CALL-RPS-BNK.                                        00646000
+006470     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00647000
+006480         GO TO AR-0006.                                           00648000
+006490     MOVE RPBNK-CURDT TO WS-CURDTYYYYMMDD.                        00649000
+006500     MOVE WS-CURDTMM TO WS-DATEMM.                                00650000
+006510     MOVE WS-CURDTDD TO WS-DATEDD.                                00651000
+006520     MOVE WS-CURDTYYYY TO WS-DATEYYYY.                            00652000
+006530     MOVE WS-DATEDDMMYYYY TO SR-TODAY.                            00653000
+006540     MOVE SPACES TO MI0307-RECORD.                                00654000
+006550     MOVE RPBNK-INST TO MIM-0307KINST.                            00655000
+006560     MOVE 50 TO MIM-0307KAPPL.                                    00656000
+006570     MOVE 3 TO MIM-0307KRECNBR.                                   00657000
+006580     MOVE +0307 TO MIM-0307KREC.                                  00658000
+006590     MOVE MIC-MST-0307-PRI TO MIC-MST-REC-PRI.                    00659000
+006600     MOVE MI0307-RECORD TO MIMST-RECORD.                          00660000
+006610     PERFORM MIC-MST-GET-REQUEST.                                 00661000
+006620     IF WS-FUNCTION IS NOT EQUAL TO SPACE                         00662000
+006630         GO TO AR-0007.                                           00663000
+006640     MOVE MIMST-RECORD TO MI0307-RECORD.                          00664000
+006650     MOVE MIM-DSRPTCTL (12) TO WS-RRPTCTL.                        00665000
+006660     MOVE RPACTWS-ACCT1-GRP TO RPACT-GRP-KEY.                     00666000
+006670 CB-REC7100.                                                      00667000
+006680     MOVE SPACES TO MI7100-RECORD.                                00668000
+006690     MOVE RPBNK-INST TO MIM-7100KINST.                            00669000
+006700     MOVE +7100 TO MIM-7100KREC.                                  00670000
+006710     MOVE MIC-RPS-7100-PRI TO MIC-MST-REC-PRI.                    00671000
+006720     MOVE MI7100-RECORD TO MIMST-RECORD.                          00672000
+006730     PERFORM MIC-MST-GET-EQUAL-REQUEST.                           00673000
+006740     IF WS-FUNCTION IS NOT EQUAL TO SPACES                        00674000
+006750         GO TO AR-0010.                                           00675000
+006760     MOVE MIMST-RECORD TO MI7100-RECORD.                          00676000
+006770     IF MIM-7100KINST IS NOT EQUAL TO RPBNK-INST                  00677000
+006780         GO TO AR-0011.                                           00678000
+006790 CB-REC2023.                                                      00679000
+006800     MOVE RPBNK-INST TO WS-RPMIM2023INST.                         00680000
+006810     PERFORM LOAD-RPS-2023.                                       00681000
+006820     IF WS-RPMIM2023ERROR IS EQUAL TO 'Y'                         00682000
+006830         GO TO AR-0008.                                           00683000
+006840 CB-REC7102.                                                      00684000
+006850     MOVE RPBNK-INST TO WS-RPMIM7102INST.                         00685000
+006860     PERFORM LOAD-RPS-7102.                                       00686000
+006870     IF WS-RPMIM7102ERROR IS EQUAL TO 'Y'                         00687000
+006880         GO TO AR-0009.                                           00688000
+006890 CB-EXIT.                                                         00689000
+006900     EXIT.                                                        00690000
+006910******************************************************************00691000
+006920 LOAD-RPS-2023 SECTION.                                           00692000
+000000 COPY RPP2023.                                                    00693000
+006940******************************************************************00694000
+006950 LOAD-RPS-7102 SECTION.                                           00695000
+000000 COPY RPP7102.                                                    00696000
+006970******************************************************************00697000
+006980 SEARCH-RPS-2023 SECTION.                                         00698000
+000000 COPY RPP2023S.                                                   00699000
+007000******************************************************************00700000
+007010 SEARCH-RPS-7102 SECTION.                                         00701000
+000000 COPY RPP7102S.                                                   00702000
+007030******************************************************************00703000
+007040*MIC-MST-API SECTION.                                             00704000
+000000 COPY MIPMSTA.                                                    00705000
+007060******************************************************************00706000
+007070 CONVERT-6-TO-8 SECTION.                                          00707000
+000000 COPY SRP011.                                                     00708000
+007090***************************************************************** 00709000
+007100 GET-FILE-ORGANIZATION SECTION.                                   00710000
+000000 COPY SRP093.                                                     00711000
+007120***************************************************************** 00712000
+007130 CALL-RPS-BNK SECTION.                                            00713000
+000000 COPY RPPBNKB.                                                    00714000
+007150******************************************************************00715000
+007160 CALL-RPRPTS SECTION.                                             00716000
+000000 COPY RPPRPTS.                                                    00717000
+007180******************************************************************00718000
+007190 ABORT-ROUTINE SECTION.                                           00719000
+007200 AR-0001.                                                         00720000
+007210     MOVE 1 TO WS-ABCODE.                                         00721000
+007220     GO TO AR-MSG.                                                00722000
+007230 AR-0002.                                                         00723000
+007240     MOVE 2 TO WS-ABCODE.                                         00724000
+007250     GO TO AR-MSG.                                                00725000
+007260 AR-0003.                                                         00726000
+007270     MOVE 3 TO WS-ABCODE.                                         00727000
+007280     GO TO AR-MSG.                                                00728000
+007290 AR-0004.                                                         00729000
+007300     MOVE 4 TO WS-ABCODE.                                         00730000
+007310     GO TO AR-MSG.                                                00731000
+007320 AR-0005.                                                         00732000
+007330     MOVE 5 TO WS-ABCODE.                                         00733000
+007340     GO TO AR-MSG.                                                00734000
+007350 AR-0006.                                                         00735000
+007360     MOVE 6 TO WS-ABCODE.                                         00736000
+007370     GO TO AR-MSG.                                                00737000
+007380 AR-0007.                                                         00738000
+007390     MOVE 7 TO WS-ABCODE.                                         00739000
+007400     GO TO AR-MSG.                                                00740000
+007410 AR-0008.                                                         00741000
+007420     MOVE 8 TO WS-ABCODE.                                         00742000
+007430     GO TO AR-MSG.                                                00743000
+007440 AR-0009.                                                         00744000
+007450     MOVE 9 TO WS-ABCODE.                                         00745000
+007460     GO TO AR-MSG.                                                00746000
+007470 AR-0010.                                                         00747000
+007480     MOVE 10 TO WS-ABCODE.                                        00748000
+007490     GO TO AR-MSG.                                                00749000
+007500 AR-0011.                                                         00750000
+007510     MOVE 11 TO WS-ABCODE.                                        00751000
+007520     GO TO AR-MSG.                                                00752000
+007530 AR-MSG.                                                          00753000
+007540     MOVE WS-FUNCTION TO WS-ABFC.                                 00754000
+007550 AR-PRINT.                                                        00755000
+000000 COPY SRP029.                                                     00756000

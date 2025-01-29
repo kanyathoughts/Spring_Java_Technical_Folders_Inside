@@ -1,0 +1,532 @@
+**********************************************************************  00001000
+*                                                                       00002000
+*  S13UDB .... STATIC SQL UPDATE MODULE                                 00003000
+*                                                                       00004000
+*  CREATION DATE: 04/25/16                                              00005000
+*                                                                       00006000
+*  FUNCTIONAL DESCRIPTION: THIS PROGRAM CONTAINS THE STATIC SQL         00007000
+*  VECTORS REQUIRED TO SUPPORT I/O TO THE S13 TABLE.  IT IS LOADED      00008000
+*  BY THE DB2 I/O MANAGER (BIPDB2X).  THIS PROGRAM WILL BE USED         00009000
+*  IN BOTH A CICS AND BATCH ENVIRONMENT AND MUST BE RE-ENTRANT          00010000
+*  AND VOID OF SVC CALLS.                                               00011000
+*                                                                       00012000
+*     ***************************************************************   00013000
+*     *                                                             *   00013001
+*     *                           NOTICE                            *   00013002
+*     *                                                             *   00013003
+*     *   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00013004
+*     *   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00013005
+*     *   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00013006
+*     *   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00013007
+*     *   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00013008
+*     *   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00013009
+*     *   ALL OTHER RIGHTS RESERVED.                                *   00013010
+*     *                                                             *   00013011
+*     *   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00013012
+*     *   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00013013
+*     *   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00013014
+*     *   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00013015
+*     *   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00013016
+*     *   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00013017
+*     *                                                             *   00013018
+*     ***************************************************************   00013019
+*     *     Infopoint Relationship Pricing                          *   00013020
+*     *     RP 5.0.01                                               *   00013021
+*     ***************************************************************   00013022
+*                                                                       00014000
+**********************************************************************  00015000
+* SQI COMMUNICATION AREA DSECT ADDRESSED BY REGISTER 11                 00016000
+**********************************************************************  00017000
+*                                                                       00018000
+COM#AREA DSECT                         SQI COMMUNICATION AREA           00019000
+SQW@CAF  DS    F                       ADDRESS OF CALL ATTACH FACILITY  00020000
+SQW@RET  DS    F                       RETURN TO THIS SQI ADDRESS       00021000
+SQWSQLCA DS    XL136                   SQLCA FOR I/O MODULE USE         00022000
+         ORG   SQWSQLCA                                                 00023000
+         EXEC  SQL INCLUDE SQLCA                                        00024000
+SQWSQLDL DS    F                       LENGTH OF DYNAMIC SQLDSECT       00025000
+SQWSQLD  DS    F                       DYNAMIC SQLDSECT                 00026000
+SQW@SQRX DS    F                       SQI INTERFACE ROUTINE ADDRESS    00027000
+SQWPARM1 DS    F                       SQI PARAMETER 1 (MODULE ADDRESS) 00028000
+SQWINTHV DS    F                       INTEGER HOST VARIABLE            00029000
+SQWCSRBR DS    F                       CURSOR ROUTINE BASE REGISTER     00030000
+SQWCSRRA DS    F                       CURSOR ROUTINE RETURN ADDRESS    00031000
+SQWRSFVC DS    H                       ROWSET FETCH SQLVAR COUNT        00032000
+SQWKMRP  DS    CL1                     SQI KEY MASK / ROUTINE POINTER   00033000
+         DS    CL5                     RESERVED                         00034000
+SQWIOSI  DS    0CL24                   I/O MODULE STATE INFORMATION     00035000
+SQWSQLDA DS    F                       ROWSET SQLDA STORAGE ADDRESS     00036000
+SQWRSRMX DS    H                       ROWSET MAX NUMBER OF ROWS        00037000
+SQWRSRCT DS    H                       ROWSET RETURNED ROW COUNT        00038000
+SQWRSROC DS    H                       ROWSET ROW OCCURS COUNT          00039000
+SQWRSFCD DS    H                       ROWSET FETCH SQLCODE             00040000
+SQWCSRCA DS    F                       READ CURSOR CLOSE ROUTINE ADDR   00041000
+SQWCSUCA DS    F                       UPDATE CURSOR CLOSE ROUTINE ADDR 00042000
+SQWCSRLV DS    CL1                     CURSOR CASCADE LEVEL LIMIT       00043000
+SQWCSRCC DS    CL1                     CURSOR CASCADE COUNT             00044000
+SQWCSRSP DS    H                       CURSOR ROUTINE POINTER           00045000
+         DS    CL4                     RESERVED                         00046000
+SQWCMD   DS    CL2                     DBS COMMAND CODE                 00047000
+SQWORG   DS    CL6                     RECORD ORG CODE                  00048000
+ASMREC   DS    0F                      ASSEMBLER RECORD (ALIGNED)       00049000
+INST     DS    CL4                                                      00050000
+RECNBR   DS    CL4                                                      00051000
+SS_PLAN  DS    CL6                                                      00052000
+AUDDATE  DS    PL5'0.'                                                  00053000
+AUDTIME  DS    PL5'0.'                                                  00054000
+AUDUSER  DS    CL8                                                      00055000
+AUDORG   DS    CL6                                                      00056000
+SSCD1    DS    CL6                                                      00057000
+SSCD2    DS    CL6                                                      00058000
+SSCD3    DS    CL6                                                      00059000
+SSCD4    DS    CL6                                                      00060000
+SSCD5    DS    CL6                                                      00061000
+SSCD6    DS    CL6                                                      00062000
+SSCD7    DS    CL6                                                      00063000
+SSCD8    DS    CL6                                                      00064000
+SSCD9    DS    CL6                                                      00065000
+SSCD10   DS    CL6                                                      00066000
+SSCD11   DS    CL6                                                      00067000
+SSCD12   DS    CL6                                                      00068000
+SSCD13   DS    CL6                                                      00069000
+SSCD14   DS    CL6                                                      00070000
+SSCD15   DS    CL6                                                      00071000
+SSCD16   DS    CL6                                                      00072000
+SSCD17   DS    CL6                                                      00073000
+SSCD18   DS    CL6                                                      00074000
+SSCD19   DS    CL6                                                      00075000
+SSCD20   DS    CL6                                                      00076000
+*                                                                       00077000
+         ORG   ASMREC+(2000-L'SQWADATA) POINT TO ADDITIONAL DATA        00078000
+SQWADATA DS    0CL400                  ADDITIONAL DATA PASSED TO MODULE 00079000
+SQWSEGF  DS    CL102                   SEGMENTED FROM KEY VALUE         00080000
+SQWSEGT  DS    CL102                   SEGMENTED TO KEY VALUE           00081000
+SQWAUDIT DS    CL99                    CALLERS AUDIT DATA               00082000
+         DS    CL97                    RESERVED                         00083000
+*                                                                       00084000
+INDVARS  DS    0H                      NULL INDICATOR VARIABLES         00085000
+INDVARX  DS    0H                                                       00086000
+INDVARL  EQU   INDVARX-INDVARS         NULL INDICATOR AREA LENGTH       00087000
+*                                                                       00088000
+*                                                                       00089000
+**********************************************************************  00090000
+* PROGRAM TABLE HEADER SECTION:                                         00091000
+*   THIS SECTION CONTAINS STATIC DESCRIPTIVE FIELDS.                    00092000
+**********************************************************************  00093000
+*                                                                       00094000
+S13UDB   CSECT                         PROGRAM TABLE SECTION            00095000
+S13UDB   AMODE ANY                                                      00096000
+S13UDB   RMODE ANY                                                      00097000
+         DC    CL8'S13UDB  '           PROGRAM ID                       00098000
+         DC    CL1' '                                                   00099000
+         DC    CL8'&SYSDATE'           ASSEMBLY DATE                    00100000
+         DC    CL1' '                                                   00101000
+         DC    CL5'&SYSTIME'           ASSEMBLY TIME                    00102000
+         DC    CL1' '                                                   00103000
+         DC    A(SQLDLEN)              SQLDSECT SIZE                    00104000
+         DC    5A(0)                   RESERVED                         00105000
+         DC    AL2(0)                  RESERVED                         00106000
+         DC    AL2(INDVARL)            NULL INDICATOR AREA LENGTH       00107000
+         DC    A(CONVTAB1)             RECORD/HOST CONVERSION TABLE     00108000
+         DC    A(0)                    SQLDA DATA TYPE/LENGTH TABLE     00109000
+         DC    A(STM#TAB)              STATEMENT TABLE ADDRESS          00110000
+         DC    CL43'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. '        00111000
+         DC    CL29'WWW.INFOR.COM                '                      00111001
+*                                                                       00112000
+**********************************************************************  00113000
+* STATEMENT TABLE SECTION:                                              00114000
+*   THIS SECTION DEFINES AN ENTRY VECTOR FOR EACH SQL STATEMENT.        00115000
+**********************************************************************  00116000
+*                                                                       00117000
+STM#TAB  CSECT                         STATEMENT TABLE SECTION          00118000
+STM#TAB  AMODE ANY                                                      00119000
+STM#TAB  RMODE ANY                                                      00120000
+         DC    4A(0)                   RDB MODULE VECTORS               00121000
+         DC    A(SELUC0)               SELECT UPDATE CURSOR (KEY 0)     00122000
+         DC    A(SELUC1)               SELECT UPDATE CURSOR (KEY 1)     00123000
+         DC    A(SELUC2)               SELECT UPDATE CURSOR (KEY 2)     00124000
+         DC    A(SELUC3)               SELECT UPDATE CURSOR (KEY 3)     00125000
+         DC    A(FETUC0)               FETCH UPDATE CURSOR (KEY 0)      00126000
+         DC    A(FETUC1)               FETCH UPDATE CURSOR (KEY 1)      00127000
+         DC    A(FETUC2)               FETCH UPDATE CURSOR (KEY 2)      00128000
+         DC    A(FETUC3)               FETCH UPDATE CURSOR (KEY 3)      00129000
+         DC    A(CLSUC0)               CLOSE UPDATE CURSOR (KEY 0)      00130000
+         DC    A(CLSUC1)               CLOSE UPDATE CURSOR (KEY 1)      00131000
+         DC    A(CLSUC2)               CLOSE UPDATE CURSOR (KEY 2)      00132000
+         DC    A(CLSUC3)               CLOSE UPDATE CURSOR (KEY 3)      00133000
+         DC    20A(0)                  RDB MODULE VECTORS               00134000
+         DC    A(INSROW)               INSERT STATEMENT                 00135000
+         DC    A(UPDUC0)               UPDATE STATEMENT (KEY 0)         00136000
+         DC    A(UPDUC1)               UPDATE STATEMENT (KEY 1)         00137000
+         DC    A(UPDUC2)               UPDATE STATEMENT (KEY 2)         00138000
+         DC    A(UPDUC3)               UPDATE STATEMENT (KEY 3)         00139000
+         DC    A(DELUC0)               DELETE STATEMENT (KEY 0)         00140000
+         DC    A(DELUC1)               DELETE STATEMENT (KEY 1)         00141000
+         DC    A(DELUC2)               DELETE STATEMENT (KEY 2)         00142000
+         DC    A(DELUC3)               DELETE STATEMENT (KEY 3)         00143000
+         DC    A(DELTBL)               DELETE ALL STATEMENT             00144000
+         DC    4X'FF'                                                   00145000
+*                                                                       00146000
+**********************************************************************  00147000
+* SQL STATEMENT SECTION:                                                00148000
+*   THIS SECTION CONTAINS ALL THE STATIC SQL STATEMENTS REQUIRED        00149000
+*     TO SUPPORT THIS TABLE.                                            00150000
+*   THE INDICATED STATEMENTS MAY BE MODIFIED, AS LONG AS THE RESULTS    00151000
+*     ARE EQUIVALENT.                                                   00152000
+**********************************************************************  00153000
+*                                                                       00154000
+SQL#STMT CSECT                         SQL STATEMENT SECTION            00155000
+SQL#STMT AMODE ANY                                                      00156000
+SQL#STMT RMODE ANY                                                      00157000
+         USING SQLDSECT,10             ADDRESS SQLDSECT                 00158000
+         USING COM#AREA,11             ADDRESS COMMAREA                 00159000
+*                                                                       00160000
+**********************************************************************  00161000
+* SELECT UPDATE AND OPEN UPDATE CURSOR STATEMENTS BY PRIMARY KEY:       00162000
+*   THESE STATEMENTS SUPPORT THE GET-LOCK VERB.                         00163000
+*   THEY ARE ALSO USED AFTER A SUCCESSFUL SELECT SEQUENTIAL STATEMENT   00164000
+*     FOR THE GET-GE-LOCK AND GET-NEXT-LOCK VERBS.                      00165000
+**********************************************************************  00166000
+*                                                                       00167000
+SELUC0   DS    0H                                                       00168000
+         USING SELUC0,12               ESTABLISH BASE REGISTER          00169000
+         MVI   SQWKMRP,X'80'           MOVE RECORD TO HOST FOR KEY 0    00170000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00171000
+         BALR  14,15                   MOVE REQUESTED DATA              00172000
+         EXEC  SQL DECLARE S13UPD0 CURSOR                              *00173000
+               FOR SELECT                                              *00174000
+                   AUDIT_DATE,                                         *00175000
+                   AUDIT_TIME,                                         *00176000
+                   AUDIT_USER,                                         *00177000
+                   AUDIT_ORG,                                          *00178000
+                   SEC_SVC_CD_01,                                      *00179000
+                   SEC_SVC_CD_02,                                      *00180000
+                   SEC_SVC_CD_03,                                      *00181000
+                   SEC_SVC_CD_04,                                      *00182000
+                   SEC_SVC_CD_05,                                      *00183000
+                   SEC_SVC_CD_06,                                      *00184000
+                   SEC_SVC_CD_07,                                      *00185000
+                   SEC_SVC_CD_08,                                      *00186000
+                   SEC_SVC_CD_09,                                      *00187000
+                   SEC_SVC_CD_10,                                      *00188000
+                   SEC_SVC_CD_11,                                      *00189000
+                   SEC_SVC_CD_12,                                      *00190000
+                   SEC_SVC_CD_13,                                      *00191000
+                   SEC_SVC_CD_14,                                      *00192000
+                   SEC_SVC_CD_15,                                      *00193000
+                   SEC_SVC_CD_16,                                      *00194000
+                   SEC_SVC_CD_17,                                      *00195000
+                   SEC_SVC_CD_18,                                      *00196000
+                   SEC_SVC_CD_19,                                      *00197000
+                   SEC_SVC_CD_20                                       *00198000
+                 FROM S13                                              *00199000
+                 WHERE                                                 *00200000
+                   INST_NBR = :INST AND                                *00201000
+                   RECORD_NBR = :RECNBR AND                            *00202000
+                   SEC_SVC_PLAN = :SS_PLAN                             *00203000
+                 FOR UPDATE OF                                         *00204000
+                   AUDIT_DATE,                                         *00205000
+                   AUDIT_TIME,                                         *00206000
+                   AUDIT_USER,                                         *00207000
+                   AUDIT_ORG,                                          *00208000
+                   SEC_SVC_CD_01,                                      *00209000
+                   SEC_SVC_CD_02,                                      *00210000
+                   SEC_SVC_CD_03,                                      *00211000
+                   SEC_SVC_CD_04,                                      *00212000
+                   SEC_SVC_CD_05,                                      *00213000
+                   SEC_SVC_CD_06,                                      *00214000
+                   SEC_SVC_CD_07,                                      *00215000
+                   SEC_SVC_CD_08,                                      *00216000
+                   SEC_SVC_CD_09,                                      *00217000
+                   SEC_SVC_CD_10,                                      *00218000
+                   SEC_SVC_CD_11,                                      *00219000
+                   SEC_SVC_CD_12,                                      *00220000
+                   SEC_SVC_CD_13,                                      *00221000
+                   SEC_SVC_CD_14,                                      *00222000
+                   SEC_SVC_CD_15,                                      *00223000
+                   SEC_SVC_CD_16,                                      *00224000
+                   SEC_SVC_CD_17,                                      *00225000
+                   SEC_SVC_CD_18,                                      *00226000
+                   SEC_SVC_CD_19,                                      *00227000
+                   SEC_SVC_CD_20                                       *00228000
+                 FETCH FIRST 1 ROW ONLY                                 00229000
+         EXEC  SQL OPEN S13UPD0                                         00230000
+         MVC   SQWCSUCA,=A(CLSUC0)     SET CURSOR CLOSE ROUTINE ADDRESS 00231000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00232000
+         BR    14                      RETURN TO CALLER                 00233000
+         LTORG                                                          00234000
+*                                                                       00235000
+**********************************************************************  00236000
+* FETCH FROM UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                   00237000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00238000
+*   IT WILL FOLLOW A SUCCESSFUL SELECT UPDATE STATEMENT TO RETRIEVE     00239000
+*     THE ACTUAL ROW.                                                   00240000
+**********************************************************************  00241000
+*                                                                       00242000
+FETUC0   DS    0H                                                       00243000
+         USING FETUC0,12               ESTABLISH BASE REGISTER          00244000
+         EXEC  SQL FETCH S13UPD0                                       *00245000
+                 INTO                                                  *00246000
+                   :AUDDATE,                                           *00247000
+                   :AUDTIME,                                           *00248000
+                   :AUDUSER,                                           *00249000
+                   :AUDORG,                                            *00250000
+                   :SSCD1,                                             *00251000
+                   :SSCD2,                                             *00252000
+                   :SSCD3,                                             *00253000
+                   :SSCD4,                                             *00254000
+                   :SSCD5,                                             *00255000
+                   :SSCD6,                                             *00256000
+                   :SSCD7,                                             *00257000
+                   :SSCD8,                                             *00258000
+                   :SSCD9,                                             *00259000
+                   :SSCD10,                                            *00260000
+                   :SSCD11,                                            *00261000
+                   :SSCD12,                                            *00262000
+                   :SSCD13,                                            *00263000
+                   :SSCD14,                                            *00264000
+                   :SSCD15,                                            *00265000
+                   :SSCD16,                                            *00266000
+                   :SSCD17,                                            *00267000
+                   :SSCD18,                                            *00268000
+                   :SSCD19,                                            *00269000
+                   :SSCD20                                              00270000
+         MVI   SQWKMRP,X'03'           MOVE HOST VARIABLES TO RECORD    00271000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00272000
+         BALR  14,15                   MOVE REQUESTED DATA              00273000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00274000
+         BR    14                      RETURN TO CALLER                 00275000
+         LTORG                                                          00276000
+*                                                                       00277000
+**********************************************************************  00278000
+* INSERT STATEMENT:                                                     00279000
+*   THIS STATEMENT SUPPORTS THE PUT VERB.                               00280000
+**********************************************************************  00281000
+*                                                                       00282000
+INSROW   DS    0H                                                       00283000
+         USING INSROW,12               ESTABLISH BASE REGISTER          00284000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00285000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00286000
+         BALR  14,15                   MOVE REQUESTED DATA              00287000
+         EXEC  SQL INSERT INTO S13                                     *00288000
+                   (                                                   *00289000
+                   INST_NBR,                                           *00290000
+                   RECORD_NBR,                                         *00291000
+                   SEC_SVC_PLAN,                                       *00292000
+                   AUDIT_DATE,                                         *00293000
+                   AUDIT_TIME,                                         *00294000
+                   AUDIT_USER,                                         *00295000
+                   AUDIT_ORG,                                          *00296000
+                   SEC_SVC_CD_01,                                      *00297000
+                   SEC_SVC_CD_02,                                      *00298000
+                   SEC_SVC_CD_03,                                      *00299000
+                   SEC_SVC_CD_04,                                      *00300000
+                   SEC_SVC_CD_05,                                      *00301000
+                   SEC_SVC_CD_06,                                      *00302000
+                   SEC_SVC_CD_07,                                      *00303000
+                   SEC_SVC_CD_08,                                      *00304000
+                   SEC_SVC_CD_09,                                      *00305000
+                   SEC_SVC_CD_10,                                      *00306000
+                   SEC_SVC_CD_11,                                      *00307000
+                   SEC_SVC_CD_12,                                      *00308000
+                   SEC_SVC_CD_13,                                      *00309000
+                   SEC_SVC_CD_14,                                      *00310000
+                   SEC_SVC_CD_15,                                      *00311000
+                   SEC_SVC_CD_16,                                      *00312000
+                   SEC_SVC_CD_17,                                      *00313000
+                   SEC_SVC_CD_18,                                      *00314000
+                   SEC_SVC_CD_19,                                      *00315000
+                   SEC_SVC_CD_20                                       *00316000
+                   )                                                   *00317000
+                  VALUES                                               *00318000
+                   (                                                   *00319000
+                   :INST,                                              *00320000
+                   :RECNBR,                                            *00321000
+                   :SS_PLAN,                                           *00322000
+                   :AUDDATE,                                           *00323000
+                   :AUDTIME,                                           *00324000
+                   :AUDUSER,                                           *00325000
+                   :AUDORG,                                            *00326000
+                   :SSCD1,                                             *00327000
+                   :SSCD2,                                             *00328000
+                   :SSCD3,                                             *00329000
+                   :SSCD4,                                             *00330000
+                   :SSCD5,                                             *00331000
+                   :SSCD6,                                             *00332000
+                   :SSCD7,                                             *00333000
+                   :SSCD8,                                             *00334000
+                   :SSCD9,                                             *00335000
+                   :SSCD10,                                            *00336000
+                   :SSCD11,                                            *00337000
+                   :SSCD12,                                            *00338000
+                   :SSCD13,                                            *00339000
+                   :SSCD14,                                            *00340000
+                   :SSCD15,                                            *00341000
+                   :SSCD16,                                            *00342000
+                   :SSCD17,                                            *00343000
+                   :SSCD18,                                            *00344000
+                   :SSCD19,                                            *00345000
+                   :SSCD20                                             *00346000
+                   )                                                    00347000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00348000
+         BR    14                      RETURN TO CALLER                 00349000
+         LTORG                                                          00350000
+*                                                                       00351000
+**********************************************************************  00352000
+* UPDATE STATEMENT BY PRIMARY KEY:                                      00353000
+*   THIS STATEMENT SUPPORTS THE REPUT VERB.                             00354000
+**********************************************************************  00355000
+*                                                                       00356000
+UPDUC0   DS    0H                                                       00357000
+         USING UPDUC0,12               ESTABLISH BASE REGISTER          00358000
+         MVI   SQWKMRP,X'01'           MOVE RECORD TO HOST VARIABLES    00359000
+         L     15,SQW@SQRX             LOAD INTERFACE ROUTINE ADDRESS   00360000
+         BALR  14,15                   MOVE REQUESTED DATA              00361000
+         EXEC  SQL UPDATE S13                                          *00362000
+                   SET                                                 *00363000
+                     AUDIT_DATE = :AUDDATE,                            *00364000
+                     AUDIT_TIME = :AUDTIME,                            *00365000
+                     AUDIT_USER = :AUDUSER,                            *00366000
+                     AUDIT_ORG = :AUDORG,                              *00367000
+                     SEC_SVC_CD_01 = :SSCD1,                           *00368000
+                     SEC_SVC_CD_02 = :SSCD2,                           *00369000
+                     SEC_SVC_CD_03 = :SSCD3,                           *00370000
+                     SEC_SVC_CD_04 = :SSCD4,                           *00371000
+                     SEC_SVC_CD_05 = :SSCD5,                           *00372000
+                     SEC_SVC_CD_06 = :SSCD6,                           *00373000
+                     SEC_SVC_CD_07 = :SSCD7,                           *00374000
+                     SEC_SVC_CD_08 = :SSCD8,                           *00375000
+                     SEC_SVC_CD_09 = :SSCD9,                           *00376000
+                     SEC_SVC_CD_10 = :SSCD10,                          *00377000
+                     SEC_SVC_CD_11 = :SSCD11,                          *00378000
+                     SEC_SVC_CD_12 = :SSCD12,                          *00379000
+                     SEC_SVC_CD_13 = :SSCD13,                          *00380000
+                     SEC_SVC_CD_14 = :SSCD14,                          *00381000
+                     SEC_SVC_CD_15 = :SSCD15,                          *00382000
+                     SEC_SVC_CD_16 = :SSCD16,                          *00383000
+                     SEC_SVC_CD_17 = :SSCD17,                          *00384000
+                     SEC_SVC_CD_18 = :SSCD18,                          *00385000
+                     SEC_SVC_CD_19 = :SSCD19,                          *00386000
+                     SEC_SVC_CD_20 = :SSCD20                           *00387000
+                 WHERE CURRENT OF S13UPD0                               00388000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00389000
+         BR    14                      RETURN TO CALLER                 00390000
+         LTORG                                                          00391000
+*                                                                       00392000
+**********************************************************************  00393000
+* DELETE STATEMENT BY PRIMARY KEY:                                      00394000
+*   THIS STATEMENT SUPPORTS THE DELETE VERB.                            00395000
+**********************************************************************  00396000
+*                                                                       00397000
+DELUC0   DS    0H                                                       00398000
+         USING DELUC0,12               ESTABLISH BASE REGISTER          00399000
+         EXEC  SQL DELETE FROM S13                                     *00400000
+                 WHERE CURRENT OF S13UPD0                               00401000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00402000
+         BR    14                      RETURN TO CALLER                 00403000
+         LTORG                                                          00404000
+*                                                                       00405000
+**********************************************************************  00406000
+* DELETE ALL STATEMENT:                                                 00407000
+*   THIS STATEMENT SUPPORTS THE DELETE-FILE VERB.                       00408000
+**********************************************************************  00409000
+*                                                                       00410000
+DELTBL   DS    0H                                                       00411000
+         USING DELTBL,12               ESTABLISH BASE REGISTER          00412000
+         EXEC  SQL DELETE FROM S13                                      00413000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00414000
+         BR    14                      RETURN TO CALLER                 00415000
+         LTORG                                                          00416000
+*                                                                       00417000
+**********************************************************************  00418000
+* CLOSE UPDATE CURSOR STATEMENT FOR PRIMARY KEY:                        00419000
+*   THIS STATEMENT SUPPORTS THE GET-LOCK VERB.                          00420000
+*   IT WILL FOLLOW THE LAST FETCH FROM UPDATE CURSOR STATEMENT          00421000
+*     TO CLOSE THE UPDATE CURSOR.                                       00422000
+**********************************************************************  00423000
+*                                                                       00424000
+CLSUC0   DS    0H                                                       00425000
+         USING CLSUC0,12               ESTABLISH BASE REGISTER          00426000
+         EXEC  SQL CLOSE S13UPD0                                        00427000
+         XC    SQWCSUCA,SQWCSUCA       CLEAR CURSOR CLOSE ROUTINE ADDR  00428000
+         L     14,SQW@RET              LOAD RETURN ADDRESS              00429000
+         BR    14                      RETURN TO CALLER                 00430000
+         LTORG                                                          00431000
+*                                                                       00432000
+**********************************************************************  00433000
+* ALTERNATE KEY 1 NOT DEFINED                                           00434000
+**********************************************************************  00435000
+*                                                                       00436000
+SELUC1   DS    0H                                                       00437000
+FETUC1   DS    0H                                                       00438000
+UPDUC1   DS    0H                                                       00439000
+DELUC1   DS    0H                                                       00440000
+CLSUC1   DS    0H                                                       00441000
+         DC    X'00DEAD01'             FORCE S0C1 ABEND                 00442000
+*                                                                       00443000
+**********************************************************************  00444000
+* ALTERNATE KEY 2 NOT DEFINED                                           00445000
+**********************************************************************  00446000
+*                                                                       00447000
+SELUC2   DS    0H                                                       00448000
+FETUC2   DS    0H                                                       00449000
+UPDUC2   DS    0H                                                       00450000
+DELUC2   DS    0H                                                       00451000
+CLSUC2   DS    0H                                                       00452000
+         DC    X'00DEAD02'             FORCE S0C1 ABEND                 00453000
+*                                                                       00454000
+**********************************************************************  00455000
+* ALTERNATE KEY 3 NOT DEFINED                                           00456000
+**********************************************************************  00457000
+*                                                                       00458000
+SELUC3   DS    0H                                                       00459000
+FETUC3   DS    0H                                                       00460000
+UPDUC3   DS    0H                                                       00461000
+DELUC3   DS    0H                                                       00462000
+CLSUC3   DS    0H                                                       00463000
+         DC    X'00DEAD03'             FORCE S0C1 ABEND                 00464000
+*                                                                       00465000
+         DS    0H                      END OF SQL STATEMENTS            00466000
+         DC    XL16'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'                   00467000
+*                                                                       00468000
+**********************************************************************  00469000
+* DUMMY ENTRY POINT DSNHLI                                              00470000
+**********************************************************************  00471000
+*                                                                       00472000
+         ENTRY DSNHLI                                                   00473000
+DSNHLI   DS    0H                                                       00474000
+         L     15,SQW@CAF              LOAD ENTRY POINT TO ATTACH       00475000
+         BR    15                      BRANCH TO ATTACH FACILITY        00476000
+*                                                                       00477000
+**********************************************************************  00478000
+* CONVERSION TABLE VALUES FOR ALL FIELDS IN THIS TABLE                  00479000
+**********************************************************************  00480000
+*                                                                       00481000
+* CONVTAB1 TABLE ENTRY FORMAT IS:                                       00482000
+*        DC    H'RRRR',H'VVVV',H'LLLL',X'KK',X'DD'                      00483000
+* OR:                                                                   00484000
+*        DC    H'RRRR',H'VVVV',X'ZZPP',X'KK',X'DD'                      00485000
+* WHERE:                                                                00486000
+*   RRRR = RECORD AREA OFFSET                                           00487000
+*   VVVV = HOST VARIABLE AREA OFFSET                                    00488000
+*   LLLL = HALFWORD LENGTH TO MOVE                                      00489000
+*   ZZPP = CONVERT ZONED/PACKED LENGTHS (MINUS 1)                       00490000
+*   KK   = KEY FIELD MASK:                                              00491000
+*            80 = KEY 0 FIELD                                           00492000
+*            40 = KEY 1 FIELD                                           00493000
+*            20 = KEY 2 FIELD                                           00494000
+*            10 = KEY 3 FIELD                                           00495000
+*   DD   = DATA FIELD MASK:                                             00496000
+*            80 = RECORD FIELD IS PACKED                                00497000
+*            40 = HOST VARIABLE IS PACKED                               00498000
+*            20 = NULLABLE FIELD                                        00499000
+*            01 = DATE FIELD                                            00500000
+*            02 = TIME FIELD                                            00501000
+*                                                                       00502000
+CONVTAB1 DS    0H                      RECORD/HOST VARIABLE CONVERSIONS 00503000
+         DC    H'0000',H'0000',H'0014',X'80',X'00'                      00504000
+         DC    H'0014',H'0014',H'0144',X'00',X'00'                      00505000
+         DC    8X'FF'                                                   00506000
+*                                                                       00507000
+         LTORG                                                          00508000
+         END                                                            00509000

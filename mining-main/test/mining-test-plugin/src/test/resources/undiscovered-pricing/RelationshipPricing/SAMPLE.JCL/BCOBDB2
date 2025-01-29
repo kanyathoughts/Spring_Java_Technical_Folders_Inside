@@ -1,0 +1,119 @@
+//BCOBDB2 JOB
+//**********************************************************************
+//** COBOL DB2 COMPILE AND BIND                            MVS BCOBDB2**
+//**********************************************************************
+//** Infopoint Product: RP  Release: 5.0  Putlevel: 00                **
+//** Description: RELATIONSHIP PRICING                                **
+//**********************************************************************
+//** BEFORE EXECUTING THIS PROCEDURE:                                 **
+//**                                                                  **
+//** 1. Check all symbolics and JCL for your site assignments.        **
+//**    Be sure to change the CLASS and TIME JOB CARD parameters      **
+//**    for a long running job.                                       **
+//**                                                                  **
+//** 2. Check all DB2 library names are correct for your site.        **
+//**                                                                  **
+//** 3. Change the DB2 SUBSYSTEM ID (D910) to the correct value       **
+//**    for your site.                                                **
+//**                                                                  **
+//** 4. Verify the $COMPPGM PARM statement:                           **
+//**                                                                  **
+//**     - verify that the 'DATA(31)' option is present unless        **
+//**       instructed differently in the installation guide.          **
+//**     - the options 'NOOFF NOLIST NOS NOX' are included to limit   **
+//**       compiler output; change these as appropriate to your site. **
+//**                                                                  **
+//** 5. If the compiler system libraries are not included in the      **
+//**    system LINK-LIST, uncomment and assign the correct library    **
+//**    to the SYSCOMP symbolic, and uncomment the STEPLIB line in    **
+//**    the COB step.                                                 **
+//**                                                                  **
+//** 6. Change all the system and product library names and add       **
+//**    additional libraries as appropriate to your site.             **
+//**                                                                  **
+//** 7. If there are too many steps in this job you may need to break **
+//**    it into muliple job streams.                                  **
+//**                                                                  **
+//** 8. After all the mass compiles/assemblies are completed:         **
+//**                                                                  **
+//**     - execute the BNKLKEDD procedure to relink the system if     **
+//**       using the COBOL DYNAM compile option, or                   **
+//**                                                                  **
+//**     - execute the BNKLKED procedure to relink the system if      **
+//**       using the COBOL NODYNAM compile option.                    **
+//**                                                                  **
+//** NOTE:  This procedure link-edits the program object to the       **
+//**        product library in LKED1.  Change as required.            **
+//**                                                                  **
+//**********************************************************************
+//**********************************************************************
+//BCOBDB2 PROC M=XXXXXX,
+//        COMPPGM='IGYCRCTL',                     COMPILER
+//*       SYSCOMP='your.system.compiler.lib',     SYSTEM COBOL LIBRARY
+//        SRCLIN1='BNKCA.RP50.COBOL.SOURCE',  SOURCE LIBRARY
+//        CPYLIN1='BNKCA.RP50.COBOL.COPYLIB', COPYBOOK LIBRARY
+//        DSNLOAD='your.DB2.SDSNLOAD',            DB2 DSN LOAD LIBRARY
+//        DB2RUN='your.DB2.RUNLIB',               DB2 RUNLIB LIBRARY
+//        DSNEXIT='your.DB2.SDSNEXIT',            DB2 SDSNEXIT LIBRARY
+//**********************************************************************
+//        OBJLOUT='BNKCA.RP50.OBJLIB',        OUTPUT OBJECT LIBRARY
+//        CICSCOB='your.CTS.lib.SDFHCOB',         CICS COBOL LIBRARY
+//        DBRMLIB='BNKCA.RP50.DBRMLIB'        OUTPUT DBRM LIBRARY
+//**********************************************************************
+//*
+//COB     EXEC PGM=&COMPPGM,
+//             PARM=('OPT(STD),TRUNC(OPT),NOADV,APOST,SQL',
+//             LIB,OBJ,NOSEQ,DATA(31),NUMPROC(NOPFD))
+//*STEPLIB  DD  DSN=&SYSCOMP,DISP=SHR
+//STEPLIB  DD  DSN=&DSNEXIT,DISP=SHR
+//         DD  DSN=&DSNLOAD,DISP=SHR
+//DBRMLIB  DD  DSN=&DBRMLIB(&M),DISP=SHR
+//SYSLIB   DD  DSN=&CPYLIN1,DISP=SHR
+//         DD  DSN=&CICSCOB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSPUNCH DD  SYSOUT=*
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT2   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT3   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT4   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT5   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT6   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSUT7   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(,PASS),UNIT=SYSDA,SPACE=(CYL,(5,1)),
+//             DCB=(RECFM=FB,LRECL=80,BLKSIZE=3120)
+//SYSIN    DD  DSN=&SRCLIN1(&M),DISP=SHR
+//*
+//LKED1   EXEC PGM=IEWL,PARM='RENT,LIST,XREF,NCAL',
+//             COND=(5,LT,COB)
+//SYSUDUMP DD  SYSOUT=*
+//SYSPRINT DD  SYSOUT=*
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(3,1))
+//SYSLIB   DD  DSN=&OBJLOUT,DISP=SHR
+//SYSLMOD  DD  DSN=&OBJLOUT(&M),DISP=SHR
+//SYSLIN   DD  DSN=&&LOADSET,DISP=(OLD,DELETE)
+//*
+//DB2BIND  EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
+//STEPLIB  DD  DSN=&DSNLOAD.,DISP=SHR
+//         DD  DSN=&DB2RUN,DISP=SHR
+//DBRMLIB  DD  DSN=&DBRMLIB,DISP=SHR
+//SYSPRINT DD  SYSOUT=*
+//SYSUDUMP DD  SYSOUT=*
+//SYSTSPRT DD  SYSOUT=*
+//SYSTSIN  DD  DUMMY     *** This input is overridden below ***
+//*
+//**********************************************************************
+//** DELETE LOADSET IF COB FAILS                                      **
+//**********************************************************************
+//DELETE2 EXEC PGM=IEFBR14,COND=(5,GT,COB)
+//LOADSET  DD  DSN=&&LOADSET,DISP=(OLD,DELETE)
+//*
+//        PEND
+//*
+//TIVSAMDD EXEC BCOBDB2,M=*sample* *Sample Program Entry - do not use
+//DB2BIND.SYSTSIN  DD  *
+  DSN SYSTEM(ssid)
+BIND PACKAGE(BK170PKG) OWNER(BNKDB) -
+  MEMBER(TIVSAMDD) CURRENTDATA(NO) REOPT(NONE) -
+  QUALIFIER(BK170)  ISO(CS) VALIDATE(BIND) RELEASE(COMMIT) ACT(REPLACE)
+/*
+//

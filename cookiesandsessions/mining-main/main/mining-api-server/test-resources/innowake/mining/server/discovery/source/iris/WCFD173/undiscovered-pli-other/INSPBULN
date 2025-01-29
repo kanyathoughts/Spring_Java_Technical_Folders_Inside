@@ -1,0 +1,202 @@
+                                                                        
+  /*****************************************************************/   
+  /*                                                               */   
+  /*         THIS IS THE ROUTINE TO REARRANGE THE NAME INTO        */   
+  /*      FIRST,MIDDLE1,MIDDLE2,LAST AND SUFFIX ORDER. THEY        */   
+  /*      ARE SEPARATED BY A BLANK AND NOT COMMAS AND PADDED       */   
+  /*      WITH BLANKS ON THE END TO MAKE A 23 BYTE FIELD.          */   
+  /*                                                               */   
+  /*****************************************************************/   
+                                                                        
+ NAMEFIX: PROC;                                                         
+                                                                        
+    BLD_LAST_NAME = ' ';                                                
+    BLD_FIRST_NAME = ' ';                                               
+    BLD_MID_NAME = ' ';                                                 
+    BLD_SUFFIX_NAME = ' ';                                              
+    BLD_NAME = CUST_OPER_NAME;                                          
+                                                                        
+    IF VERIFY (BLD_NAME,WS_SEMI_COLON) ª= 0 THEN DO;                    
+        WS_POS = INDEX(BLD_NAME,WS_SEMI);                               
+        BLD_LAST_NAME = SUBSTR(BLD_NAME,1,WS_POS - 1);                  
+        NEW_POS = INDEX(SUBSTR(BLD_NAME,WS_POS + 1,                     
+             35 - WS_POS),WS_COMM);                                     
+        BLD_SUFFIX_NAME = SUBSTR(BLD_NAME,WS_POS + 1,NEW_POS - 1);      
+        WS_POS_1 = WS_POS + NEW_POS;                                    
+        TEMP_BLD_FIRST_NAME = SUBSTR(BLD_NAME,                          
+             WS_POS_1 + 1,35 - WS_POS_1);                               
+        IF VERIFY (TEMP_BLD_FIRST_NAME,WS_COMMA) ª= 0 THEN DO;          
+           NEW_POS_1 = INDEX(TEMP_BLD_FIRST_NAME,WS_COMM);              
+           BLD_FIRST_NAME = SUBSTR(TEMP_BLD_FIRST_NAME,1,NEW_POS_1 - 1);
+        END;                                                            
+            ELSE DO;                                                    
+                    NEW_POS_1 = INDEX(TEMP_BLD_FIRST_NAME,WS_SPACE);    
+                    BLD_FIRST_NAME = SUBSTR(TEMP_BLD_FIRST_NAME,        
+                        1,NEW_POS_1 - 1);                               
+            END;                                                        
+        WS_POS_2 = WS_POS_1 + NEW_POS_1;                                
+        NEW_POS_2 = INDEX(SUBSTR(BLD_NAME,WS_POS_2 + 1,                 
+             35 - WS_POS_2),WS_SPACE);                                  
+        BLD_MID_NAME = SUBSTR(BLD_NAME,WS_POS_2 + 1,NEW_POS_2 - 1);     
+    END;                                                                
+    ELSE DO;                                                            
+        WS_POS = INDEX(BLD_NAME,WS_COMM);                               
+        BLD_LAST_NAME = SUBSTR(BLD_NAME,1,WS_POS - 1);                  
+        WS_POS_1 = WS_POS;                                              
+        TEMP_BLD_FIRST_NAME = SUBSTR(BLD_NAME,                          
+             WS_POS + 1,35 - WS_POS_1);                                 
+        IF VERIFY (TEMP_BLD_FIRST_NAME,WS_COMMA) ª= 0 THEN DO;          
+           NEW_POS_1 = INDEX(TEMP_BLD_FIRST_NAME,WS_COMM);              
+           BLD_FIRST_NAME = SUBSTR(TEMP_BLD_FIRST_NAME,1,NEW_POS_1 - 1);
+        END;                                                            
+            ELSE DO;                                                    
+                    NEW_POS_1 = INDEX(TEMP_BLD_FIRST_NAME,WS_SPACE);    
+                    BLD_FIRST_NAME = SUBSTR(TEMP_BLD_FIRST_NAME,        
+                        1,NEW_POS_1 - 1);                               
+            END;                                                        
+        WS_POS_2 = WS_POS_1 + NEW_POS_1;                                
+        NEW_POS_2 = INDEX(SUBSTR(BLD_NAME,WS_POS_2 + 1,                 
+                35 - WS_POS_2),WS_SPACE);                               
+        BLD_MID_NAME = SUBSTR(BLD_NAME,WS_POS_2 + 1,NEW_POS_2 - 1);     
+    END;                                                                
+                                                                        
+    LAST_NAME_35    = BLD_LAST_NAME;                                    
+    FIRST_NAME_32   = BLD_FIRST_NAME;                                   
+    MIDDLE_NAME_30  = BLD_MID_NAME;                                     
+    NAME_SUFFIX_1   = BLD_SUFFIX_NAME;                                  
+    NAME_OUT = ' ';                                                     
+    CHRS_NAME_MIDDLE =  0;                                              
+    CHRS_NAME_LAST =  0;                                                
+    CHRS_NAME_SUFFIX =  0;                                              
+    CHRS_NAME_FIRST =  0;                                               
+    CHRS_NAME =  0;                                                     
+  /*****************************************************************/   
+  /*                                                               */   
+  /*         THE FOLLOWING FEW DO LOOPS WILL FIND THE LAST         */   
+  /*         POSITION OF EACH FIELD AND STORES IT'S NUMBER.        */   
+  /*                                                               */   
+  /*****************************************************************/   
+    DO SUBSCRIPT = 35 TO 1 BY -1;                                       
+      IF WS_LAST_NAME (SUBSCRIPT) ª= ' ' &                              
+         SPACE_SWITCH = 'OFF'                                           
+      THEN DO;                                                          
+         SPACE_SWITCH = 'ON ';                                          
+         CHRS_NAME_LAST = SUBSCRIPT;                                    
+      END;                                                              
+    END;                                                                
+    SPACE_SWITCH = 'OFF';                                               
+    DO SUBSCRIPT = 32 TO 1 BY -1;                                       
+      IF WS_FIRST_NAME (SUBSCRIPT) ª= ' ' &                             
+         SPACE_SWITCH = 'OFF'                                           
+      THEN DO;                                                          
+         SPACE_SWITCH = 'ON ';                                          
+         CHRS_NAME_FIRST = SUBSCRIPT;                                   
+      END;                                                              
+    END;                                                                
+    SPACE_SWITCH = 'OFF';                                               
+    DO SUBSCRIPT = 30 TO 1 BY -1;                                       
+      IF WS_MIDDLE_NAME (SUBSCRIPT) ª= ' ' &                            
+         SPACE_SWITCH = 'OFF'                                           
+      THEN DO;                                                          
+         SPACE_SWITCH = 'ON ';                                          
+         CHRS_NAME_MIDDLE = SUBSCRIPT;                                  
+         DO SUBSCRIPT_2 = 1 TO CHRS_NAME_MIDDLE BY 1;                   
+            IF WS_MIDDLE_NAME (SUBSCRIPT_2) = ';'                       
+            THEN DO;                                                    
+               WS_MIDDLE_NAME (SUBSCRIPT_2) = ' ';                      
+            END;                                                        
+         END;                                                           
+      END;                                                              
+    END;                                                                
+    SPACE_SWITCH = 'OFF';                                               
+    DO SUBSCRIPT = 3 TO 1 BY -1;                                        
+      IF WS_NAME_SUFFIX (SUBSCRIPT) ª= ' ' &                            
+         SPACE_SWITCH = 'OFF'                                           
+      THEN DO;                                                          
+             SPACE_SWITCH = 'ON ';                                      
+             CHRS_NAME_SUFFIX = SUBSCRIPT;                              
+           END;                                                         
+    END;                                                                
+    SPACE_SWITCH = 'OFF';                                               
+ TOTAL_NAME_BYTES:                                                      
+    BLANK_CTR = 1;                                                      
+    IF CHRS_NAME_MIDDLE ª= 0                                            
+         THEN BLANK_CTR = BLANK_CTR + 1;                                
+    IF CHRS_NAME_SUFFIX ª= 0                                            
+         THEN BLANK_CTR = BLANK_CTR + 1;                                
+    CHRS_NAME = CHRS_NAME_LAST                                          
+              + CHRS_NAME_FIRST                                         
+              + CHRS_NAME_MIDDLE                                        
+              + CHRS_NAME_SUFFIX                                        
+              + BLANK_CTR;                                              
+  /*****************************************************************/   
+  /*                                                               */   
+  /*         IF THE FIELDS TOTAL MORE THEN 23 BYTES, THEY          */   
+  /*         WILL BE TRUNCATED UNTIL THEY TOTAL 23 BYTES.          */   
+  /*         STARTING WITH THE MIDDLE, FOLLOWED BY THE FIRST       */   
+  /*         THEN LAST NAMES BUT THE SUFFIX IS NEVER TOUCHED.      */   
+  /*                                                               */   
+  /*****************************************************************/   
+    CHRS_REMAIN = CHRS_NAME;                                            
+    IF CHRS_REMAIN > 23                                                 
+    THEN DO WHILE ((CHRS_NAME_MIDDLE > 1) & (CHRS_REMAIN > 23));        
+            CHRS_NAME_MIDDLE = CHRS_NAME_MIDDLE - 1;                    
+            CHRS_REMAIN = CHRS_REMAIN - 1;                              
+         END;                                                           
+    IF CHRS_REMAIN > 23                                                 
+    THEN DO WHILE ((CHRS_NAME_FIRST > 3) & (CHRS_REMAIN > 23));         
+            CHRS_NAME_FIRST = CHRS_NAME_FIRST - 1;                      
+            CHRS_REMAIN = CHRS_REMAIN - 1;                              
+         END;                                                           
+    ELSE                                                                
+         IF WS_MIDDLE_NAME (CHRS_NAME_MIDDLE) = ';'                     
+         THEN DO;                                                       
+            CHRS_NAME_MIDDLE = CHRS_NAME_MIDDLE - 1;                    
+         END;                                                           
+    IF CHRS_REMAIN > 23                                                 
+    THEN DO WHILE ((CHRS_NAME_LAST > 12) & (CHRS_REMAIN > 23));         
+            CHRS_NAME_LAST = CHRS_NAME_LAST - 1;                        
+            CHRS_REMAIN = CHRS_REMAIN - 1;                              
+         END;                                                           
+  /*                                                              */    
+  /* ****** ASSEMBLE 23 BYTE NAME STRING ***********************  */    
+  /*                                                              */    
+                                                                        
+     SUBSTR(NAME_OUT,1,CHRS_NAME_FIRST) =                               
+                    SUBSTR(FIRST_NAME_32,1,CHRS_NAME_FIRST);            
+                                                                        
+     SUBSTR(NAME_OUT,CHRS_NAME_FIRST + 1,1) = ' ';                      
+                                                                        
+     CHRS_NAME = CHRS_NAME_FIRST + 1;                                   
+                                                                        
+     IF CHRS_NAME_MIDDLE ª= 0                                           
+     THEN DO;                                                           
+                                                                        
+        SUBSTR(NAME_OUT,CHRS_NAME + 1,CHRS_NAME_MIDDLE) =               
+                       SUBSTR(MIDDLE_NAME_30,1,CHRS_NAME_MIDDLE);       
+        CHRS_NAME = CHRS_NAME + CHRS_NAME_MIDDLE;                       
+                                                                        
+        SUBSTR(NAME_OUT,CHRS_NAME + 1,1) = ' ';                         
+                                                                        
+        CHRS_NAME = CHRS_NAME + 1;                                      
+                                                                        
+     END;                                                               
+                                                                        
+     SUBSTR(NAME_OUT,CHRS_NAME + 1,CHRS_NAME_LAST) =                    
+                    SUBSTR(LAST_NAME_35,1,CHRS_NAME_LAST);              
+                                                                        
+     IF CHRS_NAME_SUFFIX ª= 0                                           
+     THEN DO;                                                           
+                                                                        
+        CHRS_NAME = CHRS_NAME + CHRS_NAME_LAST;                         
+                                                                        
+        SUBSTR(NAME_OUT,CHRS_NAME + 1,1) = ' ';                         
+                                                                        
+        SUBSTR(NAME_OUT,CHRS_NAME + 2,CHRS_NAME_SUFFIX) =               
+                       SUBSTR(NAME_SUFFIX_1,1,CHRS_NAME_SUFFIX);        
+                                                                        
+     END;                                                               
+                                                                        
+ END_NAMEFIX_ROUT:                                                      
+  RETURN;                                                               
+ END;                                                                   

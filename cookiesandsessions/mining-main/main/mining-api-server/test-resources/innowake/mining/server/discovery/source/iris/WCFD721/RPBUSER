@@ -1,0 +1,86 @@
+000010 IDENTIFICATION DIVISION.                                         00001000
+000020 PROGRAM-ID.             RPBUSER.                                 00002000
+000000***************************************************************   00003000
+000000*                                                             *   00003001
+000000*                           NOTICE                            *   00003002
+000000*                                                             *   00003003
+000000*   THIS SOFTWARE IS THE PROPERTY OF AND CONTAINS             *   00003004
+000000*   CONFIDENTIAL INFORMATION OF INFOR AND/OR ITS AFFILIATES   *   00003005
+000000*   OR SUBSIDIARIES AND SHALL NOT BE DISCLOSED WITHOUT PRIOR  *   00003006
+000000*   WRITTEN PERMISSION. LICENSED CUSTOMERS MAY COPY AND       *   00003007
+000000*   ADAPT THIS SOFTWARE FOR THEIR OWN USE IN ACCORDANCE WITH  *   00003008
+000000*   THE TERMS OF THEIR SOFTWARE LICENSE AGREEMENT.            *   00003009
+000000*   ALL OTHER RIGHTS RESERVED.                                *   00003010
+000000*                                                             *   00003011
+000000*   (C) COPYRIGHT 2017 INFOR.  ALL RIGHTS RESERVED.           *   00003012
+000000*   THE WORD AND DESIGN MARKS SET FORTH HEREIN ARE            *   00003013
+000000*   TRADEMARKS AND/OR REGISTERED TRADEMARKS OF INFOR          *   00003014
+000000*   AND/OR ITS AFFILIATES AND SUBSIDIARIES. ALL RIGHTS        *   00003015
+000000*   RESERVED.  ALL OTHER TRADEMARKS LISTED HEREIN ARE         *   00003016
+000000*   THE PROPERTY OF THEIR RESPECTIVE OWNERS.                  *   00003017
+000000*                                                             *   00003018
+000000***************************************************************   00003019
+000000*     Infopoint Relationship Pricing                          *   00003020
+000000*     RP 5.0.01                                               *   00003021
+000000***************************************************************   00003022
+000040******************************************************************00004000
+000050*            USER EXIT ROUTINE                                   *00005000
+000060*    THIS ROUTINE MUST BE MODIFIED FOR EACH USER.                *00006000
+000070******************************************************************00007000
+000080 ENVIRONMENT DIVISION.                                            00008000
+000090 DATA DIVISION.                                                   00009000
+000100******************************************************************00010000
+000110 WORKING-STORAGE SECTION.                                         00011000
+000000 01  WS-COPYRIGHT                PIC X(057)      VALUE            00012000
+000000     'COPYRIGHT 2017 INFOR. ALL RIGHTS RESERVED. WWW.INFOR.COM '. 00012001
+000130 01  RPS-RLSELIT.                                                 00013000
+000000 COPY RPWRLSE.                                                    00014000
+000150 01  WORK-AREAS.                                                  00015000
+000160     03  FILLER                  PIC X(01).                       00016000
+000170 LINKAGE SECTION.                                                 00017000
+000180 01  WS-LINKDATA.                                                 00018000
+000000 COPY MISCNT00      REPLACING                                     00019000
+000200             ==:MICNT:== BY ==RPUSER==.                           00020000
+000000 COPY RPWUSER.                                                    00021000
+000220******************************************************************00022000
+000230 PROCEDURE DIVISION                                               00023000
+000240         USING                                                    00024000
+000250         WS-LINKDATA.                                             00025000
+000260******************************************************************00026000
+000270 INITIALIZATION SECTION.                                          00027000
+000280 IN-START.                                                        00028000
+000290     MOVE 'N' TO RPUSER-PASSED.                                   00029000
+000300     MOVE SPACE TO RPUSER-FUNCTION.                               00030000
+000310 IN-EXIT.                                                         00031000
+000320     EXIT.                                                        00032000
+000330******************************************************************00033000
+000340 MAIN-LOGIC SECTION.                                              00034000
+000350 ML-START.                                                        00035000
+000360**   IF RPUSER-PRODCODE IS EQUAL TO 'ILA   '                      00036000
+000370**       PERFORM CHECK-ILA                                        00037000
+000380**       GO TO ML-EXIT.                                           00038000
+000390     MOVE 'Y' TO RPUSER-PASSED.                                   00039000
+000400     MOVE SPACE TO RPUSER-FUNCTION.                               00040000
+000410 ML-EXIT.                                                         00041000
+000420     GO TO RETURN-ROUTINE.                                        00042000
+000430******************************************************************00043000
+000440*            TEST INSTALLMENT LOANS                              *00044000
+000450*----------------------------------------------------------------*00045000
+000460*CHECK-ILA SECTION.                                               00046000
+000470*CI-START.                                                        00047000
+000480*    IF RPUSER-ACCT-TYPE IS EQUAL TO 123                          00048000
+000490*        AND RPUSER-AUTO-DEBIT IS EQUAL TO 'N'                    00049000
+000500*        MOVE 'N' TO RPUSER-PASSED                                00050000
+000510*        MOVE 'ILA TYPE 123 MUST HAVE AUTO DEBIT'                 00051000
+000520*             TO RPUSER-ABMSG                                     00052000
+000530*        GO TO CI-EXIT.                                           00053000
+000540*    MOVE 'Y' TO RPUSER-PASSED.                                   00054000
+000550*CI-EXIT.                                                         00055000
+000560*    EXIT.                                                        00056000
+000570******************************************************************00057000
+000580 RETURN-ROUTINE SECTION.                                          00058000
+000590 RET-START.                                                       00059000
+000600     EXIT.                                                        00060000
+000610 RET-RETURN.                                                      00061000
+000620     GOBACK.                                                      00062000
+000630******************************************************************00063000

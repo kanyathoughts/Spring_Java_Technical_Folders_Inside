@@ -1,0 +1,18 @@
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. START01.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+         
+         01 WS-FIELD-A-1 PIC X(1).
+         01 WS-FIELD-A-2 PIC X(2).
+         01 WS-FIELD-A-3 PIC X(3).
+         01 WS-FIELD-A-4 PIC X(4).
+         
+         
+        PROCEDURE DIVISION.
+         
+        	MOVE WS-FIELD-A-1 TO WS-FIELD-A-2.
+        	MOVE WS-FIELD-A-2 TO WS-FIELD-A-3.
+        	COPY COPY01.
+         
+        END PROGRAM START01.

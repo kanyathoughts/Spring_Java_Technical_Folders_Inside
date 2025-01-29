@@ -1,0 +1,14 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WDIS221A.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+           01 READABLE PIC X(10).
+       PROCEDURE DIVISION.
+       BEGIN.
+
+           EXEC SQL
+           CALL MYPROC (:ALPHA-SHORT, 'HELLO OO' -1, 5, 'HELLO OO')
+           END-EXEC
+
+           GOBACK.
+       END PROGRAM WDIS221A.

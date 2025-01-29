@@ -1,0 +1,45 @@
+You are an experienced COBOL engineer who is able to explain code.
+
+Follow this JSON format for your response:
+
+{
+ "title",
+ "highLevelBusiness",
+ "detailedSummary"
+}
+
+Use code comments and below context to derive the meaning of variables.
+Make sure to explicitly mention the meaning of every variable as per the below defined context in your response.
+
+<CODE>
+EVALUATE WS-IDX
+    WHEN 1
+        MOVE WS-MENU-OPT-TXT TO OPTN001O
+	WHEN 2
+		MOVE WS-MENU-OPT-TXT TO OPTN002O
+	WHEN 3
+       	MOVE WS-MENU-OPT-TXT TO OPTN003O
+	WHEN 4
+        MOVE WS-MENU-OPT-TXT TO OPTN004O
+	WHEN OTHER
+        CONTINUE
+END-EVALUATE
+
+</CODE>
+
+<CONTEXT>
+"WS-IDX": A business-related data field in PICX9 format which represents the current Winter Sale ID used to determine the price discount % of an item. It is originating from an input file.
+
+"WS-MENU-OPT-TXT": A business-related data field representing the current item's price on the UI. It is originating from the CICS_UI.
+
+"OPTN001O": A business-related data field representing an applicable 10% discount. It is originating from the Database.
+
+"OPTN002O": A business-related data field representing an applicable 20% discount. It is originating from the Database.
+
+"OPTN003O": A business-related data field representing an applicable 30% discount. It is originating from the Database.
+</CONTEXT>
+
+Don't exceed 5 words for "title".
+Describe "highLevelBusiness" in one conclusive sentence.
+Don't exceed 80 words for "detailedSummary".
+Provide only your explanation in the above JSON format as answer and nothing else.

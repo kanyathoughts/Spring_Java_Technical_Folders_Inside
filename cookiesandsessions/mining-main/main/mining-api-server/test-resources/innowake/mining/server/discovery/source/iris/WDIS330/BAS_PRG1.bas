@@ -1,0 +1,6 @@
+PROGRAM BAS_PRG1
+
+    CALL "BAS_PRG2" 
+    CALL "BAS_PRG3" 
+    CALL "Bas_Prg3" 
+    END PROGRAM

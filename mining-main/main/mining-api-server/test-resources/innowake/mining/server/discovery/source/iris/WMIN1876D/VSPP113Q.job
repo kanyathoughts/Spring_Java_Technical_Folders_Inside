@@ -1,0 +1,15 @@
+//VSPP113Q JOB (VS02000,NSNS),'SUPPLY CHAIN',REGION=4096K,              00001009
+//       MSGCLASS=T,USER=VSPRCTL,CLASS=V,TIME=10                        00002004
+//STEP1    EXEC VSNATBAQ,PARM=('MT=0,MADIO=0,MAXCL=0,AUTO=ON')          00134009
+//DDCARD   DD DSN=VSTA.PRD1.PARMLIB(PREFETCH),DISP=SHR                  00134104
+//CMPRINT  DD SYSOUT=*                                                  00135004
+//CMPRT01  DD DSN=VSTA.DEV1.VSPP1130.REPORT,DISP=OLD                    00135111
+//CMWKF01  DD DSN=VSTA.DEV1.VSPP1130.WORK,DISP=OLD                      00135410
+//CMWKF02  DD DSN=VSTA.DEV1.VSPP1130.WORK.SORT,DISP=OLD                 00135510
+//SYSIN    DD  *                                                        00139403
+LOGON PRODBTCH                                                          00139503
+UPDATE OFF
+PP1130P1                                                                00139606
+FIN                                                                     00139703
+/*                                                                      00139803
+//                                                                      00150004

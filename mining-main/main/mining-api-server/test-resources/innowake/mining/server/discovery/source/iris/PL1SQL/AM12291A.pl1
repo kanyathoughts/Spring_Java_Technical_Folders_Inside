@@ -1,0 +1,70 @@
+ M12291A: PROCEDURE OPTIONS(MAIN);
+
+   DCL
+   1 SQLCA  ,
+     2 SQLCAID     CHAR(8),
+     2 SQLCABC     FIXED BIN(31),
+     2 SQLCODE     FIXED BIN(31),
+     2 SQLERRM     CHAR(70) VAR,
+     2 SQLERRP     CHAR(8),
+     2 SQLERRD(6)  FIXED BIN(31),
+     2 SQLWARN,
+       3 SQLWARN0  CHAR(1),
+       3 SQLWARN1  CHAR(1),
+       3 SQLWARN2  CHAR(1),
+       3 SQLWARN3  CHAR(1),
+       3 SQLWARN4  CHAR(1),
+       3 SQLWARN5  CHAR(1),
+       3 SQLWARN6  CHAR(1),
+       3 SQLWARN7  CHAR(1),
+     2 SQLEXT,
+       3 SQLWARN8  CHAR(1),
+       3 SQLWARN9  CHAR(1),
+       3 SQLWARNA  CHAR(1),
+       3 SQLSTATE  CHAR(5);
+    DCL F1 FIXED DECIMAL(5) INIT(0);
+    DCL F2 FIXED BIN(15) INIT(0);
+    DCL ALPHA CHAR(10) INIT('');
+    DCL CNT FIXED BIN(15) INIT(0);
+       
+    EXEC SQL DELETE FROM IW_SQL_TEST;
+       
+    INNERP: PROCEDURE();
+        DCL 1 SQLCA  ,
+            2 SQLCAID     CHAR(8),
+            2 SQLCABC     FIXED BIN(31),
+            2 SQLCODE     FIXED BIN(31),
+            2 SQLERRM     CHAR(70) VAR,
+            2 SQLERRP     CHAR(8),
+            2 SQLERRD(6)  FIXED BIN(31),
+            2 SQLWARN,
+              3 SQLWARN0  CHAR(1),
+              3 SQLWARN1  CHAR(1),
+              3 SQLWARN2  CHAR(1),
+              3 SQLWARN3  CHAR(1),
+              3 SQLWARN4  CHAR(1),
+              3 SQLWARN5  CHAR(1),
+              3 SQLWARN6  CHAR(1),
+              3 SQLWARN7  CHAR(1),
+            2 SQLEXT,
+              3 SQLWARN8  CHAR(1),
+              3 SQLWARN9  CHAR(1),
+              3 SQLWARNA  CHAR(1),
+              3 SQLSTATE  CHAR(5);
+        EXEC SQL DECLARE C1 CURSOR FOR 
+            SELECT P_7_2, ALPHA_SHORT
+            FROM IW_SQL_TEST
+            ORDER BY ALPHA_SHORT;
+         
+        EXEC SQL OPEN C1;
+    
+        put skip list(SQLCODE);
+        EXEC SQL FETCH C1 INTO :F1, :ALPHA;
+        put skip list(SQLCODE);
+         
+       END INNERP;
+       
+       CALL INNERP ();
+       EXEC SQL DELETE FROM IW_SQL_TEST;
+       EXEC SQL COMMIT;
+ END;

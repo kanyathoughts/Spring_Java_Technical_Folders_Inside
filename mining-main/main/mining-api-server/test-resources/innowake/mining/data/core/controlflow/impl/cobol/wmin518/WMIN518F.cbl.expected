@@ -1,0 +1,17 @@
+#5 ProcedureDivision
+ #6 CobolPerformStmt TESTPARA, FROM={TestEntryPoint}, TO={#9}
+  #7 CobolFieldReference
+ #8 CobolGoBackStmt, FROM={#31}, TO={TestReturnPoint}
+ #9 CobolLabelStmt TESTPARA , FROM={#6}, TO={#10}
+  #10 CobolSearchStmt <branch stmt>, Label: SEARCH OUTPUT-RECORD WHEN, FROM={#18, #27, #9}, TO={#18(F1 EQUAL 1), #27(F1 EQUAL 2), #31(AT END)}
+   #11 CobolFieldReference
+   #12 CobolWhenStmt
+    #13 CobolComparisonExpression
+    #18 CobolDisplayStmt 'A', FROM={#10(F1 EQUAL 1)}, TO={#10}
+   #21 CobolWhenStmt
+    #22 CobolComparisonExpression
+    #27 CobolDisplayStmt 'B', FROM={#10(F1 EQUAL 2)}, TO={#10}
+   #30 CobolAtEndBlock
+    #31 CobolDisplayStmt 'C', FROM={#10(AT END)}, TO={#8}
+ #34 CobolLabelStmt UNREACHABLE 
+  #35 CobolDisplayStmt 'UNREACHABLE'
