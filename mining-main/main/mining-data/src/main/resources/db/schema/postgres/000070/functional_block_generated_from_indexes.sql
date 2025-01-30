@@ -1,2 +1,0 @@
-CREATE INDEX functional_block_generated_from_module_link_hash_idx ON functional_block_generated_from (module_link_hash);
-CREATE INDEX functional_block_generated_from_annotation_nid_idx ON functional_block_generated_from (annotation_nid);

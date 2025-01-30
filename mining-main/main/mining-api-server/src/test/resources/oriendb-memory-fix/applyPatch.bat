@@ -1,1 +1,0 @@
-docker build -t orientdb:3.1.6 .

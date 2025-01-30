@@ -1,9 +1,0 @@
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. ADDITION.
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       77 A PIC 9(4).
-       PROCEDURE DIVISION.
-       IF A = 0
-           SET A TO TRUE
-       STOP RUN.

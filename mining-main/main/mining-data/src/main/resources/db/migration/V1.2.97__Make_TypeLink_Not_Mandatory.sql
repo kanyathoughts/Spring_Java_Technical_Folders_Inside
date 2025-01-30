@@ -1,1 +1,0 @@
-ALTER PROPERTY AnnotationCategory.typeLink MANDATORY FALSE;

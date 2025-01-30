@@ -1,1 +1,0 @@
-CREATE PROPERTY SavedSearch.modifiers  EMBEDDEDLIST STRING;

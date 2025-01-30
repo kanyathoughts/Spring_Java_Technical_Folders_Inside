@@ -1,5 +1,0 @@
--- The Module description full text index should not have been dropped here, because it was used.
--- The next migration will recreate it if this migration has already been applied.
--- This migration has been commented out to prevent the overhead of dropping and recreating this index.
--- This no-op migration is left in place to preserve the version numbering of migrations and for documentation.
--- DROP INDEX Module_description_ft IF EXISTS;

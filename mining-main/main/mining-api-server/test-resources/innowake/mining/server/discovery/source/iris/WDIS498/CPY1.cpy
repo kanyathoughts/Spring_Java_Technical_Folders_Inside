@@ -1,5 +1,0 @@
-       01 DAWS-INTERFACE-PGM PIC X(8).
-       01 DAWS-CALLED-PGM PIC X(8).
-       01 ARC2-AREA PIC X(8).
-       01 PE002-AREA PIC X(8).
-

@@ -1,8 +1,0 @@
- #2 DefineDataStmt
- #8 DecideOnStmt, Label: DECIDE ON EVERY VALUE OF #VAR1, FROM={TestEntryPoint}, TO={#15('1'), #28('2'), #35('3'), #41(NONE)}
-   #15 IfStmt, Label: IF TRUE EQ FALSE, FROM={#8('1')}, TO={#20(TRUE), #28((FALSE) AND ('2')), #35((FALSE) AND ('3')), #42(FALSE)}
-     #20 WRITE NOTITLE '1', FROM={#15(TRUE)}, TO={#28('2'), #35('3'), #42}
-   #28 WRITE NOTITLE '2', FROM={#15((FALSE) AND ('2')), #20('2'), #8('2')}, TO={#35('3'), #42}
-   #35 WRITE NOTITLE '3', FROM={#15((FALSE) AND ('3')), #20('3'), #28('3'), #35('3'), #8('3')}, TO={#35('3'), #42}
-   #41 IgnoreStmt, FROM={#8(NONE)}, TO={#42}
- #42 EndStmt, FROM={#15(FALSE), #20, #28, #35, #41}, TO={TestReturnPoint}

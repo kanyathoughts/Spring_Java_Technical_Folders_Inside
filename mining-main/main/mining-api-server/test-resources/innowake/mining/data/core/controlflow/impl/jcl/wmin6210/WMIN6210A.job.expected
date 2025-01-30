@@ -1,6 +1,0 @@
- #2 JclJobNode, Label: CNDSAMP {NOTIFY=&SYSUID, CLASS=6}, FROM={TestEntryPoint}, TO={#3}
-  #3 JclStepExec, Label: STEP1 EXEC PGM=CINDY, FROM={#2}, TO={#5}
-  #4 JclStepExec, Label: STEP2 EXEC PGM=NEXT, FROM={#5(FALSE)}, TO={#7}
-   #5 JclCondition, Label: STEP1 EQ 4, FROM={#3}, TO={#4(FALSE), #7(TRUE)}
-  #6 JclStepExec, Label: STEP3 EXEC PGM=LAST, FROM={#7(FALSE)}, TO={TestReturnPoint}
-   #7 JclCondition, Label: STEP1 LT 8 OR STEP2 GT 8, FROM={#4, #5(TRUE)}, TO={#6(FALSE), TestReturnPoint}

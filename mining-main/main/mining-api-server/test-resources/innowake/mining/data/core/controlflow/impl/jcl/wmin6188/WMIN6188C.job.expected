@@ -1,6 +1,0 @@
- #2 JclJobNode, Label: MATEKSD {NOTIFY=&SYSUID, MSGLEVEL=1,1}, FROM={TestEntryPoint}, TO={#3}
-  #3 JclStepExec, Label: STEP1 EXEC PGM=RTN, FROM={#2}, TO={#4}
-  #4 JclStepIf, Label: IFBAD IF ABEND EQ true OR STEP1.RC GT 8, FROM={#3}, TO={#7(TRUE), #8(FALSE)}
-   #5 JclCondition, Label: ABEND EQ true OR STEP1.RC GT 8
-    #7 JclStepExec, Label: TRUE EXEC PGM=ERROR, FROM={#4(TRUE)}, TO={#8}
-  #8 JclStepExec, Label: NEXTSTEP EXEC PGM=CONTINUE, FROM={#4(FALSE), #7}, TO={TestReturnPoint}

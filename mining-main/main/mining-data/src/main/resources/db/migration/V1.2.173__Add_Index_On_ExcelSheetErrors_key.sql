@@ -1,3 +1,0 @@
--- Commented out again for performance reasons as V1.2.174__Create_ErrorMarker_And_HasErrorMarker_Tables.sql and
--- V1_2_175__ExcelSheetErrors_Migration_To_ErrorMarker will replace the class ExcelSheetErrors with the ErrorMarker class and create new indexes.
--- CREATE INDEX ExcelSheetErrors_projectLink_key_idx IF NOT EXISTS ON ExcelSheetErrors (projectLink, key) NOTUNIQUE_HASH_INDEX;

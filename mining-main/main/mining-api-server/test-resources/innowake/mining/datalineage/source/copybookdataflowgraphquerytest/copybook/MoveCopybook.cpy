@@ -1,1 +1,0 @@
-           MOVE WS-FIELD-A-3 TO WS-FIELD-A-4.

@@ -1,9 +1,0 @@
-  #4 CFunctionDefinition, Function Name : main, FROM={TestEntryPoint}, TO={#10}
-   #10 CDoWhileStatement, Label: do{ printf("inside the while"); ++i; if(i == 1){ break; } printf("should be unreachable"); } while (i <= 5);, FROM={#27, #4}, TO={#11(LOOP BODY), TestReturnPoint}
-    #11 CExpressionStatement, FROM={#10(LOOP BODY)}, TO={#16}
-      #13 CFunctionReference
-    #16 CExpressionStatement, FROM={#11}, TO={#19}
-    #19 CIfElseStatement, Label: if(i == 1){ break; }, FROM={#16}, TO={#26(TRUE), #27(FALSE)}
-      #26 CBreakStatement, FROM={#19(TRUE)}, TO={TestReturnPoint}
-    #27 CExpressionStatement, FROM={#19(FALSE)}, TO={#10}
-      #29 CFunctionReference

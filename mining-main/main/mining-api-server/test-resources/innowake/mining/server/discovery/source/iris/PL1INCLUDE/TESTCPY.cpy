@@ -1,1 +1,0 @@
-   H4 BIN FIXED(31)

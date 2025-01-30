@@ -1,1 +1,0 @@
-ALTER TABLE data_dictionary ADD COLUMN translated_field TEXT;

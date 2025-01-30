@@ -1,2 +1,0 @@
-UPDATE SourceObject SET contentHash=(contentHash.substring(1, contentHash.indexOf(',')).asLong().format("%016X") + contentHash.substring(contentHash.indexOf(',')+1, contentHash.length()-1).asLong().format("%016X")) WHERE NOT contentHash IS NULL AND contentHash.indexOf(',') != -1;
-UPDATE Module SET contentHash=(contentHash.substring(1, contentHash.indexOf(',')).asLong().format("%016X") + contentHash.substring(contentHash.indexOf(',')+1, contentHash.length()-1).asLong().format("%016X")) WHERE NOT contentHash IS NULL AND contentHash.indexOf(',') != -1;

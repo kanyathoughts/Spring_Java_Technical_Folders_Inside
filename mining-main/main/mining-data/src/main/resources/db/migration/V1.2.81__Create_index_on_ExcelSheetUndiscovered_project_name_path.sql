@@ -1,2 +1,0 @@
--- The unique index for the UPSERT and DELETE of ExcelSheetUndiscovered rows.
-CREATE INDEX ExcelSheetUndiscovered_project_name_path IF NOT EXISTS ON ExcelSheetUndiscovered (projectLink, name, path) UNIQUE;

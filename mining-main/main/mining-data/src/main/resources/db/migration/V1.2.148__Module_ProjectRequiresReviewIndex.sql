@@ -1,1 +1,0 @@
-CREATE INDEX Module_projectLink_requiresReview_idx IF NOT EXISTS ON Module (projectLink, requiresReview) NOTUNIQUE;

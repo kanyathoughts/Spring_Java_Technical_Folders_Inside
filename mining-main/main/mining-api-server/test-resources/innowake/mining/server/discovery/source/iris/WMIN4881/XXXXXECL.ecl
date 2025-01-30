@@ -1,9 +1,0 @@
-@RUN,/W    XXXECL,308201,PRODUCTION 
-@SYM       PRINT$,,PRBAT
-@CAT,P     DG-XXXECL(+1).,///100000 
-@CAT,P     TR-XXXECL(+1).,///100000 
-@CAT,P     ER-XXXECL(+1).,///100000 
-@CAT,P     CR-XXXECL(+1).   
-@ASG,AX    DG-XXXECL.   
-@CHG,V     DG-XXXECL.   
-

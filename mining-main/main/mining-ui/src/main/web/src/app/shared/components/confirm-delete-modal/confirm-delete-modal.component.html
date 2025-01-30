@@ -1,8 +1,0 @@
-<ng-container [ngTemplateOutlet]="modalContent"></ng-container>
-
-<label *ngIf="isConfirmationReq" nz-checkbox [(ngModel)]="agreed">{{ confirmationText | translate }}</label>
-
-<div *nzModalFooter>
-    <button nz-button nzType="default" (click)="onCancel()">{{ 'btnLabel.cancel' | translate }}</button>
-    <button nz-button nzType="primary" nzDanger (click)="onConfirm()" [disabled]="isConfirmationReq && ! this.agreed">{{ confirmationButtonText | translate }}</button>
-</div>

@@ -1,3 +1,0 @@
-BEN_RPT:BEN_CVG_BRD_*.RPT    W@Sat@23	      1		 7	
-BEN_RPT:BEN_PRD_BRD_01.RPT   W@Sat@23	      1		 7
-BEN_RPT:BEN_PRD_BUD_01.RPT   W@Sat@23	      1		 31

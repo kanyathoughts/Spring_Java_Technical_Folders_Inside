@@ -1,1 +1,0 @@
-INSERT INTO TypeEnum set name="VAX_MACRO";

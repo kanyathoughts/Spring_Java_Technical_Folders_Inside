@@ -1,8 +1,0 @@
- #2 JclJobNode, FROM={#3(FALSE)}, TO={#4}
-  #3 JclCondition, Label: STP01 LT 10 OR STP02 GT 10, FROM={TestEntryPoint}, TO={#2(FALSE), TestReturnPoint}
-  #4 JclStepExec, Label: STEP1 EXEC PGM=CINDY, FROM={#2}, TO={#6}
-  #5 JclStepExec, Label: STEP2 EXEC PGM=NEXT, FROM={#6(FALSE)}, TO={#8}
-   #6 JclCondition, Label: STEP1 EQ 4, FROM={#4}, TO={#5(FALSE), #8(TRUE)}
-  #7 JclStepExec, Label: STEP3 EXEC PGM=LAST, FROM={#8(FALSE)}, TO={#9}
-   #8 JclCondition, Label: STEP1 LT 8 OR STEP2 GT 8, FROM={#5, #6(TRUE)}, TO={#7(FALSE), #9(TRUE)}
-  #9 JclStepExec, Label: //STEP4 EXEC PGM=CINDY, FROM={#7, #8(TRUE)}, TO={TestReturnPoint}

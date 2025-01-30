@@ -1,1 +1,0 @@
-INSERT INTO TechnologyEnum set name="BASIC";

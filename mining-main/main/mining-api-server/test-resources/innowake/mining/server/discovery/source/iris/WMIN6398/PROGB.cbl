@@ -1,5 +1,0 @@
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID.    PROGE.
-       PROCEDURE DIVISION.
-           DISPLAY 'HELLO'
-           .

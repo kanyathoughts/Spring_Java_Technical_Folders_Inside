@@ -1,9 +1,0 @@
- #2 ProcedureBlock, FROM={TestEntryPoint}, TO={#6}
-  #6 ProcedureStatement, FROM={#2}, TO={#15}
-  #15 IfStatement, Label: IF (FXD1 = FXD2) THEN RESULT = (FXD1 = FXD2);, FROM={#6}, TO={#32(TRUE), #51(FALSE)}
-    #32 AssignmentStatement, FROM={#15(TRUE)}, TO={#51}
-  #51 PutStatement, FROM={#15(FALSE), #32}, TO={#72}
-  #72 IfStatement, Label: IF (FXD1 >= FXD2) THEN RESULT = (FXD1 >= FXD2);, FROM={#51}, TO={#108(FALSE), #89(TRUE)}
-    #89 AssignmentStatement, FROM={#72(TRUE)}, TO={#108}
-  #108 EndStatement, FROM={#72(FALSE), #89}, TO={TestHaltPoint}
- #111 EndStatement

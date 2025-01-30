@@ -1,3 +1,0 @@
-INSERT INTO AnnotationCategory SELECT (SELECT @rid FROM project WHERE id = 0) AS projectLink, (SELECT @rid FROM AnnotationTypeEnum WHERE name = 'RULE') AS typeLink, sequence('AnnotationCategory_Sequence').next() AS id, 'Technical Rule' AS name;
-INSERT INTO AnnotationCategory SELECT (SELECT @rid FROM project WHERE id = 0) AS projectLink, (SELECT @rid FROM AnnotationTypeEnum WHERE name = 'RULE') AS typeLink, sequence('AnnotationCategory_Sequence').next() AS id, 'Field Computation Rule' AS name;
-INSERT INTO AnnotationCategory SELECT (SELECT @rid FROM project WHERE id = 0) AS projectLink, (SELECT @rid FROM AnnotationTypeEnum WHERE name = 'RULE') AS typeLink, sequence('AnnotationCategory_Sequence').next() AS id, 'Error Processing Rule' AS name;

@@ -1,1 +1,0 @@
-ALTER PROPERTY Module.linkHash NOTNULL TRUE;

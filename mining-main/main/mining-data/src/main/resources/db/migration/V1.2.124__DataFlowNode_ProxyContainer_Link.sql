@@ -1,1 +1,0 @@
-CREATE PROPERTY DataFlowNode.proxyContainer LINK ProxyContainer;

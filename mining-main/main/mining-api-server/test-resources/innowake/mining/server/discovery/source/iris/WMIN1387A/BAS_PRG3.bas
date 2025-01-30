@@ -1,6 +1,0 @@
-PROGRAM BAS_PRG3
-    
-    
-    EXTERNAL LONG FUNCTION functionC (DOUBLE)
-     
-    END PROGRAM

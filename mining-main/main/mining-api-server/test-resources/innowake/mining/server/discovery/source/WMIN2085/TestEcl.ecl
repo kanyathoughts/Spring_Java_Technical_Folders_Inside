@@ -1,1 +1,0 @@
-@ASG,TF TAPE.,HICL///////////EBCOPT,111C,,RING

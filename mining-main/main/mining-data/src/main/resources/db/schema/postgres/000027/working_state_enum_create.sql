@@ -1,8 +1,0 @@
-CREATE TYPE "working_state" AS ENUM (
-	'CANDIDATE',
-	'IN_ANALYSIS',
-	'FOR_REVIEW',
-	'REJECTED',
-	'APPROVED',
-	'INVALID'
-);

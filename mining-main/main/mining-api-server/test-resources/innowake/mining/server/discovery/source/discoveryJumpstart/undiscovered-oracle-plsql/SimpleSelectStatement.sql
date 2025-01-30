@@ -1,1 +1,0 @@
-SELECT * INTO customer_v FROM customer_details WHERE customer_ID = order_[count_v].customer_ID;

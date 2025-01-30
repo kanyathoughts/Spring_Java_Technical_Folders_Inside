@@ -1,1 +1,0 @@
-CREATE PROPERTY Module.location LINK ModuleLocation

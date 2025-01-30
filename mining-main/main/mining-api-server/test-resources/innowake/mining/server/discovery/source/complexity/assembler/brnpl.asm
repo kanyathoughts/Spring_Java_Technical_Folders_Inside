@@ -1,2 +1,0 @@
- START
-         BRNPL    label

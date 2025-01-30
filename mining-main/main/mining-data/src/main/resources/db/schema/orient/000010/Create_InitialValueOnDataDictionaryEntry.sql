@@ -1,1 +1,0 @@
-CREATE PROPERTY DataDictionaryEntry.initialValue IF NOT EXISTS STRING (MANDATORY FALSE);

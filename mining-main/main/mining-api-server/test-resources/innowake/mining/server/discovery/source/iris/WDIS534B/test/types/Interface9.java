@@ -1,8 +1,0 @@
-/*
- * Copyright (c) 2021 innoWake gmbh Germany. All rights reserved.
- */
-package WDIS534B.test.types;
-
-public interface Interface9<I extends Interface7> {
-
-}
